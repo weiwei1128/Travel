@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="是否要記錄景點或上傳照片？"
+        android:textColor="@color/black"
+        android:textSize="20dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_margin="-5dp"
+        android:layout_gravity="center" />
+
+    <ScrollView
+        android:layout_width="wrap_content"
+        android:layout_height="300dp"
+        android:layout_gravity="center">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/dialog_img"
+            android:layout_gravity="center" />
+    </ScrollView>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="15dp">
+
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:id="@+id/dialog_write_img"
+            android:src="@drawable/member_comment"
+            android:layout_marginRight="10dp"
+            android:layout_weight="1"
+            android:background="@drawable/click_effect_general"
+            android:clickable="true" />
+
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:id="@+id/dialog_camera_img"
+            android:src="@drawable/camera"
+            android:layout_marginRight="10dp"
+            android:layout_weight="1"
+            android:background="@drawable/click_effect_general"
+            android:clickable="true" />
+
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:id="@+id/dialog_leave_img"
+            android:src="@drawable/places_ic_clear"
+            android:layout_marginRight="10dp"
+            android:layout_weight="1"
+            android:background="@drawable/click_effect_general" />
+    </LinearLayout>
+</LinearLayout>

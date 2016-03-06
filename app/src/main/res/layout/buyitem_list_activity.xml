@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.wei.travel.BuyItemListActivity">
+
+    <LinearLayout
+        android:id="@+id/checkschedule_Layout"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:background="#5599FF"
+        android:gravity="center_vertical|center_horizontal">
+
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="40dp"
+            android:id="@+id/buyitemlist_backImg"
+            android:src="@drawable/arrow_back_white"
+            android:layout_marginLeft="10dp"
+            android:background="@drawable/click_effect_general" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:text="購物清單"
+            android:id="@+id/buyitemlistHeader"
+            android:textSize="22dp"
+            android:gravity="center_vertical|center_horizontal"
+            android:background="@color/blue"
+            android:textColor="@color/white"
+            android:layout_marginRight="40dp"
+            android:layout_weight="1" />
+
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/buyitemlist_moreImg"
+            android:src="@drawable/navigation_share"
+            android:background="@drawable/click_effect_general"
+            android:clickable="true"
+            android:layout_marginRight="10dp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:background="#FFBB00"
+        android:id="@+id/buyitemlist_listLayout">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="購物清單"
+            android:id="@+id/buyitemlist_listText"
+            android:layout_gravity="center"
+            android:textColor="#FFFFFF"
+            android:textSize="20dp"
+            android:gravity="center"
+            android:background="@drawable/click_effect_general" />
+    </LinearLayout>
+
+    <ListView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/listview"
+        android:layout_below="@+id/checkschedule_Layout"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="65dp" />
+
+</RelativeLayout>

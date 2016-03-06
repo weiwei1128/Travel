@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.wei.travel.BuyItemListConfirmActivity"
+    android:background="@color/white">
+
+    <LinearLayout
+        android:id="@+id/checkschedule_Layout"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:background="#5599FF"
+        android:gravity="center_vertical|center_horizontal">
+
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="40dp"
+            android:id="@+id/buyitemlistconfirm_backImg"
+            android:src="@drawable/arrow_back_white"
+            android:background="@drawable/click_effect_general"
+            android:layout_marginLeft="10dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:text="購物清單"
+            android:id="@+id/buyitemlistconfirmHeader"
+            android:textSize="22dp"
+            android:gravity="center_vertical|center_horizontal"
+            android:background="#5599FF"
+            android:textColor="#FFFFFF"
+            android:layout_marginRight="40dp"
+            android:layout_weight="1" />
+
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/buyitemlistconfirm_moreImg"
+            android:src="@drawable/navigation_share"
+            android:background="@drawable/click_effect_general"
+            android:clickable="true"
+            android:layout_marginRight="10dp" />
+    </LinearLayout>
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="收貨地點："
+        android:id="@+id/buyitemlistconfirm_locaText"
+        android:layout_below="@id/checkschedule_Layout"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:textColor="@color/black"
+        android:textSize="16dp" />
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/buyitemlistconfirm_locaText"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:id="@+id/buyitemlistconfirm_locLayout"
+        android:layout_marginLeft="10dp">
+
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="飯店"
+            android:id="@+id/buyitemlist_hotelCheck"
+            android:textSize="14dp"
+            android:textColor="@color/black" />
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent">
+
+            <CheckBox
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="自行輸入地址"
+                android:id="@+id/buyitemlist_addrCheck"
+                android:textColor="@color/black"
+                android:textSize="14dp" />
+
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/buyitemlist_addrEdit"
+                android:textColor="@color/black"
+                android:textSize="14dp" />
+        </LinearLayout>
+
+
+    </LinearLayout>
+    <View
+        android:id="@+id/buyitemlistconfirm_view2"
+        android:layout_below="@+id/buyitemlistconfirm_locLayout"
+        android:layout_height="1dp"
+        android:layout_width="match_parent"
+        android:background="@color/light_gray"
+        android:layout_gravity="center_vertical"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="15dp" />
+
+    <!--
+    buyitemlistconfirm_locLayout
+    !-->
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="訂單明細："
+        android:id="@+id/buyitemlistconfirm_list"
+        android:layout_below="@+id/buyitemlistconfirm_view2"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="10dp"
+        android:textSize="16dp"
+        android:textColor="@color/black" />
+
+    <ScrollView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/buyitemlistconfirm_scroll"
+        android:layout_below="@+id/buyitemlistconfirm_list"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/buyitemlistconfirm_listText"
+            android:textColor="@color/black"
+            android:textSize="16dp" />
+    </ScrollView>
+    <View
+        android:id="@+id/buyitemlistconfirm_view"
+        android:layout_height="2dp"
+        android:layout_width="match_parent"
+        android:layout_below="@+id/buyitemlistconfirm_scroll"
+        android:background="@color/light_gray"
+        android:layout_gravity="center_vertical"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="15dp" />
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:gravity="bottom"
+        android:background="#5599FF"
+        android:id="@+id/buyitemlistconfirm_confirmLay">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="確認付款"
+            android:layout_gravity="center"
+            android:gravity="center_vertical|center|center_horizontal"
+            android:textColor="@color/white"
+            android:textSize="22dp"
+            android:background="@drawable/click_effect_general"
+            android:clickable="true" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/buyitemlistconfirm_view"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="10dp"
+        android:gravity="right"
+        android:layout_marginRight="10dp"
+        android:background="@drawable/border_rec_whiteblue"
+        android:padding="3dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="總金額："
+            android:id="@+id/buyitemlistconfirm_total"
+            android:layout_alignTop="@+id/buyitemlistconfirm_totalText"
+            android:layout_toLeftOf="@+id/buyitemlistconfirm_totalText"
+            android:layout_toStartOf="@+id/buyitemlistconfirm_totalText"
+            android:textColor="@color/lightblue"
+            android:textSize="16dp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0"
+            android:id="@+id/buyitemlistconfirm_totalText"
+            android:layout_alignTop="@+id/textView2"
+            android:layout_toLeftOf="@+id/textView2"
+            android:layout_toStartOf="@+id/textView2"
+            android:layout_marginRight="5dp"
+            android:layout_marginLeft="5dp"
+            android:textColor="@color/peach"
+            android:textSize="16dp"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
+</RelativeLayout>

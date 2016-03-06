@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    tools:context="com.example.wei.travel.BuyActivity"
+    android:background="#FFFFFF">
+
+    <LinearLayout
+        android:id="@+id/buy_Layout"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:background="#5599FF"
+        android:gravity="center_vertical|center_horizontal">
+
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="40dp"
+            android:id="@+id/buy_backImg"
+            android:src="@drawable/arrow_back_white"
+            android:background="@drawable/click_effect_general"
+            android:layout_marginLeft="10dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="伴手禮列表"
+            android:id="@+id/buyHeader"
+            android:textSize="22dp"
+            android:gravity="center_vertical|center_horizontal"
+            android:background="@color/blue"
+            android:textColor="#FFFFFF" />
+    </LinearLayout>
+
+
+
+
+
+    <GridView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/buy_gridView"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/buy_Layout"/>
+
+</RelativeLayout>

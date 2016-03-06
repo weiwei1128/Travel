@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.wei.travel.GoodThingActivity">
+
+    <LinearLayout
+        android:id="@+id/goodthing_Layout"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:background="#5599FF"
+        android:gravity="center_vertical|center_horizontal"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/goodthing_backImg"
+            android:layout_width="30dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="10dp"
+            android:background="@drawable/click_effect_general"
+            android:src="@drawable/arrow_back_white" />
+
+        <TextView
+            android:id="@+id/GoodThingHeader"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:background="#5599FF"
+            android:gravity="center_vertical|center_horizontal"
+            android:text="即時好康"
+            android:textColor="@color/white"
+            android:textSize="22dp" />
+
+        <ImageView
+            android:id="@+id/goodthing_moreImg"
+            android:layout_width="40dp"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/click_effect_general"
+            android:src="@drawable/navigation_share"
+            android:clickable="true" />
+    </LinearLayout>
+
+    <ListView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/goodthing_listView"
+        android:layout_below="@+id/goodthing_Layout"
+        android:layout_centerHorizontal="true" />
+
+</RelativeLayout>

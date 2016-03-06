@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".CheckScheduleActivity"
+    android:background="#FFFFFF">
+    <LinearLayout
+        android:id="@+id/checkschedule_Layout"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:background="#5599FF"
+        android:gravity="center_vertical|center_horizontal">
+
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="40dp"
+            android:id="@+id/checkschedule_backImg"
+            android:src="@drawable/arrow_back_white"
+            android:background="@drawable/click_effect_general"
+            android:layout_marginLeft="10dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:text="寶島好智遊"
+            android:id="@+id/checkscheduleHeader"
+            android:textSize="22dp"
+            android:gravity="center_vertical|center_horizontal"
+            android:background="#5599FF"
+            android:textColor="#FFFFFF"
+            android:layout_weight="1"
+            android:layout_gravity="center" />
+
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/checkschedule_moreImg"
+            android:src="@drawable/navigation_share"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/click_effect_general" />
+    </LinearLayout>
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/checkschedule_Layout"
+        android:layout_centerHorizontal="true"
+        android:background="#33CCFF"
+        android:id="@+id/linearLayout2">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="上一天"
+            android:id="@+id/checkschedule_lastdayTxt"
+            android:textColor="#EE7700"
+            android:textSize="16dp"
+            android:background="@drawable/click_effect_withbackground"
+            android:padding="3dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginRight="3dp"
+            android:layout_marginBottom="3dp"
+            android:clickable="true" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="2015/12/31"
+            android:id="@+id/checkschedule_dateTxt"
+            android:layout_weight="1"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:textColor="#FFFFFF"
+            android:textSize="18dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="下一天"
+            android:id="@+id/checkschedule_nextdayTxt"
+            android:textColor="#EE7700"
+            android:textSize="16dp"
+            android:background="@drawable/click_effect_withbackground"
+            android:padding="3dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginLeft="3dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginBottom="3dp"
+            android:clickable="true" />
+    </LinearLayout>
+
+    <android.support.v4.view.ViewPager
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/linearLayout2"
+        android:id="@+id/check_viewPager"></android.support.v4.view.ViewPager>
+</RelativeLayout>
