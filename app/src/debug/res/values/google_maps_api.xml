@@ -15,5 +15,6 @@ https://console.developers.google.com/flows/enableapi?apiid=maps_android_backend
     <string name="google_maps_key" translatable="false" templateMergeStrategy="preserve">
         AIzaSyDkiJfEYm03VVLI2bVos0oF8j8Z4HoMPk4
         <!--AIzaSyCGQ-PZSOuhk7PTkSYgX7C4-VtVG_W43zk-->  <!--Wei -->
+<!--yeah on NCTU-->
     </string>
 </resources>
