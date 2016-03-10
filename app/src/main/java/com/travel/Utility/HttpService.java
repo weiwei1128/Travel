@@ -1,6 +1,7 @@
 package com.travel.Utility;
 
 import android.app.Service;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -31,6 +32,7 @@ import java.nio.charset.Charset;
 /**
  * Created by wei on 2016/2/23.
  * //要記得註冊service
+ * //0310 -> NEWS OK
  */
 public class HttpService extends Service {
     Context context;
@@ -154,7 +156,7 @@ public class HttpService extends Service {
             HttpResponse resp = null;
             String result = null;
             String states = null;
-            String message=null;
+            String message = "";
             try {
                 resp = client.execute(post);
                 result = EntityUtils.toString(resp.getEntity());
@@ -175,10 +177,20 @@ public class HttpService extends Service {
                 JSONArray jsonArray = null;
                 try {
                     jsonArray = new JSONObject(result).getJSONArray("list");
-//                    Log.e("3.9", jsonArray.length() + ":jsonArray長度"); //OK
+//                    Log.e("3.9", jsonArray.length() + ":jsonArray長度"); //3.9 OK
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+                if(jsonArray!=null)
+                    for(int i=0;i<jsonArray.length();i++){
+                        try {
+                            message = message+jsonArray.getJSONObject(i).getString("title")+"    ";
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+//                message="";//test
+//                Log.e("3.10","news: "+message); //3.10 OK
                 return message;
             }
 
@@ -186,9 +198,35 @@ public class HttpService extends Service {
 
         @Override
         protected void onPostExecute(String s) {
+            DataBaseHelper helper = new DataBaseHelper(context);
+            SQLiteDatabase database = helper.getWritableDatabase();
+            Cursor news_cursor = database.query("news", new String[]{"title"}, null, null, null, null, null);
+            if(news_cursor!=null && !s.equals("")){
+//                Log.e("3.10","news cursor count: "+news_cursor.getCount());
+                news_cursor.moveToFirst();
+                if(news_cursor.getCount()==0) {
+                    ContentValues cv = new ContentValues();
+                    cv.put("title", s);
+                    long result = database.insert("news", null, cv);
+//                    Log.e("3.10","news insert DB result: "+result);
+                }else if(!news_cursor.getString(0).equals(s)){ //資料不相同 -> 更新
+                    ContentValues cv = new ContentValues();
+                    cv.put("title", s);
+                    long result = database.update("news", cv, null, null);
+//                    Log.e("3.10","news update DB result: "+result);
+                }
+                news_cursor.close();
+            }
+//            else Log.e("3.10","news: cursor=NULL? message:"+s);
             super.onPostExecute(s);
         }
     }
+    private class Special extends AsyncTask<String,Void,String>{
 
+        @Override
+        protected String doInBackground(String... params) {
+            return null;
+        }
+    }
 
 }

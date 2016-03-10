@@ -58,7 +58,7 @@ public class HomepageActivity extends AppCompatActivity {
                 "name", "phone", "email", "addr"}, null, null, null, null, null);
         if (member_cursor == null || member_cursor.getCount() == 0)
             finish();
-        else Log.d("3.1", "check___check!!!!!" + member_cursor.getCount());
+//        else Log.d("3.1", "check___check!!!!!" + member_cursor.getCount());
         if(member_cursor!=null)
             member_cursor.close();
         linearLayout = (LinearLayout) findViewById(R.id.main_main_layout);
@@ -122,7 +122,7 @@ public class HomepageActivity extends AppCompatActivity {
         memberText = (TextView) findViewById(R.id.main_member_text);
         memberLayout = (LinearLayout) findViewById(R.id.main_member_layout);
         memberImg.setImageResource(R.drawable.member_img_click);
-        memberText.setTextColor(R.color.gray);
+        memberText.setTextColor(getResources().getColor(R.color.gray));
         memberImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -224,9 +224,17 @@ public class HomepageActivity extends AppCompatActivity {
         //======= MORE =======//
 
 
-        //TODO 跑馬燈
+        //TODO 跑馬燈 需要做超連結!
+        String message="讀取資料錯誤";
+        Cursor news_cursor = database.query("news", new String[]{"title"}, null, null, null, null, null);
+        if(news_cursor!=null && news_cursor.getCount()>0){
+            news_cursor.moveToFirst();
+            message = news_cursor.getString(0);
+        }
+        if(news_cursor!=null)
+            news_cursor.close();
         MyTextview textview = new MyTextview(this);
-        textview.setText("2014新竹縣客家桐花祭開幕活動  活動日期：4/26");
+        textview.setText(message);
         textview.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         params.gravity = Gravity.CENTER_VERTICAL;
