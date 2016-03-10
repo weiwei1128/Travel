@@ -127,15 +127,7 @@ public class BuyAdapter extends BaseAdapter {
 
         Cursor goods_cursor = database.query("goods", new String[]{"totalCount", "goods_id", "goods_title",
                 "goods_url", "goods_money", "goods_content", "goods_click", "goods_addtime"}, null, null, null, null, null);
-        if (goods_cursor != null && goods_cursor.getCount() >= position) {
-            goods_cursor.moveToPosition(position);
-            mcell.buyText.setText(goods_cursor.getString(2));
-//            if(goods_cursor.getString(6)!=null)
-//            mcell.clickText.append(goods_cursor.getString(6));
-            //http://zhiyou.lin366.com/
-            loader.displayImage("http://zhiyou.lin366.com/" + goods_cursor.getString(3)
-                    , mcell.buyImg, options, listener);
-        }
+
         if (mcell.buyImg != null)
             mcell.buyImg.setScaleType(ImageView.ScaleType.CENTER_CROP);
 

@@ -318,11 +318,13 @@ public class BuyItemDetailActivity extends AppCompatActivity {
             } catch (IOException e) {
                 Log.e("3.10",e.toString());
             }
+            Log.e("3.10","購物車項目: "+response.getEntity().toString());
             try{
+                Log.e("3.10","購物車項目? 2getString: start");
                 getString = EntityUtils.toString(response.getEntity());
                 Log.e("3.10","購物車項目? 2getString: "+getString);
             } catch (IOException e) {
-                Log.e("3.10",e.toString());
+                Log.e("3.10",e.toString()+"error");
             }
             Log.e("3.10","購物車項目? getString: "+getString);
             /*
@@ -342,6 +344,12 @@ public class BuyItemDetailActivity extends AppCompatActivity {
             Log.e("3.10","購物車項目?"+jsonArray+"getString: "+getString);
             */
             return null;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            Log.e("3.10","Buy item Detail onPostExecute");
+            super.onPostExecute(s);
         }
     }
 }
