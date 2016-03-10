@@ -7,18 +7,18 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.ListView;
 
-import com.travel.Adapter.GoodThingAdapter;
+import com.travel.Adapter.SpecialAdapter;
 import com.travel.Utility.Functions;
 
-public class GoodThingActivity extends AppCompatActivity {
+public class SpecialActivity extends AppCompatActivity {
     ImageView backImg, moreImg;
     ListView listView;
-    GoodThingAdapter adapter;
+    SpecialAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.goodthing_activity);
+        setContentView(R.layout.special_activity);
         backImg = (ImageView) findViewById(R.id.goodthing_backImg);
         listView = (ListView) findViewById(R.id.goodthing_listView);
 
@@ -26,11 +26,11 @@ public class GoodThingActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 //                finish();
-                Functions.go(true,GoodThingActivity.this, GoodThingActivity.this, HomepageActivity.class, null);
+                Functions.go(true,SpecialActivity.this, SpecialActivity.this, HomepageActivity.class, null);
             }
         });
 
-        adapter = new GoodThingAdapter(GoodThingActivity.this);
+        adapter = new SpecialAdapter(SpecialActivity.this);
         listView.setAdapter(adapter);
 
     }
@@ -38,7 +38,7 @@ public class GoodThingActivity extends AppCompatActivity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            Functions.go(true,GoodThingActivity.this, GoodThingActivity.this, HomepageActivity.class, null);
+            Functions.go(true,SpecialActivity.this, SpecialActivity.this, HomepageActivity.class, null);
         }
 
         return false;

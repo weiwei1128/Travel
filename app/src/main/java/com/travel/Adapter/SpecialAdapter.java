@@ -13,11 +13,11 @@ import com.travel.R;
 /**
  * Created by wei on 2016/1/30.
  */
-public class GoodThingAdapter extends BaseAdapter {
+public class SpecialAdapter extends BaseAdapter {
     Context mContext;
     LayoutInflater layoutInflater;
 
-    public GoodThingAdapter(Context context) {
+    public SpecialAdapter(Context context) {
         this.mContext = context;
         layoutInflater = LayoutInflater.from(context);
     }
@@ -39,7 +39,7 @@ public class GoodThingAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        View view = layoutInflater.inflate(R.layout.goodthing_item, null);
+        View view = layoutInflater.inflate(R.layout.special_item, null);
         thing item = new thing(
                 (ImageView)view.findViewById(R.id.goodthing_img),
                 (TextView)view.findViewById(R.id.goodthing_name_txt),

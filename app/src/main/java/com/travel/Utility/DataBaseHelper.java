@@ -115,7 +115,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         db.execSQL(DATABASE_CREATE_TABLE_GOODS);
 
         //即時好康
-        String DATABASE_CREATE_TABLE_SPECIAL = "create table special("
+        String DATABASE_CREATE_TABLE_SPECIAL = "create table special_activity("
                 +"_ID INTEGER PRIMARY KEY,"+"id TEXT,"
                 +"title TEXT,"
                 +"img TEXT,"

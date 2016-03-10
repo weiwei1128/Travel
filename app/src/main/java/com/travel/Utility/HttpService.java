@@ -230,6 +230,7 @@ public class HttpService extends Service {
 
         @Override
         protected Map<String, String[][]> doInBackground(String... params) {
+            Log.e("3.9", "=========Special======doInBackground");
             HttpClient client = new DefaultHttpClient();
             HttpPost post = new HttpPost("http://zhiyou.lin366.com/api/article/index.aspx");
             MultipartEntity multipartEntity = new MultipartEntity();
@@ -311,7 +312,7 @@ public class HttpService extends Service {
                             //有小數點!!
                             sellprice = sellprice.substring(0, sellprice.indexOf("."));
                         }
-//                        Log.e("3.10","special 去除小數點前: "+jsonArray.getJSONObject(i).getString("sell_price")+"後: "+sellprice);
+//                        Log.e("3.10","special_activity 去除小數點前: "+jsonArray.getJSONObject(i).getString("sell_price")+"後: "+sellprice);
                         jsonObjects[i][5] = sellprice;
                     } catch (JSONException | NullPointerException e) {
                         e.printStackTrace();
@@ -328,7 +329,75 @@ public class HttpService extends Service {
 
         @Override
         protected void onPostExecute(Map<String, String[][]> s) {
-            Log.e("3.10","special item size:"+s.size());
+            if (s != null) {
+                String[][] jsonObjects = s.get("item");
+//                Log.e("3.10","special_activity item size:"+jsonObjects.length);
+                DataBaseHelper helper = new DataBaseHelper(context);
+                SQLiteDatabase database = helper.getWritableDatabase();
+                Cursor special = database.query("special_activity", new String[]{"id", "title", "img", "content", "price", "click"},
+                        null, null, null, null, null);
+                if (special != null && jsonObjects != null) {
+                    if (special.getCount() == 0) //如果還沒新增過資料->直接新增!
+                        for (int i = 0; i < jsonObjects.length; i++) {
+                            ContentValues cv = new ContentValues();
+                            cv.put("id", jsonObjects[i][0]);
+                            cv.put("title", jsonObjects[i][1]);
+                            cv.put("img", jsonObjects[i][2]);
+                            cv.put("content", jsonObjects[i][3]);
+                            cv.put("price", jsonObjects[i][4]);
+                            cv.put("click", jsonObjects[i][5]);
+                            long result = database.insert("special_activity", null, cv);
+                            Log.d("3.10", "special_activity: " + result + " = DB INSERT" + i + "title " + jsonObjects[i][1]);
+                        }
+                    else { //資料庫已經有資料了!
+                        for (int i = 0; i < jsonObjects.length; i++) {
+                            Cursor special_dul = database.query(true, "special_activity", new String[]{"id",
+                                            "title", "img", "content", "price", "click"},
+                                    "id=" + jsonObjects[i][0], null, null, null, null, null);
+                            if (special_dul != null && special_dul.getCount() > 0) {
+                                //有重複的資料
+                                special_dul.moveToFirst();
+                                ContentValues cv = new ContentValues();
+                                //若資料不一樣 則更新 ! (besides ID)
+                                if (!special_dul.getString(1).equals(jsonObjects[i][1]))
+                                    cv.put("title", jsonObjects[i][1]);
+                                if (!special_dul.getString(2).equals(jsonObjects[i][2]))
+                                    cv.put("img", jsonObjects[i][2]);
+                                if (!special_dul.getString(3).equals(jsonObjects[i][3]))
+                                    cv.put("content", jsonObjects[i][3]);
+                                if (!special_dul.getString(4).equals(jsonObjects[i][4]))
+                                    cv.put("price", jsonObjects[i][1]);
+                                if (!special_dul.getString(5).equals(jsonObjects[i][5]))
+                                    cv.put("click", jsonObjects[i][5]);
+                                if (!special_dul.getString(1).equals(jsonObjects[i][1]) ||
+                                        !special_dul.getString(2).equals(jsonObjects[i][2]) ||
+                                        !special_dul.getString(3).equals(jsonObjects[i][3]) ||
+                                        !special_dul.getString(4).equals(jsonObjects[i][4]) ||
+                                        !special_dul.getString(5).equals(jsonObjects[i][5])) {
+                                    long result = database.update("special_activity", cv, "id=?", new String[]{jsonObjects[i][0]});
+                                    Log.e("3.10", "special_activity updated: " + result + " title: " + jsonObjects[i][1]);
+                                }
+                            } else {
+                                //資料庫存在 但資料不存在
+                                ContentValues cv = new ContentValues();
+                                cv.put("id", jsonObjects[i][0]);
+                                cv.put("title", jsonObjects[i][1]);
+                                cv.put("img", jsonObjects[i][2]);
+                                cv.put("content", jsonObjects[i][3]);
+                                cv.put("price", jsonObjects[i][4]);
+                                cv.put("click", jsonObjects[i][5]);
+                                long result = database.insert("special_activity", null, cv);
+                                Log.d("3.10", "special_activity insert: " + result + " = DB INSERT" + i + "title " + jsonObjects[i][1]);
+                            }
+                            if (special_dul != null)
+                                special_dul.close();
+                        }
+
+                    }
+                    special.close();
+                }
+            }
+
             super.onPostExecute(s);
         }
     }

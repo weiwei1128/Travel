@@ -3,21 +3,16 @@ package com.travel;
 /*/Users/wei/android-sdks*/
 
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -28,16 +23,10 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.google.android.gms.maps.MapsInitializer;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.travel.ImageSlide.MainImageFragment;
 import com.travel.Utility.DataBaseHelper;
 import com.travel.Utility.Functions;
 import com.travel.Utility.MyTextview;
-
-import java.util.ArrayList;
 
 public class HomepageActivity extends AppCompatActivity {
     private Fragment contentFragment;
@@ -68,7 +57,7 @@ public class HomepageActivity extends AppCompatActivity {
         goodthingLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Functions.go(false, HomepageActivity.this, HomepageActivity.this, GoodThingActivity.class, null);
+                Functions.go(false, HomepageActivity.this, HomepageActivity.this, SpecialActivity.class, null);
             }
         });
 
