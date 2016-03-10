@@ -74,7 +74,7 @@ public class BuyItemListConfirmActivity extends AppCompatActivity {
                 if (sharedPreferences.getInt(goods_cursor.getString(1), 0) != 0) {
                     buylistText.append(goods_cursor.getString(2) + " : "
                             + sharedPreferences.getInt(goods_cursor.getString(1), 0) + " 個 \n");
-                    int money = Integer.valueOf(goods_cursor.getString(4).substring(0, goods_cursor.getString(4).indexOf(".")));
+                    int money = Integer.valueOf(goods_cursor.getString(4));
                     totalnumber = totalnumber+money*Integer.valueOf(sharedPreferences.getInt(goods_cursor.getString(1), 0));
                 }
                 goods_cursor.moveToNext();

@@ -111,8 +111,6 @@ public class BuyitemAdapter extends BaseAdapter {
         newcell.cellnumberTxt.setText("0");
 
         //TODO need modify
-        ImageLoaderConfiguration configuration = new ImageLoaderConfiguration.Builder(context).build();
-        ImageLoader.getInstance().init(configuration);
 
         Cursor goods_cursor = database.query("goods", new String[]{"totalCount", "goods_id", "goods_title",
                 "goods_url", "goods_money", "goods_content", "goods_click", "goods_addtime"}, null, null, null, null, null);
@@ -128,7 +126,7 @@ public class BuyitemAdapter extends BaseAdapter {
             Log.d("3.9", "購物車項目名稱" + position + ":" + goods_cursor.getString(2));
             newcell.cellnameTxt.setText(goods_cursor.getString(2));
             newcell.cellfromTxt.setText(goods_cursor.getString(2));
-            newcell.cellmoneyTxt.setText(goods_cursor.getString(4).substring(0, goods_cursor.getString(4).indexOf(".")));
+            newcell.cellmoneyTxt.setText(goods_cursor.getString(4));
             newcell.cellnumberTxt.setText(sharedPreferences.getInt(goods_cursor.getString(1), 0)+"");
             goods_id.clear();
             goods_id.add(goods_cursor.getString(1));

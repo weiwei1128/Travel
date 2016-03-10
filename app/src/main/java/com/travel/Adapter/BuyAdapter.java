@@ -90,10 +90,10 @@ public class BuyAdapter extends BaseAdapter {
 //                Log.e("3.10", "LastPage");
                 number = number % 10;
             }
-        }else
-//        Log.e("3.10","BuyAdapter:"+number+"%10 "+(number%10)+"/10: "+(number/10)+"PageNo:"+pageNO);
-        number = 10;
-        Log.e("3.10","buyAdapter: "+number);
+            else number=10;
+        } else
+            number = 10;
+        Log.e("3.10", "buyAdapter: " + number);
         return number;
     }
 

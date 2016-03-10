@@ -27,6 +27,20 @@ import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 import com.travel.Utility.DataBaseHelper;
 import com.travel.Utility.Functions;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.entity.mime.content.StringBody;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,6 +55,7 @@ public class BuyItemDetailActivity extends AppCompatActivity {
     ImageView ItemImg, BackImg, AddImg;
     DataBaseHelper helper;
     SQLiteDatabase database;
+    String itemID;
 
     //按下返回鍵
     @Override
@@ -76,145 +91,11 @@ public class BuyItemDetailActivity extends AppCompatActivity {
             }
         });
         AddImg = (ImageView) findViewById(R.id.buyitemAdd_Img);
+        AddImg.setVisibility(View.INVISIBLE);
         AddImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Bundle bundle = new Bundle();
-                bundle.putInt("WhichItem", ItemPosition);
-                //=====0308 test popping Dialog
-                final Dialog BuyAdd = new Dialog(BuyItemDetailActivity.this);
-                BuyAdd.setCancelable(true);
-                BuyAdd.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                BuyAdd.setCanceledOnTouchOutside(true);
-                BuyAdd.setContentView(R.layout.dialog_buyitem);
-                LinearLayout linearLayout = (LinearLayout) BuyAdd.findViewById(R.id.dialog_buyitem_layout);
-                View view = LayoutInflater.from(BuyItemDetailActivity.this)
-                        .inflate(R.layout.buylist_item, null);
-                linearLayout.addView(view);
-                TextView nameText = (TextView) view.findViewById(R.id.buyitemlist_nameTxt);
-                TextView fromText = (TextView) view.findViewById(R.id.buyitemlist_fromTxt);
-                final TextView moneyText = (TextView) view.findViewById(R.id.butitemlist_moneyTxt);
-                ImageView Img = (ImageView) view.findViewById(R.id.buyitemlist_itemImg);
-                ImageView delImg = (ImageView) view.findViewById(R.id.buyitemlist_delImg);
-                final TextView numberText = (TextView) view.findViewById(R.id.buyitemlist_numbertext);
-                final TextView totalText = (TextView) view.findViewById(R.id.buyitemlist_totalTxt);
-                Button addButton = (Button) view.findViewById(R.id.buyitemlist_addbutton);
-                Button minusButton = (Button) view.findViewById(R.id.buyitemlist_minusbutton);
-                Button okButton = (Button) BuyAdd.findViewById(R.id.dialog_buyitem_OkButton);
-                Button cancelButton = (Button) BuyAdd.findViewById(R.id.dialog_buyitem_CancelButton);
-                final List<String> goods_id = new ArrayList<>();
-                DataBaseHelper helper = new DataBaseHelper(BuyItemDetailActivity.this);
-                SQLiteDatabase database = helper.getWritableDatabase();
-                //show image init
-                options = new DisplayImageOptions.Builder()
-                        .showImageOnFail(R.drawable.error)
-                        .showImageForEmptyUri(R.drawable.empty)
-                        .cacheInMemory()
-                        .cacheOnDisc().build();
-                listener = new ImageLoadingListener() {
-                    @Override
-                    public void onLoadingStarted(String s, View view) {
-
-                    }
-
-                    @Override
-                    public void onLoadingFailed(String s, View view, FailReason failReason) {
-
-                    }
-
-                    @Override
-                    public void onLoadingComplete(String s, View view, Bitmap bitmap) {
-
-                    }
-
-                    @Override
-                    public void onLoadingCancelled(String s, View view) {
-
-                    }
-                };
-                ImageLoaderConfiguration configuration = new ImageLoaderConfiguration.Builder(
-                        BuyItemDetailActivity.this).build();
-                ImageLoader.getInstance().init(configuration);
-                //show image init
-
-                final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(BuyItemDetailActivity.this);
-                final Cursor goods_cursor = database.query("goods", new String[]{"totalCount", "goods_id", "goods_title",
-                        "goods_url", "goods_money", "goods_content", "goods_click", "goods_addtime"}, null, null, null, null, null);
-                if (goods_cursor != null && goods_cursor.getCount() >= ItemPosition) {
-                    goods_cursor.moveToPosition(ItemPosition);
-                    //name,name,money,img
-                    goods_id.clear();
-                    goods_id.add(goods_cursor.getString(1));
-
-                    nameText.setText(goods_cursor.getString(2));
-                    fromText.setText(goods_cursor.getString(2));
-
-                    moneyText.setText(goods_cursor.getString(4).substring(0, goods_cursor.getString(4).indexOf(".")));
-                    numberText.setText("" + sharedPreferences.getInt(goods_cursor.getString(1), 0));
-                    Log.d("3.8", "shared:" + sharedPreferences.getInt(goods_cursor.getString(1), 0));
-                    loader.displayImage("http://zhiyou.lin366.com/" + goods_cursor.getString(3)
-                            , Img, options, listener);
-                    goods_cursor.close();
-                }
-                addButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        numberText.setText((Integer.valueOf(numberText.getText().toString() + "") + 1) + "");
-                        totalText.setText(Integer.parseInt(moneyText.getText().toString())
-                                * Integer.valueOf(numberText.getText().toString() + "")+"");
-                    }
-                });
-                delImg.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        numberText.setText("0");
-                        totalText.setText(Integer.parseInt(numberText.getText().toString())
-                                * Integer.valueOf(numberText.getText().toString() + ""));
-                    }
-                });
-                minusButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (Integer.valueOf(numberText.getText().toString() + "") > 0) {
-                            numberText.setText((Integer.valueOf(numberText.getText().toString() + "") - 1) + "");
-                            totalText.setText(Integer.parseInt(moneyText.getText().toString()+"")
-                                    * Integer.valueOf(numberText.getText().toString() + "")+"");
-                        }
-                    }
-                });
-                final int[] number = {sharedPreferences.getInt("InBuyList", 0)};
-                okButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (goods_id.get(0) != null) {
-                            number[0]++;
-                            SharedPreferences.Editor editor = sharedPreferences.edit();
-                            editor.putInt(goods_id.get(0), Integer.valueOf(numberText.getText().toString() + ""));
-                            editor.putInt("InBuyList", number[0]);
-//                            Log.d("3.8", "InBuyList number[0]:"+number[0]);
-                            editor.putInt("InBuyList"+number[0], ItemPosition);
-                            editor.apply();
-
-                        }else Log.d("3.8","null");
-                        if (BuyAdd.isShowing())
-                            BuyAdd.cancel();
-                    }
-                });
-                cancelButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (BuyAdd.isShowing())
-                            BuyAdd.cancel();
-                    }
-                });
-                totalText.setText(Integer.valueOf(numberText.getText().toString()+"")
-                        * Integer.valueOf(numberText.getText().toString() + "")+"");
-
-                BuyAdd.show();
-                //=====0308 test popping Dialog
-
-//                Functions.go(false, BuyItemDetailActivity.this,
-//                        BuyItemDetailActivity.this, BuyItemListActivity.class, bundle);
+                setupAddDialog();
             }
         });
 
@@ -246,25 +127,29 @@ public class BuyItemDetailActivity extends AppCompatActivity {
 
             }
         };
-        ImageLoaderConfiguration configuration = new ImageLoaderConfiguration.Builder(
-                BuyItemDetailActivity.this).build();
-        ImageLoader.getInstance().destroy();
-        ImageLoader.getInstance().init(configuration);
 
         //===各個item的資料=02_24==//
         helper = new DataBaseHelper(BuyItemDetailActivity.this);
         database = helper.getWritableDatabase();
         Cursor goods_cursor = database.query("goods", new String[]{"totalCount", "goods_id", "goods_title",
                 "goods_url", "goods_money", "goods_content", "goods_addtime"}, null, null, null, null, null);
-        //TODO 0224 still need modify!
         if (goods_cursor != null && goods_cursor.getCount() >= ItemPosition) {
             goods_cursor.moveToPosition(ItemPosition);
-            ItemDetail.setText(goods_cursor.getString(5));
-            ItemName.setText(goods_cursor.getString(2));
-            ItemHeader.setText(goods_cursor.getString(2));
-            loader.displayImage("http://zhiyou.lin366.com/" + goods_cursor.getString(3)
-                    , ItemImg, options, listener);
+            if (goods_cursor.getString(1) != null)
+                itemID = goods_cursor.getString(1);
+            if (goods_cursor.getString(5) != null)
+                ItemDetail.setText(goods_cursor.getString(5));
+            if (goods_cursor.getString(2) != null)
+                ItemName.setText(goods_cursor.getString(2));
+            if (goods_cursor.getString(2) != null)
+                ItemHeader.setText(goods_cursor.getString(2));
+            if (goods_cursor.getString(3) != null)
+                loader.displayImage("http://zhiyou.lin366.com/" + goods_cursor.getString(3)
+                        , ItemImg, options, listener);
+            Log.e("3.10","id:"+itemID);
+            new checkitem().execute();
         }
+
 //        else Log.d("2.24", "not right!!!!" + ItemPosition);
         if (goods_cursor != null)
             goods_cursor.close();
@@ -272,14 +157,190 @@ public class BuyItemDetailActivity extends AppCompatActivity {
 
     }
 
+    void setupAddDialog() {
+        Bundle bundle = new Bundle();
+        bundle.putInt("WhichItem", ItemPosition);
+        //=====0308 test popping Dialog
+        final Dialog BuyAdd = new Dialog(BuyItemDetailActivity.this);
+        BuyAdd.setCancelable(true);
+        BuyAdd.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        BuyAdd.setCanceledOnTouchOutside(true);
+        BuyAdd.setContentView(R.layout.dialog_buyitem);
+        LinearLayout linearLayout = (LinearLayout) BuyAdd.findViewById(R.id.dialog_buyitem_layout);
+        View view = LayoutInflater.from(BuyItemDetailActivity.this)
+                .inflate(R.layout.buylist_item, null);
+        linearLayout.addView(view);
+        TextView nameText = (TextView) view.findViewById(R.id.buyitemlist_nameTxt);
+        TextView fromText = (TextView) view.findViewById(R.id.buyitemlist_fromTxt);
+        final TextView moneyText = (TextView) view.findViewById(R.id.butitemlist_moneyTxt);
+        ImageView Img = (ImageView) view.findViewById(R.id.buyitemlist_itemImg);
+        ImageView delImg = (ImageView) view.findViewById(R.id.buyitemlist_delImg);
+        final TextView numberText = (TextView) view.findViewById(R.id.buyitemlist_numbertext);
+        final TextView totalText = (TextView) view.findViewById(R.id.buyitemlist_totalTxt);
+        Button addButton = (Button) view.findViewById(R.id.buyitemlist_addbutton);
+        Button minusButton = (Button) view.findViewById(R.id.buyitemlist_minusbutton);
+        Button okButton = (Button) BuyAdd.findViewById(R.id.dialog_buyitem_OkButton);
+        Button cancelButton = (Button) BuyAdd.findViewById(R.id.dialog_buyitem_CancelButton);
+        final List<String> goods_id = new ArrayList<>();
+        DataBaseHelper helper = new DataBaseHelper(BuyItemDetailActivity.this);
+        SQLiteDatabase database = helper.getWritableDatabase();
+        //show image init
+        options = new DisplayImageOptions.Builder()
+                .showImageOnFail(R.drawable.error)
+                .showImageForEmptyUri(R.drawable.empty)
+                .cacheInMemory()
+                .cacheOnDisc().build();
+        listener = new ImageLoadingListener() {
+            @Override
+            public void onLoadingStarted(String s, View view) {
 
-    void IfNeedShop(){
+            }
 
+            @Override
+            public void onLoadingFailed(String s, View view, FailReason failReason) {
+
+            }
+
+            @Override
+            public void onLoadingComplete(String s, View view, Bitmap bitmap) {
+
+            }
+
+            @Override
+            public void onLoadingCancelled(String s, View view) {
+
+            }
+        };
+        ImageLoaderConfiguration configuration = new ImageLoaderConfiguration.Builder(
+                BuyItemDetailActivity.this).build();
+        ImageLoader.getInstance().init(configuration);
+        //show image init
+
+        final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(BuyItemDetailActivity.this);
+        final Cursor goods_cursor = database.query("goods", new String[]{"totalCount", "goods_id", "goods_title",
+                "goods_url", "goods_money", "goods_content", "goods_click", "goods_addtime"}, null, null, null, null, null);
+        if (goods_cursor != null && goods_cursor.getCount() >= ItemPosition) {
+            goods_cursor.moveToPosition(ItemPosition);
+            //name,name,money,img
+            goods_id.clear();
+            goods_id.add(goods_cursor.getString(1));
+
+            nameText.setText(goods_cursor.getString(2));
+            fromText.setText(goods_cursor.getString(2));
+
+            moneyText.setText(goods_cursor.getString(4));
+            numberText.setText("" + sharedPreferences.getInt(goods_cursor.getString(1), 0));
+            Log.d("3.8", "shared:" + sharedPreferences.getInt(goods_cursor.getString(1), 0));
+            loader.displayImage("http://zhiyou.lin366.com/" + goods_cursor.getString(3)
+                    , Img, options, listener);
+            goods_cursor.close();
+        }
+        addButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                numberText.setText((Integer.valueOf(numberText.getText().toString() + "") + 1) + "");
+                totalText.setText(Integer.parseInt(moneyText.getText().toString())
+                        * Integer.valueOf(numberText.getText().toString() + "") + "");
+            }
+        });
+        delImg.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                numberText.setText("0");
+                totalText.setText(Integer.parseInt(numberText.getText().toString())
+                        * Integer.valueOf(numberText.getText().toString() + ""));
+            }
+        });
+        minusButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (Integer.valueOf(numberText.getText().toString() + "") > 0) {
+                    numberText.setText((Integer.valueOf(numberText.getText().toString() + "") - 1) + "");
+                    totalText.setText(Integer.parseInt(moneyText.getText().toString() + "")
+                            * Integer.valueOf(numberText.getText().toString() + "") + "");
+                }
+            }
+        });
+        final int[] number = {sharedPreferences.getInt("InBuyList", 0)};
+        okButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (goods_id.get(0) != null) {
+                    number[0]++;
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putInt(goods_id.get(0), Integer.valueOf(numberText.getText().toString() + ""));
+                    editor.putInt("InBuyList", number[0]);
+//                            Log.d("3.8", "InBuyList number[0]:"+number[0]);
+                    editor.putInt("InBuyList" + number[0], ItemPosition);
+                    editor.apply();
+
+                } else Log.d("3.8", "null");
+                if (BuyAdd.isShowing())
+                    BuyAdd.cancel();
+            }
+        });
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (BuyAdd.isShowing())
+                    BuyAdd.cancel();
+            }
+        });
+        totalText.setText(Integer.valueOf(numberText.getText().toString() + "")
+                * Integer.valueOf(numberText.getText().toString() + "") + "");
+
+        BuyAdd.show();
     }
-    class checkitem extends AsyncTask<String,Void,String>{
 
+    class checkitem extends AsyncTask<String, Void, String> {
+        /**
+         * http://zhiyou.lin366.com/api/article/show.aspx
+         * {"act":"show","id”:"609","type":"goods"}
+         */
         @Override
         protected String doInBackground(String... params) {
+            Log.e("3.9", "=========checkitem======doInBackground"+itemID);
+            HttpClient client = new DefaultHttpClient();
+            HttpPost post = new HttpPost("http://zhiyou.lin366.com/api/article/show.aspx");
+            MultipartEntity multipartEntity = new MultipartEntity();
+            Charset charset = Charset.forName("UTF-8");
+            try {
+                multipartEntity.addPart("json", new StringBody("{\"act\":\"show\",\"id\":\"" + itemID + "\",\"type\":\"goods\"}", charset));
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+            post.setEntity(multipartEntity);
+            HttpResponse response = null;
+            String getString = null;
+            try {
+                response = client.execute(post);
+                Log.e("3.10","購物車項目? 1getString: "+response);
+            } catch (IOException e) {
+                Log.e("3.10",e.toString());
+            }
+            try{
+                getString = EntityUtils.toString(response.getEntity());
+                Log.e("3.10","購物車項目? 2getString: "+getString);
+            } catch (IOException e) {
+                Log.e("3.10",e.toString());
+            }
+            Log.e("3.10","購物車項目? getString: "+getString);
+            /*
+            String state = null;
+            String totalcount = null;
+            try {
+                state = new JSONObject(getString.substring(getString.indexOf("{"), getString.lastIndexOf("}") + 1)).getString("states");
+            } catch (JSONException | NullPointerException e) {
+                e.printStackTrace();
+            }
+            JSONArray jsonArray = null;
+            try {
+                jsonArray = new JSONObject(getString).getJSONArray("guigelist");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            Log.e("3.10","購物車項目?"+jsonArray+"getString: "+getString);
+            */
             return null;
         }
     }
