@@ -48,6 +48,7 @@ public class SpecialFragment extends Fragment {
 //        ListView list_View = (ListView) view.findViewById(R.id.special_listview);
         adapter = new SpecialAdapter(getActivity(),page_number);
         gridView.setAdapter(adapter);
+        gridView.setOnItemClickListener(new itemListener());
 //        list_View.setAdapter(adapter);
 //        list_View.setOnItemClickListener(new itemListener());
         Log.e("3.10","SpecailFragment:"+adapter.getCount()+" page:"+page_number);
