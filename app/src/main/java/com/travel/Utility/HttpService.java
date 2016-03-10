@@ -12,8 +12,6 @@ import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
-import com.travel.GlobalVariable;
-
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
@@ -28,6 +26,8 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by wei on 2016/2/23.
@@ -134,7 +134,8 @@ public class HttpService extends Service {
 
         }
     }
-    private class News extends AsyncTask<String,Void,String>{
+
+    private class News extends AsyncTask<String, Void, String> {
 
         //{"act":"top","type":"tophot","size":"10"}
         //http://zhiyou.lin366.com/api/news/index.aspx
@@ -172,9 +173,9 @@ public class HttpService extends Service {
                 e2.printStackTrace();
             }
 //            Log.e("3.10","result:"+result); //OK
-            if(states==null||states.equals("0"))
+            if (states == null || states.equals("0"))
                 return null;
-            else{
+            else {
                 JSONArray jsonArray = null;
                 try {
                     jsonArray = new JSONObject(result).getJSONArray("list");
@@ -182,10 +183,10 @@ public class HttpService extends Service {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                if(jsonArray!=null)
-                    for(int i=0;i<jsonArray.length();i++){
+                if (jsonArray != null)
+                    for (int i = 0; i < jsonArray.length(); i++) {
                         try {
-                            message = message+jsonArray.getJSONObject(i).getString("title")+"    ";
+                            message = message + jsonArray.getJSONObject(i).getString("title") + "    ";
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -202,15 +203,15 @@ public class HttpService extends Service {
             DataBaseHelper helper = new DataBaseHelper(context);
             SQLiteDatabase database = helper.getWritableDatabase();
             Cursor news_cursor = database.query("news", new String[]{"title"}, null, null, null, null, null);
-            if(news_cursor!=null && !s.equals("")){
+            if (news_cursor != null && !s.equals("")) {
 //                Log.e("3.10","news cursor count: "+news_cursor.getCount());
                 news_cursor.moveToFirst();
-                if(news_cursor.getCount()==0) {
+                if (news_cursor.getCount() == 0) {
                     ContentValues cv = new ContentValues();
                     cv.put("title", s);
                     long result = database.insert("news", null, cv);
 //                    Log.e("3.10","news insert DB result: "+result);
-                }else if(!news_cursor.getString(0).equals(s)){ //資料不相同 -> 更新
+                } else if (!news_cursor.getString(0).equals(s)) { //資料不相同 -> 更新
                     ContentValues cv = new ContentValues();
                     cv.put("title", s);
                     long result = database.update("news", cv, null, null);
@@ -222,12 +223,13 @@ public class HttpService extends Service {
             super.onPostExecute(s);
         }
     }
-    private class Special extends AsyncTask<String,Void,String>{
+
+    private class Special extends AsyncTask<String, Void, Map<String, String[][]>> {
         /*
         * {"act":"list","type":"jindian","page":"1","size":"10","key":"","tid":""}**/
 
         @Override
-        protected String doInBackground(String... params) {
+        protected Map<String, String[][]> doInBackground(String... params) {
             HttpClient client = new DefaultHttpClient();
             HttpPost post = new HttpPost("http://zhiyou.lin366.com/api/article/index.aspx");
             MultipartEntity multipartEntity = new MultipartEntity();
@@ -266,8 +268,6 @@ public class HttpService extends Service {
         "sell_price": "100.00"
     }
             * */
-
-
             String[][] jsonObjects = null;
             if (state != null && state.equals("1") && totalcount != null) {
                 JSONArray jsonArray = null;
@@ -307,23 +307,28 @@ public class HttpService extends Service {
                         //TODO 要把小數點去掉
                         //goods_cursor.getString(4).substring(0, goods_cursor.getString(4).indexOf("."))
                         String sellprice = jsonArray.getJSONObject(i).getString("sell_price");
-                        if(sellprice.contains(".")){
+                        if (sellprice.contains(".")) {
                             //有小數點!!
-                            sellprice = sellprice.substring(0,sellprice.indexOf("."));
+                            sellprice = sellprice.substring(0, sellprice.indexOf("."));
                         }
-                        Log.e("3.10","special 去除小數點前: "+jsonArray.getJSONObject(i).getString("sell_price")+"後: "+sellprice);
+//                        Log.e("3.10","special 去除小數點前: "+jsonArray.getJSONObject(i).getString("sell_price")+"後: "+sellprice);
                         jsonObjects[i][5] = sellprice;
                     } catch (JSONException | NullPointerException e) {
                         e.printStackTrace();
                     }
                 }
             }
-
-            return null;
+            if (jsonObjects != null) {
+                Map<String, String[][]> fromnet = new HashMap<>();
+                fromnet.put("item", jsonObjects);
+                return fromnet;
+            } else
+                return null;
         }
 
         @Override
-        protected void onPostExecute(String s) {
+        protected void onPostExecute(Map<String, String[][]> s) {
+            Log.e("3.10","special item size:"+s.size());
             super.onPostExecute(s);
         }
     }
