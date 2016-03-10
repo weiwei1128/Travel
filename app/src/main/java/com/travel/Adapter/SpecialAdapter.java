@@ -22,7 +22,6 @@ import com.travel.Utility.DataBaseHelper;
 
 /**
  * Created by wei on 2016/1/30.
- *
  */
 public class SpecialAdapter extends BaseAdapter {
     ImageLoader loader = ImageLoader.getInstance();
@@ -81,10 +80,8 @@ public class SpecialAdapter extends BaseAdapter {
         }
         if ((number % 10 > 0))
             if (number / 10 + 1 == page_no) {
-//                Log.e("3.10", "LastPage");
                 number = number % 10;
-            }
-        else number=number%10;
+            } else number = 10;
         Log.e("3.10", "special:" + number);
         return number;
     }
@@ -101,41 +98,50 @@ public class SpecialAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        Log.e("3.10","special_getView!");
         thing item;
+        /*
         if (convertView == null) {
-            Log.e("3.10","convertivew NULL");
-            convertView = layoutInflater.inflate(R.layout.special_item, parent);
+            convertView = layoutInflater.inflate(R.layout.special_item, null);
             item = new thing(
                     (ImageView) convertView.findViewById(R.id.special_img),
                     (TextView) convertView.findViewById(R.id.special_name_text),
                     (TextView) convertView.findViewById(R.id.special_price_text)
             );
             convertView.setTag(item);
-        } else {
-            Log.e("3.10","convertivew not NULL");
+        } else
             item = (thing) convertView.getTag();
-        }
+            */
         View view = layoutInflater.inflate(R.layout.special_item, null);
-        ImageLoaderConfiguration configuration = new ImageLoaderConfiguration.Builder(mContext).build();
-        ImageLoader.getInstance().init(configuration);
-        Cursor special = database.query("special_activity", new String[]{"special_id", "title", "img", "content", "price", "click"},
+        item = new thing(
+                (ImageView) view.findViewById(R.id.special_img),
+                (TextView) view.findViewById(R.id.special_name_text),
+                (TextView) view.findViewById(R.id.special_price_text)
+        );
+
+//        ImageLoaderConfiguration configuration = new ImageLoaderConfiguration.Builder(mContext).build();
+//        ImageLoader.getInstance().clearMemoryCache();
+//        ImageLoader.getInstance().init(configuration);
+
+        Cursor special = database.query("special_activity", new String[]{"special_id",
+                        "title", "img", "content", "price", "click"},
                 null, null, null, null, null);
         if (special != null && special.getCount() >= ((page_no - 1) * 10 + position)) {
             special.moveToPosition((page_no - 1) * 10 + position);
             if (special.getString(1) != null)
                 item.name.setText(special.getString(1));
             if (special.getString(4) != null)
-                item.what.setText(special.getString(4));
+                item.what.setText("價格: "+special.getString(4));
             if (special.getString(2) != null)
-                loader.displayImage(special.getString(3)
+                if (special.getString(2).startsWith("http:"))
+                    loader.displayImage(special.getString(2)
+                            , item.m_img, options, listener);
+                else loader.displayImage("http://zhiyou.lin366.com/" + special.getString(2)
                         , item.m_img, options, listener);
         }
         if (special != null)
             special.close();
 
 
-//        item.name.append(position+"");
 //        return convertView;
         return view;
     }

@@ -129,7 +129,8 @@
 
         <activity android:name=".BuyRecordActivity" />
         <activity android:name=".CheckScheduleMainActivity" />
-        <activity android:name=".BuyActivityNew"></activity>
+        <activity android:name=".BuyActivityNew" />
+        <activity android:name=".SpecialDetailActivity"></activity>
     </application>
 
 </manifest>
