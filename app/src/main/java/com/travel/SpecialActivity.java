@@ -51,7 +51,7 @@ public class SpecialActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.e("3.10", "Special onCreate");
+//        Log.e("3.10", "Special onCreate");
         setContentView(R.layout.special_activity_new);
         backImg = (ImageView) findViewById(R.id.special_backImg);
         textLayout = (LinearLayout)findViewById(R.id.special_textlayout);

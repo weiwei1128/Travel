@@ -1,207 +1,82 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <HorizontalScrollView
-        android:layout_width="fill_parent"
+    <TextView
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/horizontalScrollView"
-        android:layout_margin="5dp">
+        android:text="#12345678"
+        android:id="@+id/buyrecorditem_no"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="10dp"
+        android:textColor="@color/black"
+        android:textSize="16dp"
+        android:layout_marginBottom="10dp" />
 
-        <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="2016年3月10日"
+        android:id="@+id/buyrecorditem_date"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="15dp"
+        android:textSize="16dp"
+        android:textColor="@color/black" />
 
-            <TextView
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:text="#"
-                android:id="@+id/buyrecorditem_no_text"
-                android:textColor="@color/black"
-                android:textSize="14dp"
-                android:layout_marginLeft="3dp" />
+    <ImageView
+        android:layout_width="150dp"
+        android:layout_height="100dp"
+        android:id="@+id/buyrecorditem_img"
+        android:layout_below="@+id/buyrecorditem_no"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:src="@drawable/empty"
+        android:layout_marginLeft="15dp" />
 
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="3dp"
-                android:background="@color/blue">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="＄"
+        android:id="@+id/buyrecorditem_money"
+        android:layout_alignTop="@+id/buyrecorditem_img"
+        android:layout_toRightOf="@+id/buyrecorditem_img"
+        android:layout_toEndOf="@+id/buyrecorditem_img"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="15dp"
+        android:textColor="@color/black"
+        android:textSize="15dp" />
 
-                <LinearLayout
-                    android:orientation="vertical"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="已付款"
+        android:id="@+id/buyrecorditem_state"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginRight="15dp"
+        android:textColor="@color/white"
+        android:background="@color/blue"
+        android:padding="3dp"
+        android:textSize="15dp"
+        android:layout_below="@+id/buyrecorditem_money" />
 
-                    <TextView
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:text="產品"
-                        android:background="@color/blue"
-                        android:gravity="center_horizontal"
-                        android:textColor="@color/white"
-                        android:paddingLeft="2dp"
-                        android:paddingTop="2dp"
-                        android:paddingRight="2dp"
-                        android:layout_marginBottom="-1dp"
-                        android:textSize="15dp" />
-
-                    <ImageView
-                        android:layout_width="70dp"
-                        android:layout_height="70dp"
-                        android:id="@+id/imageView"
-                        android:src="@drawable/spot4"
-                        android:background="@color/white"
-                        android:layout_marginLeft="1dp"
-                        android:layout_marginRight="1dp"
-                        android:layout_marginBottom="1dp"
-                        android:paddingLeft="3dp"
-                        android:paddingRight="3dp" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:orientation="vertical"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent">
-
-                    <TextView
-                        android:layout_width="80dp"
-                        android:layout_height="wrap_content"
-                        android:text="產品名稱"
-                        android:paddingLeft="2dp"
-                        android:paddingTop="2dp"
-                        android:paddingRight="2dp"
-                        android:textColor="@color/white"
-                        android:background="@color/blue"
-                        android:layout_marginBottom="-1dp"
-                        android:textSize="15dp"
-                        android:layout_marginLeft="-1dp"
-                        android:gravity="center_horizontal" />
-
-                    <TextView
-                        android:layout_width="fill_parent"
-                        android:layout_height="fill_parent"
-                        android:text="產品名稱"
-                        android:id="@+id/textView9"
-                        android:padding="4dp"
-                        android:textColor="@color/black"
-                        android:textSize="14dp"
-                        android:gravity="center"
-                        android:layout_marginBottom="1dp"
-                        android:layout_marginRight="1dp"
-                        android:background="@color/white" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:orientation="vertical"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent" >
-
-                    <TextView
-                        android:layout_width="100dp"
-                        android:layout_height="wrap_content"
-                        android:text="訂購日期"
-                        android:textColor="@color/white"
-                        android:background="@color/blue"
-                        android:layout_marginBottom="-1dp"
-                        android:textSize="15dp"
-                        android:paddingLeft="5dp"
-                        android:paddingTop="2dp"
-                        android:paddingRight="5dp"
-                        android:gravity="center_horizontal" />
-
-                    <TextView
-                        android:layout_width="fill_parent"
-                        android:layout_height="fill_parent"
-                        android:text="2016/01/01"
-                        android:id="@+id/textView11"
-                        android:textSize="14dp"
-                        android:padding="4dp"
-                        android:textColor="@color/black"
-                        android:gravity="center"
-                        android:background="@color/white"
-                        android:layout_marginRight="1dp"
-                        android:layout_marginBottom="1dp" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:orientation="vertical"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent" >
-
-                    <TextView
-                        android:layout_width="80dp"
-                        android:layout_height="wrap_content"
-                        android:text="金額"
-                        android:paddingLeft="5dp"
-                        android:paddingTop="2dp"
-                        android:paddingRight="5dp"
-                        android:layout_marginBottom="-1dp"
-                        android:background="@color/blue"
-                        android:gravity="center_horizontal"
-                        android:textColor="@color/white"
-                        android:textSize="15dp" />
-
-                    <TextView
-                        android:layout_width="fill_parent"
-                        android:layout_height="fill_parent"
-                        android:text="$1000"
-                        android:id="@+id/textView13"
-                        android:textColor="@color/black"
-                        android:gravity="center"
-                        android:layout_marginBottom="1dp"
-                        android:layout_marginRight="1dp"
-                        android:background="@color/white"
-                        android:padding="4dp" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:orientation="vertical"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent" >
-
-                    <TextView
-                        android:layout_width="100dp"
-                        android:layout_height="wrap_content"
-                        android:text="付款狀態"
-                        android:layout_marginBottom="-1dp"
-                        android:background="@color/blue"
-                        android:gravity="center_horizontal"
-                        android:paddingLeft="5dp"
-                        android:paddingTop="2dp"
-                        android:paddingRight="5dp"
-                        android:textColor="@color/white"
-                        android:textSize="15dp" />
-
-                    <TextView
-                        android:layout_width="fill_parent"
-                        android:layout_height="fill_parent"
-                        android:text="尚未付款"
-                        android:id="@+id/textView15"
-                        android:textColor="@color/black"
-                        android:textSize="14dp"
-                        android:gravity="center"
-                        android:background="@color/white"
-                        android:layout_marginRight="1dp"
-                        android:layout_marginBottom="1dp"
-                        android:padding="4dp" />
-                </LinearLayout>
-            </LinearLayout>
-
-            <TextView
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:text="看明細"
-                android:id="@+id/textView6"
-                android:textColor="@color/gray"
-                android:textStyle="bold"
-                android:textSize="15dp"
-                android:layout_marginLeft="3dp"
-                android:clickable="true" />
-
-        </LinearLayout>
-    </HorizontalScrollView>
-
-</LinearLayout>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="商品明細明細明細明細明細商品明細四個"
+        android:id="@+id/textView4"
+        android:layout_below="@+id/buyrecorditem_money"
+        android:layout_toLeftOf="@+id/buyrecorditem_state"
+        android:layout_toStartOf="@+id/buyrecorditem_state"
+        android:layout_marginLeft="160dp"
+        android:textColor="@color/black"
+        android:textSize="16dp"
+        android:layout_marginRight="3dp" />
+</RelativeLayout>

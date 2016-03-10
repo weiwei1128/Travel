@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
@@ -268,5 +269,18 @@ public class BuyItemDetailActivity extends AppCompatActivity {
         if (goods_cursor != null)
             goods_cursor.close();
 
+
+    }
+
+
+    void IfNeedShop(){
+
+    }
+    class checkitem extends AsyncTask<String,Void,String>{
+
+        @Override
+        protected String doInBackground(String... params) {
+            return null;
+        }
     }
 }
