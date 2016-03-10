@@ -318,7 +318,7 @@ public class BuyItemDetailActivity extends AppCompatActivity {
             } catch (IOException e) {
                 Log.e("3.10",e.toString());
             }
-                Log.d("3.10","購物車項目: "+response.getEntity().toString());
+                Log.d("3.10", "購物車項目: " + response.getEntity().toString());
 
             try{
                 Log.d("3.10","購物車項目? 2getString: start");
@@ -329,6 +329,10 @@ public class BuyItemDetailActivity extends AppCompatActivity {
                 Log.e("3.10",e.toString()+"error");
             }
             Log.e("3.10","購物車項目? getString: "+getString);
+
+
+            if(getString.contains("guigelist"))
+                Log.d("3.11","contain!!!");
 
             String state = null;
             String totalcount = null;
