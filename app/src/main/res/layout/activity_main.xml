@@ -299,7 +299,7 @@
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:layout_gravity="center"
-                android:clickable="true"
+                android:clickable="false"
                 android:src="@drawable/tab_selected_home" />
 
             <TextView
@@ -328,7 +328,7 @@
                 android:layout_height="30dp"
                 android:id="@+id/main_member_img"
                 android:layout_gravity="center"
-                android:clickable="true"
+                android:clickable="false"
                 android:src="@drawable/member_img_click" />
 
             <TextView
@@ -358,7 +358,7 @@
                 android:layout_height="30dp"
                 android:id="@+id/main_shoprecord_img"
                 android:layout_gravity="center"
-                android:clickable="true"
+                android:clickable="false"
                 android:src="@drawable/record_img_click" />
 
             <TextView
@@ -388,7 +388,7 @@
                 android:layout_height="30dp"
                 android:id="@+id/main_more_img"
                 android:layout_gravity="center"
-                android:clickable="true"
+                android:clickable="false"
                 android:src="@drawable/more_img_click" />
 
             <TextView

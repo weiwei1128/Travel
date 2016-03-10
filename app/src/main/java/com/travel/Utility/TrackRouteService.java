@@ -1,67 +1,52 @@
-package com.travel;
+package com.travel.Utility;
 
-import android.Manifest;
 import android.app.Service;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.location.LocationManager;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
-import android.provider.Settings;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
-import com.travel.Utility.DataBaseHelper;
-import com.travel.Utility.GetSpotsNSort;
+import com.google.android.gms.maps.model.LatLng;
+import com.travel.GlobalVariable;
 
-/**
- * Created by Tinghua on 2/29/2016.
- */
-public class LocationService extends Service {
+import java.util.ArrayList;
 
-    private static final String TAG = "LocationService";
+public class TrackRouteService extends Service {
+
+    public TrackRouteService() {
+    }
+
+    private static final String TAG = "TrackRouteService";
     private LocationManager mLocationManager = null;
-    private static final int LOCATION_INTERVAL = 2000;
+    private static final int LOCATION_INTERVAL = 1000;
     private static final float LOCATION_DISTANCE = 0;
 
     private Handler handler = new Handler();
 
-    private Context context;
     private GlobalVariable globalVariable;
-    private DataBaseHelper helper;
-    private SQLiteDatabase database;
 
-    public static final String BROADCAST_ACTION = "com.example.location.status";
+    public static final String BROADCAST_ACTION = "com.example.trackroute.status";
 
     private Boolean isLocationChanged = false;
 
+    private ArrayList<LatLng> TraceRoute;
+    private Boolean record_start_boolean;
+    private Integer RoutesCounter;
+    private Integer Track_no;
+
     @Override
     public void onCreate() {
-        Log.d("3.9_", "LocationService: onCreate");
-        helper = new DataBaseHelper(getApplicationContext());
-        database = helper.getWritableDatabase();
-        context = getApplicationContext();
+        Log.d("3.9_", "TrackRouteService: onCreate");
+        Log.i(TAG, "onCreate");
+
         globalVariable = (GlobalVariable)getApplicationContext();
-
-        // Prompt the user to Enabled GPS
-        LocationManager service = (LocationManager) getSystemService(LOCATION_SERVICE);
-        boolean enabled = service.isProviderEnabled(LocationManager.GPS_PROVIDER);
-
-        // check if enabled and if not send user to the GSP settings
-        // Better solution would be to display a dialog and suggesting to
-        // go to the settings
-        if (!enabled) {
-            Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-            startActivity(intent);
-        }
 
         initializeLocationManager();
 
@@ -87,6 +72,13 @@ public class LocationService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        Log.d("3.9_", "TrackRouteService: onStartCommand");
+        if (intent != null) {
+            record_start_boolean = intent.getBooleanExtra("isStart", false);
+            RoutesCounter = intent.getIntExtra("routesCounter", 1);
+            Track_no = intent.getIntExtra("track_no", 1);
+            Log.d("3.9_", "isStart: " + record_start_boolean);
+        }
         super.onStartCommand(intent, flags, startId);
         return START_STICKY;
     }
@@ -94,16 +86,13 @@ public class LocationService extends Service {
     private class LocationListener implements android.location.LocationListener {
         Location mLastLocation;
 
-        public LocationListener(String provider)
-        {
+        public LocationListener(String provider) {
             Log.d(TAG, "LocationListener " + provider);
             mLastLocation = new Location(provider);
         }
 
         @Override
-        public void onLocationChanged(Location location)
-        {
-            isLocationChanged = true;
+        public void onLocationChanged(Location location) {
             Log.d(TAG, "onLocationChanged: " + location);
             mLastLocation.set(location);
 
@@ -112,41 +101,12 @@ public class LocationService extends Service {
             Log.d("3.9_", "Latitude " + Latitude);
             Log.d("3.9_", "Longitude " + Longitude);
 
-            Cursor location_cursor = database.query("location",
-                    new String[]{"CurrentLat", "CurrentLng"}, null, null, null, null, null);
-            if (location_cursor != null) {
-                if (location_cursor.getCount() == 0) {
-                    ContentValues cv = new ContentValues();
-                    cv.put("CurrentLat", Latitude);
-                    cv.put("CurrentLng", Longitude);
-                    long result = database.insert("location", null, cv);
-                    Log.d("3.9_新增位置", result + " = DB INSERT " + Latitude + " " + Longitude);
-                    if (globalVariable.SpotDataSorted == null) {
-                        new GetSpotsNSort(getApplicationContext()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-                    }
-                } else {
-                    ContentValues cv = new ContentValues();
-                    cv.put("CurrentLat", Latitude);
-                    cv.put("CurrentLng", Longitude);
-                    long result = database.update("location", cv, "_ID=1", null);
-                    Log.d("3.9_位置更新", result + " = DB INSERT " + Latitude + " " + Longitude);
-                }
-                location_cursor.close();
+            // 加上軌跡
+            if (record_start_boolean) {
+                TraceOfRoute(Latitude, Longitude);
+                Log.d("3.9_", "TraceOfRoute");
             }
 
-            Intent intent = new Intent(BROADCAST_ACTION);
-            intent.putExtra("isLocationChanged", isLocationChanged);
-            intent.putExtra("Latitude", Latitude);
-            intent.putExtra("Longitude", Longitude);
-            sendBroadcast(intent);
-
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    isLocationChanged = false;
-                    Log.d("3.9_", "isLocationChanged: false");
-                }
-            }, 1000);
         }
 
         @Override
@@ -178,6 +138,9 @@ public class LocationService extends Service {
 
     @Override
     public void onDestroy() {
+        Log.d("3.9_", "TrackRouteService: onDestroy");
+        Log.i(TAG, "onDestroy");
+        super.onDestroy();
         if (mLocationManager != null) {
             for (int i = 0; i < mLocationListeners.length; i++) {
                 try {
@@ -187,15 +150,45 @@ public class LocationService extends Service {
                 }
             }
         }
-        super.onDestroy();
     }
 
     private void initializeLocationManager() {
         Log.i(TAG, "initializeLocationManager");
         if (mLocationManager == null) {
-            mLocationManager = (LocationManager) getApplicationContext()
-                    .getSystemService(Context.LOCATION_SERVICE);
+            mLocationManager = (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
         }
     }
-}
 
+    // 紀錄軌跡
+    private void TraceOfRoute(Double Latitude, Double Longitude) {
+        DataBaseHelper helper = new DataBaseHelper(getApplicationContext());
+        SQLiteDatabase database = helper.getWritableDatabase();
+        Cursor trackRoute_cursor = database.query("trackRoute",
+                new String[]{"routesCounter", "track_no", "track_lat", "track_lng", "track_start"},
+                null, null, null, null, null);
+        if (trackRoute_cursor != null) {
+            ContentValues cv = new ContentValues();
+            cv.put("routesCounter", RoutesCounter);
+            cv.put("track_no", Track_no);
+            cv.put("track_lat", Latitude);
+            cv.put("track_lng", Longitude);
+            if (record_start_boolean) {
+                cv.put("track_start", 1);
+            } else {
+                cv.put("track_start", 0);
+            }
+            long result = database.insert("trackRoute", null, cv);
+            Log.d("3.9_軌跡紀錄", result + " = DB INSERT RC:" + RoutesCounter
+                    + " no:" + Track_no + " 座標 " + Latitude + "," + Longitude);
+            trackRoute_cursor.close();
+        }
+
+        Intent intent = new Intent(BROADCAST_ACTION);
+        intent.putExtra("isStart", record_start_boolean);
+        intent.putExtra("routesCounter", RoutesCounter);
+        intent.putExtra("track_no", Track_no);
+        intent.putExtra("track_lat", Latitude);
+        intent.putExtra("track_lng", Longitude);
+        sendBroadcast(intent);
+    }
+}

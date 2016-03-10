@@ -29,7 +29,7 @@ public class BuyActivity extends AppCompatActivity {
                 Functions.go(true,BuyActivity.this, BuyActivity.this, HomepageActivity.class, null);
             }
         });
-        adapter = new BuyAdapter(BuyActivity.this);
+        adapter = new BuyAdapter(BuyActivity.this,1);
         gridView.setNumColumns(2);
         gridView.setAdapter(adapter);
         gridView.setOnItemClickListener(new itemListener());

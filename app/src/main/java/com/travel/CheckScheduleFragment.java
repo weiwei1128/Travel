@@ -2,9 +2,11 @@ package com.travel;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -34,7 +36,12 @@ public class CheckScheduleFragment extends Fragment {
         Checkadapter = new CheckAdapter(getActivity());
         listView.setAdapter(Checkadapter);
         listView.setDividerHeight(0);
-        nowDayTxt = (TextView) view.findViewById(R.id.checkschedule_dayTxt);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Log.d("3.7","ItemClick!!!! "+view.getId()+"  /// "+position);
+            }
+        });
 
         return view;
     }

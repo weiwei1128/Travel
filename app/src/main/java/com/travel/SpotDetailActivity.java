@@ -1,9 +1,11 @@
 package com.travel;
 
-import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageView;
@@ -14,7 +16,12 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
+import com.travel.Utility.DataBaseHelper;
 import com.travel.Utility.Functions;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class SpotDetailActivity extends AppCompatActivity {
 
@@ -22,18 +29,77 @@ public class SpotDetailActivity extends AppCompatActivity {
     DisplayImageOptions options;
     private ImageLoadingListener listener;
 
-    Integer mSpotPosition;
+    Integer mPosition;
     String mRegion;
     TextView SpotName, SpotOpenTime, SpotAddress, SpotTicketInfo, SpotDetail;
     ImageView SpotImg,BackImg;
 
-    private SpotJson.PostInfos.PostInfo[] mInfo;
-    private TPESpotJson.PostResult.PostResults[] mResults;
+    private Double Latitude;
+    private Double Longitude;
+
+    private DataBaseHelper helper;
+    private SQLiteDatabase database;
+
+    private GlobalVariable globalVariable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.spot_detail_activity);
+
+        helper = new DataBaseHelper(getApplicationContext());
+        database = helper.getWritableDatabase();
+
+        globalVariable = (GlobalVariable) getApplicationContext();
+        if (globalVariable.SpotDataSorted == null || globalVariable.SpotDataSorted.isEmpty()) {
+            // retrieve Location from DB
+            Cursor location_cursor = database.query("location",
+                    new String[]{"CurrentLat", "CurrentLng"}, null, null, null, null, null);
+            if (location_cursor != null) {
+                if (location_cursor.getCount() != 0) {
+                    while (location_cursor.moveToNext()) {
+                        Latitude = location_cursor.getDouble(0);
+                        Longitude = location_cursor.getDouble(1);
+                        Log.d("3/8_抓取位置", Latitude.toString() + Longitude.toString());
+                    }
+                }
+                location_cursor.close();
+            }
+            // get SpotData
+            Cursor spotDataSorted_cursor = database.query("spotDataSorted",
+                    new String[]{"spotId", "spotName", "spotAdd","spotLat", "spotLng", "picture1",
+                            "picture2","picture3", "openTime", "ticketInfo", "infoDetail", "distance"},
+                    null, null, null, null, null);
+            if (spotDataSorted_cursor != null) {
+                while (spotDataSorted_cursor.moveToNext()) {
+                    String Id = spotDataSorted_cursor.getString(0);
+                    String Name = spotDataSorted_cursor.getString(1);
+                    String Add = spotDataSorted_cursor.getString(2);
+                    Double Latitude = spotDataSorted_cursor.getDouble(3);
+                    Double Longitude = spotDataSorted_cursor.getDouble(4);
+                    String Picture1 = spotDataSorted_cursor.getString(5);
+                    String Picture2 = spotDataSorted_cursor.getString(6);
+                    String Picture3 = spotDataSorted_cursor.getString(7);
+                    String OpenTime = spotDataSorted_cursor.getString(8);
+                    String TicketInfo = spotDataSorted_cursor.getString(9);
+                    String InfoDetail = spotDataSorted_cursor.getString(10);
+                    globalVariable.SpotDataSorted.add(new SpotData(Id, Name, Latitude, Longitude, Add,
+                            Picture1, Picture2, Picture3, OpenTime,TicketInfo, InfoDetail));
+                }
+                spotDataSorted_cursor.close();
+            }
+
+            //Log.d(TAG, "排序");
+            for (SpotData mSpot : globalVariable.SpotDataSorted) {
+                //for迴圈將距離帶入，判斷距離為Distance function
+                //需帶入使用者取得定位後的緯度、經度、景點店家緯度、經度。
+                mSpot.setDistance(Distance(Latitude, Longitude,
+                        mSpot.getLatitude(), mSpot.getLongitude()));
+            }
+
+            //依照距離遠近進行List重新排列
+            DistanceSort(globalVariable.SpotDataSorted);
+        }
 
         SpotImg = (ImageView) findViewById(R.id.spotdetail_Img);
         SpotName = (TextView) findViewById(R.id.spotdetailName_Text);
@@ -50,20 +116,8 @@ public class SpotDetailActivity extends AppCompatActivity {
             }
         });
         Bundle bundle = this.getIntent().getExtras();
-        if (bundle.containsKey("Region")) {
-            mRegion = bundle.getString("Region");
-        }
-
-        if (mRegion.equals("台北市")) {
-            if (bundle.containsKey("WhichItem")) {
-                mSpotPosition = bundle.getInt("WhichItem");
-                mResults = SpotListActivity.Result.getResults();
-            }
-        } else {
-            if (bundle.containsKey("WhichItem")) {
-                mSpotPosition = bundle.getInt("WhichItem");
-                mInfo = SpotListActivity.Infos.getInfo();
-            }
+        if (bundle.containsKey("WhichItem")) {
+            mPosition = bundle.getInt("WhichItem");
         }
 
         options = new DisplayImageOptions.Builder()
@@ -93,66 +147,39 @@ public class SpotDetailActivity extends AppCompatActivity {
             }
         };
 
-        ImageLoaderConfiguration configuration = new ImageLoaderConfiguration
-                .Builder(SpotDetailActivity.this).build();
+        ImageLoaderConfiguration configuration =
+                new ImageLoaderConfiguration.Builder(SpotDetailActivity.this).build();
+        ImageLoader.getInstance().destroy();
         ImageLoader.getInstance().init(configuration);
 
-        if (mRegion.equals("台北市")) {
-            String ImgString = mResults[mSpotPosition].getFile();
-            int StringPosition = ImgString.indexOf("http", 2);
-            if (StringPosition > 0) {
-                ImgString = ImgString.substring(0, StringPosition);
-            }
-            loader.displayImage(ImgString, SpotImg, options, listener);
-            SpotName.setText(mResults[mSpotPosition].getStitle());
+        String ImgString = globalVariable.SpotDataSorted.get(mPosition).getPicture1();
+        loader.displayImage(ImgString, SpotImg, options, listener);
 
-            if (mResults[mSpotPosition].getMemoTime().equals("")) {
-                SpotOpenTime.setText("1. 開放時間：無");
-            } else {
-                SpotOpenTime.setText("1. 開放時間：" + mResults[mSpotPosition].getMemoTime());
-            }
+        SpotName.setText(globalVariable.SpotDataSorted.get(mPosition).getName());
 
-            if (mResults[mSpotPosition].getAddress().equals("")) {
-                SpotAddress.setText("2. 地址：無");
-            } else {
-                SpotAddress.setText("2. 地址：" + mResults[mSpotPosition].getAddress());
-            }
-
-            SpotTicketInfo.setText("門票資訊：無");
-/*
-            if (mResults[mSpotPosition].getTicketinfo().equals("")) {
-                SpotTicketInfo.setText("門票資訊：無");
-            } else {
-                SpotTicketInfo.setText("門票資訊：" + mResults[mSpotPosition].getTicketinfo());
-            }
-*/
-            SpotDetail.setText(mResults[mSpotPosition].getXbody());
+        if (globalVariable.SpotDataSorted.get(mPosition).getOpenTime().equals("")) {
+            SpotOpenTime.setText("1. 開放時間：無");
         } else {
-            loader.displayImage(mInfo[mSpotPosition].getPicture1(), SpotImg, options, listener);
-            SpotName.setText(mInfo[mSpotPosition].getName());
-
-            if (mInfo[mSpotPosition].getOpentime().equals("")) {
-                SpotOpenTime.setText("1. 開放時間：無");
-            } else {
-                SpotOpenTime.setText("1. 開放時間：" + mInfo[mSpotPosition].getOpentime());
-            }
-
-            if (mInfo[mSpotPosition].getAdd().equals("")) {
-                SpotAddress.setText("2. 地址：無");
-            } else {
-                SpotAddress.setText("2. 地址：" + mInfo[mSpotPosition].getAdd());
-            }
-
-            if (mInfo[mSpotPosition].getTicketinfo().equals("")) {
-                SpotTicketInfo.setText("門票資訊：無");
-            } else {
-                SpotTicketInfo.setText("門票資訊：" + mInfo[mSpotPosition].getTicketinfo());
-            }
-
-            SpotDetail.setText(mInfo[mSpotPosition].getToldescribe());
+            SpotOpenTime.setText("1. 開放時間：" + globalVariable.SpotDataSorted.get(mPosition).getOpenTime());
         }
+
+        if (globalVariable.SpotDataSorted.get(mPosition).getAdd().equals("")) {
+            SpotAddress.setText("2. 地址：無");
+        } else {
+            SpotAddress.setText("2. 地址：" + globalVariable.SpotDataSorted.get(mPosition).getAdd());
+        }
+
+        if (globalVariable.SpotDataSorted.get(mPosition).getTicketInfo().equals("")) {
+            SpotTicketInfo.setText("門票資訊：無");
+        } else {
+            SpotTicketInfo.setText("門票資訊：" + globalVariable.SpotDataSorted.get(mPosition).getTicketInfo());
+        }
+
+        SpotDetail.setText(globalVariable.SpotDataSorted.get(mPosition).getInfoDetail());
+
         if(SpotImg!=null)
             SpotImg.setScaleType(ImageView.ScaleType.CENTER_CROP);
+
     }
 
     @Override
@@ -161,5 +188,30 @@ public class SpotDetailActivity extends AppCompatActivity {
             Functions.go(true, SpotDetailActivity.this, SpotDetailActivity.this, SpotListActivity.class, null);
         }
         return false;
+    }
+
+    //List排序，依照距離由近開始排列，第一筆為最近，最後一筆為最遠
+    private void DistanceSort(ArrayList<SpotData> spot) {
+        Collections.sort(spot, new Comparator<SpotData>() {
+            @Override
+            public int compare(SpotData spot1, SpotData spot2) {
+                return spot1.getDistance() < spot2.getDistance() ? -1 : 1;
+            }
+        });
+    }
+
+    //帶入使用者及景點店家經緯度可計算出距離
+    public double Distance(double longitude1, double latitude1, double longitude2, double latitude2) {
+        double radLatitude1 = latitude1 * Math.PI / 180;
+        double radLatitude2 = latitude2 * Math.PI / 180;
+        double l = radLatitude1 - radLatitude2;
+        double p = longitude1 * Math.PI / 180 - longitude2 * Math.PI / 180;
+        double distance = 2 * Math.asin(Math.sqrt(Math.pow(Math.sin(l / 2), 2)
+                + Math.cos(radLatitude1) * Math.cos(radLatitude2)
+                * Math.pow(Math.sin(p / 2), 2)));
+        distance = distance * 6378137.0;
+        distance = Math.round(distance * 10000) / 10000;
+
+        return distance;
     }
 }

@@ -95,7 +95,7 @@ public class CheckScheduleActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Functions.go(true,CheckScheduleActivity.this, CheckScheduleActivity.this,
-                        HomepageActivity.class, null);
+                        CheckScheduleMainActivity.class, null);
             }
         });
         viewPager = (ViewPager) findViewById(R.id.check_viewPager);
@@ -117,7 +117,7 @@ public class CheckScheduleActivity extends AppCompatActivity {
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if(keyCode==KeyEvent.KEYCODE_BACK)
             Functions.go(true,CheckScheduleActivity.this, CheckScheduleActivity.this,
-                    HomepageActivity.class, null);
+                    CheckScheduleMainActivity.class, null);
         return super.onKeyDown(keyCode, event);
     }
 }

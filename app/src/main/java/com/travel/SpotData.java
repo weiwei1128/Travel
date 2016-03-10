@@ -1,151 +1,95 @@
 package com.travel;
 
 /**
- * Created by Tinghua on 3/6/2016.
+ * Created by Tinghua on 2016/3/7.
  */
 public class SpotData {
-    private Data[] data;
+    private String Id;   //景點店家編號
+    private String Name;        //景點店家名稱
+    private double Latitude;    //景點店家緯度
+    private double Longitude;   //景點店家經度
+    private double Distance;    //景點店家距離
+    private String Add;        //景點店家名稱
+    private String Picture1;
+    private String Picture2;
+    private String Picture3;
+    private String OpenTime;
+    private String TicketInfo;
+    private String InfoDetail;
 
-    public SpotData() {
-
+    //建立物件時需帶入景點店家名稱、景點店家緯度、景點店家經度
+    public SpotData (String id, String name, double latitude, double longitude,
+                     String add, String picture1, String picture2, String picture3,
+                     String openTime, String ticketInfo ,String infoDetail) {
+        //將資訊帶入類別屬性
+        Id = id;
+        Name = name;
+        Latitude = latitude;
+        Longitude = longitude;
+        Add = add;
+        Picture1 = picture1;
+        Picture2 = picture2;
+        Picture3 = picture3;
+        OpenTime = openTime;
+        TicketInfo = ticketInfo;
+        InfoDetail = infoDetail;
     }
 
-    public void setData(Data[] data) {
-        this.data = data;
+    //取得店家編號
+    public String getId() {
+        return Id;
     }
 
-    public Data[] getData() {
-        return data;
+    //取得店家名稱
+    public String getName() {
+        return Name;
     }
 
-    public class Data {
-
-        private String spotId;
-        private String spotName;
-        private String spotAdd;
-        private String spotLat;
-        private String spotLng;
-        private String picture1;
-        private String picture2;
-        private String picture3;
-        private String openTime;
-        private String ticketInfo;
-        private String infoDetail;
-
-        public Data() {
-
-        }
-
-        public void setSpotId(String spotId)
-        {
-            this.spotId = spotId;
-        }
-
-        public String getSpotId()
-        {
-            return spotId;
-        }
-
-        public void setSpotName(String spotName)
-        {
-            this.spotName = spotName;
-        }
-
-        public String getSpotName()
-        {
-            return spotName;
-        }
-
-        public void setSpotAdd(String spotAdd)
-        {
-            this.spotAdd = spotAdd;
-        }
-
-        public String getSpotAdd()
-        {
-            return spotAdd;
-        }
-
-        public void setSpotLat(String spotLat)
-        {
-            this.spotLat = spotLat;
-        }
-
-        public String getSpotLat()
-        {
-            return spotLat;
-        }
-
-        public void setSpotLng(String spotLng)
-        {
-            this.spotLng = spotLng;
-        }
-
-        public String getSpotLng()
-        {
-            return spotLng;
-        }
-
-        public void setPicture1(String picture1)
-        {
-            this.picture1 = picture1;
-        }
-
-        public String getPicture1()
-        {
-            return picture1;
-        }
-
-        public void setPicture2(String picture2)
-        {
-            this.picture2 = picture2;
-        }
-
-        public String getPicture2()
-        {
-            return picture2;
-        }
-
-        public void setPicture3(String picture3)
-        {
-            this.picture3 = picture3;
-        }
-
-        public String getPicture3()
-        {
-            return picture3;
-        }
-
-        public void setOpenTime(String openTime)
-        {
-            this.openTime = openTime;
-        }
-
-        public String getOpenTime()
-        {
-            return openTime;
-        }
-
-        public void setTicketInfo(String ticketInfo)
-        {
-            this.ticketInfo = ticketInfo;
-        }
-
-        public String getTicketInfo()
-        {
-            return ticketInfo;
-        }
-
-        public void setInfoDetail(String infoDetail)
-        {
-            this.infoDetail = infoDetail;
-        }
-
-        public String getInfoDetail()
-        {
-            return infoDetail;
-        }
-
+    //取得店家緯度
+    public double getLatitude() {
+        return Latitude;
     }
 
+    //取得店家經度
+    public double getLongitude() {
+        return Longitude;
+    }
+
+    //寫入店家距離
+    public void setDistance(double distance) {
+        Distance = distance;
+    }
+
+    //取的店家距離
+    public double getDistance() {
+        return Distance;
+    }
+
+    public String getAdd() {
+        return Add;
+    }
+
+    public String getPicture1() {
+        return Picture1;
+    }
+
+    public String getPicture2() {
+        return Picture2;
+    }
+
+    public String getPicture3() {
+        return Picture3;
+    }
+
+    public String getOpenTime() {
+        return OpenTime;
+    }
+
+    public String getTicketInfo() {
+        return TicketInfo;
+    }
+
+    public String getInfoDetail() {
+        return InfoDetail;
+    }
 }

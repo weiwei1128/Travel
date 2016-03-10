@@ -55,22 +55,28 @@ public class MemberActivity extends AppCompatActivity {
         homeImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                homeText.setTextColor(Color.parseColor("#0044BB"));
                 Functions.go(false, MemberActivity.this, MemberActivity.this, HomepageActivity.class, null);
                 finish();
+            }
+        });
+        homeImg.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                Functions.ClickTouchEvent(homeImg, homeText, "home", false, event.getAction());
+                return false;
             }
         });
 
         homeLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                LayoutClickTouchEvent("home", true, 356735);
+                Functions.ClickTouchEvent(homeImg, homeText, "home", true, 356735);
             }
         });
         homeLayout.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                LayoutClickTouchEvent("home", false, event.getAction());
+                Functions.ClickTouchEvent(homeImg, homeText, "home", false, event.getAction());
                 return false;
             }
         });
@@ -86,21 +92,25 @@ public class MemberActivity extends AppCompatActivity {
         shoprecordImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                shoprecordText.setTextColor(Color.parseColor("#0044BB"));
-                //TODO next Page....
+                Functions.go(false,MemberActivity.this,MemberActivity.this,BuyRecordActivity.class,null);            }
+        });
+        shoprecordImg.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                Functions.ClickTouchEvent(shoprecordImg, shoprecordText, "shoprecord", false, event.getAction());
+                return false;
             }
         });
-
         shoprecordLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                LayoutClickTouchEvent("shoprecord", true, 356735);
+                Functions.ClickTouchEvent(shoprecordImg, shoprecordText, "shoprecord", true, 356735);
             }
         });
         shoprecordLayout.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                LayoutClickTouchEvent("shoprecord", false, event.getAction());
+                Functions.ClickTouchEvent(shoprecordImg, shoprecordText, "shoprecord", false, event.getAction());
                 return false;
             }
         });
@@ -115,21 +125,27 @@ public class MemberActivity extends AppCompatActivity {
         moreImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                moreText.setTextColor(Color.parseColor("#0044BB"));
                 //TODO next Page....
+            }
+        });
+        moreImg.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                Functions.ClickTouchEvent(moreImg, moreText, "more", false, event.getAction());
+                return false;
             }
         });
 
         moreLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                LayoutClickTouchEvent("more", true, 356735);
+//                Functions.ClickTouchEvent(moreImg, moreText, "more", true, 356735);
             }
         });
         moreLayout.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                LayoutClickTouchEvent("more", false, event.getAction());
+                Functions.ClickTouchEvent(moreImg, moreText, "more", false, event.getAction());
                 return false;
             }
         });
@@ -212,45 +228,9 @@ public class MemberActivity extends AppCompatActivity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            Functions.go(false, MemberActivity.this, MemberActivity.this, HomepageActivity.class, null);
-            finish();
+            Functions.go(true, MemberActivity.this, MemberActivity.this, HomepageActivity.class, null);
         }
         return false;
     }
 
-
-    public void LayoutClickTouchEvent(String where, Boolean isClick, int event) {
-        switch (where) {
-            case "home":
-                homeImg.setImageResource(R.drawable.tab_selected_home);
-                homeText.setTextColor(Color.parseColor("#0044BB"));
-                if (isClick)
-                    homeImg.performClick();
-                if (event == MotionEvent.ACTION_UP) {
-                    homeImg.setImageResource(R.drawable.click_home_img);
-                    homeText.setTextColor(Color.parseColor("#555555"));
-                }
-                break;
-            case "shoprecord":
-                shoprecordImg.setImageResource(R.drawable.tab_selected_record);
-                shoprecordText.setTextColor(Color.parseColor("#0044BB"));
-                if (isClick)
-                    shoprecordImg.performClick();
-                if (event == MotionEvent.ACTION_UP) {
-                    shoprecordImg.setImageResource(R.drawable.record_img_click);
-                    shoprecordText.setTextColor(Color.parseColor("#555555"));
-                }
-                break;
-            case "more":
-                moreImg.setImageResource(R.drawable.tab_selected_more);
-                moreText.setTextColor(Color.parseColor("#0044BB"));
-                if (isClick)
-                    moreImg.performClick();
-                if (event == MotionEvent.ACTION_UP) {
-                    moreImg.setImageResource(R.drawable.more_img_click);
-                    moreText.setTextColor(Color.parseColor("#555555"));
-                }
-                break;
-        }
-    }
 }

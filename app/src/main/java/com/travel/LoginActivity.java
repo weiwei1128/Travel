@@ -1,14 +1,19 @@
 package com.travel;
 
+import android.Manifest;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.Settings;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -21,15 +26,17 @@ import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
 import com.travel.Utility.DataBaseHelper;
-import com.travel.Utility.JsonGoods;
+import com.travel.Utility.Functions;
+import com.travel.Utility.GetSpotsNSort;
+import com.travel.Utility.HttpService;
 import com.travel.Utility.MyAnimation;
+import com.travel.Utility.TPESpotAPIFetcher;
+import com.travel.Utility.TWSpotAPIFetcher;
+import com.travel.Utility.TrackRouteService;
 
-import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.http.StatusLine;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.StringBody;
@@ -38,10 +45,7 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.util.Timer;
@@ -62,49 +66,110 @@ public class LoginActivity extends AppCompatActivity {
     //1.4
 
     //2.29 Hua
-    private GlobalVariable globalVariable;
-    private String JsonString;
-    private String JsonString_TPE;
-    //private Bundle bundle = new Bundle();
-    //private Double Latitude;
-    //private Double Longitude;
+    GlobalVariable globalVariable;
     //2.29 Hua
+
+    //3.9 Hua//
+    final int REQUEST_LOCATION = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Fabric.with(this, new Crashlytics());
-
-        //3.5 Hua// // start LocationService in background
-        startService(new Intent(LoginActivity.this, LocationService.class));
-        //3.5 Hua//
-
-        globalVariable = (GlobalVariable)getApplicationContext();
-
-        // 到景點API抓景點資訊
-        if (globalVariable.JsonString.equals("")) {
-            //Taiwan
-            PostFetcher fetcher = new PostFetcher();
-            fetcher.execute();
-            Log.d("2.29", "PostFetcher");
-        } else
-            Log.d("2.29", "PostFetcher:"+globalVariable.JsonString);
-        if (globalVariable.JsonString_TPE.equals("")) {
-            //Taipei
-            PostFetcher_TPE fetcher_TPE = new PostFetcher_TPE();
-            fetcher_TPE.execute();
-            Log.d("2.29", "PostFetcher_TPE");
-        } else
-            Log.d("2.29", "PostFetcher_TPE:"+globalVariable.JsonString_TPE);
-
         setContentView(R.layout.login_activity);
-        //抓取資料!
-        JsonGoods a = new JsonGoods(LoginActivity.this);
-        a.execute();
-        //0223
+
+        //3.5 Hua
+        // Prompt the user to Enabled GPS
+        LocationManager service = (LocationManager) getSystemService(LOCATION_SERVICE);
+        boolean GPS_enabled = service.isProviderEnabled(LocationManager.GPS_PROVIDER);//NETWORK_PROVIDER);
+        // check if enabled and if not send user to the GSP settings
+        // Better solution would be to display a dialog and suggesting to
+        // go to the settings
+        if (!GPS_enabled) {
+            Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+            startActivity(intent);
+        }
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED
+                || ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            // Check Permissions Now
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION);
+        } else {
+            // Loading API
+            startService(new Intent(LoginActivity.this, LocationService.class));
+
+            globalVariable = (GlobalVariable) getApplicationContext();
+            DataBaseHelper helper = new DataBaseHelper(getApplicationContext());
+            SQLiteDatabase database = helper.getWritableDatabase();
+            Cursor spotDataRaw_cursor = database.query("spotDataRaw", new String[]{"spotId", "spotName", "spotAdd",
+                            "spotLat", "spotLng", "picture1", "picture2", "picture3",
+                            "openTime", "ticketInfo", "infoDetail"},
+                    null, null, null, null, null);
+            if (spotDataRaw_cursor != null) {
+                if (spotDataRaw_cursor.getCount() == 0) {
+                    // 到景點API抓景點資訊
+                    new TPESpotAPIFetcher(LoginActivity.this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+
+                    // TODO 放著在背景執行去動UI，結果好像就不了了之，沒有載入成功 哪招QAQ
+                    new TWSpotAPIFetcher(LoginActivity.this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+
+                    helper = new DataBaseHelper(LoginActivity.this);
+                    database = helper.getWritableDatabase();
+                    Cursor location_cursor = database.query("location",
+                            new String[]{"CurrentLat", "CurrentLng"}, null, null, null, null, null);
+                    if (location_cursor != null) {
+                        if (location_cursor.getCount() != 0) {
+                            new GetSpotsNSort(LoginActivity.this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                        } else {
+                            globalVariable.SpotDataSorted = null;
+                            Log.d("3.9_抓不到位置", "不執行GetSpotsNSort");
+                            if (Functions.isMyServiceRunning(LoginActivity.this, LocationService.class)) {
+                                Intent intent = new Intent(LoginActivity.this, LocationService.class);
+                                stopService(intent);
+                            }
+                            startService(new Intent(LoginActivity.this, LocationService.class));
+                        }
+                        location_cursor.close();
+                    }
+                } else {
+                    if (globalVariable.SpotDataSorted.isEmpty()) {
+                        // retrieve Location from DB
+                        helper = new DataBaseHelper(LoginActivity.this);
+                        database = helper.getWritableDatabase();
+                        Cursor location_cursor = database.query("location",
+                                new String[]{"CurrentLat", "CurrentLng"}, null, null, null, null, null);
+                        if (location_cursor != null) {
+                            if (location_cursor.getCount() != 0) {
+                                new GetSpotsNSort(LoginActivity.this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                            } else {
+                                globalVariable.SpotDataSorted = null;
+                                Log.d("3.9_抓不到位置", "不執行GetSpotsNSort");
+                                if (Functions.isMyServiceRunning(LoginActivity.this, LocationService.class)) {
+                                    Intent intent = new Intent(LoginActivity.this, LocationService.class);
+                                    stopService(intent);
+                                }
+                                startService(new Intent(LoginActivity.this, LocationService.class));
+                            }
+                            location_cursor.close();
+                        }
+
+                    }
+                }
+                spotDataRaw_cursor.close();
+            }
+
+            Intent intent = new Intent(LoginActivity.this, HttpService.class);
+            startService(intent);
+        }
+        //3.5 Hua
+
+        //Intent intent = new Intent(LoginActivity.this, HttpService.class);
+        //startService(intent);
         /////////// 檢查登入狀態
         checkLogin();
-        ///////////
 
 
         accountText = (TextView) findViewById(R.id.home_account_text);
@@ -117,14 +182,6 @@ public class LoginActivity extends AppCompatActivity {
         forgetText = (TextView) findViewById(R.id.home_forgetpa_text);
         accountEdit.setVisibility(View.INVISIBLE);
         passEdit.setVisibility(View.INVISIBLE);
-
-        //click effect//
-        signupText.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-            }
-        });
-        //click effect
 
         //11.18 按下textview的動畫
         accountText.setOnClickListener(new View.OnClickListener() {
@@ -179,7 +236,7 @@ public class LoginActivity extends AppCompatActivity {
                         || passEdit.getText().toString().equals("") || !passEdit.isShown()) {
                     Toast.makeText(LoginActivity.this, "未輸入帳號或密碼", Toast.LENGTH_SHORT).show();
                 } else {
-                    Log.d("1/4", "account:" + accountEdit.getText() + "_ \n password:" + passEdit.getText() + "_");
+//                    Log.d("1/4", "account:" + accountEdit.getText() + "_ \n password:" + passEdit.getText() + "_");
                     login_Data loginData = new login_Data(accountEdit.getText().toString(),
                             passEdit.getText().toString());
                     loginData.execute();
@@ -228,13 +285,13 @@ public class LoginActivity extends AppCompatActivity {
                 final Dialog signDialog = new Dialog(LoginActivity.this);
                 signDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
                 signDialog.setContentView(R.layout.dialog_reg);
-                Button OK = (Button)signDialog.findViewById(R.id.reg_ok);
-                Button cancel = (Button)signDialog.findViewById(R.id.reg_cancel);
-                final EditText account = (EditText)signDialog.findViewById(R.id.reg_account);
-                final EditText password = (EditText)signDialog.findViewById(R.id.reg_password);
-                final EditText name = (EditText)signDialog.findViewById(R.id.reg_name);
-                final EditText phone = (EditText)signDialog.findViewById(R.id.reg_phone);
-                final EditText email = (EditText)signDialog.findViewById(R.id.reg_email);
+                Button OK = (Button) signDialog.findViewById(R.id.reg_ok);
+                Button cancel = (Button) signDialog.findViewById(R.id.reg_cancel);
+                final EditText account = (EditText) signDialog.findViewById(R.id.reg_account);
+                final EditText password = (EditText) signDialog.findViewById(R.id.reg_password);
+                final EditText name = (EditText) signDialog.findViewById(R.id.reg_name);
+                final EditText phone = (EditText) signDialog.findViewById(R.id.reg_phone);
+                final EditText email = (EditText) signDialog.findViewById(R.id.reg_email);
                 OK.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -269,40 +326,41 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
         //11.18 登入textview
-    }
+    } //onCreate
 
-    void checkLogin(){
-
+    void checkLogin() {
         DataBaseHelper helper = new DataBaseHelper(LoginActivity.this);
         SQLiteDatabase database = helper.getWritableDatabase();
         Cursor member_cursor = database.query("member", new String[]{"account", "password",
                 "name", "phone", "email", "addr"}, null, null, null, null, null);
         if (member_cursor != null && member_cursor.getCount() > 0) {
             //表示登入過了!
-            Toast.makeText(LoginActivity.this,"登入過了!",Toast.LENGTH_SHORT).show();
+//            Toast.makeText(LoginActivity.this, "登入過了!", Toast.LENGTH_SHORT).show();
             Timer a = new Timer();
-                //如果正確才會跳到下個畫面
-                a.schedule(new TimerTask() {
-                    @Override
-                    public void run() {
-                        Intent intent = new Intent();
-                        intent.setClass(LoginActivity.this, HomepageActivity.class);
-                        startActivity(intent);
-                        finish();
-                    }
-                }, 2500);
+            //如果正確才會跳到下個畫面
+//            a.schedule(new TimerTask() {
+//                @Override
+//                public void run() {
+            Intent intent = new Intent();
+            intent.setClass(LoginActivity.this, HomepageActivity.class);
+            startActivity(intent);
+            finish();
+//                }
+//            }, 2500);
         }
+        if (member_cursor != null)
+            member_cursor.close();
 //        else Toast.makeText(LoginActivity.this,"沒登入過!",Toast.LENGTH_SHORT).show();
 
     }
 
-    class sighUp extends AsyncTask<String,Void,Boolean>{
+    class sighUp extends AsyncTask<String, Void, Boolean> {
 
-        String account,password,name,phone,email,message;
+        String account, password, name, phone, email, message;
         Dialog dialog;
 
-        public sighUp(String maccount,String mpassword,String mname,String mphone,String memail,
-                      Dialog mdialog){
+        public sighUp(String maccount, String mpassword, String mname, String mphone, String memail,
+                      Dialog mdialog) {
             this.account = maccount;
             this.password = mpassword;
             this.name = mname;
@@ -327,8 +385,8 @@ public class LoginActivity extends AppCompatActivity {
             try {
                 entity.addPart("json", new StringBody("{\"act\":\"reg\",\"username\":\""
                         + account + "\",\"password\":\"" + password
-                        +"\",\"email\":\"" + email + "\",\"mobile\":\"" + phone
-                        + "\",\"nickname\":\"" + name +"\"}", chars));
+                        + "\",\"email\":\"" + email + "\",\"mobile\":\"" + phone
+                        + "\",\"nickname\":\"" + name + "\"}", chars));
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
@@ -362,13 +420,13 @@ public class LoginActivity extends AppCompatActivity {
             if (aBoolean)
                 message = "註冊訊息:" + message;
 
-            Toast.makeText(LoginActivity.this,message,Toast.LENGTH_SHORT).show();
+            Toast.makeText(LoginActivity.this, message, Toast.LENGTH_SHORT).show();
             Timer a = new Timer();
             if (aBoolean)
                 a.schedule(new TimerTask() {
                     @Override
                     public void run() {
-                        if(dialog.isShowing())
+                        if (dialog.isShowing())
                             dialog.dismiss();
                     }
                 }, 2500);
@@ -437,13 +495,13 @@ public class LoginActivity extends AppCompatActivity {
             if (s)
                 message = "錯誤訊息:" + message;
 
-            Toast.makeText(LoginActivity.this,message,Toast.LENGTH_SHORT).show();
+            Toast.makeText(LoginActivity.this, message, Toast.LENGTH_SHORT).show();
             Timer a = new Timer();
             if (s)
                 a.schedule(new TimerTask() {
                     @Override
                     public void run() {
-                        if(mdialog.isShowing())
+                        if (mdialog.isShowing())
                             mdialog.dismiss();
                     }
                 }, 2500);
@@ -570,11 +628,11 @@ public class LoginActivity extends AppCompatActivity {
                         }
                     }
 
-                    Log.e("2.26", "getinfo: " + result + "states:" + message);
-                    Log.e("2.26", "name: " + mName);
-                    Log.e("2.26", "phone: " + mPhone);
-                    Log.e("2.26", "Email: " + mEmail);
-                    Log.e("2.26", "Address: " + mAddr);
+//                    Log.e("2.26", "getinfo: " + result + "states:" + message);
+//                    Log.e("2.26", "name: " + mName);
+//                    Log.e("2.26", "phone: " + mPhone);
+//                    Log.e("2.26", "Email: " + mEmail);
+//                    Log.e("2.26", "Address: " + mAddr);
                 } else Log.e("2.26", "state: " + state);
 
 
@@ -588,13 +646,13 @@ public class LoginActivity extends AppCompatActivity {
 
 
             } catch (UnsupportedEncodingException e) {
-                Log.d("1/7", "UnsupportedEncodingException");
+//                Log.d("1/7", "UnsupportedEncodingException");
                 e.printStackTrace();
             } catch (ClientProtocolException e) {
-                Log.d("1/7", "ClientProtocolException");
+//                Log.d("1/7", "ClientProtocolException");
                 e.printStackTrace();
             } catch (IOException e) {
-                Log.d("1/7", "IOException");
+//                Log.d("1/7", "IOException");
                 e.printStackTrace();
             }
             Log.d("2.26", "login result: " + login_result);
@@ -623,7 +681,7 @@ public class LoginActivity extends AppCompatActivity {
                 cv.put("email", mEmail);
                 cv.put("addr", mAddr);
                 long result = database.insert("member", null, cv);
-                Log.d("2.26", "member_insert:" + result);
+//                Log.d("2.26", "member_insert:" + result);
 
                 if (member_cursor != null)
                     member_cursor.close();
@@ -661,165 +719,31 @@ public class LoginActivity extends AppCompatActivity {
                         startActivity(intent);
                         finish();
                     }
-                }, 2500);
+                },
+                        0
+//                        2500
+                );
+
+
             super.onPostExecute(string);
         }
     }
 
-    ///////////////////////// //2.29 Hua
-    private void handlePostsList() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                globalVariable.JsonString = JsonString;
-                //bundle.putString("JsonString", JsonString);
-                Log.e("Tag", "TW_API loaded.");
-                Toast.makeText(LoginActivity.this, "TW_API loaded.", Toast.LENGTH_SHORT).show();
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        if (requestCode == REQUEST_LOCATION) {
+            if(grantResults.length == 1
+                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // We can now safely use the API we requested access to
+
+                // Loading API
+                Intent intent = new Intent(LoginActivity.this, HttpService.class);
+                startService(intent);
+            } else {
+                // Permission was denied or request was cancelled
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION);
+                Toast.makeText(LoginActivity.this, "請允許寶島好智遊存取您的位置!", Toast.LENGTH_LONG).show();
             }
-        });
-    }
-
-    private void failedLoadingPosts() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(LoginActivity.this, "TW_API Failed to load Posts.", Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-    private class PostFetcher extends AsyncTask<Void, Void, String> {
-        private static final String TAG = "PostFetcher";
-        public static final String SERVER_URL = "http://data.gov.tw/iisi/logaccess/2205?dataUrl=http://gis.taiwan.net.tw/XMLReleaseALL_public/scenic_spot_C_f.json&ndctype=JSON&ndcnid=7777";
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        @Override
-        protected String doInBackground(Void... param) {
-            JsonString = "";
-            try {
-                //Create an HTTP client
-                HttpClient client = new DefaultHttpClient();
-                HttpPost post;
-                post = new HttpPost(SERVER_URL);
-
-                //Perform the request and check the status code
-                HttpResponse response = client.execute(post);
-                StatusLine statusLine = response.getStatusLine();
-
-                if (statusLine.getStatusCode() == 200) {
-                    HttpEntity entity = response.getEntity();
-                    InputStream content = entity.getContent();
-
-                    //Read the server response and attempt to parse it as JSON
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(content));
-
-                    String line;
-                    while ((line = reader.readLine()) != null) {
-                        JsonString += line;
-                    }
-                    content.close();
-
-                    //Gson(JsonString);
-
-                } else {
-                    Log.e(TAG, "Server responded with status code: " + statusLine.getStatusCode());
-                    failedLoadingPosts();
-                }
-
-            } catch (Exception ex) {
-                Log.e(TAG, "Failed to send HTTP POST request due to: " + ex);
-                failedLoadingPosts();
-            }
-            Log.d("2.29","onBackground end1");
-            return JsonString;
-        }
-
-        protected void onPostExecute(String JsonString) {
-            handlePostsList();
         }
     }
-    /////////////////////////
-
-    /////////////////////////
-    private void handlePostsList_TPE() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                globalVariable.JsonString_TPE = JsonString_TPE;
-                //bundle.putString("JsonString_TPE", JsonString_TPE);
-                Log.e("Tag", "TPE_API loaded.");
-                Toast.makeText(LoginActivity.this, "TPE_API loaded.", Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-    private void failedLoadingPosts_TPE() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(LoginActivity.this, "TPE_API Failed to load Posts.", Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-    private class PostFetcher_TPE extends AsyncTask<Void, Void, String> {
-        private static final String TAG = "PostFetcher";
-        public static final String SERVER_URL_TPE = "http://data.taipei/opendata/datalist/apiAccess?scope=resourceAquire&rid=36847f3f-deff-4183-a5bb-800737591de5";
-
-        @Override
-        protected void onPreExecute() {
-            //2.2 wei move to another place
-            super.onPreExecute();
-        }
-
-        @Override
-        protected String doInBackground(Void... param) {
-            JsonString_TPE = "";
-            try {
-                //Create an HTTP client
-                HttpClient client = new DefaultHttpClient();
-                HttpGet get = new HttpGet(SERVER_URL_TPE);
-
-                //Perform the request and check the status code
-                HttpResponse response = client.execute(get);
-                StatusLine statusLine = response.getStatusLine();
-
-                if (statusLine.getStatusCode() == 200) {
-                    HttpEntity entity = response.getEntity();
-                    InputStream content = entity.getContent();
-
-                    //Read the server response and attempt to parse it as JSON
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(content));
-
-                    String line;
-                    while ((line = reader.readLine()) != null) {
-                        JsonString_TPE += line;
-                    }
-                    content.close();
-
-                    //Gson(JsonString_TPE);
-
-                } else {
-                    Log.e(TAG, "Server responded with status code: " + statusLine.getStatusCode());
-                    failedLoadingPosts_TPE();
-                }
-
-            } catch (Exception ex) {
-                Log.e(TAG, "Failed to send HTTP POST request due to: " + ex);
-                failedLoadingPosts_TPE();
-            }
-            Log.d("2.29","onBackground end2");
-            return JsonString_TPE;
-        }
-
-        protected void onPostExecute(String JsonString) {
-            handlePostsList_TPE();
-        }
-    }
-    /////////////////////////// //2.29 Hua
-
 }

@@ -10,11 +10,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -79,13 +77,8 @@ public class BuyitemAdapter extends BaseAdapter {
     public int getCount() {
         int number = 0;
         //TODO need modify
-        Cursor goods_cursor = database.query("goods", new String[]{"totalCount", "goods_id", "goods_title",
-                "goods_url", "goods_content", "goods_addtime"}, null, null, null, null, null);
-        if (goods_cursor != null) {
-            Log.d("2.24", "getCount:" + goods_cursor.getCount());
-            number = goods_cursor.getCount();
-            goods_cursor.close();
-        }
+        if (sharedPreferences.getInt("InBuyList", 0) != 0)
+            number = sharedPreferences.getInt("InBuyList", 0);
         return number;//wait to edit//
     }
 
@@ -111,86 +104,84 @@ public class BuyitemAdapter extends BaseAdapter {
                 (TextView) mview.findViewById(R.id.buyitemlist_fromTxt),
                 (TextView) mview.findViewById(R.id.butitemlist_moneyTxt),
                 (TextView) mview.findViewById(R.id.buyitemlist_totalTxt),
-                (Spinner) mview.findViewById(R.id.spinner),
-                (Button) mview.findViewById(R.id.button),
-                (Button) mview.findViewById(R.id.button2)
+                (TextView) mview.findViewById(R.id.buyitemlist_numbertext),
+                (Button) mview.findViewById(R.id.buyitemlist_addbutton),
+                (Button) mview.findViewById(R.id.buyitemlist_minusbutton)
         );
-
+        newcell.cellnumberTxt.setText("0");
 
         //TODO need modify
         ImageLoaderConfiguration configuration = new ImageLoaderConfiguration.Builder(context).build();
         ImageLoader.getInstance().init(configuration);
 
         Cursor goods_cursor = database.query("goods", new String[]{"totalCount", "goods_id", "goods_title",
-                "goods_url", "goods_content", "goods_addtime"}, null, null, null, null, null);
+                "goods_url", "goods_money", "goods_content", "goods_click", "goods_addtime"}, null, null, null, null, null);
         final List<String> goods_id = new ArrayList<>();
-        if (goods_cursor != null && goods_cursor.getCount() >= position) {
-            goods_cursor.moveToPosition(position);
+
+        int howmany = sharedPreferences.getInt("InBuyList", 0);
+        Log.d("3.8", "howmany: " + howmany);
+        for (int i = 1; i <= howmany; i++)
+            Log.d("3.8", "in Position: " + sharedPreferences.getInt("InBuyList" + i, 0));
+        int itemPosition = sharedPreferences.getInt("InBuyList" + (position + 1), 0);
+        if (goods_cursor != null && goods_cursor.getCount() >= itemPosition) {
+            goods_cursor.moveToPosition(itemPosition);
+            Log.d("3.9", "購物車項目名稱" + position + ":" + goods_cursor.getString(2));
             newcell.cellnameTxt.setText(goods_cursor.getString(2));
             newcell.cellfromTxt.setText(goods_cursor.getString(2));
+            newcell.cellmoneyTxt.setText(goods_cursor.getString(4).substring(0, goods_cursor.getString(4).indexOf(".")));
+            newcell.cellnumberTxt.setText(sharedPreferences.getInt(goods_cursor.getString(1), 0)+"");
+            goods_id.clear();
             goods_id.add(goods_cursor.getString(1));
-            loader.displayImage("http://zhiyou.lin366.com/"+goods_cursor.getString(3)
+            loader.displayImage("http://zhiyou.lin366.com/" + goods_cursor.getString(3)
                     , newcell.cellImg, options, listener);
-//            Toast.makeText(context, "伴手禮數目:" + goods_cursor.getCount(), Toast.LENGTH_SHORT).show();
         }
+
         if (goods_cursor != null)
             goods_cursor.close();
-        ///1.13
-        final List<Integer> spinners = new ArrayList<>();
-        for (int i = 0; i <= 25; i++) {
-            spinners.add(i);
-        }
-        final CountAdapter countAdapter = new CountAdapter(context,
-                R.layout.support_simple_spinner_dropdown_item, spinners);
-        newcell.spinner.setAdapter(countAdapter);
-        newcell.spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                //position =item value
-//                Log.e("1/13", "spinner item selected" + position);
-                newcell.celltotalTxt.setText(Integer.parseInt(newcell.cellmoneyTxt.getText().toString()) * position + "");
-                    SharedPreferences.Editor editor = sharedPreferences.edit();
-                    editor.putInt(goods_id.get(0), position);
-                    editor.apply();
-            }
 
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
 
         newcell.plus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int spinnerSelect = Integer.valueOf(newcell.spinner.getSelectedItem().toString() + "");
-                if (!countAdapter.isLast(spinnerSelect))
-                    newcell.spinner.setSelection(countAdapter.getPosition(spinnerSelect) + 1);
+                newcell.cellnumberTxt.setText((Integer.valueOf(newcell.cellnumberTxt.getText().toString() + "") + 1) + "");
+                if (goods_id.get(0) != null) {
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putInt(goods_id.get(0), Integer.valueOf(newcell.cellnumberTxt.getText().toString()+""));
+                    Log.d("3.9", "id: " + goods_id.get(0) + " BuyItemAdapter goods_id NULL" + Integer.valueOf(newcell.cellnumberTxt.getText().toString() + ""));
+                    editor.apply();
+                    newcell.celltotalTxt.setText(Integer.parseInt(newcell.cellmoneyTxt.getText().toString())
+                            * Integer.valueOf(newcell.cellnumberTxt.getText().toString() + "") + "");
+                } else Log.d("3.9","BuyItemAdapter goods_id NULL"+Integer.valueOf(newcell.cellnumberTxt.getText().toString()+""));
             }
         });
         newcell.minus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int spinnerSelect = Integer.valueOf(newcell.spinner.getSelectedItem().toString() + "");
-                if (!countAdapter.isFirst(spinnerSelect))
-                    newcell.spinner.setSelection(countAdapter.getPosition(spinnerSelect) - 1);
+                if ((Integer.valueOf(newcell.cellnumberTxt.getText().toString()) > 0)) {
+                    newcell.cellnumberTxt.setText((Integer.valueOf(newcell.cellnumberTxt.getText().toString()) - 1) + "");
+                    if (goods_id.get(0) != null) {
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.putInt(goods_id.get(0), Integer.valueOf(newcell.cellnumberTxt.getText().toString()+""));
+                        editor.apply();
+                    }
+                    newcell.celltotalTxt.setText(Integer.parseInt(newcell.cellmoneyTxt.getText().toString())
+                            * Integer.valueOf(newcell.cellnumberTxt.getText().toString() + "") + "");
+                }
             }
         });
         ///1.13
 
 
-        newcell.spinner.setSelection(sharedPreferences.getInt(goods_id.get(0), 0));
-
         newcell.celltotalTxt.setText(Integer.parseInt(newcell.cellmoneyTxt.getText().toString())
-                * Integer.valueOf(newcell.spinner.getSelectedItem().toString()) + "");
+                * Integer.valueOf(newcell.cellnumberTxt.getText().toString() + "") + "");
 
         //delete chosed item
         newcell.celldelImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                newcell.celltotalTxt.setText(0 + "");
-                newcell.spinner.setSelection(0);
-                if(goods_id.get(0)!=null) {
+                newcell.celltotalTxt.setText("0");
+                newcell.cellnumberTxt.setText("0");
+                if (goods_id.get(0) != null) {
                     SharedPreferences.Editor editor = sharedPreferences.edit();
                     editor.putInt(goods_id.get(0), 0);
                     editor.apply();
@@ -203,22 +194,19 @@ public class BuyitemAdapter extends BaseAdapter {
 
     public class cell {
         ImageView cellImg, celldelImg;
-        TextView cellnameTxt, cellfromTxt, cellmoneyTxt, celltotalTxt;
-        //1.13
-        Spinner spinner;
+        TextView cellnameTxt, cellfromTxt, cellmoneyTxt, celltotalTxt, cellnumberTxt;
         Button plus, minus;
 
         public cell(ImageView itemImg, ImageView itemdelImg, TextView itemnameTxt, TextView itemfromTxt,
                     TextView itemmoneyTxt, TextView itemtotalTxt,
-                    Spinner mSpinner, Button mPlus, Button mMinus) {
+                    TextView itemnumberTxt, Button mPlus, Button mMinus) {
             this.cellImg = itemImg;
             this.celldelImg = itemdelImg;
             this.cellnameTxt = itemnameTxt;
             this.cellfromTxt = itemfromTxt;
             this.cellmoneyTxt = itemmoneyTxt;
             this.celltotalTxt = itemtotalTxt;
-            //1.13
-            this.spinner = mSpinner;
+            this.cellnumberTxt = itemnumberTxt;
             this.plus = mPlus;
             this.minus = mMinus;
         }

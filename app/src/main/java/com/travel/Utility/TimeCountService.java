@@ -4,7 +4,6 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.IBinder;
-import android.support.annotation.Nullable;
 import android.util.Log;
 
 
@@ -14,13 +13,13 @@ import android.util.Log;
 public class TimeCountService extends Service {
 
     private Handler handler = new Handler() {
+
     };
+
     Long start_time = (long) 0;
     //send for UI update
     public static final String BROADCAST_ACTION = "com.example.tracking.updateprogress";
 
-
-    @Nullable
     @Override
     public IBinder onBind(Intent intent) {
         return null;

@@ -65,6 +65,6 @@
         tools:context=".MapsActivity"
         tools:ignore="MissingPrefix"
         map:cameraTargetLat="24.029548"
-        map:cameraTargetLng="121.276745"
-        map:cameraZoom="7" />
+        map:cameraTargetLng="121.076745"
+        map:cameraZoom="9" />
 </LinearLayout>

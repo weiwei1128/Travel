@@ -8,15 +8,20 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.MotionEvent;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.travel.HomepageActivity;
 import com.travel.MemberActivity;
+import com.travel.R;
 
 import java.io.ByteArrayOutputStream;
 
@@ -36,13 +41,6 @@ public class Functions {
             if (bundle != null)
                 intent.putExtras(bundle);
             activity.startActivity(intent);
-//            if(activity.getLocalClassName().equals("HomepageActivity")&&(goclass==MemberActivity.class))
-//                activity.finish();
-//            if(activity.getLocalClassName().equals("MemberActivity")&&(goclass==HomepageActivity.class))
-//                activity.finish();
-
-
-
         }
     }
 
@@ -95,6 +93,71 @@ public class Functions {
         inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
         String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
         return (Uri.parse(path)).toString();
+    }
+
+    public static  void ClickTouchEvent(ImageView imageView,TextView textView,String where, Boolean isClick, int event) {
+        switch (where) {
+            case "home":
+                imageView.setImageResource(R.drawable.tab_selected_home);
+                textView.setTextColor(Color.parseColor("#0044BB"));
+                if (isClick) {
+                    imageView.performClick();
+                    imageView.setImageResource(R.drawable.click_home_img);
+                    textView.setTextColor(Color.parseColor("#555555"));
+                }
+                if (event == MotionEvent.ACTION_UP) {
+                    imageView.setImageResource(R.drawable.click_home_img);
+                    textView.setTextColor(Color.parseColor("#555555"));
+                }
+                if(event==MotionEvent.ACTION_DOWN)
+                    textView.setTextColor(Color.parseColor("#0044BB"));
+                break;
+            case "member":
+                imageView.setImageResource(R.drawable.tab_selected_member);
+                textView.setTextColor(Color.parseColor("#0044BB"));
+                if (isClick) {
+                    imageView.performClick();
+                    imageView.setImageResource(R.drawable.member_img_click);
+                    textView.setTextColor(Color.parseColor("#555555"));
+                }
+                if (event == MotionEvent.ACTION_UP) {
+                    imageView.setImageResource(R.drawable.member_img_click);
+                    textView.setTextColor(Color.parseColor("#555555"));
+                }
+                if(event==MotionEvent.ACTION_DOWN)
+                    textView.setTextColor(Color.parseColor("#0044BB"));
+                break;
+            case "shoprecord":
+                imageView.setImageResource(R.drawable.tab_selected_record);
+                textView.setTextColor(Color.parseColor("#0044BB"));
+                if (isClick) {
+                    imageView.performClick();
+                    imageView.setImageResource(R.drawable.record_img_click);
+                    textView.setTextColor(Color.parseColor("#555555"));
+                }
+                if (event == MotionEvent.ACTION_UP) {
+                    imageView.setImageResource(R.drawable.record_img_click);
+                    textView.setTextColor(Color.parseColor("#555555"));
+                }
+                if(event==MotionEvent.ACTION_DOWN)
+                    textView.setTextColor(Color.parseColor("#0044BB"));
+                break;
+            case "more":
+                imageView.setImageResource(R.drawable.tab_selected_more);
+                textView.setTextColor(Color.parseColor("#0044BB"));
+                if (isClick) {
+                    imageView.performClick();
+                    imageView.setImageResource(R.drawable.more_img_click);
+                    textView.setTextColor(Color.parseColor("#555555"));
+                }
+                if (event == MotionEvent.ACTION_UP) {
+                    imageView.setImageResource(R.drawable.more_img_click);
+                    textView.setTextColor(Color.parseColor("#555555"));
+                }
+                if(event==MotionEvent.ACTION_DOWN)
+                    textView.setTextColor(Color.parseColor("#0044BB"));
+                break;
+        }
     }
 
 

@@ -36,7 +36,7 @@
             android:layout_gravity="center|right"
             android:textSize="14dp"
             android:textColor="@color/white"
-            android:layout_marginRight="70dp" />
+            android:layout_marginRight="65dp" />
 
         <ImageView
             android:layout_width="40dp"
@@ -90,8 +90,8 @@
             android:layout_gravity="right|top"
             tools:ignore="MissingPrefix"
             map:cameraTargetLat="24.029548"
-            map:cameraTargetLng="121.276745"
-            map:cameraZoom="7" />
+            map:cameraTargetLng="121.076745"
+            map:cameraZoom="9" />
 
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="wrap_content"

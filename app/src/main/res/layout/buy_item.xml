@@ -21,7 +21,7 @@
         <TextView
             android:id="@+id/buy_thingText"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="35dp"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
             android:layout_marginBottom="5dp"
@@ -32,29 +32,6 @@
             android:textSize="13dp" />
 
         <ImageView
-            android:id="@+id/buy_popularImg"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_alignParentRight="false"
-            android:layout_alignParentTop="true"
-            android:layout_marginBottom="5dp"
-            android:layout_marginRight="5dp"
-            android:layout_toLeftOf="@+id/buy_starImg"
-            android:src="@drawable/popular" />
-
-        <ImageView
-            android:id="@+id/buy_starImg"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentTop="true"
-
-            android:layout_alignWithParentIfMissing="false"
-            android:layout_marginBottom="5dp"
-            android:layout_marginRight="5dp"
-            android:src="@drawable/thumb" />
-
-        <ImageView
             android:id="@+id/buy_thingImg"
             android:layout_width="150dp"
             android:layout_height="150dp"
@@ -63,5 +40,16 @@
             android:layout_marginBottom="2dp"
             android:layout_marginLeft="3dp"
             android:layout_marginRight="3dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="人氣:"
+            android:id="@+id/buything_clickText"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:textColor="@color/peach"
+            android:layout_marginRight="5dp" />
     </RelativeLayout>
 </RelativeLayout>

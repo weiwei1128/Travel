@@ -58,50 +58,8 @@
         android:textColor="@color/black"
         android:textSize="16dp" />
 
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/buyitemlistconfirm_locaText"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:id="@+id/buyitemlistconfirm_locLayout"
-        android:layout_marginLeft="10dp">
-
-        <CheckBox
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="飯店"
-            android:id="@+id/buyitemlist_hotelCheck"
-            android:textSize="14dp"
-            android:textColor="@color/black" />
-
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent">
-
-            <CheckBox
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="自行輸入地址"
-                android:id="@+id/buyitemlist_addrCheck"
-                android:textColor="@color/black"
-                android:textSize="14dp" />
-
-            <EditText
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/buyitemlist_addrEdit"
-                android:textColor="@color/black"
-                android:textSize="14dp" />
-        </LinearLayout>
-
-
-    </LinearLayout>
     <View
         android:id="@+id/buyitemlistconfirm_view2"
-        android:layout_below="@+id/buyitemlistconfirm_locLayout"
         android:layout_height="1dp"
         android:layout_width="match_parent"
         android:background="@color/light_gray"
@@ -109,7 +67,8 @@
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
         android:layout_marginTop="5dp"
-        android:layout_marginBottom="15dp" />
+        android:layout_marginBottom="15dp"
+        android:layout_below="@+id/buyitemlistconfirm_locaText" />
 
     <!--
     buyitemlistconfirm_locLayout
@@ -218,5 +177,14 @@
             android:textStyle="bold" />
 
     </LinearLayout>
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/editText"
+        android:layout_below="@+id/checkschedule_Layout"
+        android:layout_toRightOf="@+id/buyitemlistconfirm_locaText"
+        android:textSize="16dp"
+        android:textColor="@color/black" />
 
 </RelativeLayout>

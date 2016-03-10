@@ -71,12 +71,10 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="0分"
+                android:text="   "
                 android:id="@+id/schedule_totaltime_text"
                 android:layout_gravity="right"
-                android:gravity="right"
-                android:layout_marginRight="5dp"
-                android:textSize="12dp" />
+                android:layout_marginRight="10dp" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -86,6 +84,7 @@
                 android:layout_marginLeft="5dp"
                 android:layout_marginBottom="5dp"
                 android:textSize="12dp" />
+
         </LinearLayout>
 
         <LinearLayout
@@ -105,20 +104,9 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="約"
-                android:id="@+id/textView9"
-                android:layout_gravity="center_vertical"
-                android:layout_marginLeft="3dp"
-                android:textSize="12dp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="3小時"
+                android:text="   "
                 android:id="@+id/schedule_time_text"
-                android:layout_gravity="center_vertical"
-                android:layout_weight="1"
-                android:textSize="12dp" />
+                android:layout_weight="1" />
 
             <ImageView
                 android:layout_width="wrap_content"

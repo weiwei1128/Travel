@@ -25,9 +25,9 @@ public class BuyItemListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.buyitem_list_activity);
         Bundle bundle = this.getIntent().getExtras();
-        if (bundle.containsKey("WhichItem")) {
-            lastItem = bundle.getInt("WhichItem");
-        }
+//        if (bundle.containsKey("WhichItem")) {
+//            lastItem = bundle.getInt("WhichItem");
+//        }
         listView = (ListView) findViewById(R.id.listview);
         backImg = (ImageView) findViewById(R.id.buyitemlist_backImg);
         backImg.setOnClickListener(new View.OnClickListener() {
@@ -36,7 +36,10 @@ public class BuyItemListActivity extends AppCompatActivity {
                 Bundle bundle = new Bundle();
                 bundle.putInt("WhichItem", lastItem);
                 Functions.go(true,BuyItemListActivity.this, BuyItemListActivity.this,
-                        BuyItemDetailActivity.class, bundle);
+                        BuyItemDetailActivity.class,
+                        null
+//                        bundle
+                );
             }
         });
         moreImg = (ImageView) findViewById(R.id.buyitemlist_moreImg);
@@ -48,7 +51,9 @@ public class BuyItemListActivity extends AppCompatActivity {
                 Bundle bundle = new Bundle();
                 bundle.putInt("WhichItem", lastItem);
                 Functions.go(false,BuyItemListActivity.this, BuyItemListActivity.this,
-                        BuyItemListConfirmActivity.class, bundle);
+                        BuyItemListConfirmActivity.class,null
+//                        bundle
+                );
             }
         });
         adapter = new BuyitemAdapter(this);
@@ -61,7 +66,9 @@ public class BuyItemListActivity extends AppCompatActivity {
             Bundle bundle = new Bundle();
             bundle.putInt("WhichItem", lastItem);
             Functions.go(true,BuyItemListActivity.this, BuyItemListActivity.this,
-                    BuyItemDetailActivity.class, bundle);
+                    BuyItemDetailActivity.class,null
+//                        bundle
+            );
         }
         return false;
     }

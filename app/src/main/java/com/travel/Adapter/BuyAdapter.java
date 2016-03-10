@@ -23,7 +23,6 @@ import com.travel.Utility.DataBaseHelper;
 
 /**
  * Created by wei on 2015/11/11.
- 0307
  */
 public class BuyAdapter extends BaseAdapter {
     ImageLoader loader = ImageLoader.getInstance();
@@ -35,9 +34,13 @@ public class BuyAdapter extends BaseAdapter {
     private Context context;
     private LayoutInflater inflater;
 
-    public BuyAdapter(Context mcontext) {
+    int pageNO=0;
+
+    public BuyAdapter(Context mcontext,Integer index) {
         this.context = mcontext;
         inflater = LayoutInflater.from(mcontext);
+
+        pageNO = index;
 
         helper = new DataBaseHelper(context);
         database = helper.getWritableDatabase();
@@ -75,12 +78,13 @@ public class BuyAdapter extends BaseAdapter {
         int number = 0;
         //TODO need modify!
         Cursor goods_cursor = database.query("goods", new String[]{"totalCount", "goods_id", "goods_title",
-                "goods_url", "goods_content", "goods_addtime"}, null, null, null, null, null);
+                "goods_url","goods_money", "goods_content","goods_click", "goods_addtime"}, null, null, null, null, null);
         if (goods_cursor != null) {
             Log.d("2.24", "getCount:" + goods_cursor.getCount());
             number = goods_cursor.getCount();
             goods_cursor.close();
         }
+        number=10;
         return number;
     }
 
@@ -97,22 +101,28 @@ public class BuyAdapter extends BaseAdapter {
     @SuppressLint("InflateParams")
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+        Log.d("3.7","goods:"+pageNO);
+
+
         cell mcell;
         View mview;
         mview = inflater.inflate(R.layout.buy_item, null);
         mcell = new cell(
                 (ImageView) mview.findViewById(R.id.buy_thingImg),
-                (TextView) mview.findViewById(R.id.buy_thingText)
+                (TextView) mview.findViewById(R.id.buy_thingText),
+                (TextView) mview.findViewById(R.id.buything_clickText)
         );
 
         ImageLoaderConfiguration configuration = new ImageLoaderConfiguration.Builder(context).build();
         ImageLoader.getInstance().init(configuration);
 
         Cursor goods_cursor = database.query("goods", new String[]{"totalCount", "goods_id", "goods_title",
-                "goods_url", "goods_content", "goods_addtime"}, null, null, null, null, null);
+                "goods_url","goods_money", "goods_content","goods_click", "goods_addtime"}, null, null, null, null, null);
         if (goods_cursor != null && goods_cursor.getCount() >= position) {
             goods_cursor.moveToPosition(position);
             mcell.buyText.setText(goods_cursor.getString(2));
+//            if(goods_cursor.getString(6)!=null)
+//            mcell.clickText.append(goods_cursor.getString(6));
             //http://zhiyou.lin366.com/
             loader.displayImage("http://zhiyou.lin366.com/"+goods_cursor.getString(3)
                     , mcell.buyImg, options, listener);
@@ -122,6 +132,34 @@ public class BuyAdapter extends BaseAdapter {
 
         if(mcell.buyText.getText()==null)
             mcell.buyText.setText("資料錯誤");
+        //********0308
+//        Log.e("3.8", "==========page number" + pageNO);
+        if(goods_cursor!=null&&goods_cursor.getCount()>=(pageNO-1)*10) {
+            goods_cursor.moveToPosition((pageNO - 1) * 10);
+//            Log.e("3.8", "1 name: "+goods_cursor.getString(2));
+            int i=1;
+            while ((goods_cursor.isLast()||!(i>=10))){
+                goods_cursor.moveToNext();
+                i++;
+//                Log.e("3.8", i+"name: " + goods_cursor.getString(2));
+            }
+        }
+
+        if(goods_cursor!=null&&goods_cursor.getCount()>=(pageNO-1)*10+position){
+            goods_cursor.moveToPosition((pageNO - 1) * 10 + position);
+            mcell.buyText.setText(goods_cursor.getString(2));
+            if(!(mcell.clickText.getText().toString().substring(3).startsWith("0")&&
+                    mcell.clickText.getText().toString().endsWith("0")))
+//                Log.d("3.8", "click:000" + mcell.clickText.getText().toString());
+            if(goods_cursor.getString(6)!=null)
+                mcell.clickText.append(goods_cursor.getString(6));
+            //http://zhiyou.lin366.com/
+            loader.displayImage("http://zhiyou.lin366.com/"+goods_cursor.getString(3)
+                    , mcell.buyImg, options, listener);
+        }
+//        Log.d("3.8","click"+mcell.clickText.getText().toString().substring(3));
+        //**********0308
+
 
         if (goods_cursor != null)
             goods_cursor.close();
@@ -132,11 +170,12 @@ public class BuyAdapter extends BaseAdapter {
 
     public class cell {
         ImageView buyImg;
-        TextView buyText;
+        TextView buyText,clickText;
 
-        public cell(ImageView buy_img, TextView buy_text) {
+        public cell(ImageView buy_img, TextView buy_text,TextView click_Text) {
             this.buyImg = buy_img;
             this.buyText = buy_text;
+            this.clickText = click_Text;
         }
 
     }

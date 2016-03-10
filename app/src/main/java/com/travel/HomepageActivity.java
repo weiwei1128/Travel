@@ -3,15 +3,15 @@ package com.travel;
 /*/Users/wei/android-sdks*/
 
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -27,13 +27,17 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.google.android.gms.maps.MapsInitializer;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.travel.ImageSlide.MainImageFragment;
 import com.travel.Utility.DataBaseHelper;
 import com.travel.Utility.Functions;
 import com.travel.Utility.MyTextview;
+
+import java.util.ArrayList;
 
 public class HomepageActivity extends AppCompatActivity {
     private Fragment contentFragment;
@@ -43,20 +47,10 @@ public class HomepageActivity extends AppCompatActivity {
     TextView memberText, shoprecordText, moreText;
     ImageView memberImg, shoprecordImg, moreImg;
 
-    //3.5 Hua//
-    //private Bundle Bundle = new Bundle();
-    //private Double Latitude;
-    //private Double Longitude;
-    //3.5 Hua//
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        //3.5 Hua// TODO
-
-        //3.5 Hua//
 
         DataBaseHelper helper = new DataBaseHelper(HomepageActivity.this);
         SQLiteDatabase database = helper.getWritableDatabase();
@@ -65,8 +59,8 @@ public class HomepageActivity extends AppCompatActivity {
         if (member_cursor == null || member_cursor.getCount() == 0)
             finish();
         else Log.d("3.1", "check___check!!!!!" + member_cursor.getCount());
-
-
+        if(member_cursor!=null)
+            member_cursor.close();
         linearLayout = (LinearLayout) findViewById(R.id.main_main_layout);
 
         //Goodthing
@@ -107,7 +101,9 @@ public class HomepageActivity extends AppCompatActivity {
         buyLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Functions.go(false, HomepageActivity.this, HomepageActivity.this, BuyActivity.class, null);
+                //TODO 0307 TEST!!!!
+                Functions.go(false, HomepageActivity.this, HomepageActivity.this, BuyActivityNew.class, null);
+//                Functions.go(false, HomepageActivity.this, HomepageActivity.this, BuyActivity.class, null);
             }
         });
 
@@ -115,7 +111,7 @@ public class HomepageActivity extends AppCompatActivity {
         scheduleLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Functions.go(false, HomepageActivity.this, HomepageActivity.this, CheckScheduleActivity.class, null);
+                Functions.go(false, HomepageActivity.this, HomepageActivity.this, CheckScheduleMainActivity.class, null);
             }
         });
 
@@ -130,21 +126,27 @@ public class HomepageActivity extends AppCompatActivity {
         memberImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                memberText.setTextColor(Color.parseColor("#0044BB"));
                 Functions.go(false, HomepageActivity.this, HomepageActivity.this, MemberActivity.class, null);
-                finish();
+//                finish();
+            }
+        });
+        memberImg.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                Functions.ClickTouchEvent(memberImg, memberText, "member", false, event.getAction());
+                return false;
             }
         });
         memberLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                LayoutClickTouchEvent("member", true, 356735);
+                Functions.ClickTouchEvent(memberImg, memberText, "member", true, 356735);
             }
         });
         memberLayout.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                LayoutClickTouchEvent("member", false, event.getAction());
+                Functions.ClickTouchEvent(memberImg, memberText, "member", false, event.getAction());
                 return false;
             }
         });
@@ -154,24 +156,34 @@ public class HomepageActivity extends AppCompatActivity {
         shoprecordText = (TextView) findViewById(R.id.main_shoprecord_text);
         shoprecordLayout = (LinearLayout) findViewById(R.id.main_shoprecord_layout);
         shoprecordImg.setImageResource(R.drawable.record_img_click);
-        shoprecordText.setTextColor(R.color.gray);
+        shoprecordText.setTextColor(Color.parseColor("#555555"));
         shoprecordImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                shoprecordText.setTextColor(Color.parseColor("#0044BB"));
-                //TODO next Page....
+                Functions.go(false, HomepageActivity.this, HomepageActivity.this, BuyRecordActivity.class, null);
+//                finish();
+//                TODO next Page....
+            }
+        });
+        shoprecordImg.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                Functions.ClickTouchEvent(shoprecordImg, shoprecordText, "shoprecord", false, event.getAction());
+                return false;
             }
         });
         shoprecordLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                LayoutClickTouchEvent("shoprecord", true, 356735);
+                Functions.ClickTouchEvent(shoprecordImg, shoprecordText, "shoprecord", true, 356735);
+                shoprecordImg.setImageResource(R.drawable.record_img_click);
+                shoprecordText.setTextColor(Color.parseColor("#555555"));
             }
         });
         shoprecordLayout.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                LayoutClickTouchEvent("shoprecord", false, event.getAction());
+                Functions.ClickTouchEvent(shoprecordImg, shoprecordText, "shoprecord", false, event.getAction());
                 return false;
             }
         });
@@ -182,35 +194,40 @@ public class HomepageActivity extends AppCompatActivity {
         moreText = (TextView) findViewById(R.id.main_more_text);
         moreLayout = (LinearLayout) findViewById(R.id.main_more_layout);
         moreImg.setImageResource(R.drawable.more_img_click);
-        moreText.setTextColor(R.color.gray);
+        moreText.setTextColor(Color.parseColor("#555555"));
         moreImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                moreText.setTextColor(Color.parseColor("#0044BB"));
                 //TODO next Page....
+            }
+        });
+        moreImg.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                Functions.ClickTouchEvent(moreImg, moreText, "more", false, event.getAction());
+                return false;
             }
         });
         moreLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                LayoutClickTouchEvent("more", true, 356735);
+//                Functions.ClickTouchEvent(moreImg, moreText, "more", true, 356735);
             }
         });
         moreLayout.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                LayoutClickTouchEvent("more", false, event.getAction());
+                Functions.ClickTouchEvent(moreImg, moreText, "more", false, event.getAction());
                 return false;
             }
         });
         //======= MORE =======//
 
 
-        /////跑馬燈
+        //TODO 跑馬燈
         MyTextview textview = new MyTextview(this);
-        textview.setText("跑馬燈燈燈燈燈");
+        textview.setText("2014新竹縣客家桐花祭開幕活動  活動日期：4/26");
         textview.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
-
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         params.gravity = Gravity.CENTER_VERTICAL;
         linearLayout.addView(textview,
@@ -312,39 +329,4 @@ public class HomepageActivity extends AppCompatActivity {
             }
         }
     };
-
-    public void LayoutClickTouchEvent(String where, Boolean isClick, int event) {
-        switch (where) {
-            case "member":
-                memberImg.setImageResource(R.drawable.tab_selected_member);
-                memberText.setTextColor(Color.parseColor("#0044BB"));
-                if (isClick)
-                    memberImg.performClick();
-                if (event == MotionEvent.ACTION_UP) {
-                    memberImg.setImageResource(R.drawable.member_img_click);
-                    memberText.setTextColor(Color.parseColor("#555555"));
-                }
-                break;
-            case "shoprecord":
-                shoprecordImg.setImageResource(R.drawable.tab_selected_record);
-                shoprecordText.setTextColor(Color.parseColor("#0044BB"));
-                if (isClick)
-                    shoprecordImg.performClick();
-                if (event == MotionEvent.ACTION_UP) {
-                    shoprecordImg.setImageResource(R.drawable.record_img_click);
-                    shoprecordText.setTextColor(Color.parseColor("#555555"));
-                }
-                break;
-            case "more":
-                moreImg.setImageResource(R.drawable.tab_selected_more);
-                moreText.setTextColor(Color.parseColor("#0044BB"));
-                if (isClick)
-                    moreImg.performClick();
-                if (event == MotionEvent.ACTION_UP) {
-                    moreImg.setImageResource(R.drawable.more_img_click);
-                    moreText.setTextColor(Color.parseColor("#555555"));
-                }
-                break;
-        }
-    }
 }

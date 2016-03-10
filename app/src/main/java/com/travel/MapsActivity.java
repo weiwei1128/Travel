@@ -1,11 +1,17 @@
 package com.travel;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
@@ -25,13 +31,11 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.travel.Utility.DataBaseHelper;
 import com.travel.Utility.Functions;
 
 import java.util.ArrayList;
@@ -42,48 +46,59 @@ public class MapsActivity extends FragmentActivity implements
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener {
 
+    public static final String TAG = MapsActivity.class.getSimpleName();
+
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
     private GoogleApiClient mGoogleApiClient;
     private LocationRequest mLocationRequest;
     private Location currentLocation;
     private Marker currentMarker;
 
-    public static final String TAG = MapsActivity.class.getSimpleName();
-
-    public static SpotJson.PostInfos Infos;
-    public static TPESpotJson.PostResult Result;
-    //public Bundle bundle = new Bundle();
-    private String JsonString = null;
-    private String JsonString_TPE = null;
-
-    private ArrayList<MarkerOptions> MarkerOptionsArray = new ArrayList<MarkerOptions>();
-    private BitmapDescriptor MarkerIcon;
+    private Bitmap MarkerIcon;
+    private GlobalVariable globalVariable;
 
     private ImageView BackImg;
-    //LinearLayout SpotMapLayout,SpotListLayout;
     private Button SpotMapBtn, SpotListBtn;
-    Context context;
 
+    private ProgressDialog mDialog;
+
+    private DataBaseHelper helper;
+    private SQLiteDatabase database;
+    private Double Latitude;
+    private Double Longitude;
+    private LatLng latLng;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.maps_activity);
 
-        GlobalVariable globalVariable = (GlobalVariable)getApplicationContext();
-        JsonString = globalVariable.JsonString;
-        if (!JsonString.equals("null")) {
-            Gson(JsonString);
-            Toast.makeText(this, "JsonString", Toast.LENGTH_SHORT).show();
+        helper = new DataBaseHelper(getApplicationContext());
+        database = helper.getWritableDatabase();
+        // retrieve Location from DB
+        Cursor location_cursor = database.query("location",
+                new String[]{"CurrentLat", "CurrentLng"}, null, null, null, null, null);
+        if (location_cursor != null) {
+            if (location_cursor.getCount() != 0) {
+                while (location_cursor.moveToNext()) {
+                    Latitude = location_cursor.getDouble(0);
+                    Longitude = location_cursor.getDouble(1);
+                }
+                latLng = new LatLng(Latitude, Longitude);
+                Log.d("3.9_抓取位置", Latitude.toString() + Longitude.toString());
+            }
+            location_cursor.close();
         }
 
-        JsonString_TPE = globalVariable.JsonString_TPE;
-        if (!JsonString_TPE.equals("null")) {
-            Gson(JsonString_TPE);
-            Toast.makeText(this, "JsonString_TPE", Toast.LENGTH_SHORT).show();
-        }
+        BitmapDrawable BitmapDraw = (BitmapDrawable)getResources().getDrawable(R.drawable.location);
+        MarkerIcon = Bitmap.createScaledBitmap(BitmapDraw.getBitmap(), 60, 90, false);
 
-        MarkerIcon = BitmapDescriptorFactory.fromResource(R.drawable.location);
+        globalVariable = (GlobalVariable) getApplicationContext();
+        if (globalVariable.MarkerOptionsArray.isEmpty()) {
+            // Get Marker Info
+            GetMarkerInfo getMarkerInfo = new GetMarkerInfo(MapsActivity.this);
+            getMarkerInfo.execute();
+        }
 
         BackImg = (ImageView) findViewById(R.id.maps_backImg);
         BackImg.setOnClickListener(new View.OnClickListener() {
@@ -109,39 +124,44 @@ public class MapsActivity extends FragmentActivity implements
         SpotListBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.e("2.3","Map->Spot_location"+currentLocation);
-                Functions.go(false,MapsActivity.this, MapsActivity.this, SpotListActivity.class, null);
+                Log.e("2.3", "Map->Spot_location" + currentLocation);
+                Functions.go(false, MapsActivity.this, MapsActivity.this, SpotListActivity.class, null);
             }
         });
-
         setUpMapIfNeeded();
     }
 
     @Override
     protected void onResume() {
-        super.onResume();
         setUpMapIfNeeded();
         mGoogleApiClient.connect();
+        super.onResume();
     }
 
     @Override
     protected void onPause() {
-        super.onPause();
         if (mGoogleApiClient.isConnected()) {
             LocationServices.FusedLocationApi.removeLocationUpdates
                     (mGoogleApiClient, this);
             mGoogleApiClient.disconnect();
         }
+        super.onPause();
     }
 
     @Override
     protected void onStop() {
-        super.onStop();
-
         // 移除Google API用戶端連線
         if (mGoogleApiClient.isConnected()) {
             mGoogleApiClient.disconnect();
         }
+        super.onStop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        MarkerIcon.recycle();
+        System.gc();
+        super.onDestroy();
     }
 
     /**
@@ -178,22 +198,13 @@ public class MapsActivity extends FragmentActivity implements
      */
     private void setUpMap() {
 
-        if (MarkerOptionsArray != null)
-            for (MarkerOptions markerOptions : MarkerOptionsArray) {
+        if (!globalVariable.MarkerOptionsArray.isEmpty()) {
+            for (MarkerOptions markerOptions : globalVariable.MarkerOptionsArray) {
+                markerOptions.icon(BitmapDescriptorFactory.fromBitmap(MarkerIcon));
                 mMap.addMarker(markerOptions);
-                //marker.setVisible(false);
-                //marker.remove(); <-- works too!
             }
-        /*
-        mMap.addMarker(new MarkerOptions()
-                .position(new LatLng(22.997219, 120.202415)).title("赤崁樓"));
-        mMap.addMarker(new MarkerOptions()
-                .position(new LatLng(23.001564, 120.160676)).title("安平古堡"));
-        mMap.addMarker(new MarkerOptions()
-                .position(new LatLng(23.010687, 120.199797)).title("花園夜市"));
-        mMap.addMarker(new MarkerOptions()
-                .position(new LatLng(22.934781, 120.226067)).title("奇美博物館"));
-        */
+            Log.d("3.9_setUpMap","MarkerOption已載入...顯示中");
+        }
     }
 
     @Override
@@ -255,15 +266,17 @@ public class MapsActivity extends FragmentActivity implements
 
         // 設定目前位置的標記
         if (currentMarker == null) {
-            currentMarker = mMap.addMarker(new MarkerOptions()
-                    .position(latLng).title("I am here!"));
+            if (mMap == null) {
+                LoadtoMap();
+            }
+            currentMarker = mMap.addMarker(new MarkerOptions().position(latLng)
+                    .title("I am here!").icon(BitmapDescriptorFactory.fromBitmap(MarkerIcon)));
         } else {
             currentMarker.setPosition(latLng);
         }
 
         // 移動地圖到目前的位置
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 12));
-
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
     }
 
     private void LoadtoMap() {
@@ -306,58 +319,6 @@ public class MapsActivity extends FragmentActivity implements
         mMap.getUiSettings().setCompassEnabled(true);
         mMap.getUiSettings().setZoomControlsEnabled(true);
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-
-        //get Marker Info
-        Integer ResultsLength = Result.getResults().length;
-        for (int i = 0; i < ResultsLength; i++) {
-            String Name = Result.getResults()[i].getStitle();
-            String OpenTime = Result.getResults()[i].getMemoTime();
-            Double Latitude = Double.valueOf(Result.getResults()[i].getLatitude());
-            Double Longitude = Double.valueOf(Result.getResults()[i].getLongitude());
-            LatLng latLng = new LatLng(Latitude,Longitude);
-            MarkerOptions markerOpt = new MarkerOptions();
-            markerOpt.position(latLng).title(Name).snippet(OpenTime).icon(MarkerIcon);
-
-            MarkerOptionsArray.add(markerOpt);
-        }
-
-        Integer InfoLength = Infos.getInfo().length;
-        for (int i = 0; i < InfoLength; i++) {
-            String Name = Infos.getInfo()[i].getName();
-            String OpenTime = Infos.getInfo()[i].getOpentime();
-            Double Latitude = Double.valueOf(Infos.getInfo()[i].getPy());
-            Double Longitude = Double.valueOf(Infos.getInfo()[i].getPx());
-            LatLng latLng = new LatLng(Latitude,Longitude);
-            MarkerOptions markerOpt = new MarkerOptions();
-            markerOpt.position(latLng).title(Name).snippet(OpenTime).icon(MarkerIcon);
-
-            MarkerOptionsArray.add(markerOpt);
-        }
-    }
-
-    // retrieve SpotJson
-    private void Gson(String jsonString) {
-        GsonBuilder gsonBuilder = new GsonBuilder();
-        gsonBuilder.setDateFormat("M/d/yy hh:mm a");
-        Gson gson = gsonBuilder.create();
-        try {
-            if (jsonString.equals(JsonString_TPE)) {
-                TPESpotJson tpespotJson = gson.fromJson(jsonString, TPESpotJson.class);
-                Result = tpespotJson.getResult();
-            }
-        } catch (Exception ex) {
-            Log.e(TAG, "JsonString_TPE: Failed to parse JSON due to: " + ex);
-            Toast.makeText(MapsActivity.this, "TPE_API Failed to load Posts.", Toast.LENGTH_SHORT).show();
-            }
-        try {
-            if (jsonString.equals(JsonString)){
-                SpotJson spotJson = gson.fromJson(jsonString, SpotJson.class);
-                Infos = spotJson.getInfos();
-            }
-        } catch (Exception ex) {
-            Log.e(TAG, "JsonString: Failed to parse JSON due to: " + ex);
-            Toast.makeText(MapsActivity.this, "TW_API Failed to load Posts.", Toast.LENGTH_SHORT).show();
-        }
     }
 
     // Android 系統返回鍵
@@ -369,5 +330,66 @@ public class MapsActivity extends FragmentActivity implements
         return false;
     }
 
+    public class GetMarkerInfo extends AsyncTask<Void, Void, ArrayList<MarkerOptions>> {
+        public static final String TAG = "GetMarkerInfo";
+        Context mcontext;
+        ArrayList<MarkerOptions> MarkerOptionsArray = new ArrayList<MarkerOptions>();
+
+        public GetMarkerInfo(Context context) {
+            this.mcontext = context;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            Log.d("3.9_GetMarkerInfo","MarkerOption載入中...");
+            //Loading Dialog
+            mDialog = new ProgressDialog(MapsActivity.this);
+            mDialog.setMessage("載入中......");
+            mDialog.setCancelable(false);
+            if (!mDialog.isShowing()) {
+                mDialog.show();
+            }
+            super.onPreExecute();
+        }
+
+        @Override
+        protected ArrayList<MarkerOptions> doInBackground(Void... params) {
+            //get Marker Info
+            Cursor spotDataRaw_cursor = database.query("spotDataRaw", new String[]{"spotId", "spotName", "spotAdd",
+                            "spotLat", "spotLng", "picture1", "picture2","picture3",
+                            "openTime", "ticketInfo", "infoDetail"},
+                    null, null, null, null, null);
+            if (spotDataRaw_cursor != null) {
+                while (spotDataRaw_cursor.moveToNext()) {
+                    String Name = spotDataRaw_cursor.getString(1);
+                    Double Latitude = spotDataRaw_cursor.getDouble(3);
+                    Double Longitude = spotDataRaw_cursor.getDouble(4);
+                    LatLng latLng = new LatLng(Latitude,Longitude);
+                    String OpenTime = spotDataRaw_cursor.getString(8);
+                    MarkerOptions markerOpt = new MarkerOptions();
+                    markerOpt.position(latLng).title(Name).snippet(OpenTime);
+
+                    MarkerOptionsArray.add(markerOpt);
+                }
+            }
+            if (spotDataRaw_cursor != null)
+                spotDataRaw_cursor.close();
+            return MarkerOptionsArray;
+        }
+
+        protected void onPostExecute(ArrayList<MarkerOptions> markerOptionsArray) {
+            if (MarkerOptionsArray.isEmpty()) {
+                MarkerOptionsArray = markerOptionsArray;
+            } else {
+                globalVariable.MarkerOptionsArray = markerOptionsArray;
+                for (MarkerOptions markerOptions : globalVariable.MarkerOptionsArray) {
+                    markerOptions.icon(BitmapDescriptorFactory.fromBitmap(MarkerIcon));
+                    mMap.addMarker(markerOptions);
+                }
+            }
+            mDialog.dismiss();
+            super.onPostExecute(markerOptionsArray);
+        }
+    }
 }
 

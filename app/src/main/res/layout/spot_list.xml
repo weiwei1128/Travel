@@ -58,7 +58,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="18dp"
                     android:text="OpenTime"
-                    android:id="@+id/SpotHour"
+                    android:id="@+id/SpotOpenTime"
                     android:textColor="@color/gray"
                     android:textSize="13dp"
                     android:layout_marginLeft="5dp"

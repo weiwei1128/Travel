@@ -2,20 +2,27 @@ package com.travel.ImageSlide;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 
 import com.travel.R;
 
@@ -48,7 +55,8 @@ public class MainImageFragment extends Fragment {
     private Handler handler;
 
     FragmentActivity activity;
-
+    RelativeLayout putProgressLayout;
+    ProgressBar progressBar;
 
 
 
@@ -67,6 +75,16 @@ public class MainImageFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.main_image_frament, container, false);
         findViewById(view);
+        putProgressLayout = (RelativeLayout)view.findViewById(R.id.img_slideshow_layout);
+        progressBar = new ProgressBar(activity.getBaseContext());
+        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT);
+        layoutParams.addRule(RelativeLayout.CENTER_VERTICAL);
+        layoutParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
+        progressBar.setLayoutParams(layoutParams);
+        progressBar.setMinimumHeight(100);
+//        putProgressLayout.addView(progressBar);
+
         mIndicator.setOnPageChangeListener(new PageChangeListener());
         mViewPager.setOnPageChangeListener(new PageChangeListener());
         mViewPager.setOnTouchListener(new OnTouchListener() {
@@ -82,6 +100,7 @@ public class MainImageFragment extends Fragment {
                     case MotionEvent.ACTION_UP:
                         // calls when touch release on ViewPager
                         if (products != null && products.size() != 0) {
+//                            putProgressLayout.removeView(progressBar);
                             stopSliding = false;
                             runnable(products.size());
                             handler.postDelayed(animateViewPager,
@@ -91,7 +110,7 @@ public class MainImageFragment extends Fragment {
 
                     case MotionEvent.ACTION_MOVE:
                         // calls when ViewPager touch
-                        if (handler != null && stopSliding == false) {
+                        if (handler != null && !stopSliding) {
                             stopSliding = true;
                             handler.removeCallbacks(animateViewPager);
                         }
@@ -114,6 +133,7 @@ public class MainImageFragment extends Fragment {
         if (products == null) {
             sendRequest();
         } else {
+//            putProgressLayout.removeView(progressBar);
             mViewPager.setAdapter(new ImageSliderAdapter(activity, products,
                     MainImageFragment.this));
 
@@ -169,8 +189,8 @@ public class MainImageFragment extends Fragment {
         public void onPageScrollStateChanged(int state) {
             if (state == ViewPager.SCROLL_STATE_IDLE) {
                 if (products != null) {
-                    Log.d("LoadImage", "name= " + ((Product) products.get(mViewPager
-                            .getCurrentItem())).getName());
+//                    Log.d("LoadImage", "name= " + ((Product) products.get(mViewPager
+//                            .getCurrentItem())).getName());
                 }
             }
         }
@@ -204,43 +224,62 @@ public class MainImageFragment extends Fragment {
     private class RequestImgTask extends AsyncTask<String, Void, List<Product>> {
         private final WeakReference<Activity> activityWeakRef;
         Throwable error;
+        //0307 wei
+        Context context;
 
         private RequestImgTask(Activity activityWeakRef) {
+            this.context = activityWeakRef.getBaseContext();
             this.activityWeakRef = new WeakReference<Activity>(activityWeakRef);
         }
 
         @Override
         protected List<Product> doInBackground(String... params) {
+            //0307
+            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+            Log.d("3.7", "Image Slide!!!" + sharedPreferences.getInt("count", 0));
+            for(int i=0;i<sharedPreferences.getInt("count", 0);i++){
+                Log.d("3.7", "!!!" + sharedPreferences.getString("img"+ i, ""));
+                String imgUrl=sharedPreferences.getString("img"+ i, "");
+                if(!imgUrl.equals("")) {
+                    product = new Product();
+                    product.setId(434);
+                    product.setName("Pattern - Fractal Wallpaper");
+                    product.setImageUrl(imgUrl);
+                    productsAdd.add(product);
+                }
+            }
+/*
             product = new Product();
             product.setId(434);
             product.setName("Pattern - Fractal Wallpaper");
-            product.setImageUrl("http://images5.alphacoders.com/350/350374.jpg");
+            product.setImageUrl("http://www.hchcc.gov.tw/ch/temp/flower2014/images/index_F_01.jpg");
             productsAdd.add(product);
+
 
             product = new Product();
             product.setId(431);
             product.setName("Mickey Mouse");
-            product.setImageUrl("http://www.iconsdb.com/icons/download/icon-sets/sketchy-pink/mickey-mouse-20-512.png");
+            product.setImageUrl("http://www.hchcc.gov.tw/ch/temp/flower2014/images/index_F_01.jpg");
             productsAdd.add(product);
 
             product = new Product();
             product.setId(424);
             product.setName("Pattern - Wallpaper");
-            product.setImageUrl("http://images7.alphacoders.com/421/421423.jpg");
+            product.setImageUrl("http://www.hchcc.gov.tw/ch/temp/flower2014/images/index_F_01.jpg");
             productsAdd.add(product);
 
             product = new Product();
             product.setId(426);
             product.setName("Batman");
-            product.setImageUrl("http://www.iconsdb.com/icons/download/icon-sets/sketchy-pink/batman-6-512.png");
+            product.setImageUrl("http://www.hchcc.gov.tw/ch/temp/flower2014/images/index_F_01.jpg");
             productsAdd.add(product);
 
             product = new Product();
             product.setId(419);
             product.setName("Pattern - Music");
-            product.setImageUrl("http://images3.alphacoders.com/169/169085.jpg");
+            product.setImageUrl("http://www.hchcc.gov.tw/ch/temp/flower2014/images/index_F_01.jpg");
             productsAdd.add(product);
-
+            */
             return productsAdd;
         }
 
@@ -255,6 +294,7 @@ public class MainImageFragment extends Fragment {
                     products = results;
                     if(results!=null){
                         if(products!=null && products.size()!=0){
+//                            putProgressLayout.removeView(progressBar);
                             mViewPager.setAdapter(new ImageSliderAdapter(activity,
                                     products,MainImageFragment.this));
                             mIndicator.setViewPager(mViewPager);

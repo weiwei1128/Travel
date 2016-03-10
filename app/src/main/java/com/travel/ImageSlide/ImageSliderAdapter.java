@@ -4,10 +4,12 @@ import android.app.Activity;
 import android.graphics.Bitmap;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.PagerAdapter;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 
 import com.travel.R;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -35,8 +37,8 @@ public class ImageSliderAdapter extends PagerAdapter{
     // HomeFragment=MainImageFragment
     MainImageFragment fragment;
 
-    public ImageSliderAdapter(FragmentActivity fragment_Activity,List<Product> I_products,
-                              MainImageFragment main_fragment){
+    public ImageSliderAdapter(final FragmentActivity fragment_Activity,List<Product> I_products,
+                              final MainImageFragment main_fragment){
         this.fragmentActivity = fragment_Activity;
         this.products = I_products;
         this.fragment = main_fragment;
@@ -44,27 +46,23 @@ public class ImageSliderAdapter extends PagerAdapter{
         options = new DisplayImageOptions.Builder()
                 .showImageOnFail(R.drawable.error)
                 .showImageForEmptyUri(R.drawable.empty)
-                .cacheInMemory()
+                .cacheInMemory().cacheOnDisk(true).showImageOnLoading(R.drawable.loading)
                 .cacheOnDisc().build();
         listener = new ImageLoadingListener() {
             @Override
             public void onLoadingStarted(String s, View view) {
-
             }
 
             @Override
             public void onLoadingFailed(String s, View view, FailReason failReason) {
-
             }
 
             @Override
             public void onLoadingComplete(String s, View view, Bitmap bitmap) {
-
             }
 
             @Override
             public void onLoadingCancelled(String s, View view) {
-
             }
         };
     }
@@ -99,7 +97,7 @@ public class ImageSliderAdapter extends PagerAdapter{
 //            }
 //        });
         ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(
-                fragmentActivity.getBaseContext())
+                fragmentActivity.getBaseContext()).denyCacheImageMultipleSizesInMemory()
         .build();
         ImageLoader.getInstance().init(config);
         imageLoader.displayImage(((Product)products.get(position)).getImageUrl()
