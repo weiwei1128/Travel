@@ -14,7 +14,9 @@ import java.util.List;
 /**
  * Created by wei on 2016/3/10.
  */
-public class SpecialFragmentViewPagerAdapter extends PagerAdapter {
+public class SpecialFragmentViewPagerAdapter
+        extends PagerAdapter
+{
     List<Fragment> fragments;
     FragmentManager fragmentManager;
     ViewPager viewPager;

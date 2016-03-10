@@ -105,7 +105,8 @@
             android:name=".MemberActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".ServiceActivity" />
-        <activity android:name=".SpecialActivity" />
+        <activity android:name=".SpecialActivity"
+            android:hardwareAccelerated="true"/>
 
         <service android:name=".Utility.TimeCountService" />
         <service android:name=".LocationService" />

@@ -720,8 +720,8 @@ public class LoginActivity extends AppCompatActivity {
                         finish();
                     }
                 },
-                        0
-//                        2500
+//                        0
+                        1500
                 );
 
 
