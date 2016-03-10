@@ -3,6 +3,7 @@ package com.travel;
 import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -10,7 +11,6 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
 import android.location.LocationManager;
@@ -42,7 +42,6 @@ import com.travel.Utility.DataBaseHelper;
 import com.travel.Utility.Functions;
 import com.travel.Utility.GetSpotsNSort;
 import com.travel.Utility.TWSpotAPIFetcher;
-import com.travel.Utility.TimeCountService;
 
 import java.util.ArrayList;
 
@@ -68,10 +67,6 @@ public class MapsActivity extends FragmentActivity implements
 
     private ProgressDialog mDialog = null;
 
-    private Double Latitude;
-    private Double Longitude;
-    private LatLng latLng;
-
     //3.10
     final int REQUEST_LOCATION = 2;
 
@@ -82,28 +77,6 @@ public class MapsActivity extends FragmentActivity implements
         globalVariable = (GlobalVariable) getApplicationContext();
 
         registerReceiver(broadcastReceiver, new IntentFilter(TWSpotAPIFetcher.BROADCAST_ACTION));
-
-        if (!globalVariable.isAPILoaded) {
-            Log.e("3/10_", "API is not ready");
-            mDialog = new ProgressDialog(MapsActivity.this);
-            mDialog.setMessage("景點資料載入中...");
-            mDialog.setCancelable(false);
-            mDialog.show();
-        } else {
-            if (globalVariable.MarkerOptionsArray.isEmpty()) {
-                Log.e("3/10_", "Marker is not ready");
-                mDialog = new ProgressDialog(MapsActivity.this);
-                mDialog.setMessage("景點資料載入中...");
-                mDialog.setCancelable(false);
-                mDialog.show();
-                // Get Marker Info
-                new GetMarkerInfo(MapsActivity.this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-                if (currentLocation != null) {
-                    new GetSpotsNSort(MapsActivity.this, currentLocation.getLatitude(),
-                            currentLocation.getLongitude()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-                }
-            }
-        }
 
         BitmapDrawable BitmapDraw = (BitmapDrawable)getResources().getDrawable(R.drawable.location);
         MarkerIcon = Bitmap.createScaledBitmap(BitmapDraw.getBitmap(), 60, 90, false);
@@ -137,6 +110,31 @@ public class MapsActivity extends FragmentActivity implements
             }
         });
         setUpMapIfNeeded();
+
+        if (!globalVariable.isAPILoaded) {
+            Log.e("3/10_", "API is not ready");
+            mDialog = new ProgressDialog(MapsActivity.this);
+            mDialog.setMessage("景點資料載入中...");
+            mDialog.setCancelable(false);
+            mDialog.show();
+        } else {
+            if (globalVariable.MarkerOptionsArray.isEmpty()) {
+                Log.e("3/10_", "Marker is not ready");
+                mDialog = new ProgressDialog(MapsActivity.this);
+                mDialog.setMessage("景點資料載入中...");
+                mDialog.setCancelable(false);
+                mDialog.show();
+                // Get Marker Info
+                new GetMarkerInfo(MapsActivity.this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                if (currentLocation != null) {
+                    Log.e("3/10_讀到位置", "事先Sort");
+                    if (globalVariable.SpotDataSorted.isEmpty()) {
+                        new GetSpotsNSort(MapsActivity.this, currentLocation.getLatitude(),
+                                currentLocation.getLongitude()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                    }
+                }
+            }
+        }
     }
 
     @Override
@@ -213,7 +211,7 @@ public class MapsActivity extends FragmentActivity implements
                 markerOptions.icon(BitmapDescriptorFactory.fromBitmap(MarkerIcon));
                 mMap.addMarker(markerOptions);
             }
-            Log.d("3.9_setUpMap","MarkerOption已載入...顯示中");
+            Log.d("3/10_setUpMap","MarkerOption已載入...顯示中");
         }
     }
 
@@ -238,6 +236,11 @@ public class MapsActivity extends FragmentActivity implements
                         (mGoogleApiClient, mLocationRequest, MapsActivity.this);
             } else {
                 handleNewLocation(location);
+                if (globalVariable.SpotDataSorted.isEmpty()) {
+                    Log.e("3/10_MapsActivity", "事先Sort");
+                    new GetSpotsNSort(MapsActivity.this, currentLocation.getLatitude(),
+                            currentLocation.getLongitude()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                }
             }
         }
     }
@@ -286,6 +289,28 @@ public class MapsActivity extends FragmentActivity implements
 
         // 移動地圖到目前的位置
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
+
+        DataBaseHelper helper = new DataBaseHelper(MapsActivity.this);
+        SQLiteDatabase database = helper.getWritableDatabase();
+        Cursor location_cursor = database.query("location",
+                new String[]{"CurrentLat", "CurrentLng"}, null, null, null, null, null);
+        if (location_cursor != null) {
+            if (location_cursor.getCount() == 0) {
+                ContentValues cv = new ContentValues();
+                cv.put("CurrentLat", location.getLatitude());
+                cv.put("CurrentLng", location.getLongitude());
+                long result = database.insert("location", null, cv);
+                Log.d("3/10_新增位置", result + " = DB INSERT " + location.getLatitude() + " " + location.getLongitude());
+
+            } else {
+                ContentValues cv = new ContentValues();
+                cv.put("CurrentLat", location.getLatitude());
+                cv.put("CurrentLng", location.getLongitude());
+                long result = database.update("location", cv, "_ID=1", null);
+                Log.d("3/10_位置更新", result + " = DB INSERT " + location.getLatitude() + " " + location.getLongitude());
+            }
+            location_cursor.close();
+        }
     }
 
     private void LoadtoMap() {

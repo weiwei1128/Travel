@@ -36,7 +36,7 @@ public class TrackRouteService extends Service {
 
     @Override
     public void onCreate() {
-        Log.d("3.9_", "TrackRouteService: onCreate");
+        Log.d("3/10_", "TrackRouteService: onCreate");
         Log.i(TAG, "onCreate");
 
         globalVariable = (GlobalVariable)getApplicationContext();
@@ -90,13 +90,13 @@ public class TrackRouteService extends Service {
 
             final Double Latitude = mLastLocation.getLatitude();
             final Double Longitude = mLastLocation.getLongitude();
-            Log.d("3.9_", "Latitude " + Latitude);
-            Log.d("3.9_", "Longitude " + Longitude);
+            Log.d("3/10_", "Latitude " + Latitude);
+            Log.d("3/10_", "Longitude " + Longitude);
 
             // 加上軌跡
             if (record_start_boolean) {
                 TraceOfRoute(Latitude, Longitude);
-                Log.d("3.9_", "TraceOfRoute");
+                Log.d("3/10_", "TraceOfRoute");
             }
 
         }
@@ -129,7 +129,7 @@ public class TrackRouteService extends Service {
 
     @Override
     public void onDestroy() {
-        Log.d("3.9_", "TrackRouteService: onDestroy");
+        Log.d("3/10_", "TrackRouteService: onDestroy");
         Log.i(TAG, "onDestroy");
         super.onDestroy();
         if (mLocationManager != null) {
@@ -169,7 +169,7 @@ public class TrackRouteService extends Service {
                 cv.put("track_start", 0);
             }
             long result = database.insert("trackRoute", null, cv);
-            Log.d("3.9_軌跡紀錄", result + " = DB INSERT RC:" + RoutesCounter
+            Log.d("3/10_軌跡紀錄", result + " = DB INSERT RC:" + RoutesCounter
                     + " no:" + Track_no + " 座標 " + Latitude + "," + Longitude);
             trackRoute_cursor.close();
         }

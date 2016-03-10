@@ -324,6 +324,7 @@ public class RecordActivity extends FragmentActivity implements
         //----2.4 WEI----//
         //For doing Update count UI
         registerReceiver(broadcastReceiver, new IntentFilter(TimeCountService.BROADCAST_ACTION));
+        registerReceiver(broadcastReceiver, new IntentFilter(TrackRouteService.BROADCAST_ACTION));
         //----2.4 WEI----//
 
         BitmapDrawable BitmapDraw = (BitmapDrawable)getResources().getDrawable(R.drawable.location);
@@ -495,7 +496,6 @@ public class RecordActivity extends FragmentActivity implements
         }
     };
 
-
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -512,11 +512,12 @@ public class RecordActivity extends FragmentActivity implements
                     record_start_img.setImageResource(R.drawable.selected_pause);
                     record_start_boolean = true;
                     time_text.setVisibility(View.VISIBLE);
+                    record_completeImg.setVisibility(View.VISIBLE);
                     //UI update
                     if (((spent / 1000) / 60) > 0)
-                        time_text.setText("經過時間：" + ((spent / 1000) / 60) + "分" + ((spent / 1000) % 60) + "秒");
+                        time_text.setText(((spent / 1000) / 60) + ":" + ((spent / 1000) % 60));
                     else
-                        time_text.setText("經過時間：" + ((spent / 1000) % 60) + "秒");
+                        time_text.setText("00:" + ((spent / 1000) % 60));
                 }
                 Log.d("2/4", "fromBroadcast" + intent.getLongExtra("spent", 99));
 
@@ -796,7 +797,7 @@ public class RecordActivity extends FragmentActivity implements
         Polyline line = mMap.addPolyline(polylineOpt);
         line.setWidth(10);
 
-        Log.d("3.9_畫出軌跡", "DisplayRoute" + track_latlng.toString());
+        Log.d("3/10_畫出軌跡", "DisplayRoute" + track_latlng.toString());
         /* //ArrayList寫法
         for (LatLng latlng : track_latlng) {
             polylineOpt.add(track_latlng);

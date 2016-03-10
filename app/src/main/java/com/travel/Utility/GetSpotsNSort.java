@@ -27,6 +27,7 @@ public class GetSpotsNSort extends AsyncTask<Void, Void, ArrayList<SpotData>> {
     private Double Longitude;
 
     Context mcontext;
+
     public static final String BROADCAST_ACTION = "com.example.spotsort.status";
 
     public GetSpotsNSort(Context context, Double lat, Double lng) {
@@ -45,7 +46,6 @@ public class GetSpotsNSort extends AsyncTask<Void, Void, ArrayList<SpotData>> {
     protected ArrayList<SpotData> doInBackground(Void... param) {
         Log.e("3/10_", "=========GetSpotsNSort======doInBackground");
         ArrayList<SpotData> mSpotData = new ArrayList<SpotData>();
-        mSpotData = null;
         if (globalVariable.isAPILoaded) {
             Integer SpotCount = globalVariable.SpotDataRaw.size();
             for (int i = 0; i < SpotCount; i++) {
@@ -61,7 +61,7 @@ public class GetSpotsNSort extends AsyncTask<Void, Void, ArrayList<SpotData>> {
                 String TicketInfo = globalVariable.SpotDataRaw.get(i).getTicketInfo();
                 String InfoDetail = globalVariable.SpotDataRaw.get(i).getInfoDetail();
                 mSpotData.add(new SpotData(Id, Name, Latitude, Longitude, Add,
-                        Picture1, Picture2, Picture3, OpenTime,TicketInfo, InfoDetail));
+                        Picture1, Picture2, Picture3, OpenTime, TicketInfo, InfoDetail));
             }
         } else {
             // retrieve Spots from DB
@@ -105,7 +105,7 @@ public class GetSpotsNSort extends AsyncTask<Void, Void, ArrayList<SpotData>> {
         globalVariable.SpotDataSorted = mSpotData;
         if (!globalVariable.SpotDataSorted.isEmpty()) {
             Intent intent = new Intent(BROADCAST_ACTION);
-            intent.putExtra("isAPILoaded", true);
+            intent.putExtra("isSpoted", true);
             mcontext.sendBroadcast(intent);
         }
 

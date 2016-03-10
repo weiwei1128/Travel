@@ -36,7 +36,7 @@
             android:layout_gravity="center|right"
             android:textSize="14dp"
             android:textColor="@color/white"
-            android:layout_marginRight="65dp" />
+            android:layout_marginRight="60dp" />
 
         <ImageView
             android:layout_width="40dp"
