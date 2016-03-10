@@ -9,6 +9,8 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.travel.GlobalVariable;
+import com.travel.SpotData;
 import com.travel.TPESpotJson;
 
 import org.apache.http.HttpEntity;
@@ -31,9 +33,11 @@ public class TPESpotAPIFetcher extends AsyncTask<Void, Void, TPESpotJson> {
     public static TPESpotJson.PostResult Result;
 
     Context mcontext;
+    GlobalVariable globalVariable;
 
     public TPESpotAPIFetcher(Context context) {
         this.mcontext = context;
+        globalVariable = (GlobalVariable) mcontext.getApplicationContext();
     }
 
     @Override
@@ -43,7 +47,7 @@ public class TPESpotAPIFetcher extends AsyncTask<Void, Void, TPESpotJson> {
 
     @Override
     protected TPESpotJson doInBackground(Void... params) {
-        Log.e("3.9_", "=========TPESpotJson======doInBackground");
+        Log.e("3/10_", "=========TPESpotJson======doInBackground");
         String JsonString = "";
         try {
             //Create an HTTP client
@@ -82,10 +86,8 @@ public class TPESpotAPIFetcher extends AsyncTask<Void, Void, TPESpotJson> {
         } catch (Exception ex) {
             Log.e(TAG, "JsonString: Failed to parse JSON due to: " + ex);
         }
-        return spotJson;
-    }
 
-    protected void onPostExecute(TPESpotJson spotJson) {
+        Log.e("3/10_", "=========TPESpotJson======Write to DB");
         Result = spotJson.getResult();
         DataBaseHelper helper = new DataBaseHelper(mcontext);
         SQLiteDatabase database = helper.getWritableDatabase();
@@ -96,9 +98,9 @@ public class TPESpotAPIFetcher extends AsyncTask<Void, Void, TPESpotJson> {
         Integer ResultsLength = Result.getResults().length;
         if (spotDataRaw_cursor != null && ResultsLength > 0) {
             if (spotDataRaw_cursor.getCount() == 0) {
-                for (int i = 0; i < ResultsLength; i++) {
+                for (Integer i = 0; i < ResultsLength; i++) {
                     ContentValues cv = new ContentValues();
-                    cv.put("spotId", i);
+                    cv.put("spotId", i.toString());
                     cv.put("spotName", Result.getResults()[i].getStitle());
                     cv.put("spotAdd", Result.getResults()[i].getAddress());
                     cv.put("spotLat", Double.valueOf(Result.getResults()[i].getLatitude()));
@@ -108,27 +110,39 @@ public class TPESpotAPIFetcher extends AsyncTask<Void, Void, TPESpotJson> {
                     int StringPosition1 = ImgString.indexOf("http", 2);
                     int StringPosition2 = ImgString.indexOf("http", StringPosition1+1);
                     int StringPosition3 = ImgString.indexOf("http", StringPosition2+1);
+
+                    String ImgString1 = Result.getResults()[i].getFile();
+                    String ImgString2 = "";
+                    String ImgString3 = "";
                     if (StringPosition1 > 0) {
-                        String ImgString1 = ImgString.substring(0, StringPosition1);
-                        cv.put("picture1", ImgString1);
+                        ImgString1 = ImgString.substring(0, StringPosition1);
                         if (StringPosition2 > 0 && StringPosition2 > StringPosition1) {
-                            String ImgString2 = ImgString.substring(StringPosition1, StringPosition2);
-                            cv.put("picture2", ImgString2);
+                            ImgString2 = ImgString.substring(StringPosition1, StringPosition2);
                             if (StringPosition3 > 0 && StringPosition3 > StringPosition2) {
-                                String ImgString3 = ImgString.substring(StringPosition2, StringPosition3);
-                                cv.put("picture3", ImgString3);
+                                ImgString3 = ImgString.substring(StringPosition2, StringPosition3);
                             }
                         }
-                    }
 
+                    }
+                    cv.put("picture1", ImgString1);
+                    cv.put("picture2", ImgString2);
+                    cv.put("picture3", ImgString3);
                     cv.put("openTime", Result.getResults()[i].getMemoTime());
                     cv.put("ticketInfo", "");
                     cv.put("infoDetail", Result.getResults()[i].getXbody());
                     long result = database.insert("spotDataRaw", null, cv);
+                    globalVariable.SpotDataRaw.add(new SpotData(i.toString(),
+                            Result.getResults()[i].getStitle(),
+                            Double.valueOf(Result.getResults()[i].getLatitude()),
+                            Double.valueOf(Result.getResults()[i].getLongitude()),
+                            Result.getResults()[i].getAddress(),
+                            ImgString1, ImgString2, ImgString3,
+                            Result.getResults()[i].getMemoTime(), "",
+                            Result.getResults()[i].getXbody()));
                     //Log.d("3/8_沒有重複資料", result + " = DB INSERT " + i + " spotName " + Result.getResults()[i].getStitle());
                 }
             } else {
-                for (int i = 0; i < ResultsLength; i++) {
+                for (Integer i = 0; i < ResultsLength; i++) {
                     Cursor spotDataRaw_dul = database.query(true, "spotDataRaw", new String[]{"spotId", "spotName", "spotAdd",
                                     "spotLat", "spotLng", "picture1", "picture2","picture3",
                                     "openTime", "ticketInfo", "infoDetail"},
@@ -138,7 +152,7 @@ public class TPESpotAPIFetcher extends AsyncTask<Void, Void, TPESpotJson> {
                         Log.e("3/8", "有重複的資料!" + i + "title: " + spotDataRaw_dul.getString(1));
                     } else {
                         ContentValues cv = new ContentValues();
-                        cv.put("spotId", i);
+                        cv.put("spotId", i.toString());
                         cv.put("spotName", Result.getResults()[i].getStitle());
                         cv.put("spotAdd", Result.getResults()[i].getAddress());
                         cv.put("spotLat", Double.valueOf(Result.getResults()[i].getLatitude()));
@@ -147,34 +161,51 @@ public class TPESpotAPIFetcher extends AsyncTask<Void, Void, TPESpotJson> {
                         String ImgString = Result.getResults()[i].getFile();
                         int StringPosition1 = ImgString.indexOf("http", 2);
                         int StringPosition2 = ImgString.indexOf("http", StringPosition1+1);
-                        int StringPosition3 = ImgString.indexOf("http", StringPosition2+1);
+                        int StringPosition3 = ImgString.indexOf("http", StringPosition2 + 1);
+
+                        String ImgString1 = Result.getResults()[i].getFile();
+                        String ImgString2 = "";
+                        String ImgString3 = "";
                         if (StringPosition1 > 0) {
-                            String ImgString1 = ImgString.substring(0, StringPosition1);
-                            cv.put("picture1", ImgString1);
+                            ImgString1 = ImgString.substring(0, StringPosition1);
                             if (StringPosition2 > 0 && StringPosition2 > StringPosition1) {
-                                String ImgString2 = ImgString.substring(StringPosition1, StringPosition2);
-                                cv.put("picture2", ImgString2);
+                                ImgString2 = ImgString.substring(StringPosition1, StringPosition2);
                                 if (StringPosition3 > 0 && StringPosition3 > StringPosition2) {
-                                    String ImgString3 = ImgString.substring(StringPosition2, StringPosition3);
-                                    cv.put("picture3", ImgString3);
+                                    ImgString3 = ImgString.substring(StringPosition2, StringPosition3);
                                 }
                             }
-                        }
 
+                        }
+                        cv.put("picture1", ImgString1);
+                        cv.put("picture2", ImgString2);
+                        cv.put("picture3", ImgString3);
                         cv.put("openTime", Result.getResults()[i].getMemoTime());
                         cv.put("ticketInfo", "");
                         cv.put("infoDetail", Result.getResults()[i].getXbody());
                         long result = database.insert("spotDataRaw", null, cv);
+                        globalVariable.SpotDataRaw.add(new SpotData(i.toString(),
+                                Result.getResults()[i].getStitle(),
+                                Double.valueOf(Result.getResults()[i].getLatitude()),
+                                Double.valueOf(Result.getResults()[i].getLongitude()),
+                                Result.getResults()[i].getAddress(),
+                                ImgString1, ImgString2, ImgString3,
+                                Result.getResults()[i].getMemoTime(), "",
+                                Result.getResults()[i].getXbody()));
                         //Log.d("3/8_新增過資料", result + " = DB INSERT " + i + "spotName " + Result.getResults()[i].getStitle());
                     }
                     if(spotDataRaw_dul!=null)
                         spotDataRaw_dul.close();
                 }
             }
-        }
-        if (spotDataRaw_cursor != null)
             spotDataRaw_cursor.close();
-        Log.e("3.9_TPESpotAPIFetcher", "DONE");
+        }
+        return spotJson;
+    }
+
+    protected void onPostExecute(TPESpotJson spotJson) {
+        if (spotJson != null) {
+            Log.e("3/10_TPESpotAPIFetcher", "DONE");
+        }
         super.onPostExecute(spotJson);
     }
 }

@@ -13,13 +13,9 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
 
-import com.google.android.gms.maps.model.LatLng;
 import com.travel.GlobalVariable;
 
-import java.util.ArrayList;
-
 public class TrackRouteService extends Service {
-
     public TrackRouteService() {
     }
 
@@ -34,9 +30,6 @@ public class TrackRouteService extends Service {
 
     public static final String BROADCAST_ACTION = "com.example.trackroute.status";
 
-    private Boolean isLocationChanged = false;
-
-    private ArrayList<LatLng> TraceRoute;
     private Boolean record_start_boolean;
     private Integer RoutesCounter;
     private Integer Track_no;
@@ -72,13 +65,12 @@ public class TrackRouteService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.d("3.9_", "TrackRouteService: onStartCommand");
+        Log.d("3/10_", "TrackRouteService: onStartCommand");
         if (intent != null) {
-            record_start_boolean = intent.getBooleanExtra("isStart", false);
             RoutesCounter = intent.getIntExtra("routesCounter", 1);
             Track_no = intent.getIntExtra("track_no", 1);
-            Log.d("3.9_", "isStart: " + record_start_boolean);
         }
+        record_start_boolean = true;
         super.onStartCommand(intent, flags, startId);
         return START_STICKY;
     }
@@ -125,14 +117,13 @@ public class TrackRouteService extends Service {
         }
     }
 
-    LocationListener[] mLocationListeners = new LocationListener[] {
+    LocationListener[] mLocationListeners = new LocationListener[]{
             new LocationListener(LocationManager.GPS_PROVIDER),
             new LocationListener(LocationManager.NETWORK_PROVIDER)
     };
 
     @Override
-    public IBinder onBind(Intent arg0)
-    {
+    public IBinder onBind(Intent arg0) {
         return null;
     }
 
@@ -159,7 +150,7 @@ public class TrackRouteService extends Service {
         }
     }
 
-    // 紀錄軌跡
+    // 紀錄軌跡到DB
     private void TraceOfRoute(Double Latitude, Double Longitude) {
         DataBaseHelper helper = new DataBaseHelper(getApplicationContext());
         SQLiteDatabase database = helper.getWritableDatabase();

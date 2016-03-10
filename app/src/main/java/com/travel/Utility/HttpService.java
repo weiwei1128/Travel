@@ -12,6 +12,9 @@ import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import com.travel.GlobalVariable;
+import com.travel.SpotData;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
@@ -36,6 +39,7 @@ import java.util.Map;
  */
 public class HttpService extends Service {
     Context context;
+    GlobalVariable globalVariable;
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -57,12 +61,55 @@ public class HttpService extends Service {
         new News().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         new Special().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
+        DataBaseHelper helper = new DataBaseHelper(getBaseContext());
+        SQLiteDatabase database = helper.getWritableDatabase();
+        Cursor spotDataRaw_cursor = database.query("spotDataRaw", new String[]{"spotId", "spotName", "spotAdd",
+                        "spotLat", "spotLng", "picture1", "picture2", "picture3",
+                        "openTime", "ticketInfo", "infoDetail"},
+                null, null, null, null, null);
+        if (spotDataRaw_cursor != null) {
+            if (spotDataRaw_cursor.getCount() == 0) {
+                // 到景點API抓景點資訊
+                Log.e("3/10_", "Download API");
+                new TWSpotAPIFetcher(context).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                new TPESpotAPIFetcher(context).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                // TODO TW API放著在背景執行去動UI，結果好像就不了了之，沒有載入成功 哪招QAQ
+                //new GetSpotsNSort(LoginActivity.this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            } else {
+                Log.e("3/10_", "API load to GlobalVariable");
+                while (spotDataRaw_cursor.moveToNext()) {
+                    String Id = spotDataRaw_cursor.getString(0);
+                    String Name = spotDataRaw_cursor.getString(1);
+                    String Add = spotDataRaw_cursor.getString(2);
+                    Double Latitude = spotDataRaw_cursor.getDouble(3);
+                    Double Longitude = spotDataRaw_cursor.getDouble(4);
+                    String Picture1 = spotDataRaw_cursor.getString(5);
+                    String Picture2 = spotDataRaw_cursor.getString(6);
+                    String Picture3 = spotDataRaw_cursor.getString(7);
+                    String OpenTime = spotDataRaw_cursor.getString(8);
+                    String TicketInfo = spotDataRaw_cursor.getString(9);
+                    String InfoDetail = spotDataRaw_cursor.getString(10);
+                    globalVariable.SpotDataRaw.add(new SpotData(Id, Name, Latitude, Longitude, Add,
+                            Picture1, Picture2, Picture3, OpenTime,TicketInfo, InfoDetail));
+                }
+                globalVariable.isAPILoaded = true;
+                if (globalVariable.isAPILoaded) {
+                    Log.e("3/10_", "API is Loaded Broadcast");
+                    Intent APILoaded = new Intent(TWSpotAPIFetcher.BROADCAST_ACTION);
+                    APILoaded.putExtra("isAPILoaded", true);
+                    sendBroadcast(APILoaded);
+                }
+            }
+            spotDataRaw_cursor.close();
+        }
+
         return 1;
     }
 
     @Override
     public void onCreate() {
         context = this.getBaseContext();
+        globalVariable = (GlobalVariable) context.getApplicationContext();
         super.onCreate();
     }
 
