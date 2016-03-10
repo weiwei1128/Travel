@@ -334,13 +334,16 @@ public class HttpService extends Service {
 //                Log.e("3.10","special_activity item size:"+jsonObjects.length);
                 DataBaseHelper helper = new DataBaseHelper(context);
                 SQLiteDatabase database = helper.getWritableDatabase();
-                Cursor special = database.query("special_activity", new String[]{"id", "title", "img", "content", "price", "click"},
+//                database.beginTransaction();
+                Cursor special = database.query("special_activity", new String[]{"special_id", "title", "img", "content", "price", "click"},
                         null, null, null, null, null);
                 if (special != null && jsonObjects != null) {
+
+
                     if (special.getCount() == 0) //如果還沒新增過資料->直接新增!
                         for (int i = 0; i < jsonObjects.length; i++) {
                             ContentValues cv = new ContentValues();
-                            cv.put("id", jsonObjects[i][0]);
+                            cv.put("special_id", jsonObjects[i][0]);
                             cv.put("title", jsonObjects[i][1]);
                             cv.put("img", jsonObjects[i][2]);
                             cv.put("content", jsonObjects[i][3]);
@@ -351,9 +354,9 @@ public class HttpService extends Service {
                         }
                     else { //資料庫已經有資料了!
                         for (int i = 0; i < jsonObjects.length; i++) {
-                            Cursor special_dul = database.query(true, "special_activity", new String[]{"id",
+                            Cursor special_dul = database.query(true, "special_activity", new String[]{"special_id",
                                             "title", "img", "content", "price", "click"},
-                                    "id=" + jsonObjects[i][0], null, null, null, null, null);
+                                    "special_id=" + jsonObjects[i][0], null, null, null, null, null);
                             if (special_dul != null && special_dul.getCount() > 0) {
                                 //有重複的資料
                                 special_dul.moveToFirst();
@@ -374,13 +377,13 @@ public class HttpService extends Service {
                                         !special_dul.getString(3).equals(jsonObjects[i][3]) ||
                                         !special_dul.getString(4).equals(jsonObjects[i][4]) ||
                                         !special_dul.getString(5).equals(jsonObjects[i][5])) {
-                                    long result = database.update("special_activity", cv, "id=?", new String[]{jsonObjects[i][0]});
+                                    long result = database.update("special_activity", cv, "special_id=?", new String[]{jsonObjects[i][0]});
                                     Log.e("3.10", "special_activity updated: " + result + " title: " + jsonObjects[i][1]);
                                 }
                             } else {
                                 //資料庫存在 但資料不存在
                                 ContentValues cv = new ContentValues();
-                                cv.put("id", jsonObjects[i][0]);
+                                cv.put("special_id", jsonObjects[i][0]);
                                 cv.put("title", jsonObjects[i][1]);
                                 cv.put("img", jsonObjects[i][2]);
                                 cv.put("content", jsonObjects[i][3]);
@@ -396,6 +399,8 @@ public class HttpService extends Service {
                     }
                     special.close();
                 }
+//                database.endTransaction();
+                database.close();
             }
 
             super.onPostExecute(s);

@@ -102,7 +102,7 @@ public class LoginActivity extends AppCompatActivity {
             startService(new Intent(LoginActivity.this, LocationService.class));
 
             globalVariable = (GlobalVariable) getApplicationContext();
-            DataBaseHelper helper = new DataBaseHelper(getApplicationContext());
+            DataBaseHelper helper = new DataBaseHelper(getBaseContext());
             SQLiteDatabase database = helper.getWritableDatabase();
             Cursor spotDataRaw_cursor = database.query("spotDataRaw", new String[]{"spotId", "spotName", "spotAdd",
                             "spotLat", "spotLng", "picture1", "picture2", "picture3",
@@ -161,11 +161,11 @@ public class LoginActivity extends AppCompatActivity {
                 spotDataRaw_cursor.close();
             }
 
-            Intent intent = new Intent(LoginActivity.this, HttpService.class);
-            startService(intent);
+
         }
         //3.5 Hua
-
+        Intent intent = new Intent(LoginActivity.this, HttpService.class);
+        startService(intent);
         //Intent intent = new Intent(LoginActivity.this, HttpService.class);
         //startService(intent);
         /////////// 檢查登入狀態

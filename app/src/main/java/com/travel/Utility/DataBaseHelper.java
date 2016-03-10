@@ -12,8 +12,8 @@ import android.database.sqlite.SQLiteOpenHelper;
  */
 public class DataBaseHelper extends SQLiteOpenHelper {
     private static DataBaseHelper mInstance = null;
-    private static final int VERSION = 5;
-    private static final String DATABASE_NAME = "MyTravel.db";
+    private static final int VERSION = 1;
+    private static final String DATABASE_NAME = "Travel2.db";
     private Context mcontext;
 
     public DataBaseHelper(Context context){
@@ -116,7 +116,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
         //即時好康
         String DATABASE_CREATE_TABLE_SPECIAL = "create table special_activity("
-                +"_ID INTEGER PRIMARY KEY,"+"id TEXT,"
+                +"_ID INTEGER PRIMARY KEY,"+"special_id TEXT,"
                 +"title TEXT,"
                 +"img TEXT,"
                 +"content TEXT,"

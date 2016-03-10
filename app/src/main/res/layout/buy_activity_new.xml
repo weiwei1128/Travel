@@ -54,8 +54,8 @@
 
     <android.support.v4.view.ViewPager
         android:id="@+id/buy_viewpager"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
         android:layout_below="@+id/buy_textlayout">
 
     </android.support.v4.view.ViewPager>

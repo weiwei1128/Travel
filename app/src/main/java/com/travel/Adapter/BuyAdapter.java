@@ -47,6 +47,7 @@ public class BuyAdapter extends BaseAdapter {
 
         options = new DisplayImageOptions.Builder()
                 .showImageOnFail(R.drawable.error)
+                .showImageOnLoading(R.drawable.loading)
                 .showImageForEmptyUri(R.drawable.empty)
                 .cacheInMemory()
                 .cacheOnDisc().build();
@@ -80,10 +81,16 @@ public class BuyAdapter extends BaseAdapter {
         Cursor goods_cursor = database.query("goods", new String[]{"totalCount", "goods_id", "goods_title",
                 "goods_url","goods_money", "goods_content","goods_click", "goods_addtime"}, null, null, null, null, null);
         if (goods_cursor != null) {
-            Log.d("2.24", "getCount:" + goods_cursor.getCount());
+            Log.d("2.24", pageNO+"getCount:" + goods_cursor.getCount());
             number = goods_cursor.getCount();
             goods_cursor.close();
         }
+        if((number%10>0))
+            if(number/10+1==pageNO) {
+//                Log.e("3.10", "LastPage");
+                  number=number%10;
+            }
+//        Log.e("3.10","BuyAdapter:"+number+"%10 "+(number%10)+"/10: "+(number/10)+"PageNo:"+pageNO);
         number=10;
         return number;
     }

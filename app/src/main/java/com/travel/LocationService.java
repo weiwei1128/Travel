@@ -97,7 +97,7 @@ public class LocationService extends Service {
 
         public LocationListener(String provider)
         {
-            Log.d(TAG, "LocationListener " + provider);
+//            Log.d(TAG, "LocationListener " + provider);
             mLastLocation = new Location(provider);
         }
 
@@ -105,13 +105,13 @@ public class LocationService extends Service {
         public void onLocationChanged(Location location)
         {
             isLocationChanged = true;
-            Log.d(TAG, "onLocationChanged: " + location);
+//            Log.d(TAG, "onLocationChanged: " + location);
             mLastLocation.set(location);
 
             final Double Latitude = mLastLocation.getLatitude();
             final Double Longitude = mLastLocation.getLongitude();
-            Log.d("3.9_", "Latitude " + Latitude);
-            Log.d("3.9_", "Longitude " + Longitude);
+//            Log.d("3.9_", "Latitude " + Latitude);
+//            Log.d("3.9_", "Longitude " + Longitude);
 
             Cursor location_cursor = database.query("location",
                     new String[]{"CurrentLat", "CurrentLng"}, null, null, null, null, null);
@@ -121,7 +121,7 @@ public class LocationService extends Service {
                     cv.put("CurrentLat", Latitude);
                     cv.put("CurrentLng", Longitude);
                     long result = database.insert("location", null, cv);
-                    Log.d("3.9_新增位置", result + " = DB INSERT " + Latitude + " " + Longitude);
+//                    Log.d("3.9_新增位置", result + " = DB INSERT " + Latitude + " " + Longitude);
                     if (globalVariable.SpotDataSorted == null) {
                         new GetSpotsNSort(getApplicationContext()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                     }
@@ -130,7 +130,7 @@ public class LocationService extends Service {
                     cv.put("CurrentLat", Latitude);
                     cv.put("CurrentLng", Longitude);
                     long result = database.update("location", cv, "_ID=1", null);
-                    Log.d("3.9_位置更新", result + " = DB INSERT " + Latitude + " " + Longitude);
+//                    Log.d("3.9_位置更新", result + " = DB INSERT " + Latitude + " " + Longitude);
                 }
                 location_cursor.close();
             }
@@ -145,7 +145,7 @@ public class LocationService extends Service {
                 @Override
                 public void run() {
                     isLocationChanged = false;
-                    Log.d("3.9_", "isLocationChanged: false");
+//                    Log.d("3.9_", "isLocationChanged: false");
                 }
             }, 1000);
         }

@@ -21,7 +21,6 @@ public class BuyFragmentNew extends Fragment {
     GridView gridView;
     BuyAdapter adapter;
     int Position = 0;
-    TextView textView;
     Context context;
     Activity activity;
 
@@ -44,7 +43,7 @@ public class BuyFragmentNew extends Fragment {
         gridView.setNumColumns(2);
         gridView.setAdapter(adapter);
         gridView.setOnItemClickListener(new itemListener());
-        Log.d("3.8","adapter!"+adapter.getCount());
+        Log.d("3.8", "adapter!" + adapter.getCount());
         if (adapter.getCount() == 0)
             Toast.makeText(context, "尚無資料!", Toast.LENGTH_SHORT).show();
         return view;
@@ -55,7 +54,7 @@ public class BuyFragmentNew extends Fragment {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             Bundle bundle = new Bundle();
-            bundle.putInt("WhichItem", (Position-1)*10+position);
+            bundle.putInt("WhichItem", (Position - 1) * 10 + position);
             Functions.go(false, activity, context, BuyItemDetailActivity.class, bundle);
         }
     }
