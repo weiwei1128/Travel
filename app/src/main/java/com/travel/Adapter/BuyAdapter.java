@@ -34,9 +34,9 @@ public class BuyAdapter extends BaseAdapter {
     private Context context;
     private LayoutInflater inflater;
 
-    int pageNO=0;
+    int pageNO = 0;
 
-    public BuyAdapter(Context mcontext,Integer index) {
+    public BuyAdapter(Context mcontext, Integer index) {
         this.context = mcontext;
         inflater = LayoutInflater.from(mcontext);
 
@@ -47,6 +47,7 @@ public class BuyAdapter extends BaseAdapter {
 
         options = new DisplayImageOptions.Builder()
                 .showImageOnFail(R.drawable.error)
+                .showImageOnLoading(R.drawable.loading)
                 .showImageForEmptyUri(R.drawable.empty)
                 .cacheInMemory()
                 .cacheOnDisc().build();
@@ -78,13 +79,20 @@ public class BuyAdapter extends BaseAdapter {
         int number = 0;
         //TODO need modify!
         Cursor goods_cursor = database.query("goods", new String[]{"totalCount", "goods_id", "goods_title",
-                "goods_url","goods_money", "goods_content","goods_click", "goods_addtime"}, null, null, null, null, null);
+                "goods_url", "goods_money", "goods_content", "goods_click", "goods_addtime"}, null, null, null, null, null);
         if (goods_cursor != null) {
-            Log.d("2.24", "getCount:" + goods_cursor.getCount());
+            Log.d("2.24", pageNO + "getCount:" + goods_cursor.getCount());
             number = goods_cursor.getCount();
             goods_cursor.close();
         }
-        number=10;
+        if ((number % 10 > 0)) {
+            if (number / 10 + 1 == pageNO) {
+//                Log.e("3.10", "LastPage");
+                number = number % 10;
+            }
+        }else
+//        Log.e("3.10","BuyAdapter:"+number+"%10 "+(number%10)+"/10: "+(number/10)+"PageNo:"+pageNO);
+        number = 10;
         return number;
     }
 
@@ -101,7 +109,7 @@ public class BuyAdapter extends BaseAdapter {
     @SuppressLint("InflateParams")
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        Log.d("3.7","goods:"+pageNO);
+        Log.d("3.7", "goods:" + pageNO);
 
 
         cell mcell;
@@ -117,44 +125,44 @@ public class BuyAdapter extends BaseAdapter {
         ImageLoader.getInstance().init(configuration);
 
         Cursor goods_cursor = database.query("goods", new String[]{"totalCount", "goods_id", "goods_title",
-                "goods_url","goods_money", "goods_content","goods_click", "goods_addtime"}, null, null, null, null, null);
+                "goods_url", "goods_money", "goods_content", "goods_click", "goods_addtime"}, null, null, null, null, null);
         if (goods_cursor != null && goods_cursor.getCount() >= position) {
             goods_cursor.moveToPosition(position);
             mcell.buyText.setText(goods_cursor.getString(2));
 //            if(goods_cursor.getString(6)!=null)
 //            mcell.clickText.append(goods_cursor.getString(6));
             //http://zhiyou.lin366.com/
-            loader.displayImage("http://zhiyou.lin366.com/"+goods_cursor.getString(3)
+            loader.displayImage("http://zhiyou.lin366.com/" + goods_cursor.getString(3)
                     , mcell.buyImg, options, listener);
         }
         if (mcell.buyImg != null)
             mcell.buyImg.setScaleType(ImageView.ScaleType.CENTER_CROP);
 
-        if(mcell.buyText.getText()==null)
+        if (mcell.buyText.getText() == null)
             mcell.buyText.setText("資料錯誤");
         //********0308
 //        Log.e("3.8", "==========page number" + pageNO);
-        if(goods_cursor!=null&&goods_cursor.getCount()>=(pageNO-1)*10) {
+        if (goods_cursor != null && goods_cursor.getCount() >= (pageNO - 1) * 10) {
             goods_cursor.moveToPosition((pageNO - 1) * 10);
 //            Log.e("3.8", "1 name: "+goods_cursor.getString(2));
-            int i=1;
-            while ((goods_cursor.isLast()||!(i>=10))){
+            int i = 1;
+            while ((goods_cursor.isLast() || !(i >= 10))) {
                 goods_cursor.moveToNext();
                 i++;
 //                Log.e("3.8", i+"name: " + goods_cursor.getString(2));
             }
         }
 
-        if(goods_cursor!=null&&goods_cursor.getCount()>=(pageNO-1)*10+position){
+        if (goods_cursor != null && goods_cursor.getCount() >= (pageNO - 1) * 10 + position) {
             goods_cursor.moveToPosition((pageNO - 1) * 10 + position);
             mcell.buyText.setText(goods_cursor.getString(2));
-            if(!(mcell.clickText.getText().toString().substring(3).startsWith("0")&&
+            if (!(mcell.clickText.getText().toString().substring(3).startsWith("0") &&
                     mcell.clickText.getText().toString().endsWith("0")))
 //                Log.d("3.8", "click:000" + mcell.clickText.getText().toString());
-            if(goods_cursor.getString(6)!=null)
-                mcell.clickText.append(goods_cursor.getString(6));
+                if (goods_cursor.getString(6) != null)
+                    mcell.clickText.append(goods_cursor.getString(6));
             //http://zhiyou.lin366.com/
-            loader.displayImage("http://zhiyou.lin366.com/"+goods_cursor.getString(3)
+            loader.displayImage("http://zhiyou.lin366.com/" + goods_cursor.getString(3)
                     , mcell.buyImg, options, listener);
         }
 //        Log.d("3.8","click"+mcell.clickText.getText().toString().substring(3));
@@ -170,9 +178,9 @@ public class BuyAdapter extends BaseAdapter {
 
     public class cell {
         ImageView buyImg;
-        TextView buyText,clickText;
+        TextView buyText, clickText;
 
-        public cell(ImageView buy_img, TextView buy_text,TextView click_Text) {
+        public cell(ImageView buy_img, TextView buy_text, TextView click_Text) {
             this.buyImg = buy_img;
             this.buyText = buy_text;
             this.clickText = click_Text;

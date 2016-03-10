@@ -12,8 +12,6 @@ import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
-import com.travel.GlobalVariable;
-
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
@@ -28,6 +26,8 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by wei on 2016/2/23.
@@ -55,6 +55,7 @@ public class HttpService extends Service {
         new Banner().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         new JsonGoods(context).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         new News().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        new Special().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
         return 1;
     }
@@ -133,7 +134,8 @@ public class HttpService extends Service {
 
         }
     }
-    private class News extends AsyncTask<String,Void,String>{
+
+    private class News extends AsyncTask<String, Void, String> {
 
         //{"act":"top","type":"tophot","size":"10"}
         //http://zhiyou.lin366.com/api/news/index.aspx
@@ -171,9 +173,9 @@ public class HttpService extends Service {
                 e2.printStackTrace();
             }
 //            Log.e("3.10","result:"+result); //OK
-            if(states==null||states.equals("0"))
+            if (states == null || states.equals("0"))
                 return null;
-            else{
+            else {
                 JSONArray jsonArray = null;
                 try {
                     jsonArray = new JSONObject(result).getJSONArray("list");
@@ -181,10 +183,10 @@ public class HttpService extends Service {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                if(jsonArray!=null)
-                    for(int i=0;i<jsonArray.length();i++){
+                if (jsonArray != null)
+                    for (int i = 0; i < jsonArray.length(); i++) {
                         try {
-                            message = message+jsonArray.getJSONObject(i).getString("title")+"    ";
+                            message = message + jsonArray.getJSONObject(i).getString("title") + "    ";
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -201,15 +203,15 @@ public class HttpService extends Service {
             DataBaseHelper helper = new DataBaseHelper(context);
             SQLiteDatabase database = helper.getWritableDatabase();
             Cursor news_cursor = database.query("news", new String[]{"title"}, null, null, null, null, null);
-            if(news_cursor!=null && !s.equals("")){
+            if (news_cursor != null && !s.equals("")) {
 //                Log.e("3.10","news cursor count: "+news_cursor.getCount());
                 news_cursor.moveToFirst();
-                if(news_cursor.getCount()==0) {
+                if (news_cursor.getCount() == 0) {
                     ContentValues cv = new ContentValues();
                     cv.put("title", s);
                     long result = database.insert("news", null, cv);
 //                    Log.e("3.10","news insert DB result: "+result);
-                }else if(!news_cursor.getString(0).equals(s)){ //資料不相同 -> 更新
+                } else if (!news_cursor.getString(0).equals(s)) { //資料不相同 -> 更新
                     ContentValues cv = new ContentValues();
                     cv.put("title", s);
                     long result = database.update("news", cv, null, null);
@@ -221,11 +223,187 @@ public class HttpService extends Service {
             super.onPostExecute(s);
         }
     }
-    private class Special extends AsyncTask<String,Void,String>{
+
+    private class Special extends AsyncTask<String, Void, Map<String, String[][]>> {
+        /*
+        * {"act":"list","type":"jindian","page":"1","size":"10","key":"","tid":""}**/
 
         @Override
-        protected String doInBackground(String... params) {
-            return null;
+        protected Map<String, String[][]> doInBackground(String... params) {
+            Log.e("3.9", "=========Special======doInBackground");
+            HttpClient client = new DefaultHttpClient();
+            HttpPost post = new HttpPost("http://zhiyou.lin366.com/api/article/index.aspx");
+            MultipartEntity multipartEntity = new MultipartEntity();
+            Charset charset = Charset.forName("UTF-8");
+            try {
+                multipartEntity.addPart("json", new StringBody("{\"act\":\"list\",\"type\":\"jindian\",\"page\":\"1\",\"size\":\"1000\",\"key\":\"\",\"tid\":\"\"}", charset));
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+            post.setEntity(multipartEntity);
+            HttpResponse response = null;
+            String getString = null;
+            try {
+                response = client.execute(post);
+                getString = EntityUtils.toString(response.getEntity());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            String state = null;
+            String totalcount = null;
+            try {
+                state = new JSONObject(getString.substring(
+                        getString.indexOf("{"), getString.lastIndexOf("}") + 1)).getString("states");
+                totalcount = new JSONObject(getString).getString("totalCount");
+            } catch (JSONException | NullPointerException e) {
+                e.printStackTrace();
+            }
+            /*
+            *{
+        "id": "618",
+        "title": "雲林-北港春生活博物館",
+        "img_url": "http://www.abic.com.tw/photoDB/post/1429406074.jpg",
+        "zhaiyao": "北港春生活博物館，位於雲林，是一個以木工為特色的博物館，是由超過70年的木工傢具店「盛椿木業」所轉型成立的，裡面的木工文化別有一番特色。館區最特別的就是有一個捷克藝術家海大海的進駐，使得館區內中西文化交錯，呈現一個兼容並蓄的藝文空間。裡面除了有木工文物的展示…",
+        "click": "0",
+        "add_time": "2016/3/9 17:49:57",
+        "sell_price": "100.00"
+    }
+            * */
+            String[][] jsonObjects = null;
+            if (state != null && state.equals("1") && totalcount != null) {
+                JSONArray jsonArray = null;
+                jsonObjects = new String[Integer.valueOf(totalcount)][6];
+                try {
+                    jsonArray = new JSONObject(getString).getJSONArray("list");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                for (int i = 0; i < Integer.valueOf(totalcount); i++) {
+                    try {
+                        jsonObjects[i][0] = jsonArray.getJSONObject(i).getString("id");
+                    } catch (JSONException | NullPointerException e) {
+                        e.printStackTrace();
+                    }
+                    try {
+                        jsonObjects[i][1] = jsonArray.getJSONObject(i).getString("title");
+                    } catch (JSONException | NullPointerException e) {
+                        e.printStackTrace();
+                    }
+                    try {
+                        jsonObjects[i][2] = jsonArray.getJSONObject(i).getString("img_url");
+                    } catch (JSONException | NullPointerException e) {
+                        e.printStackTrace();
+                    }
+                    try {
+                        jsonObjects[i][3] = jsonArray.getJSONObject(i).getString("zhaiyao");
+                    } catch (JSONException | NullPointerException e) {
+                        e.printStackTrace();
+                    }
+                    try {
+                        jsonObjects[i][4] = jsonArray.getJSONObject(i).getString("click");
+                    } catch (JSONException | NullPointerException e) {
+                        e.printStackTrace();
+                    }
+                    try {
+                        //TODO 要把小數點去掉
+                        //goods_cursor.getString(4).substring(0, goods_cursor.getString(4).indexOf("."))
+                        String sellprice = jsonArray.getJSONObject(i).getString("sell_price");
+                        if (sellprice.contains(".")) {
+                            //有小數點!!
+                            sellprice = sellprice.substring(0, sellprice.indexOf("."));
+                        }
+//                        Log.e("3.10","special_activity 去除小數點前: "+jsonArray.getJSONObject(i).getString("sell_price")+"後: "+sellprice);
+                        jsonObjects[i][5] = sellprice;
+                    } catch (JSONException | NullPointerException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+            if (jsonObjects != null) {
+                Map<String, String[][]> fromnet = new HashMap<>();
+                fromnet.put("item", jsonObjects);
+                return fromnet;
+            } else
+                return null;
+        }
+
+        @Override
+        protected void onPostExecute(Map<String, String[][]> s) {
+            if (s != null) {
+                String[][] jsonObjects = s.get("item");
+//                Log.e("3.10","special_activity item size:"+jsonObjects.length);
+                DataBaseHelper helper = new DataBaseHelper(context);
+                SQLiteDatabase database = helper.getWritableDatabase();
+//                database.beginTransaction();
+                Cursor special = database.query("special_activity", new String[]{"special_id", "title", "img", "content", "price", "click"},
+                        null, null, null, null, null);
+                if (special != null && jsonObjects != null) {
+
+
+                    if (special.getCount() == 0) //如果還沒新增過資料->直接新增!
+                        for (int i = 0; i < jsonObjects.length; i++) {
+                            ContentValues cv = new ContentValues();
+                            cv.put("special_id", jsonObjects[i][0]);
+                            cv.put("title", jsonObjects[i][1]);
+                            cv.put("img", jsonObjects[i][2]);
+                            cv.put("content", jsonObjects[i][3]);
+                            cv.put("price", jsonObjects[i][4]);
+                            cv.put("click", jsonObjects[i][5]);
+                            long result = database.insert("special_activity", null, cv);
+                            Log.d("3.10", "special_activity: " + result + " = DB INSERT" + i + "title " + jsonObjects[i][1]);
+                        }
+                    else { //資料庫已經有資料了!
+                        for (int i = 0; i < jsonObjects.length; i++) {
+                            Cursor special_dul = database.query(true, "special_activity", new String[]{"special_id",
+                                            "title", "img", "content", "price", "click"},
+                                    "special_id=" + jsonObjects[i][0], null, null, null, null, null);
+                            if (special_dul != null && special_dul.getCount() > 0) {
+                                //有重複的資料
+                                special_dul.moveToFirst();
+                                ContentValues cv = new ContentValues();
+                                //若資料不一樣 則更新 ! (besides ID)
+                                if (!special_dul.getString(1).equals(jsonObjects[i][1]))
+                                    cv.put("title", jsonObjects[i][1]);
+                                if (!special_dul.getString(2).equals(jsonObjects[i][2]))
+                                    cv.put("img", jsonObjects[i][2]);
+                                if (!special_dul.getString(3).equals(jsonObjects[i][3]))
+                                    cv.put("content", jsonObjects[i][3]);
+                                if (!special_dul.getString(4).equals(jsonObjects[i][4]))
+                                    cv.put("price", jsonObjects[i][1]);
+                                if (!special_dul.getString(5).equals(jsonObjects[i][5]))
+                                    cv.put("click", jsonObjects[i][5]);
+                                if (!special_dul.getString(1).equals(jsonObjects[i][1]) ||
+                                        !special_dul.getString(2).equals(jsonObjects[i][2]) ||
+                                        !special_dul.getString(3).equals(jsonObjects[i][3]) ||
+                                        !special_dul.getString(4).equals(jsonObjects[i][4]) ||
+                                        !special_dul.getString(5).equals(jsonObjects[i][5])) {
+                                    long result = database.update("special_activity", cv, "special_id=?", new String[]{jsonObjects[i][0]});
+                                    Log.e("3.10", "special_activity updated: " + result + " title: " + jsonObjects[i][1]);
+                                }
+                            } else {
+                                //資料庫存在 但資料不存在
+                                ContentValues cv = new ContentValues();
+                                cv.put("special_id", jsonObjects[i][0]);
+                                cv.put("title", jsonObjects[i][1]);
+                                cv.put("img", jsonObjects[i][2]);
+                                cv.put("content", jsonObjects[i][3]);
+                                cv.put("price", jsonObjects[i][4]);
+                                cv.put("click", jsonObjects[i][5]);
+                                long result = database.insert("special_activity", null, cv);
+                                Log.d("3.10", "special_activity insert: " + result + " = DB INSERT" + i + "title " + jsonObjects[i][1]);
+                            }
+                            if (special_dul != null)
+                                special_dul.close();
+                        }
+
+                    }
+                    special.close();
+                }
+//                database.endTransaction();
+                database.close();
+            }
+
+            super.onPostExecute(s);
         }
     }
 

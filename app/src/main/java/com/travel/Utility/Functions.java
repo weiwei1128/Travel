@@ -2,10 +2,7 @@ package com.travel.Utility;
 
 import android.app.Activity;
 import android.app.ActivityManager;
-import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -13,19 +10,14 @@ import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.travel.HomepageActivity;
-import com.travel.MemberActivity;
 import com.travel.R;
 
 import java.io.ByteArrayOutputStream;
-
-import static android.content.Context.CONTEXT_RESTRICTED;
 
 /**
  * Created by wei on 2016/1/30.
@@ -95,7 +87,7 @@ public class Functions {
         return (Uri.parse(path)).toString();
     }
 
-    public static  void ClickTouchEvent(ImageView imageView,TextView textView,String where, Boolean isClick, int event) {
+    public static void ClickTouchEvent(ImageView imageView, TextView textView, String where, Boolean isClick, int event) {
         switch (where) {
             case "home":
                 imageView.setImageResource(R.drawable.tab_selected_home);
@@ -109,7 +101,7 @@ public class Functions {
                     imageView.setImageResource(R.drawable.click_home_img);
                     textView.setTextColor(Color.parseColor("#555555"));
                 }
-                if(event==MotionEvent.ACTION_DOWN)
+                if (event == MotionEvent.ACTION_DOWN)
                     textView.setTextColor(Color.parseColor("#0044BB"));
                 break;
             case "member":
@@ -124,7 +116,7 @@ public class Functions {
                     imageView.setImageResource(R.drawable.member_img_click);
                     textView.setTextColor(Color.parseColor("#555555"));
                 }
-                if(event==MotionEvent.ACTION_DOWN)
+                if (event == MotionEvent.ACTION_DOWN)
                     textView.setTextColor(Color.parseColor("#0044BB"));
                 break;
             case "shoprecord":
@@ -139,7 +131,7 @@ public class Functions {
                     imageView.setImageResource(R.drawable.record_img_click);
                     textView.setTextColor(Color.parseColor("#555555"));
                 }
-                if(event==MotionEvent.ACTION_DOWN)
+                if (event == MotionEvent.ACTION_DOWN)
                     textView.setTextColor(Color.parseColor("#0044BB"));
                 break;
             case "more":
@@ -154,7 +146,7 @@ public class Functions {
                     imageView.setImageResource(R.drawable.more_img_click);
                     textView.setTextColor(Color.parseColor("#555555"));
                 }
-                if(event==MotionEvent.ACTION_DOWN)
+                if (event == MotionEvent.ACTION_DOWN)
                     textView.setTextColor(Color.parseColor("#0044BB"));
                 break;
         }

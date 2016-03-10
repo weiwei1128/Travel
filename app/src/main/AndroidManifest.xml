@@ -105,7 +105,7 @@
             android:name=".MemberActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".ServiceActivity" />
-        <activity android:name=".GoodThingActivity" />
+        <activity android:name=".SpecialActivity" />
 
         <service android:name=".Utility.TimeCountService" />
         <service android:name=".LocationService" />
@@ -129,7 +129,8 @@
 
         <activity android:name=".BuyRecordActivity" />
         <activity android:name=".CheckScheduleMainActivity" />
-        <activity android:name=".BuyActivityNew"></activity>
+        <activity android:name=".BuyActivityNew" />
+        <activity android:name=".SpecialDetailActivity"></activity>
     </application>
 
 </manifest>

@@ -22,9 +22,7 @@ import com.travel.Utility.DataBaseHelper;
 import com.travel.Utility.Functions;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public class BuyActivityNew extends AppCompatActivity {
     ViewPager viewPager;
@@ -40,8 +38,8 @@ public class BuyActivityNew extends AppCompatActivity {
 
     @Override
     protected void onResume() {
-        //called when
-        Log.d("3.9", "BuyActivityNew onResume");
+        //if need to display button
+//        Log.d("3.9", "BuyActivityNew onResume");
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         int howmany = sharedPreferences.getInt("InBuyList", 0);
         if (howmany > 0) {
@@ -59,19 +57,17 @@ public class BuyActivityNew extends AppCompatActivity {
 
     @Override
     protected void onStop() {
-        Log.d("3.9", "BuyActivityNew onStop");
         super.onStop();
     }
 
     @Override
     protected void onStart() {
-        Log.d("3.9", "BuyActivityNew onStart");
+        Log.e("3.10", "buyActivity onStart!");
         super.onStart();
     }
 
     @Override
     protected void onRestart() {
-        Log.d("3.9", "BuyActivityNew onRestart");
         super.onRestart();
     }
 
@@ -79,6 +75,7 @@ public class BuyActivityNew extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.buy_activity_new);
+
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         linearLayout = (LinearLayout) findViewById(R.id.buy_textlayout);
         backImg = (ImageView) findViewById(R.id.buy_backImg);
@@ -113,7 +110,7 @@ public class BuyActivityNew extends AppCompatActivity {
             count = goods_cursor.getCount();
             goods_cursor.close();
         }
-        Log.d("3.7", "" + count);
+//        Log.d("3.7", "" + count);
         int pages = 0;
         if (count % 10 > 0)
             pages = (count / 10) + 1;
@@ -141,7 +138,6 @@ public class BuyActivityNew extends AppCompatActivity {
         if (adapter.getCount() == 0)
             Toast.makeText(BuyActivityNew.this, "尚無資料!", Toast.LENGTH_SHORT).show();
         Log.e("3.8", "currentItem:" + viewPager.getCurrentItem() + "" + adapter.getCurrentPosition());
-        ///?????
     }
 
     private class PageListener implements ViewPager.OnPageChangeListener {
@@ -151,7 +147,7 @@ public class BuyActivityNew extends AppCompatActivity {
         }
 
         public void onPageSelected(int position) {
-            Log.e("3.8", "**********onPageSelected" + position);
+//            Log.e("3.8", "**********onPageSelected" + position);
             for (int i = 0; i < textViews.size(); i++)
                 textViews.get(i).setTextColor(Color.parseColor("#000000"));
             textViews.get(position).setTextColor(Color.parseColor("#FF0088"));

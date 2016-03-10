@@ -186,6 +186,7 @@ public class JsonGoods extends AsyncTask<String, String, Map<String, String[][]>
         if (ifOK && Count != 0) {
             DataBaseHelper helper = new DataBaseHelper(mcontext);
             SQLiteDatabase database = helper.getWritableDatabase();
+//            database.beginTransaction();
             Cursor goods_cursor = database.query("goods", new String[]{"totalCount", "goods_id",
                             "goods_title", "goods_url","goods_money", "goods_content","goods_click", "goods_addtime"},
                     null, null, null, null, null);
@@ -246,6 +247,8 @@ public class JsonGoods extends AsyncTask<String, String, Map<String, String[][]>
 //                Log.d("2.19", "something NULL!" + jsonObjects + " :jsonObjects");
             if (goods_cursor != null)
                 goods_cursor.close();
+//            database.endTransaction();
+//            database.close();
         }
         super.onPostExecute(stringStringMap);
     }
