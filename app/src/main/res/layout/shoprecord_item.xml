@@ -22,6 +22,7 @@
         android:layout_height="wrap_content"
         android:text="2016年3月10日"
         android:id="@+id/shoprecorditem_date"
+        android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:layout_marginTop="10dp"
