@@ -34,7 +34,6 @@ import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -61,7 +60,7 @@ public class BuyItemDetailActivity extends AppCompatActivity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            Functions.go(true, BuyItemDetailActivity.this, BuyItemDetailActivity.this, BuyActivity.class, null);
+            Functions.go(true, BuyItemDetailActivity.this, BuyItemDetailActivity.this, BuyActivityNew.class, null);
         }
 
         return false;
@@ -87,7 +86,7 @@ public class BuyItemDetailActivity extends AppCompatActivity {
         BackImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Functions.go(true, BuyItemDetailActivity.this, BuyItemDetailActivity.this, BuyActivity.class, null);
+                Functions.go(true, BuyItemDetailActivity.this, BuyItemDetailActivity.this, BuyActivityNew.class, null);
             }
         });
         AddImg = (ImageView) findViewById(R.id.buyitemAdd_Img);
@@ -146,7 +145,7 @@ public class BuyItemDetailActivity extends AppCompatActivity {
             if (goods_cursor.getString(3) != null)
                 loader.displayImage("http://zhiyou.lin366.com/" + goods_cursor.getString(3)
                         , ItemImg, options, listener);
-            Log.e("3.10","id:"+itemID);
+            Log.e("3.10", "id:" + itemID);
             new checkitem().execute();
         }
 
@@ -299,7 +298,7 @@ public class BuyItemDetailActivity extends AppCompatActivity {
          */
         @Override
         protected String doInBackground(String... params) {
-            Log.e("3.9", "=========checkitem======doInBackground"+itemID);
+            Log.e("3.9", "=========checkitem======doInBackground" + itemID);
             HttpClient client = new DefaultHttpClient();
             HttpPost post = new HttpPost("http://zhiyou.lin366.com/api/article/show.aspx");
             MultipartEntity multipartEntity = new MultipartEntity();
@@ -314,25 +313,25 @@ public class BuyItemDetailActivity extends AppCompatActivity {
             String getString = null;
             try {
                 response = client.execute(post);
-                Log.d("3.10","購物車項目? 1getString: "+response);
+                Log.d("3.10", "購物車項目? 1getString: " + response);
             } catch (IOException e) {
-                Log.e("3.10",e.toString());
+                Log.e("3.10", e.toString());
             }
-                Log.d("3.10", "購物車項目: " + response.getEntity().toString());
+            Log.d("3.10", "購物車項目: " + response.getEntity().toString());
 
-            try{
-                Log.d("3.10","購物車項目? 2getString: start");
+            try {
+                Log.d("3.10", "購物車項目? 2getString: start");
                 getString = EntityUtils.toString(response.getEntity());
-                Log.d("3.10","購物車項目? 2getString: "+getString);
+                Log.d("3.10", "購物車項目? 2getString: " + getString);
             } catch (IOException e) {
-                Log.e("3.10","error!!!!!");
-                Log.e("3.10",e.toString()+"error");
+                Log.e("3.10", "error!!!!!");
+                Log.e("3.10", e.toString() + "error");
             }
-            Log.e("3.10","購物車項目? getString: "+getString);
+            Log.e("3.10", "購物車項目? getString: " + getString);
 
 
-            if(getString.contains("guigelist"))
-                Log.d("3.11","contain!!!");
+            if (getString.contains("guigelist"))
+                Log.d("3.11", "contain!!!");
 
             String state = null;
             String totalcount = null;
@@ -341,7 +340,7 @@ public class BuyItemDetailActivity extends AppCompatActivity {
             } catch (JSONException | NullPointerException e) {
                 e.printStackTrace();
             }
-            Log.d("3.10","inBuy Item Detail: states"+state);
+            Log.d("3.10", "inBuy Item Detail: states" + state);
             /*
             JSONArray jsonArray = null;
             try {
@@ -356,7 +355,7 @@ public class BuyItemDetailActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String s) {
-            Log.e("3.10","Buy item Detail onPostExecute");
+            Log.e("3.10", "Buy item Detail onPostExecute");
             super.onPostExecute(s);
         }
     }

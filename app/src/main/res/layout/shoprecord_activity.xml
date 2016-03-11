@@ -5,7 +5,7 @@
     android:layout_height="match_parent">
 
     <LinearLayout
-        android:id="@+id/checkschedule_Layout"
+        android:id="@+id/shoprecord_Layout"
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="45dp"
@@ -15,7 +15,7 @@
         <ImageView
             android:layout_width="30dp"
             android:layout_height="40dp"
-            android:id="@+id/buyrecordlist_backImg"
+            android:id="@+id/shoprecordlist_backImg"
             android:src="@drawable/arrow_back_white"
             android:layout_marginLeft="10dp"
             android:background="@drawable/click_effect_general" />
@@ -24,7 +24,6 @@
             android:layout_width="wrap_content"
             android:layout_height="50dp"
             android:text="訂購紀錄"
-            android:id="@+id/buyrecordlistHeader"
             android:textSize="22dp"
             android:gravity="center_vertical|center_horizontal"
             android:background="@color/blue"
@@ -37,8 +36,8 @@
     <GridView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/buy_record_gridview"
-        android:layout_below="@+id/checkschedule_Layout"
+        android:id="@+id/shop_record_gridview"
+        android:layout_below="@+id/shoprecord_Layout"
         android:layout_centerHorizontal="true" />
 
 </RelativeLayout>

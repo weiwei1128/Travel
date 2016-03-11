@@ -57,14 +57,14 @@ public class BuyRecordAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         item item;
         if (convertView == null) {
-            convertView = layoutInflater.inflate(R.layout.buy_record_item, null);
+            convertView = layoutInflater.inflate(R.layout.shoprecord_item, null);
             item = new item(
-                    (TextView) convertView.findViewById(R.id.buyrecorditem_no),
-                    (TextView) convertView.findViewById(R.id.buyrecorditem_date),
-                    (TextView) convertView.findViewById(R.id.buyrecorditem_money),
-                    (TextView) convertView.findViewById(R.id.buyrecorditem_content),
-                    (TextView) convertView.findViewById(R.id.buyrecorditem_state),
-                    (ImageView) convertView.findViewById(R.id.buyrecorditem_img)
+                    (TextView) convertView.findViewById(R.id.shoprecorditem_no),
+                    (TextView) convertView.findViewById(R.id.shoprecorditem_date),
+                    (TextView) convertView.findViewById(R.id.shoprecorditem_money),
+                    (TextView) convertView.findViewById(R.id.shoprecorditem_content),
+                    (TextView) convertView.findViewById(R.id.shoprecorditem_state),
+                    (ImageView) convertView.findViewById(R.id.shoprecorditem_img)
             );
             convertView.setTag(item);
         } else

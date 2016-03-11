@@ -48,9 +48,9 @@ public class BuyRecordActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.buy_record_activity);
-        backImg = (ImageView) findViewById(R.id.buyrecordlist_backImg);
-        gridView = (GridView) findViewById(R.id.buy_record_gridview);
+        setContentView(R.layout.shoprecord_activity);
+        backImg = (ImageView) findViewById(R.id.shoprecordlist_backImg);
+        gridView = (GridView) findViewById(R.id.shop_record_gridview);
         adapter = new BuyRecordAdapter(BuyRecordActivity.this);
         gridView.setAdapter(adapter);
         backImg.setOnClickListener(new View.OnClickListener() {
