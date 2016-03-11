@@ -96,7 +96,6 @@ public class RecordActivity extends FragmentActivity implements
      * 記錄軌跡
      */
     private ArrayList<LatLng> TraceRoute;
-    private ArrayList<LatLng> markerPoints;
 
     //====1.28 WEI====new UI //
     LinearLayout record_start_layout, record_spot_layout, dialog_choose_layout, dialog_ok_layout;
@@ -161,6 +160,29 @@ public class RecordActivity extends FragmentActivity implements
             @Override
             public void onClick(View v) {
                 // TODO 完成整段旅程
+                // 停止紀錄 在資料庫中新增最後一筆 track_start=0 該段結尾
+                DataBaseHelper helper = new DataBaseHelper(getApplicationContext());
+                SQLiteDatabase database = helper.getWritableDatabase();
+                Cursor trackRoute_cursor = database.query("trackRoute",
+                        new String[]{"routesCounter", "track_no", "track_lat",
+                                "track_lng", "track_start"},
+                        null, null, null, null, null);
+                if (trackRoute_cursor != null) {
+                    ContentValues cv = new ContentValues();
+                    cv.put("routesCounter", RoutesCounter);
+                    cv.put("track_no", Track_no);
+                    cv.put("track_lat", CurrentLatitude);
+                    cv.put("track_lng", CurrentLongitude);
+                    cv.put("track_start", 0);
+
+                    long result = database.insert("trackRoute", null, cv);
+                    Log.d("3/10_軌跡紀錄_END", result + " = DB INSERT RC:" + RoutesCounter
+                            + " no:" + Track_no + " 座標 " + CurrentLatitude + "," + CurrentLongitude);
+                    trackRoute_cursor.close();
+                }
+                LatLng latLng = new LatLng(CurrentLatitude, CurrentLongitude);
+                DisplayRoute(latLng);
+
                 Track_no = 1;
                 RoutesCounter++;
                 time_text.setVisibility(View.INVISIBLE);
@@ -229,7 +251,6 @@ public class RecordActivity extends FragmentActivity implements
                 }
             }
         });
-
 
         record_start_layout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -311,11 +332,11 @@ public class RecordActivity extends FragmentActivity implements
                         cv.put("track_start", 0);
 
                         long result = database.insert("trackRoute", null, cv);
-                        Log.d("3.9_軌跡紀錄_END", result + " = DB INSERT RC:" + RoutesCounter
+                        Log.d("3/10_軌跡紀錄_END", result + " = DB INSERT RC:" + RoutesCounter
                                 + " no:" + Track_no + " 座標 " + CurrentLatitude + "," + CurrentLongitude);
                         trackRoute_cursor.close();
                     }
-                    LatLng latLng = new LatLng(CurrentLatitude, CurrentLatitude);
+                    LatLng latLng = new LatLng(CurrentLatitude, CurrentLongitude);
                     DisplayRoute(latLng);
 
                 }
@@ -551,7 +572,6 @@ public class RecordActivity extends FragmentActivity implements
         super.onResume();
         Log.d("3/10_", "RecordActivity: onResume");
         setUpMapIfNeeded();
-
         if (!mGoogleApiClient.isConnected()) {
             mGoogleApiClient.connect();
         }
@@ -561,7 +581,6 @@ public class RecordActivity extends FragmentActivity implements
     @Override
     protected void onPause() {
         super.onPause();
-
         // 移除位置請求服務
         if (mGoogleApiClient.isConnected()) {
             LocationServices.FusedLocationApi
@@ -756,9 +775,13 @@ public class RecordActivity extends FragmentActivity implements
 
         // 設定目前位置的標記
         if (currentMarker == null) {
+            if (mMap == null) {
+                LoadtoMap();
+            }
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(CurrentLatlng, 12));
             currentMarker = mMap.addMarker(new MarkerOptions().position(CurrentLatlng).title("I am here!")
                     .icon(BitmapDescriptorFactory.fromBitmap(MarkerIcon)));
-            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(CurrentLatlng, 12));
+
 
         } else {
             currentMarker.setPosition(CurrentLatlng);
@@ -771,6 +794,8 @@ public class RecordActivity extends FragmentActivity implements
         if (TraceRoute == null) {
             TraceRoute = new ArrayList<LatLng>();
         }
+        TraceRoute.add(track_latlng);
+
         PolylineOptions polylineOpt = new PolylineOptions();
         for (LatLng latlng : TraceRoute) {
             polylineOpt.add(latlng);

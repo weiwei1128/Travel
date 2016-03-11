@@ -79,7 +79,7 @@ public class MapsActivity extends FragmentActivity implements
         registerReceiver(broadcastReceiver, new IntentFilter(TWSpotAPIFetcher.BROADCAST_ACTION));
 
         BitmapDrawable BitmapDraw = (BitmapDrawable)getResources().getDrawable(R.drawable.location);
-        MarkerIcon = Bitmap.createScaledBitmap(BitmapDraw.getBitmap(), 60, 90, false);
+        MarkerIcon = Bitmap.createScaledBitmap(BitmapDraw.getBitmap(), 40, 70, false);
 
         BackImg = (ImageView) findViewById(R.id.maps_backImg);
         BackImg.setOnClickListener(new View.OnClickListener() {
@@ -128,7 +128,7 @@ public class MapsActivity extends FragmentActivity implements
                 new GetMarkerInfo(MapsActivity.this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                 if (currentLocation != null) {
                     Log.e("3/10_讀到位置", "事先Sort");
-                    if (globalVariable.SpotDataSorted.isEmpty()) {
+                    if (globalVariable.isAPILoaded && globalVariable.SpotDataSorted.isEmpty()) {
                         new GetSpotsNSort(MapsActivity.this, currentLocation.getLatitude(),
                                 currentLocation.getLongitude()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                     }
@@ -140,7 +140,9 @@ public class MapsActivity extends FragmentActivity implements
     @Override
     protected void onResume() {
         setUpMapIfNeeded();
-        mGoogleApiClient.connect();
+        if (!mGoogleApiClient.isConnected()) {
+            mGoogleApiClient.connect();
+        }
         super.onResume();
     }
 
@@ -149,7 +151,6 @@ public class MapsActivity extends FragmentActivity implements
         if (mGoogleApiClient.isConnected()) {
             LocationServices.FusedLocationApi.removeLocationUpdates
                     (mGoogleApiClient, this);
-            mGoogleApiClient.disconnect();
         }
         super.onPause();
     }
@@ -205,111 +206,12 @@ public class MapsActivity extends FragmentActivity implements
      * This should only be called once and when we are sure that {@link #mMap} is not null.
      */
     private void setUpMap() {
-
         if (!globalVariable.MarkerOptionsArray.isEmpty()) {
             for (MarkerOptions markerOptions : globalVariable.MarkerOptionsArray) {
                 markerOptions.icon(BitmapDescriptorFactory.fromBitmap(MarkerIcon));
                 mMap.addMarker(markerOptions);
             }
             Log.d("3/10_setUpMap","MarkerOption已載入...顯示中");
-        }
-    }
-
-    @Override
-    public void onConnected(Bundle bundle) {
-        // 已經連線到Google Services
-        // 啟動位置更新服務
-        // 位置資訊更新的時候，應用程式會自動呼叫LocationListener.onLocationChanged
-        Log.i(TAG, "Location services connected.");
-
-        // API 23 Needs to Check Permission
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                || ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-
-            // Check Permissions Now
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION);
-        } else {
-            Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-            if (location == null) {
-                LocationServices.FusedLocationApi.requestLocationUpdates
-                        (mGoogleApiClient, mLocationRequest, MapsActivity.this);
-            } else {
-                handleNewLocation(location);
-                if (globalVariable.SpotDataSorted.isEmpty()) {
-                    Log.e("3/10_MapsActivity", "事先Sort");
-                    new GetSpotsNSort(MapsActivity.this, currentLocation.getLatitude(),
-                            currentLocation.getLongitude()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-                }
-            }
-        }
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-        Log.i(TAG, "Location services suspended. Please reconnect.");
-    }
-
-    @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
-        // Google Services連線失敗
-        // ConnectionResult參數是連線失敗的資訊
-        int errorCode = connectionResult.getErrorCode();
-        // 裝置沒有安裝Google Play服務
-        if (errorCode == ConnectionResult.SERVICE_MISSING) {
-            Toast.makeText(this, R.string.google_play_service_missing,
-                    Toast.LENGTH_LONG).show();
-        }
-    }
-
-    /**
-     * Location Listener
-     */
-    @Override
-    public void onLocationChanged(Location location) {
-        handleNewLocation(location);
-    }
-
-    private void handleNewLocation(Location location) {
-        Log.d(TAG, location.toString());
-
-        currentLocation = location;
-        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-
-        // 設定目前位置的標記
-        if (currentMarker == null) {
-            if (mMap == null) {
-                LoadtoMap();
-            }
-            currentMarker = mMap.addMarker(new MarkerOptions().position(latLng)
-                    .title("I am here!").icon(BitmapDescriptorFactory.fromBitmap(MarkerIcon)));
-        } else {
-            currentMarker.setPosition(latLng);
-        }
-
-        // 移動地圖到目前的位置
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
-
-        DataBaseHelper helper = new DataBaseHelper(MapsActivity.this);
-        SQLiteDatabase database = helper.getWritableDatabase();
-        Cursor location_cursor = database.query("location",
-                new String[]{"CurrentLat", "CurrentLng"}, null, null, null, null, null);
-        if (location_cursor != null) {
-            if (location_cursor.getCount() == 0) {
-                ContentValues cv = new ContentValues();
-                cv.put("CurrentLat", location.getLatitude());
-                cv.put("CurrentLng", location.getLongitude());
-                long result = database.insert("location", null, cv);
-                Log.d("3/10_新增位置", result + " = DB INSERT " + location.getLatitude() + " " + location.getLongitude());
-
-            } else {
-                ContentValues cv = new ContentValues();
-                cv.put("CurrentLat", location.getLatitude());
-                cv.put("CurrentLng", location.getLongitude());
-                long result = database.update("location", cv, "_ID=1", null);
-                Log.d("3/10_位置更新", result + " = DB INSERT " + location.getLatitude() + " " + location.getLongitude());
-            }
-            location_cursor.close();
         }
     }
 
@@ -354,10 +256,112 @@ public class MapsActivity extends FragmentActivity implements
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
     }
 
+    @Override
+    public void onConnected(Bundle bundle) {
+        // 已經連線到Google Services
+        // 啟動位置更新服務
+        // 位置資訊更新的時候，應用程式會自動呼叫LocationListener.onLocationChanged
+        Log.i(TAG, "Location services connected.");
+
+        // API 23 Needs to Check Permission
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                || ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+            // Check Permissions Now
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION);
+        } else {
+            Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+            if (location == null) {
+                LocationServices.FusedLocationApi.requestLocationUpdates
+                        (mGoogleApiClient, mLocationRequest, MapsActivity.this);
+            } else {
+                handleNewLocation(location);
+                if (globalVariable.isAPILoaded && globalVariable.SpotDataSorted.isEmpty()) {
+                    Log.e("3/10_MapsActivity", "事先Sort");
+                    new GetSpotsNSort(MapsActivity.this, currentLocation.getLatitude(),
+                            currentLocation.getLongitude()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                }
+            }
+        }
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+        Log.i(TAG, "Location services suspended. Please reconnect.");
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+        // Google Services連線失敗
+        // ConnectionResult參數是連線失敗的資訊
+        int errorCode = connectionResult.getErrorCode();
+        // 裝置沒有安裝Google Play服務
+        if (errorCode == ConnectionResult.SERVICE_MISSING) {
+            Toast.makeText(this, R.string.google_play_service_missing,
+                    Toast.LENGTH_LONG).show();
+        }
+    }
+
+    /**
+     * Location Listener
+     */
+    @Override
+    public void onLocationChanged(Location location) {
+        if (currentLocation != location) {
+            handleNewLocation(currentLocation);
+        }
+    }
+
+    private void handleNewLocation(Location location) {
+        Log.d(TAG, location.toString());
+
+        currentLocation = location;
+        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+
+        // 設定目前位置的標記
+        if (currentMarker == null) {
+            if (mMap == null) {
+                LoadtoMap();
+            }
+            // 移動地圖到目前的位置
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
+            currentMarker = mMap.addMarker(new MarkerOptions().position(latLng)
+                    .title("I am here!").icon(BitmapDescriptorFactory.fromBitmap(MarkerIcon)));
+        } else {
+            currentMarker.setPosition(latLng);
+        }
+
+        DataBaseHelper helper = new DataBaseHelper(MapsActivity.this);
+        SQLiteDatabase database = helper.getWritableDatabase();
+        Cursor location_cursor = database.query("location",
+                new String[]{"CurrentLat", "CurrentLng"}, null, null, null, null, null);
+        if (location_cursor != null) {
+            if (location_cursor.getCount() == 0) {
+                ContentValues cv = new ContentValues();
+                cv.put("CurrentLat", location.getLatitude());
+                cv.put("CurrentLng", location.getLongitude());
+                long result = database.insert("location", null, cv);
+                Log.d("3/10_新增位置", result + " = DB INSERT " + location.getLatitude() + " " + location.getLongitude());
+
+            } else {
+                ContentValues cv = new ContentValues();
+                cv.put("CurrentLat", location.getLatitude());
+                cv.put("CurrentLng", location.getLongitude());
+                long result = database.update("location", cv, "_ID=1", null);
+                Log.d("3/10_位置更新", result + " = DB INSERT " + location.getLatitude() + " " + location.getLongitude());
+            }
+            location_cursor.close();
+        }
+    }
+
     // Android 系統返回鍵
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if (mDialog.isShowing()) {
+                mDialog.dismiss();
+            }
             Functions.go(true,MapsActivity.this, MapsActivity.this, HomepageActivity.class, null);
         }
         return false;
@@ -368,15 +372,39 @@ public class MapsActivity extends FragmentActivity implements
         public void onReceive(Context context, Intent intent) {
             //Update Your UI here..
             if (intent != null) {
+                Boolean isTWAPILoaded = intent.getBooleanExtra("isTWAPILoaded", false);
+                Boolean isTPEAPILoaded = intent.getBooleanExtra("isTPEAPILoaded", false);
+                if (isTWAPILoaded && isTPEAPILoaded) {
+                    globalVariable.isAPILoaded = true;
+                    if (globalVariable.isAPILoaded) {
+                        Log.e("3/10_", "Receive Broadcast: APILoaded");
+                        if (mDialog.isShowing()) {
+                            mDialog.dismiss();
+                        }
+                        if (globalVariable.MarkerOptionsArray.isEmpty()) {
+                            // Get Marker Info
+                            new GetMarkerInfo(MapsActivity.this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                        } else {
+                            if (mDialog.isShowing()) {
+                                mDialog.dismiss();
+                            }
+                        }
+                    }
+                }
+
                 globalVariable.isAPILoaded = intent.getBooleanExtra("isAPILoaded", false);
                 if (globalVariable.isAPILoaded) {
-                    Log.e("3/10_", "Receive Broadcast");
-                    mDialog.dismiss();
+                    Log.e("3/10_", "Receive Broadcast: APILoaded");
+                    if (mDialog.isShowing()) {
+                        mDialog.dismiss();
+                    }
                     if (globalVariable.MarkerOptionsArray.isEmpty()) {
                         // Get Marker Info
                         new GetMarkerInfo(MapsActivity.this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                     } else {
-                        mDialog.dismiss();
+                        if (mDialog.isShowing()) {
+                            mDialog.dismiss();
+                        }
                     }
                 }
             }

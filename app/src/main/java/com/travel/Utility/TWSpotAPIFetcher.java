@@ -34,6 +34,7 @@ public class TWSpotAPIFetcher extends AsyncTask<Void, Void, SpotJson> {
     public static final String TAG = "TWSpotAPIFetcher";
     public static final String SERVER_URL = "http://data.gov.tw/iisi/logaccess/2205?dataUrl=http://gis.taiwan.net.tw/XMLReleaseALL_public/scenic_spot_C_f.json&ndctype=JSON&ndcnid=7777";
     public static SpotJson.PostInfos Infos;
+    public static Boolean isTWAPILoaded = false;
 
     Context mcontext;
     GlobalVariable globalVariable;
@@ -96,6 +97,7 @@ public class TWSpotAPIFetcher extends AsyncTask<Void, Void, SpotJson> {
 
         Infos = spotJson.getInfos();
         Integer InfoLength = Infos.getInfo().length;
+        Log.d("3/10_TWSpotJson", "景點個數: " + InfoLength.toString());
         for (Integer i = 0; i < InfoLength; i++) {
             globalVariable.SpotDataRaw.add(new SpotData(i.toString(),
                     Infos.getInfo()[i].getName(),
@@ -109,15 +111,22 @@ public class TWSpotAPIFetcher extends AsyncTask<Void, Void, SpotJson> {
                     Infos.getInfo()[i].getTicketinfo(),
                     Infos.getInfo()[i].getToldescribe()));
         }
-        globalVariable.isAPILoaded = true;
-        if (globalVariable.isAPILoaded) {
-            Intent intent = new Intent(BROADCAST_ACTION);
-            intent.putExtra("isAPILoaded", true);
-            mcontext.sendBroadcast(intent);
+        isTWAPILoaded = true;
+        if (isTWAPILoaded) {
+            if (TPESpotAPIFetcher.isTPEAPILoaded) {
+                globalVariable.isAPILoaded = true;
+                Intent intent = new Intent(BROADCAST_ACTION);
+                intent.putExtra("isAPILoaded", true);
+                mcontext.sendBroadcast(intent);
+            } else {
+                Intent intent = new Intent(BROADCAST_ACTION);
+                intent.putExtra("isTWAPILoaded", true);
+                mcontext.sendBroadcast(intent);
+            }
         }
-        Log.e("3/10_", "=========TWSpotJson======Loaded to globalVariable");
+        Log.e("3/10_TWSpotJson", "Loaded to globalVariable");
+
         Log.e("3/10_", "=========TWSpotJson======Write to DB");
-        Infos = spotJson.getInfos();
         DataBaseHelper helper = new DataBaseHelper(mcontext);
         SQLiteDatabase database = helper.getWritableDatabase();
         Cursor spotDataRaw_cursor = database.query("spotDataRaw", new String[]{"spotId", "spotName", "spotAdd",

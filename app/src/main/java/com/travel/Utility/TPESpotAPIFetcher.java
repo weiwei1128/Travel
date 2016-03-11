@@ -2,6 +2,7 @@ package com.travel.Utility;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
@@ -31,6 +32,7 @@ public class TPESpotAPIFetcher extends AsyncTask<Void, Void, TPESpotJson> {
     public static final String TAG = "TPESpotAPIFetcher";
     public static final String SERVER_URL = "http://data.taipei/opendata/datalist/apiAccess?scope=resourceAquire&rid=36847f3f-deff-4183-a5bb-800737591de5";
     public static TPESpotJson.PostResult Result;
+    public static Boolean isTPEAPILoaded = false;
 
     Context mcontext;
     GlobalVariable globalVariable;
@@ -87,15 +89,60 @@ public class TPESpotAPIFetcher extends AsyncTask<Void, Void, TPESpotJson> {
             Log.e(TAG, "JsonString: Failed to parse JSON due to: " + ex);
         }
 
-        Log.e("3/10_", "=========TPESpotJson======Write to DB");
         Result = spotJson.getResult();
+        Integer ResultsLength = Result.getResults().length;
+        Log.d("3/10_TPESpotJson", "景點個數: " + ResultsLength.toString());
+        for (Integer i = 0; i < ResultsLength; i++) {
+            String ImgString = Result.getResults()[i].getFile();
+            int StringPosition1 = ImgString.indexOf("http", 2);
+            int StringPosition2 = ImgString.indexOf("http", StringPosition1+1);
+            int StringPosition3 = ImgString.indexOf("http", StringPosition2+1);
+
+            String ImgString1 = Result.getResults()[i].getFile();
+            String ImgString2 = "";
+            String ImgString3 = "";
+            if (StringPosition1 > 0) {
+                ImgString1 = ImgString.substring(0, StringPosition1);
+                if (StringPosition2 > 0 && StringPosition2 > StringPosition1) {
+                    ImgString2 = ImgString.substring(StringPosition1, StringPosition2);
+                    if (StringPosition3 > 0 && StringPosition3 > StringPosition2) {
+                        ImgString3 = ImgString.substring(StringPosition2, StringPosition3);
+                    }
+                }
+
+            }
+            globalVariable.SpotDataRaw.add(new SpotData(i.toString(),
+                    Result.getResults()[i].getStitle(),
+                    Double.valueOf(Result.getResults()[i].getLatitude()),
+                    Double.valueOf(Result.getResults()[i].getLongitude()),
+                    Result.getResults()[i].getAddress(),
+                    ImgString1, ImgString2, ImgString3,
+                    Result.getResults()[i].getMemoTime(), "",
+                    Result.getResults()[i].getXbody()));
+        }
+        isTPEAPILoaded = true;
+        if (isTPEAPILoaded) {
+            if (TWSpotAPIFetcher.isTWAPILoaded) {
+                globalVariable.isAPILoaded = true;
+                Intent intent = new Intent(TWSpotAPIFetcher.BROADCAST_ACTION);
+                intent.putExtra("isAPILoaded", true);
+                mcontext.sendBroadcast(intent);
+            } else {
+                Intent intent = new Intent(TWSpotAPIFetcher.BROADCAST_ACTION);
+                intent.putExtra("isTPEAPILoaded", true);
+                mcontext.sendBroadcast(intent);
+            }
+        }
+        Log.e("3/10_TPESpotJson", "Loaded to globalVariable");
+
+        Log.e("3/10_", "=========TPESpotJson======Write to DB");
         DataBaseHelper helper = new DataBaseHelper(mcontext);
         SQLiteDatabase database = helper.getWritableDatabase();
         Cursor spotDataRaw_cursor = database.query("spotDataRaw", new String[]{"spotId", "spotName", "spotAdd",
-                        "spotLat", "spotLng", "picture1", "picture2","picture3",
+                        "spotLat", "spotLng", "picture1", "picture2", "picture3",
                         "openTime", "ticketInfo", "infoDetail"},
                 null, null, null, null, null);
-        Integer ResultsLength = Result.getResults().length;
+        //Integer ResultsLength = Result.getResults().length;
         if (spotDataRaw_cursor != null && ResultsLength > 0) {
             if (spotDataRaw_cursor.getCount() == 0) {
                 for (Integer i = 0; i < ResultsLength; i++) {

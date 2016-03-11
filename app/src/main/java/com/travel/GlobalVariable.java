@@ -14,8 +14,8 @@ public class GlobalVariable extends Application {
     public ArrayList<SpotData> SpotDataSorted = new ArrayList<SpotData>();
     public ArrayList<MarkerOptions> MarkerOptionsArray = new ArrayList<MarkerOptions>();
 
-    public Double Latitude;
-    public Double Longitude;
+    //public Double Latitude;
+    //public Double Longitude;
 
     public Boolean isAPILoaded = false;
 }
