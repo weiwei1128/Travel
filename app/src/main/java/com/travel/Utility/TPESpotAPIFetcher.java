@@ -91,6 +91,7 @@ public class TPESpotAPIFetcher extends AsyncTask<Void, Void, TPESpotJson> {
 
         Result = spotJson.getResult();
         Integer ResultsLength = Result.getResults().length;
+        Log.d("3/10_TPESpotJson", "景點個數: " + ResultsLength.toString());
         for (Integer i = 0; i < ResultsLength; i++) {
             String ImgString = Result.getResults()[i].getFile();
             int StringPosition1 = ImgString.indexOf("http", 2);
@@ -121,11 +122,15 @@ public class TPESpotAPIFetcher extends AsyncTask<Void, Void, TPESpotJson> {
         }
         isTPEAPILoaded = true;
         if (isTPEAPILoaded) {
-            Intent intent = new Intent(TWSpotAPIFetcher.BROADCAST_ACTION);
-            intent.putExtra("isTPEAPILoaded", true);
-            mcontext.sendBroadcast(intent);
             if (TWSpotAPIFetcher.isTWAPILoaded) {
                 globalVariable.isAPILoaded = true;
+                Intent intent = new Intent(TWSpotAPIFetcher.BROADCAST_ACTION);
+                intent.putExtra("isAPILoaded", true);
+                mcontext.sendBroadcast(intent);
+            } else {
+                Intent intent = new Intent(TWSpotAPIFetcher.BROADCAST_ACTION);
+                intent.putExtra("isTPEAPILoaded", true);
+                mcontext.sendBroadcast(intent);
             }
         }
         Log.e("3/10_TPESpotJson", "Loaded to globalVariable");

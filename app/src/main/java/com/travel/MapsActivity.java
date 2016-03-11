@@ -79,7 +79,7 @@ public class MapsActivity extends FragmentActivity implements
         registerReceiver(broadcastReceiver, new IntentFilter(TWSpotAPIFetcher.BROADCAST_ACTION));
 
         BitmapDrawable BitmapDraw = (BitmapDrawable)getResources().getDrawable(R.drawable.location);
-        MarkerIcon = Bitmap.createScaledBitmap(BitmapDraw.getBitmap(), 50, 80, false);
+        MarkerIcon = Bitmap.createScaledBitmap(BitmapDraw.getBitmap(), 40, 70, false);
 
         BackImg = (ImageView) findViewById(R.id.maps_backImg);
         BackImg.setOnClickListener(new View.OnClickListener() {
@@ -128,7 +128,7 @@ public class MapsActivity extends FragmentActivity implements
                 new GetMarkerInfo(MapsActivity.this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                 if (currentLocation != null) {
                     Log.e("3/10_讀到位置", "事先Sort");
-                    if (globalVariable.SpotDataSorted.isEmpty()) {
+                    if (globalVariable.isAPILoaded && globalVariable.SpotDataSorted.isEmpty()) {
                         new GetSpotsNSort(MapsActivity.this, currentLocation.getLatitude(),
                                 currentLocation.getLongitude()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                     }
@@ -359,6 +359,9 @@ public class MapsActivity extends FragmentActivity implements
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if (mDialog.isShowing()) {
+                mDialog.dismiss();
+            }
             Functions.go(true,MapsActivity.this, MapsActivity.this, HomepageActivity.class, null);
         }
         return false;

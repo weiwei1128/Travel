@@ -60,21 +60,24 @@ public class LoadApiService extends Service {
                 // 到景點API抓景點資訊
                 // TODO TW API放著在背景執行去動UI，結果好像就不了了之，沒有載入成功 哪招QAQ
                 Log.e("3/10_", "*****Download API*****");
-                if(tpeApi.getStatus() == AsyncTask.Status.PENDING) {
+                if(!(tpeApi.getStatus() == AsyncTask.Status.RUNNING)) {
                     tpeApi.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                 }
-
-                if(twApi.getStatus() == AsyncTask.Status.PENDING) {
+                if(!(twApi.getStatus() == AsyncTask.Status.RUNNING)) {
                     twApi.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                 }
                 //new TPESpotAPIFetcher(context).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                 //new TWSpotAPIFetcher(context).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             } else if (spotDataRaw_cursor.getCount() > 300 && spotDataRaw_cursor.getCount() < 4600) {
-                if(twApi.getStatus() == AsyncTask.Status.PENDING) {
+                if(!(twApi.getStatus() == AsyncTask.Status.RUNNING)) {
                     twApi.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                 }
-            } else if (spotDataRaw_cursor.getCount() > 4600) {
-                if (globalVariable.SpotDataRaw.size() < 4600) {
+            } else if (spotDataRaw_cursor.getCount() > 4400 && spotDataRaw_cursor.getCount() < 4700) {
+                if(!(tpeApi.getStatus() == AsyncTask.Status.RUNNING)) {
+                    tpeApi.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                }
+            } else if (spotDataRaw_cursor.getCount() > 4700) {
+                if (globalVariable.SpotDataRaw.size() < 4700) {
                     globalVariable.SpotDataRaw.clear();
                     Log.e("3/10_", "API load to GlobalVariable");
                     while (spotDataRaw_cursor.moveToNext()) {
@@ -98,16 +101,29 @@ public class LoadApiService extends Service {
                         Intent APILoaded = new Intent(TWSpotAPIFetcher.BROADCAST_ACTION);
                         APILoaded.putExtra("isAPILoaded", true);
                         sendBroadcast(APILoaded);
-                        Log.e("3/10_", "Call StopLoadApiService");
-                        stopSelf();
+                        /*
+                        if(tpeApi.getStatus() == AsyncTask.Status.FINISHED
+                                && twApi.getStatus() == AsyncTask.Status.FINISHED){
+                            // My AsyncTask is done and onPostExecute was called
+                            Log.e("3/10_", "***Call StopLoadApiService***");
+                            stopSelf();
+                        }*/
                     }
                 } else if (TWSpotAPIFetcher.isTWAPILoaded && TPESpotAPIFetcher.isTPEAPILoaded) {
-                    Log.e("3/10_", "API is Loaded Broadcast");
-                    Intent APILoaded = new Intent(TWSpotAPIFetcher.BROADCAST_ACTION);
-                    APILoaded.putExtra("isAPILoaded", true);
-                    sendBroadcast(APILoaded);
-                    Log.e("3/10_", "Call StopLoadApiService");
-                    stopSelf();
+                    globalVariable.isAPILoaded = true;
+                    if (globalVariable.isAPILoaded) {
+                        Log.e("3/10_", "API is Loaded Broadcast");
+                        Intent APILoaded = new Intent(TWSpotAPIFetcher.BROADCAST_ACTION);
+                        APILoaded.putExtra("isAPILoaded", true);
+                        sendBroadcast(APILoaded);
+                        /*
+                        if(tpeApi.getStatus() == AsyncTask.Status.FINISHED
+                                && twApi.getStatus() == AsyncTask.Status.FINISHED){
+                            // My AsyncTask is done and onPostExecute was called
+                            Log.e("3/10_", "***Call StopLoadApiService***");
+                            stopSelf();
+                        }*/
+                    }
                 }
             }
             spotDataRaw_cursor.close();
@@ -131,13 +147,23 @@ public class LoadApiService extends Service {
                 if (isTWAPILoaded && isTPEAPILoaded) {
                     globalVariable.isAPILoaded = true;
                     if (globalVariable.isAPILoaded) {
-                        Log.e("3/10_", "API is Loaded Broadcast");
+                        Log.e("3/10_", "API is Loaded BroadcastReceiver");
                         Intent APILoaded = new Intent(TWSpotAPIFetcher.BROADCAST_ACTION);
                         APILoaded.putExtra("isAPILoaded", true);
                         sendBroadcast(APILoaded);
-                        Log.e("3/10_", "Call StopLoadApiService");
+                        Log.e("3/10_", "***Call StopLoadApiService***");
                         stopSelf();
                     }
+                }
+
+                globalVariable.isAPILoaded = intent.getBooleanExtra("isAPILoaded", false);
+                if (globalVariable.isAPILoaded) {
+                    Log.e("3/10_", "API is Loaded BroadcastReceiver");
+                    Intent APILoaded = new Intent(TWSpotAPIFetcher.BROADCAST_ACTION);
+                    APILoaded.putExtra("isAPILoaded", true);
+                    sendBroadcast(APILoaded);
+                    Log.e("3/10_", "***Call StopLoadApiService***");
+                    stopSelf();
                 }
             }
         }

@@ -97,6 +97,7 @@ public class TWSpotAPIFetcher extends AsyncTask<Void, Void, SpotJson> {
 
         Infos = spotJson.getInfos();
         Integer InfoLength = Infos.getInfo().length;
+        Log.d("3/10_TWSpotJson", "景點個數: " + InfoLength.toString());
         for (Integer i = 0; i < InfoLength; i++) {
             globalVariable.SpotDataRaw.add(new SpotData(i.toString(),
                     Infos.getInfo()[i].getName(),
@@ -112,11 +113,15 @@ public class TWSpotAPIFetcher extends AsyncTask<Void, Void, SpotJson> {
         }
         isTWAPILoaded = true;
         if (isTWAPILoaded) {
-            Intent intent = new Intent(BROADCAST_ACTION);
-            intent.putExtra("isTWAPILoaded", true);
-            mcontext.sendBroadcast(intent);
             if (TPESpotAPIFetcher.isTPEAPILoaded) {
                 globalVariable.isAPILoaded = true;
+                Intent intent = new Intent(BROADCAST_ACTION);
+                intent.putExtra("isAPILoaded", true);
+                mcontext.sendBroadcast(intent);
+            } else {
+                Intent intent = new Intent(BROADCAST_ACTION);
+                intent.putExtra("isTWAPILoaded", true);
+                mcontext.sendBroadcast(intent);
             }
         }
         Log.e("3/10_TWSpotJson", "Loaded to globalVariable");
