@@ -763,31 +763,8 @@ public class RecordActivity extends FragmentActivity implements
         } else {
             currentMarker.setPosition(CurrentLatlng);
         }
-/*
-        // 加上軌跡
-        if (record_start_boolean) {
-            TraceOfRoute(CurrentLatlng);
-        }    */
     }
-    /*
-        // 紀錄軌跡
-        private void TraceOfRoute(LatLng latLng) {
-            if (TraceRoute == null) {
-                TraceRoute = new ArrayList<LatLng>();
-            }
-            TraceRoute.add(latLng);
 
-            PolylineOptions polylineOpt = new PolylineOptions();
-            for (LatLng latlng : TraceRoute) {
-                polylineOpt.add(latlng);
-            }
-
-            polylineOpt.color(Color.RED);
-
-            Polyline line = mMap.addPolyline(polylineOpt);
-            line.setWidth(10);
-        }
-    */
     // 顯示軌跡紀錄
     private void DisplayRoute(LatLng track_latlng) {
         //database.delete("trackRoute", null, null);
