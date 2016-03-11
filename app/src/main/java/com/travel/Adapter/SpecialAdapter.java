@@ -99,7 +99,7 @@ public class SpecialAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         thing item;
-        /*
+
         if (convertView == null) {
             convertView = layoutInflater.inflate(R.layout.special_item, null);
             item = new thing(
@@ -110,14 +110,14 @@ public class SpecialAdapter extends BaseAdapter {
             convertView.setTag(item);
         } else
             item = (thing) convertView.getTag();
-            */
+            /*
         View view = layoutInflater.inflate(R.layout.special_item, null);
         item = new thing(
                 (ImageView) view.findViewById(R.id.special_img),
                 (TextView) view.findViewById(R.id.special_name_text),
                 (TextView) view.findViewById(R.id.special_price_text)
         );
-
+*/
 //        ImageLoaderConfiguration configuration = new ImageLoaderConfiguration.Builder(mContext).build();
 //        ImageLoader.getInstance().clearMemoryCache();
 //        ImageLoader.getInstance().init(configuration);
@@ -142,8 +142,8 @@ public class SpecialAdapter extends BaseAdapter {
             special.close();
 
 
-//        return convertView;
-        return view;
+        return convertView;
+//        return view;
     }
 
     public class thing {
