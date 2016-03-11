@@ -68,7 +68,7 @@ public class LoginActivity extends AppCompatActivity {
     //1.4
 
     //2.29 Hua
-    GlobalVariable globalVariable;
+    //GlobalVariable globalVariable;
     //2.29 Hua
 
     @Override
@@ -76,7 +76,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Fabric.with(this, new Crashlytics());
         setContentView(R.layout.login_activity);
-        globalVariable = (GlobalVariable) getApplicationContext();
+        //globalVariable = (GlobalVariable) getApplicationContext();
 
         Intent intent = new Intent(LoginActivity.this, HttpService.class);
         startService(intent);

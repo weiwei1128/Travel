@@ -79,7 +79,7 @@ public class MapsActivity extends FragmentActivity implements
         registerReceiver(broadcastReceiver, new IntentFilter(TWSpotAPIFetcher.BROADCAST_ACTION));
 
         BitmapDrawable BitmapDraw = (BitmapDrawable)getResources().getDrawable(R.drawable.location);
-        MarkerIcon = Bitmap.createScaledBitmap(BitmapDraw.getBitmap(), 60, 90, false);
+        MarkerIcon = Bitmap.createScaledBitmap(BitmapDraw.getBitmap(), 50, 80, false);
 
         BackImg = (ImageView) findViewById(R.id.maps_backImg);
         BackImg.setOnClickListener(new View.OnClickListener() {
@@ -140,7 +140,9 @@ public class MapsActivity extends FragmentActivity implements
     @Override
     protected void onResume() {
         setUpMapIfNeeded();
-        mGoogleApiClient.connect();
+        if (!mGoogleApiClient.isConnected()) {
+            mGoogleApiClient.connect();
+        }
         super.onResume();
     }
 
@@ -149,7 +151,6 @@ public class MapsActivity extends FragmentActivity implements
         if (mGoogleApiClient.isConnected()) {
             LocationServices.FusedLocationApi.removeLocationUpdates
                     (mGoogleApiClient, this);
-            mGoogleApiClient.disconnect();
         }
         super.onPause();
     }
@@ -205,7 +206,6 @@ public class MapsActivity extends FragmentActivity implements
      * This should only be called once and when we are sure that {@link #mMap} is not null.
      */
     private void setUpMap() {
-
         if (!globalVariable.MarkerOptionsArray.isEmpty()) {
             for (MarkerOptions markerOptions : globalVariable.MarkerOptionsArray) {
                 markerOptions.icon(BitmapDescriptorFactory.fromBitmap(MarkerIcon));
@@ -213,6 +213,47 @@ public class MapsActivity extends FragmentActivity implements
             }
             Log.d("3/10_setUpMap","MarkerOption已載入...顯示中");
         }
+    }
+
+    private void LoadtoMap() {
+        // Prompt the user to Enabled GPS
+        LocationManager service = (LocationManager) getSystemService(LOCATION_SERVICE);
+        boolean enabled = service.isProviderEnabled(LocationManager.GPS_PROVIDER);
+
+        // check if enabled and if not send user to the GSP settings
+        // Better solution would be to display a dialog and suggesting to
+        // go to the settings
+        if (!enabled) {
+            Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+            startActivity(intent);
+        }
+
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API).build();
+        mLocationRequest = LocationRequest.create()
+                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                .setInterval(5000)        // 5 seconds, in milliseconds
+                .setFastestInterval(1000); // 1 second, in milliseconds
+
+        // Try to obtain the map from the SupportMapFragment.
+        mMap = ((SupportMapFragment) getSupportFragmentManager().
+                findFragmentById(R.id.map)).getMap();
+        // API 23 Needs to Check Permission
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                || ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+            // Check Permissions Now
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION);
+        } else {
+            mMap.setMyLocationEnabled(true);
+        }
+
+        mMap.getUiSettings().setCompassEnabled(true);
+        mMap.getUiSettings().setZoomControlsEnabled(true);
+        mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
     }
 
     @Override
@@ -267,7 +308,9 @@ public class MapsActivity extends FragmentActivity implements
      */
     @Override
     public void onLocationChanged(Location location) {
-        handleNewLocation(location);
+        if (currentLocation != location) {
+            handleNewLocation(currentLocation);
+        }
     }
 
     private void handleNewLocation(Location location) {
@@ -281,14 +324,13 @@ public class MapsActivity extends FragmentActivity implements
             if (mMap == null) {
                 LoadtoMap();
             }
+            // 移動地圖到目前的位置
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
             currentMarker = mMap.addMarker(new MarkerOptions().position(latLng)
                     .title("I am here!").icon(BitmapDescriptorFactory.fromBitmap(MarkerIcon)));
         } else {
             currentMarker.setPosition(latLng);
         }
-
-        // 移動地圖到目前的位置
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
 
         DataBaseHelper helper = new DataBaseHelper(MapsActivity.this);
         SQLiteDatabase database = helper.getWritableDatabase();
@@ -311,47 +353,6 @@ public class MapsActivity extends FragmentActivity implements
             }
             location_cursor.close();
         }
-    }
-
-    private void LoadtoMap() {
-        // Prompt the user to Enabled GPS
-        LocationManager service = (LocationManager) getSystemService(LOCATION_SERVICE);
-        boolean enabled = service.isProviderEnabled(LocationManager.GPS_PROVIDER);
-
-        // check if enabled and if not send user to the GSP settings
-        // Better solution would be to display a dialog and suggesting to
-        // go to the settings
-        if (!enabled) {
-            Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-            startActivity(intent);
-        }
-
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(LocationServices.API).build();
-        mLocationRequest = LocationRequest.create()
-                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-                .setInterval(5000)        // 5 seconds, in milliseconds
-                .setFastestInterval(1000); // 1 second, in milliseconds
-
-        // Try to obtain the map from the SupportMapFragment.
-        mMap = ((SupportMapFragment) getSupportFragmentManager().
-                findFragmentById(R.id.map)).getMap();
-        // API 23 Needs to Check Permission
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                || ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-
-            // Check Permissions Now
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION);
-        } else {
-            mMap.setMyLocationEnabled(true);
-        }
-
-        mMap.getUiSettings().setCompassEnabled(true);
-        mMap.getUiSettings().setZoomControlsEnabled(true);
-        mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
     }
 
     // Android 系統返回鍵

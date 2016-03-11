@@ -74,7 +74,7 @@ public class HttpService extends Service {
                 Log.e("3/10_", "Download API");
                 new TWSpotAPIFetcher(context).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                 new TPESpotAPIFetcher(context).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-            } else if (spotDataRaw_cursor.getCount() > 300 && spotDataRaw_cursor.getCount() <4600) {
+            } else if (spotDataRaw_cursor.getCount() > 300 && spotDataRaw_cursor.getCount() < 4600) {
                 new TWSpotAPIFetcher(context).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             } else {
                 Log.e("3/10_", "API load to GlobalVariable");
