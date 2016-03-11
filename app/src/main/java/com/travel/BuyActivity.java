@@ -24,7 +24,7 @@ import com.travel.Utility.Functions;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BuyActivityNew extends AppCompatActivity {
+public class BuyActivity extends AppCompatActivity {
     ViewPager viewPager;
     List<Fragment> fragments = new ArrayList<>();
     BuyFragmentViewPagerAdapter adapter;
@@ -39,7 +39,7 @@ public class BuyActivityNew extends AppCompatActivity {
     @Override
     protected void onResume() {
         //if need to display button
-//        Log.d("3.9", "BuyActivityNew onResume");
+//        Log.d("3.9", "BuyActivity onResume");
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         int howmany = sharedPreferences.getInt("InBuyList", 0);
         if (howmany > 0) {
@@ -47,8 +47,8 @@ public class BuyActivityNew extends AppCompatActivity {
             ListImg.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Functions.go(false, BuyActivityNew.this,
-                            BuyActivityNew.this, BuyItemListActivity.class, null);
+                    Functions.go(false, BuyActivity.this,
+                            BuyActivity.this, BuyItemListActivity.class, null);
                 }
             });
         }
@@ -85,12 +85,12 @@ public class BuyActivityNew extends AppCompatActivity {
         backImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Functions.go(true, BuyActivityNew.this, BuyActivityNew.this, HomepageActivity.class, null);
+                Functions.go(true, BuyActivity.this, BuyActivity.this, HomepageActivity.class, null);
             }
         });
 
         int howmany = sharedPreferences.getInt("InBuyList", 0);
-        helper = new DataBaseHelper(BuyActivityNew.this);
+        helper = new DataBaseHelper(BuyActivity.this);
         database = helper.getWritableDatabase();
         Cursor goods_cursor = database.query("goods", new String[]{"totalCount", "goods_id", "goods_title",
                 "goods_url", "goods_money", "goods_content", "goods_addtime"}, null, null, null, null, null);
@@ -101,8 +101,8 @@ public class BuyActivityNew extends AppCompatActivity {
             ListImg.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Functions.go(false, BuyActivityNew.this,
-                            BuyActivityNew.this, BuyItemListActivity.class, null);
+                    Functions.go(false, BuyActivity.this,
+                            BuyActivity.this, BuyItemListActivity.class, null);
                 }
             });
         }
@@ -120,7 +120,7 @@ public class BuyActivityNew extends AppCompatActivity {
 
         //fragment(i) -> i代表第幾頁
         for (int i = 0; i < pages; i++) {
-            fragments.add(new BuyFragmentNew(i + 1));
+            fragments.add(new BuyFragment(i + 1));
             TextView number = new TextView(this);
             number.setText(i + 1 + "  ");
             number.setTextColor(getResources().getColor(R.color.black));
@@ -132,12 +132,12 @@ public class BuyActivityNew extends AppCompatActivity {
 
 
         adapter = new BuyFragmentViewPagerAdapter(this.getSupportFragmentManager(), viewPager,
-                fragments, BuyActivityNew.this, 4, 1);
+                fragments, BuyActivity.this, 4, 1);
 
         viewPager.setAdapter(adapter);
         viewPager.setOnPageChangeListener(new PageListener());
         if (adapter.getCount() == 0)
-            Toast.makeText(BuyActivityNew.this, "尚無資料!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(BuyActivity.this, "尚無資料!", Toast.LENGTH_SHORT).show();
 //        Log.e("3.8", "currentItem:" + viewPager.getCurrentItem() + "" + adapter.getCurrentPosition());
     }
 
@@ -163,7 +163,7 @@ public class BuyActivityNew extends AppCompatActivity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK)
-            Functions.go(true, BuyActivityNew.this, BuyActivityNew.this, HomepageActivity.class, null);
+            Functions.go(true, BuyActivity.this, BuyActivity.this, HomepageActivity.class, null);
         return false;
     }
 }

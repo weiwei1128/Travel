@@ -15,7 +15,7 @@ import android.widget.Toast;
 import com.travel.Adapter.BuyAdapter;
 import com.travel.Utility.Functions;
 
-public class BuyFragmentNew extends Fragment {
+public class BuyFragment extends Fragment {
 
     GridView gridView;
     BuyAdapter adapter;
@@ -23,7 +23,7 @@ public class BuyFragmentNew extends Fragment {
     Context context;
     Activity activity;
 
-    public BuyFragmentNew(Integer position) {
+    public BuyFragment(Integer position) {
         Position = position;
     }
 

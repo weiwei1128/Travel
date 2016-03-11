@@ -1,13 +1,10 @@
 package com.travel;
 
-import android.app.ActivityManager;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -20,8 +17,6 @@ import android.widget.TextView;
 
 import com.travel.Utility.DataBaseHelper;
 import com.travel.Utility.Functions;
-
-import java.util.List;
 
 public class MemberActivity extends AppCompatActivity {
 
@@ -92,7 +87,7 @@ public class MemberActivity extends AppCompatActivity {
         shoprecordImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Functions.go(false,MemberActivity.this,MemberActivity.this,BuyRecordActivity.class,null);            }
+                Functions.go(false,MemberActivity.this,MemberActivity.this,ShopRecordActivity.class,null);            }
         });
         shoprecordImg.setOnTouchListener(new View.OnTouchListener() {
             @Override

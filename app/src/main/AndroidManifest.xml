@@ -128,9 +128,9 @@
             android:enabled="true"
             android:exported="true" />
 
-        <activity android:name=".BuyRecordActivity" />
+        <activity android:name=".ShopRecordActivity" />
         <activity android:name=".CheckScheduleMainActivity" />
-        <activity android:name=".BuyActivityNew" />
+        <activity android:name=".BuyActivity" />
         <activity android:name=".SpecialDetailActivity"></activity>
     </application>
 

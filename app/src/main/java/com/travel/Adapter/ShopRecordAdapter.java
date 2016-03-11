@@ -16,13 +16,13 @@ import com.travel.Utility.DataBaseHelper;
 /**
  * Created by wei on 2016/3/7.
  */
-public class BuyRecordAdapter extends BaseAdapter {
+public class ShopRecordAdapter extends BaseAdapter {
     LayoutInflater layoutInflater;
     Context m_context;
     DataBaseHelper helper;
     SQLiteDatabase database;
 
-    public BuyRecordAdapter(Context context) {
+    public ShopRecordAdapter(Context context) {
         layoutInflater = LayoutInflater.from(context);
         this.m_context = context;
         helper = new DataBaseHelper(context);

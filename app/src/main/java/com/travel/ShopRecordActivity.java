@@ -13,7 +13,7 @@ import android.view.View;
 import android.widget.GridView;
 import android.widget.ImageView;
 
-import com.travel.Adapter.BuyRecordAdapter;
+import com.travel.Adapter.ShopRecordAdapter;
 import com.travel.Utility.DataBaseHelper;
 import com.travel.Utility.Functions;
 
@@ -32,16 +32,16 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 
-public class BuyRecordActivity extends AppCompatActivity {
+public class ShopRecordActivity extends AppCompatActivity {
 
     ImageView backImg;
     GridView gridView;
-    public BuyRecordAdapter adapter;
+    public ShopRecordAdapter adapter;
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK)
-            Functions.go(true, BuyRecordActivity.this, BuyRecordActivity.this, HomepageActivity.class, null);
+            Functions.go(true, ShopRecordActivity.this, ShopRecordActivity.this, HomepageActivity.class, null);
         return false;
     }
 
@@ -51,12 +51,12 @@ public class BuyRecordActivity extends AppCompatActivity {
         setContentView(R.layout.shoprecord_activity);
         backImg = (ImageView) findViewById(R.id.shoprecordlist_backImg);
         gridView = (GridView) findViewById(R.id.shop_record_gridview);
-        adapter = new BuyRecordAdapter(BuyRecordActivity.this);
+        adapter = new ShopRecordAdapter(ShopRecordActivity.this);
         gridView.setAdapter(adapter);
         backImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Functions.go(true, BuyRecordActivity.this, BuyRecordActivity.this, HomepageActivity.class, null);
+                Functions.go(true, ShopRecordActivity.this, ShopRecordActivity.this, HomepageActivity.class, null);
             }
         });
         new getShopRecord(adapter).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
@@ -64,11 +64,11 @@ public class BuyRecordActivity extends AppCompatActivity {
 
     class getShopRecord extends AsyncTask<String, Void, String> {
         String UserId = "ljd110@qq.com";
-        Context context = BuyRecordActivity.this;
-        BuyRecordAdapter adapter;
+        Context context = ShopRecordActivity.this;
+        ShopRecordAdapter adapter;
 
-        getShopRecord(BuyRecordAdapter buyRecordAdapter) {
-            this.adapter = buyRecordAdapter;
+        getShopRecord(ShopRecordAdapter shopRecordAdapter) {
+            this.adapter = shopRecordAdapter;
         }
 
         @Override
