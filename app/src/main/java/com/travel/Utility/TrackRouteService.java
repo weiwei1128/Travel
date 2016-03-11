@@ -146,8 +146,7 @@ public class TrackRouteService extends Service {
     private void initializeLocationManager() {
         Log.i(TAG, "initializeLocationManager");
         if (mLocationManager == null) {
-            mLocationManager = (LocationManager) getApplicationContext()
-                    .getSystemService(Context.LOCATION_SERVICE);
+            mLocationManager = (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
         }
     }
 
