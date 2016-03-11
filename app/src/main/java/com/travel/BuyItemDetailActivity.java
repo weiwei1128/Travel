@@ -60,7 +60,7 @@ public class BuyItemDetailActivity extends AppCompatActivity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            Functions.go(true, BuyItemDetailActivity.this, BuyItemDetailActivity.this, BuyActivityNew.class, null);
+            Functions.go(true, BuyItemDetailActivity.this, BuyItemDetailActivity.this, BuyActivity.class, null);
         }
 
         return false;
@@ -86,7 +86,7 @@ public class BuyItemDetailActivity extends AppCompatActivity {
         BackImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Functions.go(true, BuyItemDetailActivity.this, BuyItemDetailActivity.this, BuyActivityNew.class, null);
+                Functions.go(true, BuyItemDetailActivity.this, BuyItemDetailActivity.this, BuyActivity.class, null);
             }
         });
         AddImg = (ImageView) findViewById(R.id.buyitemAdd_Img);
