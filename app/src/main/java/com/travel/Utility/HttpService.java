@@ -68,13 +68,14 @@ public class HttpService extends Service {
                         "openTime", "ticketInfo", "infoDetail"},
                 null, null, null, null, null);
         if (spotDataRaw_cursor != null) {
-            if (spotDataRaw_cursor.getCount() == 0) {
+            if (spotDataRaw_cursor.getCount() == 0 || spotDataRaw_cursor.getCount() < 300) {
                 // 到景點API抓景點資訊
+                // TODO TW API放著在背景執行去動UI，結果好像就不了了之，沒有載入成功 哪招QAQ
                 Log.e("3/10_", "Download API");
                 new TWSpotAPIFetcher(context).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                 new TPESpotAPIFetcher(context).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-                // TODO TW API放著在背景執行去動UI，結果好像就不了了之，沒有載入成功 哪招QAQ
-                //new GetSpotsNSort(LoginActivity.this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            } else if (spotDataRaw_cursor.getCount() > 300 && spotDataRaw_cursor.getCount() <4600) {
+                new TWSpotAPIFetcher(context).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             } else {
                 Log.e("3/10_", "API load to GlobalVariable");
                 while (spotDataRaw_cursor.moveToNext()) {

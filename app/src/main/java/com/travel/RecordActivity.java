@@ -791,8 +791,15 @@ public class RecordActivity extends FragmentActivity implements
     // 顯示軌跡紀錄
     private void DisplayRoute(LatLng track_latlng) {
         //database.delete("trackRoute", null, null);
+        if (TraceRoute == null) {
+            TraceRoute = new ArrayList<LatLng>();
+        }
         PolylineOptions polylineOpt = new PolylineOptions();
-        polylineOpt.add(track_latlng).color(Color.RED);
+        for (LatLng latlng : TraceRoute) {
+            polylineOpt.add(latlng);
+        }
+
+        polylineOpt.color(Color.RED);
 
         Polyline line = mMap.addPolyline(polylineOpt);
         line.setWidth(10);
