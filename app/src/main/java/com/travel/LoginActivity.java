@@ -25,6 +25,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.travel.Utility.DataBaseHelper;
 import com.travel.Utility.Functions;
 import com.travel.Utility.GetSpotsNSort;
@@ -69,101 +71,13 @@ public class LoginActivity extends AppCompatActivity {
     GlobalVariable globalVariable;
     //2.29 Hua
 
-    //3.9 Hua//
-    final int REQUEST_LOCATION = 2;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Fabric.with(this, new Crashlytics());
         setContentView(R.layout.login_activity);
+        globalVariable = (GlobalVariable) getApplicationContext();
 
-        //3.5 Hua
-        // Prompt the user to Enabled GPS
-        LocationManager service = (LocationManager) getSystemService(LOCATION_SERVICE);
-        boolean GPS_enabled = service.isProviderEnabled(LocationManager.GPS_PROVIDER);//NETWORK_PROVIDER);
-        // check if enabled and if not send user to the GSP settings
-        // Better solution would be to display a dialog and suggesting to
-        // go to the settings
-        if (!GPS_enabled) {
-            Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-            startActivity(intent);
-        }
-
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED
-                || ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-            // Check Permissions Now
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION);
-        } else {
-            // Loading API
-            startService(new Intent(LoginActivity.this, LocationService.class));
-
-            globalVariable = (GlobalVariable) getApplicationContext();
-            DataBaseHelper helper = new DataBaseHelper(getBaseContext());
-            SQLiteDatabase database = helper.getWritableDatabase();
-            Cursor spotDataRaw_cursor = database.query("spotDataRaw", new String[]{"spotId", "spotName", "spotAdd",
-                            "spotLat", "spotLng", "picture1", "picture2", "picture3",
-                            "openTime", "ticketInfo", "infoDetail"},
-                    null, null, null, null, null);
-            if (spotDataRaw_cursor != null) {
-                if (spotDataRaw_cursor.getCount() == 0) {
-                    // 到景點API抓景點資訊
-                    new TPESpotAPIFetcher(LoginActivity.this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-
-                    // TODO 放著在背景執行去動UI，結果好像就不了了之，沒有載入成功 哪招QAQ
-                    new TWSpotAPIFetcher(LoginActivity.this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-
-                    helper = new DataBaseHelper(LoginActivity.this);
-                    database = helper.getWritableDatabase();
-                    Cursor location_cursor = database.query("location",
-                            new String[]{"CurrentLat", "CurrentLng"}, null, null, null, null, null);
-                    if (location_cursor != null) {
-                        if (location_cursor.getCount() != 0) {
-                            new GetSpotsNSort(LoginActivity.this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-                        } else {
-                            globalVariable.SpotDataSorted = null;
-                            Log.d("3.9_抓不到位置", "不執行GetSpotsNSort");
-                            if (Functions.isMyServiceRunning(LoginActivity.this, LocationService.class)) {
-                                Intent intent = new Intent(LoginActivity.this, LocationService.class);
-                                stopService(intent);
-                            }
-                            startService(new Intent(LoginActivity.this, LocationService.class));
-                        }
-                        location_cursor.close();
-                    }
-                } else {
-                    if (globalVariable.SpotDataSorted.isEmpty()) {
-                        // retrieve Location from DB
-                        helper = new DataBaseHelper(LoginActivity.this);
-                        database = helper.getWritableDatabase();
-                        Cursor location_cursor = database.query("location",
-                                new String[]{"CurrentLat", "CurrentLng"}, null, null, null, null, null);
-                        if (location_cursor != null) {
-                            if (location_cursor.getCount() != 0) {
-                                new GetSpotsNSort(LoginActivity.this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-                            } else {
-                                globalVariable.SpotDataSorted = null;
-                                Log.d("3.9_抓不到位置", "不執行GetSpotsNSort");
-                                if (Functions.isMyServiceRunning(LoginActivity.this, LocationService.class)) {
-                                    Intent intent = new Intent(LoginActivity.this, LocationService.class);
-                                    stopService(intent);
-                                }
-                                startService(new Intent(LoginActivity.this, LocationService.class));
-                            }
-                            location_cursor.close();
-                        }
-
-                    }
-                }
-                spotDataRaw_cursor.close();
-            }
-
-
-        }
-        //3.5 Hua
         Intent intent = new Intent(LoginActivity.this, HttpService.class);
         startService(intent);
         //Intent intent = new Intent(LoginActivity.this, HttpService.class);
@@ -726,24 +640,6 @@ public class LoginActivity extends AppCompatActivity {
 
 
             super.onPostExecute(string);
-        }
-    }
-
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        if (requestCode == REQUEST_LOCATION) {
-            if(grantResults.length == 1
-                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // We can now safely use the API we requested access to
-
-                // Loading API
-                Intent intent = new Intent(LoginActivity.this, HttpService.class);
-                startService(intent);
-            } else {
-                // Permission was denied or request was cancelled
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION);
-                Toast.makeText(LoginActivity.this, "請允許寶島好智遊存取您的位置!", Toast.LENGTH_LONG).show();
-            }
         }
     }
 }

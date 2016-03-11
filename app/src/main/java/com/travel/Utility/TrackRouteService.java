@@ -13,13 +13,9 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
 
-import com.google.android.gms.maps.model.LatLng;
 import com.travel.GlobalVariable;
 
-import java.util.ArrayList;
-
 public class TrackRouteService extends Service {
-
     public TrackRouteService() {
     }
 
@@ -34,16 +30,13 @@ public class TrackRouteService extends Service {
 
     public static final String BROADCAST_ACTION = "com.example.trackroute.status";
 
-    private Boolean isLocationChanged = false;
-
-    private ArrayList<LatLng> TraceRoute;
     private Boolean record_start_boolean;
     private Integer RoutesCounter;
     private Integer Track_no;
 
     @Override
     public void onCreate() {
-        Log.d("3.9_", "TrackRouteService: onCreate");
+        Log.d("3/10_", "TrackRouteService: onCreate");
         Log.i(TAG, "onCreate");
 
         globalVariable = (GlobalVariable)getApplicationContext();
@@ -72,13 +65,12 @@ public class TrackRouteService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.d("3.9_", "TrackRouteService: onStartCommand");
+        Log.d("3/10_", "TrackRouteService: onStartCommand");
         if (intent != null) {
-            record_start_boolean = intent.getBooleanExtra("isStart", false);
             RoutesCounter = intent.getIntExtra("routesCounter", 1);
             Track_no = intent.getIntExtra("track_no", 1);
-            Log.d("3.9_", "isStart: " + record_start_boolean);
         }
+        record_start_boolean = true;
         super.onStartCommand(intent, flags, startId);
         return START_STICKY;
     }
@@ -98,13 +90,13 @@ public class TrackRouteService extends Service {
 
             final Double Latitude = mLastLocation.getLatitude();
             final Double Longitude = mLastLocation.getLongitude();
-            Log.d("3.9_", "Latitude " + Latitude);
-            Log.d("3.9_", "Longitude " + Longitude);
+            Log.d("3/10_", "Latitude " + Latitude);
+            Log.d("3/10_", "Longitude " + Longitude);
 
             // 加上軌跡
             if (record_start_boolean) {
                 TraceOfRoute(Latitude, Longitude);
-                Log.d("3.9_", "TraceOfRoute");
+                Log.d("3/10_", "TraceOfRoute");
             }
 
         }
@@ -125,20 +117,19 @@ public class TrackRouteService extends Service {
         }
     }
 
-    LocationListener[] mLocationListeners = new LocationListener[] {
+    LocationListener[] mLocationListeners = new LocationListener[]{
             new LocationListener(LocationManager.GPS_PROVIDER),
             new LocationListener(LocationManager.NETWORK_PROVIDER)
     };
 
     @Override
-    public IBinder onBind(Intent arg0)
-    {
+    public IBinder onBind(Intent arg0) {
         return null;
     }
 
     @Override
     public void onDestroy() {
-        Log.d("3.9_", "TrackRouteService: onDestroy");
+        Log.d("3/10_", "TrackRouteService: onDestroy");
         Log.i(TAG, "onDestroy");
         super.onDestroy();
         if (mLocationManager != null) {
@@ -159,7 +150,7 @@ public class TrackRouteService extends Service {
         }
     }
 
-    // 紀錄軌跡
+    // 紀錄軌跡到DB
     private void TraceOfRoute(Double Latitude, Double Longitude) {
         DataBaseHelper helper = new DataBaseHelper(getApplicationContext());
         SQLiteDatabase database = helper.getWritableDatabase();
@@ -178,7 +169,7 @@ public class TrackRouteService extends Service {
                 cv.put("track_start", 0);
             }
             long result = database.insert("trackRoute", null, cv);
-            Log.d("3.9_軌跡紀錄", result + " = DB INSERT RC:" + RoutesCounter
+            Log.d("3/10_軌跡紀錄", result + " = DB INSERT RC:" + RoutesCounter
                     + " no:" + Track_no + " 座標 " + Latitude + "," + Longitude);
             trackRoute_cursor.close();
         }

@@ -48,9 +48,6 @@ public class SpotListAdapter extends BaseAdapter implements Filterable {
     private Double Latitude;
     private Double Longitude;
 
-    private DataBaseHelper helper;
-    private SQLiteDatabase database;
-
     private GlobalVariable globalVariable;
     private ArrayList<SpotData> mFilteredSpots;
 
@@ -60,11 +57,11 @@ public class SpotListAdapter extends BaseAdapter implements Filterable {
         this.context = mcontext;
         inflater = LayoutInflater.from(mcontext);
 
-        helper = new DataBaseHelper(context);
-        database = helper.getWritableDatabase();
+        DataBaseHelper helper = new DataBaseHelper(context);
+        SQLiteDatabase database = helper.getWritableDatabase();
 
         globalVariable = (GlobalVariable) context.getApplicationContext();
-        if (globalVariable.SpotDataSorted == null || globalVariable.SpotDataSorted.isEmpty()) {
+        if (globalVariable.SpotDataSorted.isEmpty()) {
             // retrieve Location from DB
             Cursor location_cursor = database.query("location",
                     new String[]{"CurrentLat", "CurrentLng"}, null, null, null, null, null);

@@ -10,7 +10,9 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.travel.GlobalVariable;
 import com.travel.LocationService;
+import com.travel.SpotData;
 import com.travel.SpotJson;
 
 import org.apache.http.HttpEntity;
@@ -34,9 +36,14 @@ public class TWSpotAPIFetcher extends AsyncTask<Void, Void, SpotJson> {
     public static SpotJson.PostInfos Infos;
 
     Context mcontext;
+    GlobalVariable globalVariable;
+
+    public static final String BROADCAST_ACTION = "com.example.spotapi.status";
 
     public TWSpotAPIFetcher(Context context) {
         this.mcontext = context;
+        globalVariable = (GlobalVariable) mcontext.getApplicationContext();
+
     }
 
     @Override
@@ -46,7 +53,7 @@ public class TWSpotAPIFetcher extends AsyncTask<Void, Void, SpotJson> {
 
     @Override
     protected SpotJson doInBackground(Void... params) {
-        Log.e("3.9_", "=========TWSpotAPIFetcher======doInBackground");
+        Log.e("3/10_", "=========TWSpotAPIFetcher======doInBackground");
         String JsonString = "";
         try {
             //Create an HTTP client
@@ -86,10 +93,30 @@ public class TWSpotAPIFetcher extends AsyncTask<Void, Void, SpotJson> {
         } catch (Exception ex) {
             Log.e(TAG, "JsonString: Failed to parse JSON due to: " + ex);
         }
-        return spotJson;
-    }
 
-    protected void onPostExecute(SpotJson spotJson) {
+        Infos = spotJson.getInfos();
+        Integer InfoLength = Infos.getInfo().length;
+        for (Integer i = 0; i < InfoLength; i++) {
+            globalVariable.SpotDataRaw.add(new SpotData(i.toString(),
+                    Infos.getInfo()[i].getName(),
+                    Double.valueOf(Infos.getInfo()[i].getPy()),
+                    Double.valueOf(Infos.getInfo()[i].getPx()),
+                    Infos.getInfo()[i].getAdd(),
+                    Infos.getInfo()[i].getPicture1(),
+                    Infos.getInfo()[i].getPicture2(),
+                    Infos.getInfo()[i].getPicture3(),
+                    Infos.getInfo()[i].getOpentime(),
+                    Infos.getInfo()[i].getTicketinfo(),
+                    Infos.getInfo()[i].getToldescribe()));
+        }
+        globalVariable.isAPILoaded = true;
+        if (globalVariable.isAPILoaded) {
+            Intent intent = new Intent(BROADCAST_ACTION);
+            intent.putExtra("isAPILoaded", true);
+            mcontext.sendBroadcast(intent);
+        }
+        Log.e("3/10_", "=========TWSpotJson======Loaded to globalVariable");
+        Log.e("3/10_", "=========TWSpotJson======Write to DB");
         Infos = spotJson.getInfos();
         DataBaseHelper helper = new DataBaseHelper(mcontext);
         SQLiteDatabase database = helper.getWritableDatabase();
@@ -97,10 +124,10 @@ public class TWSpotAPIFetcher extends AsyncTask<Void, Void, SpotJson> {
                         "spotLat", "spotLng", "picture1", "picture2","picture3",
                         "openTime", "ticketInfo", "infoDetail"},
                 null, null, null, null, null);
-        Integer InfoLength = Infos.getInfo().length;
+        //Integer InfoLength = Infos.getInfo().length;
         if (spotDataRaw_cursor != null && InfoLength > 0) {
             if (spotDataRaw_cursor.getCount() == 0) {
-                for (int i = 0; i < InfoLength; i++) {
+                for (Integer i = 0; i < InfoLength; i++) {
                     ContentValues cv = new ContentValues();
                     cv.put("spotId", i);
                     cv.put("spotName", Infos.getInfo()[i].getName());
@@ -117,7 +144,7 @@ public class TWSpotAPIFetcher extends AsyncTask<Void, Void, SpotJson> {
                     //Log.d("3/8_沒有重複資料", result + " = DB INSERT " + i + " spotName " + Infos.getInfo()[i].getName());
                 }
             } else {
-                for (int i = 0; i < InfoLength; i++) {
+                for (Integer i = 0; i < InfoLength; i++) {
                     Cursor spotDataRaw_dul = database.query(true, "spotDataRaw", new String[]{"spotId", "spotName", "spotAdd",
                                     "spotLat", "spotLng", "picture1", "picture2","picture3",
                                     "openTime", "ticketInfo", "infoDetail"},
@@ -148,7 +175,13 @@ public class TWSpotAPIFetcher extends AsyncTask<Void, Void, SpotJson> {
         if (spotDataRaw_cursor != null) {
             spotDataRaw_cursor.close();
         }
-        Log.e("3.9_TWSpotAPIFetcher", "DONE");
+        return spotJson;
+    }
+
+    protected void onPostExecute(SpotJson spotJson) {
+        if (spotJson != null) {
+            Log.e("3/10_TWSpotAPIFetcher", "DONE");
+        }
         super.onPostExecute(spotJson);
     }
 }

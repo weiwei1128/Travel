@@ -46,8 +46,6 @@ public class LocationService extends Service {
     @Override
     public void onCreate() {
         Log.d("3.9_", "LocationService: onCreate");
-        helper = new DataBaseHelper(getApplicationContext());
-        database = helper.getWritableDatabase();
         context = getApplicationContext();
         globalVariable = (GlobalVariable)getApplicationContext();
 
@@ -112,7 +110,7 @@ public class LocationService extends Service {
             final Double Longitude = mLastLocation.getLongitude();
 //            Log.d("3.9_", "Latitude " + Latitude);
 //            Log.d("3.9_", "Longitude " + Longitude);
-
+/*
             Cursor location_cursor = database.query("location",
                     new String[]{"CurrentLat", "CurrentLng"}, null, null, null, null, null);
             if (location_cursor != null) {
@@ -134,7 +132,7 @@ public class LocationService extends Service {
                 }
                 location_cursor.close();
             }
-
+*/
             Intent intent = new Intent(BROADCAST_ACTION);
             intent.putExtra("isLocationChanged", isLocationChanged);
             intent.putExtra("Latitude", Latitude);

@@ -1,12 +1,18 @@
 package com.travel;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.database.Cursor;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
+import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -20,25 +26,38 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
 import com.travel.Adapter.SpotListAdapter;
 import com.travel.Utility.DataBaseHelper;
 import com.travel.Utility.Functions;
 import com.travel.Utility.GetSpotsNSort;
 
-import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-
-public class SpotListActivity extends Activity {
+public class SpotListActivity extends Activity implements
+        GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener {
 
     private static final String TAG = SpotListActivity.class.getSimpleName();
+    private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 1000;
 
     EditText SearchEditText;
     ImageView BackImg, SearchImg;
 
-    //ProgressBar progressBar;
+    ProgressBar progressBar;
     Button SpotMapBtn, SpotListBtn;
+
+    private GoogleApiClient mGoogleApiClient;
+    private LocationRequest mLocationRequest;
+    // Location updates intervals in sec
+    private static int UPDATE_INTERVAL = 5000; // 5 sec
+    private static int FATEST_INTERVAL = 1000; // 1 sec
+    private static int DISPLACEMENT = 0;       // 0 meters
+
+    private Location CurrentLocation;
 
     private Double Latitude;
     private Double Longitude;
@@ -52,28 +71,39 @@ public class SpotListActivity extends Activity {
     private SQLiteDatabase database;
     private GlobalVariable globalVariable;
 
+    //3.10
+    final int REQUEST_LOCATION = 2;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.spot_list_activity);
 
+        registerReceiver(broadcastReceiver, new IntentFilter(GetSpotsNSort.BROADCAST_ACTION));
+
+        // First we need to check availability of play services
+        if (checkPlayServices()) {
+            // Building the GoogleApi client
+            buildGoogleApiClient();
+        }
+
         globalVariable = (GlobalVariable) getApplicationContext();
 
-        helper = new DataBaseHelper(getApplicationContext());
-        database = helper.getWritableDatabase();
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        mAdapter = new SpotListAdapter(SpotListActivity.this);
+        mlistView = (ListView) findViewById(R.id.spotlist_listView);
+        mlistView.setOnItemClickListener(new itemListener());
 
-        // retrieve Location from DB
-        Cursor location_cursor = database.query("location",
-                new String[]{"CurrentLat", "CurrentLng"}, null, null, null, null, null);
-        if (location_cursor != null) {
-            if (location_cursor.getCount() != 0) {
-                while (location_cursor.moveToNext()) {
-                    Latitude = location_cursor.getDouble(0);
-                    Longitude = location_cursor.getDouble(1);
-                    Log.d("3.9_抓取位置", Latitude.toString() + Longitude.toString());
-                }
+        if (globalVariable.SpotDataSorted.isEmpty()) {
+            Log.e("3/10_", "Spot is Sorted");
+            progressBar.setVisibility(View.VISIBLE);
+            mlistView.setAdapter(null);
+            if (CurrentLocation != null) {
+                new GetSpotsNSort(SpotListActivity.this, CurrentLocation.getLatitude(),
+                        CurrentLocation.getLongitude()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             }
-            location_cursor.close();
+        } else {
+            mlistView.setAdapter(mAdapter);
         }
 
         BackImg = (ImageView) findViewById(R.id.spotlist_backImg);
@@ -100,13 +130,9 @@ public class SpotListActivity extends Activity {
             }
         });
 
-        mAdapter = new SpotListAdapter(SpotListActivity.this);
-        mlistView = (ListView) findViewById(R.id.spotlist_listView);
-        mlistView.setOnItemClickListener(new itemListener());
-
         //progressBar = (ProgressBar) findViewById(R.id.progressBar);
         //progressBar.setVisibility(View.VISIBLE);
-        if (globalVariable.SpotDataSorted == null || globalVariable.SpotDataSorted.isEmpty()) {
+/*        if (globalVariable.SpotDataSorted == null || globalVariable.SpotDataSorted.isEmpty()) {
             GetSortedSpotData getSortedSpotData = new GetSortedSpotData();
             getSortedSpotData.execute();
             Log.d("3.9", "資料載入中...");
@@ -118,7 +144,7 @@ public class SpotListActivity extends Activity {
                 Toast.makeText(SpotListActivity.this, "尚無資料!", Toast.LENGTH_SHORT).show();
             }
         }
-
+*/
         SearchEditText = (EditText) findViewById(R.id.spotlist_searchEditText);
         SearchEditText.addTextChangedListener(new TextWatcher() {
             //TODO 2.2 在list還沒跑出來之前打字會發生error
@@ -147,16 +173,112 @@ public class SpotListActivity extends Activity {
         });
     }
 
+    /**
+     * Method to verify google play services on the device
+     * */
+    private boolean checkPlayServices() {
+        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
+        if (resultCode != ConnectionResult.SUCCESS) {
+            if (GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {
+                GooglePlayServicesUtil.getErrorDialog(resultCode, this,
+                        PLAY_SERVICES_RESOLUTION_REQUEST).show();
+            } else {
+                Toast.makeText(getApplicationContext(),
+                        "此裝置沒有支援Google Play Services", Toast.LENGTH_LONG).show();
+                finish();
+            }
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Creating google api client object
+     * */
+    protected synchronized void buildGoogleApiClient() {
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API).build();
+        mLocationRequest = LocationRequest.create()
+                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                .setInterval(UPDATE_INTERVAL)        // 5 seconds, in milliseconds
+                .setFastestInterval(FATEST_INTERVAL) // 1 second, in milliseconds
+                .setSmallestDisplacement(DISPLACEMENT);
+    }
+
+
+    private void HandleNewLocation(Location location) {
+        CurrentLocation = location;
+        //LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        checkPlayServices();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (mGoogleApiClient != null) {
+            mGoogleApiClient.connect();
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        // 移除Google API用戶端連線
+        if (mGoogleApiClient.isConnected()) {
+            mGoogleApiClient.disconnect();
+        }
+        super.onStop();
+    }
+
     @Override
     protected void onDestroy() {
+        if (broadcastReceiver != null)
+            unregisterReceiver(broadcastReceiver);
         super.onDestroy();
-        Log.d(TAG, "onDestroy");
     }
 
-    private void HandleNewLocation(Double lat, Double lng) {
+    @Override
+    public void onConnected(Bundle bundle) {
+        // 已經連線到Google Services
+        // 啟動位置更新服務
+        // 位置資訊更新的時候，應用程式會自動呼叫LocationListener.onLocationChanged
+        Log.i(TAG, "Location services connected.");
 
+        // API 23 Needs to Check Permission
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                || ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+            // Check Permissions Now
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION);
+        } else {
+            Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+            if (location == null) {
+                LocationServices.FusedLocationApi.requestLocationUpdates
+                        (mGoogleApiClient, mLocationRequest, (LocationListener) SpotListActivity.this);
+            } else {
+                HandleNewLocation(location);
+            }
+        }
     }
 
+    @Override
+    public void onConnectionSuspended(int i) {
+        mGoogleApiClient.connect();
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+        Log.e(TAG, "Connection failed: ConnectionResult.getErrorCode() = "
+                + connectionResult.getErrorCode());
+    }
+/*
     private class GetSortedSpotData extends AsyncTask<Void, Void, ArrayList<SpotData>> {
         private static final String TAG = "GetSortedSpotData";
 
@@ -261,6 +383,21 @@ public class SpotListActivity extends Activity {
         }
 
     }
+*/
+    private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            //Update Your UI here..
+            if (intent != null) {
+                Boolean isSpotSorted = intent.getBooleanExtra("isSpotSorted", false);
+                if (isSpotSorted) {
+                    Log.e("3/10_景點排序完畢", "Receive Broadcast");
+                    progressBar.setVisibility(View.INVISIBLE);
+                    mlistView.setAdapter(mAdapter);
+                }
+            }
+        }
+    };
 
     private class itemListener implements AdapterView.OnItemClickListener {
         @Override
@@ -285,5 +422,18 @@ public class SpotListActivity extends Activity {
         super.onSaveInstanceState(outState);
     }
 
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        if (requestCode == REQUEST_LOCATION) {
+            if(grantResults.length == 1
+                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // We can now safely use the API we requested access to
 
+            } else {
+                // Permission was denied or request was cancelled
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION);
+                Toast.makeText(SpotListActivity.this, "請允許寶島好智遊存取您的位置!", Toast.LENGTH_LONG).show();
+            }
+        }
+    }
 }

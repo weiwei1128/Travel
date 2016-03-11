@@ -28,6 +28,9 @@ import com.travel.Utility.DataBaseHelper;
 import com.travel.Utility.Functions;
 import com.travel.Utility.MyTextview;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 public class HomepageActivity extends AppCompatActivity {
     private Fragment contentFragment;
     MainImageFragment homefragment;
@@ -35,6 +38,9 @@ public class HomepageActivity extends AppCompatActivity {
             memberLayout, shoprecordLayout, moreLayout, serviceLayout, goodthingLayout;
     TextView memberText, shoprecordText, moreText;
     ImageView memberImg, shoprecordImg, moreImg;
+
+    //3.10 Hua
+    GlobalVariable globalVariable;
 
     @Override
     protected void onResume() {

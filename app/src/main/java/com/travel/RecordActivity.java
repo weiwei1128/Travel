@@ -8,6 +8,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -15,10 +16,13 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
+import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
+import android.location.LocationProvider;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
@@ -35,6 +39,10 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -51,33 +59,44 @@ import com.travel.Utility.TrackRouteService;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 
 public class RecordActivity extends FragmentActivity implements
-        GoogleMap.OnMapClickListener,
-        GoogleMap.OnMapLongClickListener,
-        GoogleMap.OnMarkerClickListener {
+        LocationListener,
+        GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener,
+        com.google.android.gms.location.LocationListener {
 
     public static final String TAG = RecordActivity.class.getSimpleName();
 
-    public static GoogleMap mMap;
+    private GoogleMap mMap;
+    private GoogleApiClient mGoogleApiClient;
+    private LocationRequest mLocationRequest;
+    private Location currentLocation;
     private Marker currentMarker;
 
     private Button record_travel_button;
     private Button record_Memo_button;
 
-    private ImageView BackImg;
-
-    private Handler handler = new Handler();
-
-    private Double Latitude;
-    private Double Longitude;
-    private LatLng latLng;
-
     private Integer RoutesCounter = 1;
     private Integer Track_no = 1;
     private Boolean record_start_boolean = false;
 
+    private ImageView BackImg;
+
+    private Double CurrentLatitude;
+    private Double CurrentLongitude;
+    private LatLng CurrentLatlng;
+
     private Bitmap MarkerIcon;
+
+    //3.10
+    final int REQUEST_LOCATION = 2;
+    /**
+     * 記錄軌跡
+     */
+    private ArrayList<LatLng> TraceRoute;
+    private ArrayList<LatLng> markerPoints;
 
     //====1.28 WEI====new UI //
     LinearLayout record_start_layout, record_spot_layout, dialog_choose_layout, dialog_ok_layout;
@@ -98,15 +117,13 @@ public class RecordActivity extends FragmentActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.record_activity);
 
-        Log.d("3.9_", "RecordActivity: onCreate");
-
-        registerReceiver(broadcastReceiver, new IntentFilter(LocationService.BROADCAST_ACTION));
+        Log.d("3/4", "RecordActivity: onCreate");
 
         BackImg = (ImageView) findViewById(R.id.record_backImg);
         BackImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Functions.go(true, RecordActivity.this, RecordActivity.this, HomepageActivity.class, null);
+                finish();
             }
         });
 
@@ -226,7 +243,6 @@ public class RecordActivity extends FragmentActivity implements
                     record_start_boolean = true;
                     //====1.29
                     time_text.setVisibility(View.VISIBLE);
-                    record_completeImg.setVisibility(View.VISIBLE);
                     starttime[0] = System.currentTimeMillis();
                     //----2.4
 
@@ -261,7 +277,6 @@ public class RecordActivity extends FragmentActivity implements
                         intent_Trace.putExtra("track_no", Track_no);
                         startService(intent_Trace);
                     }
-
                 } else {
                     //====1.29
 //                    timehandler.removeCallbacks(tictac);
@@ -291,16 +306,16 @@ public class RecordActivity extends FragmentActivity implements
                         ContentValues cv = new ContentValues();
                         cv.put("routesCounter", RoutesCounter);
                         cv.put("track_no", Track_no);
-                        cv.put("track_lat", Latitude);
-                        cv.put("track_lng", Longitude);
+                        cv.put("track_lat", CurrentLatitude);
+                        cv.put("track_lng", CurrentLongitude);
                         cv.put("track_start", 0);
 
                         long result = database.insert("trackRoute", null, cv);
                         Log.d("3.9_軌跡紀錄_END", result + " = DB INSERT RC:" + RoutesCounter
-                                + " no:" + Track_no + " 座標 " + Latitude + "," + Longitude);
+                                + " no:" + Track_no + " 座標 " + CurrentLatitude + "," + CurrentLongitude);
                         trackRoute_cursor.close();
                     }
-                    latLng = new LatLng(Latitude, Longitude);
+                    LatLng latLng = new LatLng(CurrentLatitude, CurrentLatitude);
                     DisplayRoute(latLng);
 
                 }
@@ -309,6 +324,7 @@ public class RecordActivity extends FragmentActivity implements
         //----2.4 WEI----//
         //For doing Update count UI
         registerReceiver(broadcastReceiver, new IntentFilter(TimeCountService.BROADCAST_ACTION));
+        registerReceiver(broadcastReceiver, new IntentFilter(TrackRouteService.BROADCAST_ACTION));
         //----2.4 WEI----//
 
         BitmapDrawable BitmapDraw = (BitmapDrawable)getResources().getDrawable(R.drawable.location);
@@ -385,6 +401,8 @@ public class RecordActivity extends FragmentActivity implements
     View.OnClickListener dialog_ok = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+
+
             /**DB**/
             DataBaseHelper helper = new DataBaseHelper(RecordActivity.this);
             SQLiteDatabase db = helper.getReadableDatabase();
@@ -501,22 +519,7 @@ public class RecordActivity extends FragmentActivity implements
                     else
                         time_text.setText("00:" + ((spent / 1000) % 60));
                 }
-                Log.d("3.9_Timer", "fromBroadcast" + intent.getLongExtra("spent", 99));
-
-                Boolean isLocationChanged = intent.getBooleanExtra("isLocationChanged", false);
-                if (isLocationChanged) {
-                    Latitude = intent.getDoubleExtra("Latitude", 0);
-                    Longitude = intent.getDoubleExtra("Longitude", 0);
-                    latLng = new LatLng(Latitude, Longitude);
-
-                    handler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            handleNewLocation(Latitude, Longitude);
-                            Log.d("3.9_Location", "fromBroadcast" + Latitude + Longitude);
-                        }
-                    }, 3000);
-                }
+                Log.d("2/4", "fromBroadcast" + intent.getLongExtra("spent", 99));
 
                 Boolean track_start = intent.getBooleanExtra("isStart", false);
                 if (track_start) {
@@ -539,32 +542,41 @@ public class RecordActivity extends FragmentActivity implements
             unregisterReceiver(broadcastReceiver);
         MarkerIcon.recycle();
         System.gc();
-        Log.d("3.9_", "RecordActivity: onDestroy");
+        Log.d("3/10_", "RecordActivity: onDestroy");
         super.onDestroy();
     }
 
     @Override
     protected void onResume() {
-        Log.d("3.9_", "RecordActivity: onResume");
-        setUpMapIfNeeded();
-        // retrieve Location from DB
-        DataBaseHelper helper = new DataBaseHelper(getApplicationContext());
-        SQLiteDatabase database = helper.getWritableDatabase();
-        Cursor location_cursor = database.query("location",
-                new String[]{"CurrentLat", "CurrentLng"}, null, null, null, null, null);
-        if (location_cursor != null) {
-            if (location_cursor.getCount() != 0) {
-                while (location_cursor.moveToNext()) {
-                    Latitude = location_cursor.getDouble(0);
-                    Longitude = location_cursor.getDouble(1);
-                }
-                latLng = new LatLng(Latitude, Longitude);
-                Log.d("3.9_抓取位置", Latitude.toString() + " " + Longitude.toString());
-                handleNewLocation(Latitude, Longitude);
-            }
-            location_cursor.close();
-        }
         super.onResume();
+        Log.d("3/10_", "RecordActivity: onResume");
+        setUpMapIfNeeded();
+
+        if (!mGoogleApiClient.isConnected()) {
+            mGoogleApiClient.connect();
+        }
+
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        // 移除位置請求服務
+        if (mGoogleApiClient.isConnected()) {
+            LocationServices.FusedLocationApi
+                    .removeLocationUpdates(mGoogleApiClient, this);
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        // 移除Google API用戶端連線
+        if (mGoogleApiClient.isConnected()) {
+            mGoogleApiClient.disconnect();
+        }
     }
 
     /**
@@ -585,11 +597,9 @@ public class RecordActivity extends FragmentActivity implements
     private void setUpMapIfNeeded() {
         // Do a null check to confirm that we have not already instantiated the map.
         if (mMap == null) {
-            Log.d("3.9_setUpMapIfNeeded", "LoadtoMap()");
             LoadtoMap();
             // Check if we were successful in obtaining the map.
             if (mMap != null) {
-                Log.d("3.9_setUpMapIfNeeded", "setUpMap()");
                 setUpMap();
             }
         }
@@ -602,25 +612,93 @@ public class RecordActivity extends FragmentActivity implements
      * This should only be called once and when we are sure that {@link #mMap} is not null.
      */
     private void setUpMap() {
-        // retrieve Location from DB
-        DataBaseHelper helper = new DataBaseHelper(getApplicationContext());
-        SQLiteDatabase database = helper.getWritableDatabase();
-        Cursor location_cursor = database.query("location",
-                new String[]{"CurrentLat", "CurrentLng"}, null, null, null, null, null);
-        if (location_cursor != null) {
-            if (location_cursor.getCount() != 0) {
-                while (location_cursor.moveToNext()) {
-                    Latitude = location_cursor.getDouble(0);
-                    Longitude = location_cursor.getDouble(1);
-                }
-                latLng = new LatLng(Latitude, Longitude);
-                Log.d("3.9_抓取位置", Latitude.toString() + " " + Longitude.toString());
-                handleNewLocation(Latitude, Longitude);
-            }
-            location_cursor.close();
-        }
-        Log.d("3.9_setUpMap()", "");
+        //CameraUpdate center = CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lon),18);
+        //mMap.moveCamera(center);
+        //mMap.addMarker(new MarkerOptions().position(new LatLng(0, 0)).title("Marker"));
     }
+
+    @Override
+    public void onConnected(Bundle bundle) {
+        // 已經連線到Google Services
+        // 啟動位置更新服務
+        // 位置資訊更新的時候，應用程式會自動呼叫LocationListener.onLocationChanged
+        Log.i(TAG, "Location services connected.");
+
+        // API 23 Needs to Check Permission
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                || ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+            // Check Permissions Now
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION);
+        } else {
+            Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+            if (location == null) {
+                LocationServices.FusedLocationApi.requestLocationUpdates
+                        (mGoogleApiClient, mLocationRequest, RecordActivity.this);
+            } else if (currentLocation != location) {
+                handleNewLocation(location);
+            }
+        }
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+        Log.i(TAG, "Location services suspended. Please reconnect.");
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+        // Google Services連線失敗
+        // ConnectionResult參數是連線失敗的資訊
+        int errorCode = connectionResult.getErrorCode();
+        // 裝置沒有安裝Google Play服務
+        if (errorCode == ConnectionResult.SERVICE_MISSING) {
+            Toast.makeText(this, R.string.google_play_service_missing, Toast.LENGTH_LONG).show();
+        }
+    }
+
+    /**
+     * Location Listener
+     */
+    @Override
+    public void onLocationChanged(Location location) {
+        if (currentLocation != location) {
+            handleNewLocation(currentLocation);
+        }
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+        switch (status) {
+            case LocationProvider.OUT_OF_SERVICE:
+                Log.v(TAG, "Status Changed: Out of Service");
+                Toast.makeText(RecordActivity.this, "Status Changed: Out of Service",
+                        Toast.LENGTH_SHORT).show();
+                break;
+            case LocationProvider.TEMPORARILY_UNAVAILABLE:
+                Log.v(TAG, "Status Changed: Temporarily Unavailable");
+                Toast.makeText(RecordActivity.this, "Status Changed: Temporarily Unavailable",
+                        Toast.LENGTH_SHORT).show();
+                break;
+            case LocationProvider.AVAILABLE:
+                Log.v(TAG, "Status Changed: Available");
+                Toast.makeText(RecordActivity.this, "Status Changed: Available",
+                        Toast.LENGTH_SHORT).show();
+                break;
+        }
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+        handleNewLocation(null);
+    }
+
 
     // 載入地圖
     private void LoadtoMap() {
@@ -636,65 +714,97 @@ public class RecordActivity extends FragmentActivity implements
             startActivity(intent);
         }
 
-        // API 23 Needs to Check Permission
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                || ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-
-            // Check Permissions Now
-            final int REQUEST_LOCATION = 2;
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION);
-        }
+        // 建立Google API用戶端物件
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API).build();
+        // 建立Location請求物件
+        mLocationRequest = LocationRequest.create()
+                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)    // 設定優先讀取高精確度的位置資訊（GPS）
+                .setInterval(3000)             // 設定讀取位置資訊的間隔時間為三秒
+                .setFastestInterval(1000);     // 設定讀取位置資訊最快的間隔時間為一秒
 
         // Try to obtain the map from the SupportMapFragment.
-        mMap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map_record)).getMap();
+        mMap = ((SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map_record)).getMap();
 
         // API 23 Needs to Check Permission
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                 || ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
             // Check Permissions Now
-            final int REQUEST_LOCATION = 2;
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION);
+        } else {
+            mMap.setMyLocationEnabled(true);
         }
-        mMap.setOnMapClickListener(this);
-        mMap.setOnMapLongClickListener(this);
-        mMap.setOnMarkerClickListener(this);
-        mMap.setMyLocationEnabled(true);                    // 顯示定位按鈕
         mMap.getUiSettings().setCompassEnabled(true);       // 顯示指南針
         mMap.getUiSettings().setZoomControlsEnabled(true);  // 顯示縮放控制按鈕
         mMap.getUiSettings().setAllGesturesEnabled(true);
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);         // 設定地圖類型
     }
 
-    private void handleNewLocation(Double latitude, Double longitude) {
-        //Log.d(TAG, location.toString()); Latitude Longitude
 
-        LatLng currentlatLng = new LatLng(latitude, longitude);
+    private void handleNewLocation(Location location) {
+        Log.d(TAG, location.toString());
+
+        currentLocation = location;
+        CurrentLatitude = location.getLatitude();
+        CurrentLongitude = location.getLongitude();
+        CurrentLatlng = new LatLng(CurrentLatitude, CurrentLongitude);
 
         // 設定目前位置的標記
         if (currentMarker == null) {
-            currentMarker = mMap.addMarker(new MarkerOptions().position(currentlatLng)
-                    .title("I am here!").icon(BitmapDescriptorFactory.fromBitmap(MarkerIcon)));
+            currentMarker = mMap.addMarker(new MarkerOptions().position(CurrentLatlng).title("I am here!")
+                    .icon(BitmapDescriptorFactory.fromBitmap(MarkerIcon)));
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(CurrentLatlng, 12));
+
         } else {
-            currentMarker.setPosition(currentlatLng);
+            currentMarker.setPosition(CurrentLatlng);
         }
-
-        // 移動地圖到目前的位置
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentlatLng, 16));
+/*
+        // 加上軌跡
+        if (record_start_boolean) {
+            TraceOfRoute(CurrentLatlng);
+        }    */
     }
+    /*
+        // 紀錄軌跡
+        private void TraceOfRoute(LatLng latLng) {
+            if (TraceRoute == null) {
+                TraceRoute = new ArrayList<LatLng>();
+            }
+            TraceRoute.add(latLng);
 
+            PolylineOptions polylineOpt = new PolylineOptions();
+            for (LatLng latlng : TraceRoute) {
+                polylineOpt.add(latlng);
+            }
+
+            polylineOpt.color(Color.RED);
+
+            Polyline line = mMap.addPolyline(polylineOpt);
+            line.setWidth(10);
+        }
+    */
     // 顯示軌跡紀錄
     private void DisplayRoute(LatLng track_latlng) {
         //database.delete("trackRoute", null, null);
+        if (TraceRoute == null) {
+            TraceRoute = new ArrayList<LatLng>();
+        }
         PolylineOptions polylineOpt = new PolylineOptions();
-        polylineOpt.add(track_latlng).color(Color.RED);
+        for (LatLng latlng : TraceRoute) {
+            polylineOpt.add(latlng);
+        }
 
-        Polyline line = RecordActivity.mMap.addPolyline(polylineOpt);
+        polylineOpt.color(Color.RED);
+
+        Polyline line = mMap.addPolyline(polylineOpt);
         line.setWidth(10);
 
-        Log.d("3.9_畫出軌跡", "DisplayRoute" + track_latlng.toString());
+        Log.d("3/10_畫出軌跡", "DisplayRoute" + track_latlng.toString());
         /* //ArrayList寫法
         for (LatLng latlng : track_latlng) {
             polylineOpt.add(track_latlng);
@@ -705,72 +815,27 @@ public class RecordActivity extends FragmentActivity implements
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            Functions.go(true, RecordActivity.this, RecordActivity.this, HomepageActivity.class, null);
+            Intent intent = new Intent();
+            intent.setClass(RecordActivity.this, HomepageActivity.class);
+            startActivity(intent);
+            finish();
         }
 
         return false;
     }
 
-    @Override
-    public boolean onMarkerClick(Marker marker) {
-        return false;
-    }
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        if (requestCode == REQUEST_LOCATION) {
+            if(grantResults.length == 1
+                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // We can now safely use the API we requested access to
 
-    @Override
-    public void onMapLongClick(LatLng point) {
-
-        /*---在地圖長按會新增Marker
-
-        //Convert LatLng to Location
-        Location location = new Location("Test");
-        location.setLatitude(point.latitude);
-        location.setLongitude(point.longitude);
-
-        //Convert Location to LatLng
-        LatLng newLatLng = new LatLng(location.getLatitude(), location.getLongitude());
-        MarkerOptions markerOptions = new MarkerOptions().position(newLatLng));
-        mMap.addMarker(markerOptions);
-        */
-
-    }
-
-    @Override
-    public void onMapClick(LatLng point) {
-        mMap.animateCamera(CameraUpdateFactory.newLatLng(point));
-
-        // Already two locations
-/*        if(markerPoints.size()>1){
-            markerPoints.clear();
-            mMap.clear();
+            } else {
+                // Permission was denied or request was cancelled
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION);
+                Toast.makeText(RecordActivity.this, "請允許寶島好智遊存取您的位置!", Toast.LENGTH_LONG).show();
+            }
         }
-
-        // Adding new item to the ArrayList
-        markerPoints.add(point);
-
-        // Creating MarkerOptions
-        MarkerOptions options = new MarkerOptions();
-
-        // Setting the position of the marker
-        options.position(point);
-
-        /**
-         * For the start location, the color of marker is GREEN and
-         * for the end location, the color of marker is RED.
-         */
-/*        if(markerPoints.size()==1){
-            options.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
-        }else if(markerPoints.size()==2){
-            options.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
-        }
-
-        // Add new marker to the Google Map Android API V2
-        mMap.addMarker(options);
-
-        // Checks, whether start and end locations are captured
-        if(markerPoints.size() >= 2){
-            LatLng origin = markerPoints.get(0);
-            LatLng dest = markerPoints.get(1);
-        }*/
     }
-
 }
