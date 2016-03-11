@@ -21,20 +21,22 @@ public class BuyRecordAdapter extends BaseAdapter {
     Context m_context;
     DataBaseHelper helper;
     SQLiteDatabase database;
-    public BuyRecordAdapter(Context context){
+
+    public BuyRecordAdapter(Context context) {
         layoutInflater = LayoutInflater.from(context);
         this.m_context = context;
         helper = new DataBaseHelper(context);
         database = helper.getWritableDatabase();
     }
+
     @Override
     public int getCount() {
-        int number=0;
+        int number = 0;
 
         Cursor order_cursor = database.query("shoporder", new String[]{"order_id", "order_no",
                         "order_time", "order_name", "order_phone", "order_email", "order_money", "order_state"},
                 null, null, null, null, null);
-        if(order_cursor!=null){
+        if (order_cursor != null) {
             number = order_cursor.getCount();
             order_cursor.close();
         }
@@ -53,21 +55,59 @@ public class BuyRecordAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        item item ;
+        item item;
         if (convertView == null) {
-            convertView = layoutInflater.inflate(R.layout.special_item, null);
-            item = new item();
+            convertView = layoutInflater.inflate(R.layout.buy_record_item, null);
+            item = new item(
+                    (TextView) convertView.findViewById(R.id.buyrecorditem_no),
+                    (TextView) convertView.findViewById(R.id.buyrecorditem_date),
+                    (TextView) convertView.findViewById(R.id.buyrecorditem_money),
+                    (TextView) convertView.findViewById(R.id.buyrecorditem_content),
+                    (TextView) convertView.findViewById(R.id.buyrecorditem_state),
+                    (ImageView) convertView.findViewById(R.id.buyrecorditem_img)
+            );
             convertView.setTag(item);
         } else
             item = (item) convertView.getTag();
+        Cursor order_cursor = database.query("shoporder", new String[]{"order_id", "order_no",
+                "order_time", "order_name", "order_phone", "order_email", "order_money",
+                "order_state"}, null, null, null, null, null);
+        if (order_cursor != null && order_cursor.getCount() >= position) {
+            order_cursor.moveToPosition(position);
+            if (order_cursor.getString(1) != null)
+                item.order_no.setText(order_cursor.getString(1));
+            if (order_cursor.getString(2) != null)
+                item.order_date.setText(order_cursor.getString(2));
+            if (order_cursor.getString(3) != null)
+                item.order_info.setText("姓名: "+order_cursor.getString(3));
+            if (order_cursor.getString(4) != null)
+                item.order_info.append("\n電話: "+order_cursor.getString(4));
+            if (order_cursor.getString(6) != null)
+                item.order_money.setText("$"+order_cursor.getString(6));
+            if (order_cursor.getString(7) != null)
+                item.order_state.setText(order_cursor.getString(7));
+        }
 
+        if (order_cursor != null)
+            order_cursor.close();
 
 
         return convertView;
     }
 
-    public class item{
-        item(){
+    public class item {
+        TextView order_no, order_date, order_money, order_info, order_state;
+        ImageView order_img;
+
+        item(TextView Order_no, TextView Order_date, TextView Order_money, TextView Order_info,
+             TextView Order_state, ImageView Order_img) {
+            this.order_no = Order_no;
+            this.order_date = Order_date;
+            this.order_money = Order_money;
+            this.order_info = Order_info;
+            this.order_state = Order_state;
+            this.order_img = Order_img;
+
 
         }
     }

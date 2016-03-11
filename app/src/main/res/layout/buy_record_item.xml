@@ -70,8 +70,8 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="商品明細明細明細明細明細商品明細四個"
-        android:id="@+id/textView4"
+        android:text="姓名： \n電話： \n"
+        android:id="@+id/buyrecorditem_content"
         android:layout_below="@+id/buyrecorditem_money"
         android:layout_toLeftOf="@+id/buyrecorditem_state"
         android:layout_toStartOf="@+id/buyrecorditem_state"

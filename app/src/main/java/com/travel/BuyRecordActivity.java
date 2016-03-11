@@ -36,7 +36,7 @@ public class BuyRecordActivity extends AppCompatActivity {
 
     ImageView backImg;
     GridView gridView;
-    BuyRecordAdapter adapter;
+    public BuyRecordAdapter adapter;
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -59,28 +59,22 @@ public class BuyRecordActivity extends AppCompatActivity {
                 Functions.go(true, BuyRecordActivity.this, BuyRecordActivity.this, HomepageActivity.class, null);
             }
         });
-        new getShopRecord().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        new getShopRecord(adapter).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     class getShopRecord extends AsyncTask<String, Void, String> {
         String UserId = "ljd110@qq.com";
         Context context = BuyRecordActivity.this;
-//http://zhiyou.lin366.com/api/order/index.aspx
+        BuyRecordAdapter adapter;
 
-        /**
-         * {
-         * "act": "list",
-         * "type": "",
-         * "page": "1",
-         * "size": "10",
-         * "key": "",
-         * "uid": "ljd110@qq.com"
-         * }
-         */
+        getShopRecord(BuyRecordAdapter buyRecordAdapter) {
+            this.adapter = buyRecordAdapter;
+        }
+
         @Override
         protected String doInBackground(String... params) {
             Log.i("3.11", "*************ShopRecord DO IN BACKGROUND");
-            String returnMessage=null;
+            String returnMessage = null;
 
             HttpClient client = new DefaultHttpClient();
             HttpPost post = new HttpPost("http://zhiyou.lin366.com/api/order/index.aspx");
@@ -233,8 +227,8 @@ public class BuyRecordActivity extends AppCompatActivity {
             DataBaseHelper helper = new DataBaseHelper(context);
             SQLiteDatabase database = helper.getWritableDatabase();
             Cursor order_cursor = database.query("shoporder", new String[]{"order_id", "order_no",
-                            "order_time", "order_name", "order_phone", "order_email", "order_money", "order_state"},
-                    null, null, null, null, null);
+                    "order_time", "order_name", "order_phone", "order_email",
+                    "order_money", "order_state"}, null, null, null, null, null);
             if (order_cursor != null) {
                 ContentValues cv = new ContentValues();
                 if (order_cursor.getCount() == 0) {//是新的資料庫 -> 新增資料
@@ -246,9 +240,10 @@ public class BuyRecordActivity extends AppCompatActivity {
                         cv.put("order_name", string[3]);
                         cv.put("order_phone", string[4]);
                         cv.put("order_email", string[5]);
-                        cv.put("order_state", string[6]);
+                        cv.put("order_money", string[6]);
+                        cv.put("order_state", string[7]);
                         long result = database.insert("shoporder", null, cv);
-                        returnMessage = returnMessage+"新的資料庫新增資料:"+string[0]+" result:"+result;
+                        returnMessage = returnMessage + "新的資料庫新增資料:" + string[0] + " result:" + result;
                     }
 
                 } else { //已經有資料庫了->確認是否有重複資料 ->確認是否要更新狀態 // -> 確認是否有新的資料
@@ -261,15 +256,15 @@ public class BuyRecordActivity extends AppCompatActivity {
                             //有重複的資料 ->確認是否更新狀態!
                             order_cursor_dul.moveToFirst();
                             while (order_cursor_dul.isAfterLast()) {
-                                if (!order_cursor_dul.getString(7).equals(string[6])) {//資料不相同
+                                if (!order_cursor_dul.getString(7).equals(string[7])) {//資料不相同
                                     cv.clear();
-                                    cv.put("order_state", string[6]);
+                                    cv.put("order_state", string[7]);
                                     long result = database.update("shoporder", cv, "order_id=?", new String[]{string[0]});
-                                    returnMessage = returnMessage+"新的資料庫更新資料:"+string[0]+" result:"+result;
+                                    returnMessage = returnMessage + "新的資料庫更新資料:" + string[0] + " result:" + result;
                                 }
                                 order_cursor_dul.moveToNext();
                             }
-                        }else {
+                        } else {
                             cv.clear();
                             cv.put("order_id", string[0]);
                             cv.put("order_no", string[1]);
@@ -277,11 +272,12 @@ public class BuyRecordActivity extends AppCompatActivity {
                             cv.put("order_name", string[3]);
                             cv.put("order_phone", string[4]);
                             cv.put("order_email", string[5]);
-                            cv.put("order_state", string[6]);
+                            cv.put("order_money", string[6]);
+                            cv.put("order_state", string[7]);
                             long result = database.insert("shoporder", null, cv);
                             returnMessage = returnMessage + "舊的資料庫新增資料:" + string[0] + " result:" + result;
                         }
-                        if(order_cursor_dul!=null)
+                        if (order_cursor_dul != null)
                             order_cursor_dul.close();
                     }
                 }
@@ -293,7 +289,9 @@ public class BuyRecordActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String s) {
-                Log.i("3.11", "shoprecord on PostExecute:"+s);
+            Log.i("3.11", "shoprecord on PostExecute:" + s);
+            if (s != null)
+                adapter.notifyDataSetChanged();
             super.onPostExecute(s);
         }
     }
