@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.travel">
+    package="com.travel" >
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -26,7 +26,7 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme.NoActionBar">
+        android:theme="@style/AppTheme.NoActionBar" >
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
@@ -71,7 +71,7 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".LoginActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -105,8 +105,9 @@
             android:name=".MemberActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".ServiceActivity" />
-        <activity android:name=".SpecialActivity"
-            android:hardwareAccelerated="true"/>
+        <activity
+            android:name=".SpecialActivity"
+            android:hardwareAccelerated="true" />
 
         <service android:name=".Utility.TimeCountService" />
         <service android:name=".LocationService" />
@@ -131,7 +132,13 @@
         <activity android:name=".BuyRecordActivity" />
         <activity android:name=".CheckScheduleMainActivity" />
         <activity android:name=".BuyActivityNew" />
-        <activity android:name=".SpecialDetailActivity"></activity>
+        <activity android:name=".SpecialDetailActivity" />
+
+        <service
+            android:name=".Utility.LoadApiService"
+            android:enabled="true"
+            android:exported="true" >
+        </service>
     </application>
 
 </manifest>

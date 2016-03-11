@@ -31,6 +31,7 @@ import com.travel.Utility.DataBaseHelper;
 import com.travel.Utility.Functions;
 import com.travel.Utility.GetSpotsNSort;
 import com.travel.Utility.HttpService;
+import com.travel.Utility.LoadApiService;
 import com.travel.Utility.MyAnimation;
 import com.travel.Utility.TPESpotAPIFetcher;
 import com.travel.Utility.TWSpotAPIFetcher;
@@ -77,6 +78,9 @@ public class LoginActivity extends AppCompatActivity {
         Fabric.with(this, new Crashlytics());
         setContentView(R.layout.login_activity);
         //globalVariable = (GlobalVariable) getApplicationContext();
+
+        Intent intent_LoadApiService = new Intent(LoginActivity.this, LoadApiService.class);
+        startService(intent_LoadApiService);
 
         Intent intent = new Intent(LoginActivity.this, HttpService.class);
         startService(intent);

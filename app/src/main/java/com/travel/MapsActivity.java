@@ -277,7 +277,7 @@ public class MapsActivity extends FragmentActivity implements
                         (mGoogleApiClient, mLocationRequest, MapsActivity.this);
             } else {
                 handleNewLocation(location);
-                if (globalVariable.SpotDataSorted.isEmpty()) {
+                if (globalVariable.isAPILoaded && globalVariable.SpotDataSorted.isEmpty()) {
                     Log.e("3/10_MapsActivity", "事先Sort");
                     new GetSpotsNSort(MapsActivity.this, currentLocation.getLatitude(),
                             currentLocation.getLongitude()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
@@ -369,15 +369,39 @@ public class MapsActivity extends FragmentActivity implements
         public void onReceive(Context context, Intent intent) {
             //Update Your UI here..
             if (intent != null) {
+                Boolean isTWAPILoaded = intent.getBooleanExtra("isTWAPILoaded", false);
+                Boolean isTPEAPILoaded = intent.getBooleanExtra("isTPEAPILoaded", false);
+                if (isTWAPILoaded && isTPEAPILoaded) {
+                    globalVariable.isAPILoaded = true;
+                    if (globalVariable.isAPILoaded) {
+                        Log.e("3/10_", "Receive Broadcast: APILoaded");
+                        if (mDialog.isShowing()) {
+                            mDialog.dismiss();
+                        }
+                        if (globalVariable.MarkerOptionsArray.isEmpty()) {
+                            // Get Marker Info
+                            new GetMarkerInfo(MapsActivity.this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                        } else {
+                            if (mDialog.isShowing()) {
+                                mDialog.dismiss();
+                            }
+                        }
+                    }
+                }
+
                 globalVariable.isAPILoaded = intent.getBooleanExtra("isAPILoaded", false);
                 if (globalVariable.isAPILoaded) {
-                    Log.e("3/10_", "Receive Broadcast");
-                    mDialog.dismiss();
+                    Log.e("3/10_", "Receive Broadcast: APILoaded");
+                    if (mDialog.isShowing()) {
+                        mDialog.dismiss();
+                    }
                     if (globalVariable.MarkerOptionsArray.isEmpty()) {
                         // Get Marker Info
                         new GetMarkerInfo(MapsActivity.this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                     } else {
-                        mDialog.dismiss();
+                        if (mDialog.isShowing()) {
+                            mDialog.dismiss();
+                        }
                     }
                 }
             }
