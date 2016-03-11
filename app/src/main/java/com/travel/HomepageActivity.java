@@ -43,19 +43,36 @@ public class HomepageActivity extends AppCompatActivity {
     GlobalVariable globalVariable;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
+    protected void onResume() {
+        //判斷是否該關閉程式
         DataBaseHelper helper = new DataBaseHelper(HomepageActivity.this);
         SQLiteDatabase database = helper.getWritableDatabase();
         Cursor member_cursor = database.query("member", new String[]{"account", "password",
                 "name", "phone", "email", "addr"}, null, null, null, null, null);
-        if (member_cursor == null || member_cursor.getCount() == 0)
+        if (member_cursor == null || member_cursor.getCount() == 0) {
+            if (member_cursor != null)
+                member_cursor.close();
+            database.close();
             finish();
-//        else Log.d("3.1", "check___check!!!!!" + member_cursor.getCount());
-        if(member_cursor!=null)
-            member_cursor.close();
+        }
+        super.onResume();
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        //判斷是否該關閉程式
+        DataBaseHelper helper = new DataBaseHelper(HomepageActivity.this);
+        SQLiteDatabase database = helper.getWritableDatabase();
+        Cursor member_cursor = database.query("member", new String[]{"account", "password",
+                "name", "phone", "email", "addr"}, null, null, null, null, null);
+        if (member_cursor == null || member_cursor.getCount() == 0) {
+            if (member_cursor != null)
+                member_cursor.close();
+            database.close();
+            finish();
+        }
         linearLayout = (LinearLayout) findViewById(R.id.main_main_layout);
 
         //Goodthing
@@ -96,9 +113,7 @@ public class HomepageActivity extends AppCompatActivity {
         buyLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO 0307 TEST!!!!
                 Functions.go(false, HomepageActivity.this, HomepageActivity.this, BuyActivityNew.class, null);
-//                Functions.go(false, HomepageActivity.this, HomepageActivity.this, BuyActivity.class, null);
             }
         });
 
@@ -156,8 +171,6 @@ public class HomepageActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Functions.go(false, HomepageActivity.this, HomepageActivity.this, BuyRecordActivity.class, null);
-//                finish();
-//                TODO next Page....
             }
         });
         shoprecordImg.setOnTouchListener(new View.OnTouchListener() {
@@ -219,14 +232,14 @@ public class HomepageActivity extends AppCompatActivity {
         //======= MORE =======//
 
 
-        //TODO 跑馬燈 需要做超連結!
-        String message="讀取資料錯誤";
+        //TODO 跑馬燈 需要做連結?
+        String message = "讀取資料錯誤";
         Cursor news_cursor = database.query("news", new String[]{"title"}, null, null, null, null, null);
-        if(news_cursor!=null && news_cursor.getCount()>0){
+        if (news_cursor != null && news_cursor.getCount() > 0) {
             news_cursor.moveToFirst();
             message = news_cursor.getString(0);
         }
-        if(news_cursor!=null)
+        if (news_cursor != null)
             news_cursor.close();
         MyTextview textview = new MyTextview(this);
         textview.setText(message);

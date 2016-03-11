@@ -1,5 +1,6 @@
 package com.travel;
 
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -38,5 +39,31 @@ public class BuyRecordActivity extends AppCompatActivity {
                 Functions.go(true,BuyRecordActivity.this,BuyRecordActivity.this,HomepageActivity.class,null);
             }
         });
+
+    }
+
+    class getShopRecord extends AsyncTask<String,Void,String>{
+//http://zhiyou.lin366.com/api/order/index.aspx
+        /**
+         * {
+         "act": "list",
+         "type": "",
+         "page": "1",
+         "size": "10",
+         "key": "",
+         "uid": "ljd110@qq.com"
+         }
+         *
+         *
+         * */
+        @Override
+        protected String doInBackground(String... params) {
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+        }
     }
 }
