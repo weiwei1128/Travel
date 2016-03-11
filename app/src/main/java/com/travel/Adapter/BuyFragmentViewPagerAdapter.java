@@ -87,7 +87,7 @@ public class BuyFragmentViewPagerAdapter extends PagerAdapter implements ViewPag
 
     @Override
     public void setPrimaryItem(ViewGroup container, int position, Object object) {
-        Log.e("3.8","fragments!!"+fragments.size());
+//        Log.e("3.8","fragments!!"+fragments.size());
         if(fragments.size()>0) {
             fragments.get(currentPageIndex).onStop();
             if (fragments.get(position).isAdded())
