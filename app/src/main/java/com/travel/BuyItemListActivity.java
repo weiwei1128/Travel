@@ -35,14 +35,13 @@ public class BuyItemListActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Bundle bundle = new Bundle();
                 bundle.putInt("WhichItem", lastItem);
-                Functions.go(true,BuyItemListActivity.this, BuyItemListActivity.this,
+                Functions.go(true, BuyItemListActivity.this, BuyItemListActivity.this,
                         BuyItemDetailActivity.class,
                         null
 //                        bundle
                 );
             }
         });
-        moreImg = (ImageView) findViewById(R.id.buyitemlist_moreImg);
         confirmLayout = (LinearLayout) findViewById(R.id.buyitemlist_listLayout);
         confirmLayout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -50,8 +49,8 @@ public class BuyItemListActivity extends AppCompatActivity {
                 Log.d("12/30", "listconfirmLayout CLICKED!!!");
                 Bundle bundle = new Bundle();
                 bundle.putInt("WhichItem", lastItem);
-                Functions.go(false,BuyItemListActivity.this, BuyItemListActivity.this,
-                        BuyItemListConfirmActivity.class,null
+                Functions.go(false, BuyItemListActivity.this, BuyItemListActivity.this,
+                        BuyItemListConfirmActivity.class, null
 //                        bundle
                 );
             }
@@ -65,8 +64,8 @@ public class BuyItemListActivity extends AppCompatActivity {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             Bundle bundle = new Bundle();
             bundle.putInt("WhichItem", lastItem);
-            Functions.go(true,BuyItemListActivity.this, BuyItemListActivity.this,
-                    BuyItemDetailActivity.class,null
+            Functions.go(true, BuyItemListActivity.this, BuyItemListActivity.this,
+                    BuyItemDetailActivity.class, null
 //                        bundle
             );
         }
