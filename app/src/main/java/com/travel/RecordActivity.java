@@ -96,7 +96,6 @@ public class RecordActivity extends FragmentActivity implements
      * 記錄軌跡
      */
     private ArrayList<LatLng> TraceRoute;
-    private ArrayList<LatLng> markerPoints;
 
     //====1.28 WEI====new UI //
     LinearLayout record_start_layout, record_spot_layout, dialog_choose_layout, dialog_ok_layout;
