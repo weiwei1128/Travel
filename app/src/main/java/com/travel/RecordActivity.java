@@ -72,6 +72,11 @@ public class RecordActivity extends FragmentActivity implements
     private GoogleMap mMap;
     private GoogleApiClient mGoogleApiClient;
     private LocationRequest mLocationRequest;
+    // Location updates intervals in sec
+    private static int UPDATE_INTERVAL = 5000; // 5 sec
+    private static int FATEST_INTERVAL = 1000; // 1 sec
+    private static int DISPLACEMENT = 3;       // 5 meters
+
     private Location currentLocation;
     private Marker currentMarker;
 
@@ -160,29 +165,6 @@ public class RecordActivity extends FragmentActivity implements
             @Override
             public void onClick(View v) {
                 // TODO 完成整段旅程
-                // 停止紀錄 在資料庫中新增最後一筆 track_start=0 該段結尾
-                DataBaseHelper helper = new DataBaseHelper(getApplicationContext());
-                SQLiteDatabase database = helper.getWritableDatabase();
-                Cursor trackRoute_cursor = database.query("trackRoute",
-                        new String[]{"routesCounter", "track_no", "track_lat",
-                                "track_lng", "track_start"},
-                        null, null, null, null, null);
-                if (trackRoute_cursor != null) {
-                    ContentValues cv = new ContentValues();
-                    cv.put("routesCounter", RoutesCounter);
-                    cv.put("track_no", Track_no);
-                    cv.put("track_lat", CurrentLatitude);
-                    cv.put("track_lng", CurrentLongitude);
-                    cv.put("track_start", 0);
-
-                    long result = database.insert("trackRoute", null, cv);
-                    Log.d("3/10_軌跡紀錄_END", result + " = DB INSERT RC:" + RoutesCounter
-                            + " no:" + Track_no + " 座標 " + CurrentLatitude + "," + CurrentLongitude);
-                    trackRoute_cursor.close();
-                }
-                LatLng latLng = new LatLng(CurrentLatitude, CurrentLongitude);
-                DisplayRoute(latLng);
-
                 Track_no = 1;
                 RoutesCounter++;
                 time_text.setVisibility(View.INVISIBLE);
@@ -199,8 +181,9 @@ public class RecordActivity extends FragmentActivity implements
                     stopService(intent);
                 }
                 if (Functions.isMyServiceRunning(RecordActivity.this, TrackRouteService.class)) {
-                    Intent intent = new Intent(RecordActivity.this, TrackRouteService.class);
-                    stopService(intent);
+                    Intent intent_Trace = new Intent(TrackRouteService.BROADCAST_ACTION);
+                    intent_Trace.putExtra("isStart", false);
+                    sendBroadcast(intent_Trace);
                 }
             }
         });
@@ -311,11 +294,13 @@ public class RecordActivity extends FragmentActivity implements
                         Intent intent = new Intent(RecordActivity.this, TimeCountService.class);
                         stopService(intent);
                     }
-                    if (Functions.isMyServiceRunning(RecordActivity.this, TrackRouteService.class)) {
-                        Intent intent = new Intent(RecordActivity.this, TrackRouteService.class);
-                        stopService(intent);
-                    }
 
+                    if (Functions.isMyServiceRunning(RecordActivity.this, TrackRouteService.class)) {
+                        Intent intent_Trace = new Intent(TrackRouteService.BROADCAST_ACTION);
+                        intent_Trace.putExtra("isStart", false);
+                        sendBroadcast(intent_Trace);
+                    }
+/*
                     // 停止紀錄 在資料庫中新增最後一筆 track_start=0 該段結尾
                     DataBaseHelper helper = new DataBaseHelper(getApplicationContext());
                     SQLiteDatabase database = helper.getWritableDatabase();
@@ -338,7 +323,7 @@ public class RecordActivity extends FragmentActivity implements
                     }
                     LatLng latLng = new LatLng(CurrentLatitude, CurrentLongitude);
                     DisplayRoute(latLng);
-
+*/
                 }
             }
         });
@@ -371,7 +356,7 @@ public class RecordActivity extends FragmentActivity implements
                     track_no = trackRoute_cursor.getInt(1);
                     track_lat = trackRoute_cursor.getDouble(2);
                     track_lng = trackRoute_cursor.getDouble(3);
-                    track_start = trackRoute_cursor.getInt(4);
+                    //track_start = trackRoute_cursor.getInt(4);
                     // TODO track_start=0:最後一筆 1:還在紀錄
                     LatLng track_latLng = new LatLng(track_lat, track_lng);
                     if (!(routesCounter > 1 && track_no == 1)) {
@@ -512,8 +497,6 @@ public class RecordActivity extends FragmentActivity implements
             helper.close();
             if (spotDialog.isShowing()) ;
             spotDialog.dismiss();
-
-
         }
     };
 
@@ -542,8 +525,8 @@ public class RecordActivity extends FragmentActivity implements
                 }
                 Log.d("2/4", "fromBroadcast" + intent.getLongExtra("spent", 99));
 
-                Boolean track_start = intent.getBooleanExtra("isStart", false);
-                if (track_start) {
+                Boolean isStart = intent.getBooleanExtra("isStart", false);
+                if (isStart) {
                     Integer routesCounter = intent.getIntExtra("routesCounter", 1);
                     Integer track_no = intent.getIntExtra("track_no", 1);
                     Double track_lat = intent.getDoubleExtra("track_lat", 0);
@@ -551,6 +534,34 @@ public class RecordActivity extends FragmentActivity implements
                     LatLng track_latLng = new LatLng(track_lat, track_lng);
                     if (!(routesCounter > 1 && track_no == 1)) {
                         DisplayRoute(track_latLng);
+                    }
+                }
+
+                Boolean track_END = intent.getBooleanExtra("track_start", true);
+                if (!track_END) {
+                    Integer routesCounter = intent.getIntExtra("routesCounter", 1);
+                    Integer track_no = intent.getIntExtra("track_no", 1);
+                    Double track_lat = intent.getDoubleExtra("track_lat", 0);
+                    Double track_lng = intent.getDoubleExtra("track_lng", 0);
+                    LatLng track_latLng = new LatLng(track_lat, track_lng);
+                    if (!(routesCounter > 1 && track_no == 1)) {
+                        DisplayRoute(track_latLng);
+                    }
+                    DataBaseHelper helper = new DataBaseHelper(getApplicationContext());
+                    SQLiteDatabase database = helper.getWritableDatabase();
+                    Cursor trackRoute_cursor = database.query("trackRoute",
+                            new String[]{"routesCounter", "track_no", "track_lat", "track_lng", "track_start"},
+                            null, null, null, null, null);
+                    if (trackRoute_cursor != null) {
+                        ContentValues cv = new ContentValues();
+                        cv.put("routesCounter", routesCounter);
+                        cv.put("track_no", track_no);
+                        cv.put("track_lat", track_lat);
+                        cv.put("track_lng", track_lng);
+                        cv.put("track_start", track_END);
+                        long result = database.insert("trackRoute", null, cv);
+                        Log.d("3/10_軌跡紀錄_END", result + " = DB INSERT RC:" + routesCounter
+                                + " no:" + track_no + " 座標 " + track_lat + "," + track_lng);
                     }
                 }
             }
@@ -741,8 +752,9 @@ public class RecordActivity extends FragmentActivity implements
         // 建立Location請求物件
         mLocationRequest = LocationRequest.create()
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)    // 設定優先讀取高精確度的位置資訊（GPS）
-                .setInterval(3000)             // 設定讀取位置資訊的間隔時間為三秒
-                .setFastestInterval(1000);     // 設定讀取位置資訊最快的間隔時間為一秒
+                .setInterval(UPDATE_INTERVAL)        // 5 seconds, in milliseconds
+                .setFastestInterval(FATEST_INTERVAL) // 1 second, in milliseconds
+                .setSmallestDisplacement(DISPLACEMENT);
 
         // Try to obtain the map from the SupportMapFragment.
         mMap = ((SupportMapFragment) getSupportFragmentManager()
@@ -778,11 +790,9 @@ public class RecordActivity extends FragmentActivity implements
             if (mMap == null) {
                 LoadtoMap();
             }
-            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(CurrentLatlng, 12));
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(CurrentLatlng, 14));
             currentMarker = mMap.addMarker(new MarkerOptions().position(CurrentLatlng).title("I am here!")
                     .icon(BitmapDescriptorFactory.fromBitmap(MarkerIcon)));
-
-
         } else {
             currentMarker.setPosition(CurrentLatlng);
         }

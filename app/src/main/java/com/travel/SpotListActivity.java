@@ -55,9 +55,9 @@ public class SpotListActivity extends Activity implements
     // Location updates intervals in sec
     private static int UPDATE_INTERVAL = 5000; // 5 sec
     private static int FATEST_INTERVAL = 1000; // 1 sec
-    private static int DISPLACEMENT = 0;       // 0 meters
+    private static int DISPLACEMENT = 5;       // 5 meters
 
-    private Location CurrentLocation;
+    private Location currentLocation;
 
     private Double Latitude;
     private Double Longitude;
@@ -98,9 +98,9 @@ public class SpotListActivity extends Activity implements
             Log.e("3/10_", "Spot is Sorted");
             progressBar.setVisibility(View.VISIBLE);
             mlistView.setAdapter(null);
-            if (CurrentLocation != null) {
-                new GetSpotsNSort(SpotListActivity.this, CurrentLocation.getLatitude(),
-                        CurrentLocation.getLongitude()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            if (currentLocation != null) {
+                new GetSpotsNSort(SpotListActivity.this, currentLocation.getLatitude(),
+                        currentLocation.getLongitude()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             }
         } else {
             mlistView.setAdapter(mAdapter);
@@ -209,7 +209,7 @@ public class SpotListActivity extends Activity implements
 
 
     private void HandleNewLocation(Location location) {
-        CurrentLocation = location;
+        currentLocation = location;
         //LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
     }
 
