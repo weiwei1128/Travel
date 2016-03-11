@@ -10,10 +10,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ImageView;
 
-import com.travel.Adapter.BuyRecordAdapter;
+import com.travel.Adapter.ShopRecordAdapter;
 import com.travel.Utility.DataBaseHelper;
 import com.travel.Utility.Functions;
 
@@ -32,54 +33,61 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 
-public class BuyRecordActivity extends AppCompatActivity {
+public class ShopRecordActivity extends AppCompatActivity {
 
     ImageView backImg;
     GridView gridView;
-    BuyRecordAdapter adapter;
+    public ShopRecordAdapter adapter;
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK)
-            Functions.go(true, BuyRecordActivity.this, BuyRecordActivity.this, HomepageActivity.class, null);
+            Functions.go(true, ShopRecordActivity.this, ShopRecordActivity.this, HomepageActivity.class, null);
         return false;
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.buy_record_activity);
-        backImg = (ImageView) findViewById(R.id.buyrecordlist_backImg);
-        gridView = (GridView) findViewById(R.id.buy_record_gridview);
-        adapter = new BuyRecordAdapter(BuyRecordActivity.this);
+        setContentView(R.layout.shoprecord_activity);
+        backImg = (ImageView) findViewById(R.id.shoprecordlist_backImg);
+        gridView = (GridView) findViewById(R.id.shop_record_gridview);
+        adapter = new ShopRecordAdapter(ShopRecordActivity.this);
         gridView.setAdapter(adapter);
+        gridView.setOnItemClickListener(new itemlistener());
         backImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Functions.go(true, BuyRecordActivity.this, BuyRecordActivity.this, HomepageActivity.class, null);
+                Functions.go(true, ShopRecordActivity.this, ShopRecordActivity.this, HomepageActivity.class, null);
             }
         });
-        new getShopRecord().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        new getShopRecord(adapter).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+    }
+
+    class itemlistener implements AdapterView.OnItemClickListener {
+
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            Bundle bundle = new Bundle();
+            bundle.putInt("WhichItem", position);
+            Functions.go(false, ShopRecordActivity.this, ShopRecordActivity.this,
+                    ShopRecordItemActivity.class, bundle);
+        }
     }
 
     class getShopRecord extends AsyncTask<String, Void, String> {
         String UserId = "ljd110@qq.com";
-        Context context = BuyRecordActivity.this;
-//http://zhiyou.lin366.com/api/order/index.aspx
+        Context context = ShopRecordActivity.this;
+        ShopRecordAdapter adapter;
 
-        /**
-         * {
-         * "act": "list",
-         * "type": "",
-         * "page": "1",
-         * "size": "10",
-         * "key": "",
-         * "uid": "ljd110@qq.com"
-         * }
-         */
+        getShopRecord(ShopRecordAdapter shopRecordAdapter) {
+            this.adapter = shopRecordAdapter;
+        }
+
         @Override
         protected String doInBackground(String... params) {
-            String returnMessage=null;
+            Log.i("3.11", "*************ShopRecord DO IN BACKGROUND");
+            String returnMessage = null;
 
             HttpClient client = new DefaultHttpClient();
             HttpPost post = new HttpPost("http://zhiyou.lin366.com/api/order/index.aspx");
@@ -232,8 +240,8 @@ public class BuyRecordActivity extends AppCompatActivity {
             DataBaseHelper helper = new DataBaseHelper(context);
             SQLiteDatabase database = helper.getWritableDatabase();
             Cursor order_cursor = database.query("shoporder", new String[]{"order_id", "order_no",
-                            "order_time", "order_name", "order_phone", "order_email", "order_money", "order_state"},
-                    null, null, null, null, null);
+                    "order_time", "order_name", "order_phone", "order_email",
+                    "order_money", "order_state"}, null, null, null, null, null);
             if (order_cursor != null) {
                 ContentValues cv = new ContentValues();
                 if (order_cursor.getCount() == 0) {//是新的資料庫 -> 新增資料
@@ -245,8 +253,10 @@ public class BuyRecordActivity extends AppCompatActivity {
                         cv.put("order_name", string[3]);
                         cv.put("order_phone", string[4]);
                         cv.put("order_email", string[5]);
-                        cv.put("order_state", string[6]);
+                        cv.put("order_money", string[6]);
+                        cv.put("order_state", string[7]);
                         long result = database.insert("shoporder", null, cv);
+                        returnMessage = returnMessage + "新的資料庫新增資料:" + string[0] + " result:" + result;
                     }
 
                 } else { //已經有資料庫了->確認是否有重複資料 ->確認是否要更新狀態 // -> 確認是否有新的資料
@@ -259,14 +269,15 @@ public class BuyRecordActivity extends AppCompatActivity {
                             //有重複的資料 ->確認是否更新狀態!
                             order_cursor_dul.moveToFirst();
                             while (order_cursor_dul.isAfterLast()) {
-                                if (!order_cursor_dul.getString(7).equals(string[6])) {//資料不相同
+                                if (!order_cursor_dul.getString(7).equals(string[7])) {//資料不相同
                                     cv.clear();
-                                    cv.put("order_state", string[6]);
+                                    cv.put("order_state", string[7]);
                                     long result = database.update("shoporder", cv, "order_id=?", new String[]{string[0]});
+                                    returnMessage = returnMessage + "新的資料庫更新資料:" + string[0] + " result:" + result;
                                 }
                                 order_cursor_dul.moveToNext();
                             }
-                        }else {
+                        } else {
                             cv.clear();
                             cv.put("order_id", string[0]);
                             cv.put("order_no", string[1]);
@@ -274,23 +285,26 @@ public class BuyRecordActivity extends AppCompatActivity {
                             cv.put("order_name", string[3]);
                             cv.put("order_phone", string[4]);
                             cv.put("order_email", string[5]);
-                            cv.put("order_state", string[6]);
+                            cv.put("order_money", string[6]);
+                            cv.put("order_state", string[7]);
                             long result = database.insert("shoporder", null, cv);
+                            returnMessage = returnMessage + "舊的資料庫新增資料:" + string[0] + " result:" + result;
                         }
-                        if(order_cursor_dul!=null)
+                        if (order_cursor_dul != null)
                             order_cursor_dul.close();
                     }
                 }
                 order_cursor.close();
             }
             database.close();
-            return null;
+            return returnMessage;
         }
 
         @Override
         protected void onPostExecute(String s) {
-            if (s == null)
-                Log.i("3.11", "shoprecord NULL");
+            Log.i("3.11", "shoprecord on PostExecute:" + s);
+            if (s != null)
+                adapter.notifyDataSetChanged();
             super.onPostExecute(s);
         }
     }
