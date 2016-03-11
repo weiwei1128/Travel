@@ -73,9 +73,6 @@ public class SpecialActivity extends AppCompatActivity {
         if(special!=null){
             FragmentNumber = special.getCount();
             special.close();
-//            Log.e("3.10", "specialNumber:" + FragmentNumber);
-//            database.endTransaction();
-//            database.close();
         }
         fragmentManager = this.getSupportFragmentManager();
 
