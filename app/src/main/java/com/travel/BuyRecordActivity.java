@@ -79,6 +79,7 @@ public class BuyRecordActivity extends AppCompatActivity {
          */
         @Override
         protected String doInBackground(String... params) {
+            Log.i("3.11", "*************ShopRecord DO IN BACKGROUND");
             String returnMessage=null;
 
             HttpClient client = new DefaultHttpClient();
@@ -247,6 +248,7 @@ public class BuyRecordActivity extends AppCompatActivity {
                         cv.put("order_email", string[5]);
                         cv.put("order_state", string[6]);
                         long result = database.insert("shoporder", null, cv);
+                        returnMessage = returnMessage+"新的資料庫新增資料:"+string[0]+" result:"+result;
                     }
 
                 } else { //已經有資料庫了->確認是否有重複資料 ->確認是否要更新狀態 // -> 確認是否有新的資料
@@ -263,6 +265,7 @@ public class BuyRecordActivity extends AppCompatActivity {
                                     cv.clear();
                                     cv.put("order_state", string[6]);
                                     long result = database.update("shoporder", cv, "order_id=?", new String[]{string[0]});
+                                    returnMessage = returnMessage+"新的資料庫更新資料:"+string[0]+" result:"+result;
                                 }
                                 order_cursor_dul.moveToNext();
                             }
@@ -276,6 +279,7 @@ public class BuyRecordActivity extends AppCompatActivity {
                             cv.put("order_email", string[5]);
                             cv.put("order_state", string[6]);
                             long result = database.insert("shoporder", null, cv);
+                            returnMessage = returnMessage + "舊的資料庫新增資料:" + string[0] + " result:" + result;
                         }
                         if(order_cursor_dul!=null)
                             order_cursor_dul.close();
@@ -284,13 +288,12 @@ public class BuyRecordActivity extends AppCompatActivity {
                 order_cursor.close();
             }
             database.close();
-            return null;
+            return returnMessage;
         }
 
         @Override
         protected void onPostExecute(String s) {
-            if (s == null)
-                Log.i("3.11", "shoprecord NULL");
+                Log.i("3.11", "shoprecord on PostExecute:"+s);
             super.onPostExecute(s);
         }
     }
