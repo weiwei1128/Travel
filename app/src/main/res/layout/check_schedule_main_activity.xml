@@ -5,7 +5,7 @@
     android:layout_height="match_parent">
 
     <LinearLayout
-        android:id="@+id/checkschedule_Layout"
+        android:id="@+id/shoprecord_Layout"
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="45dp"
@@ -38,7 +38,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/checkschedule_listview"
-        android:layout_below="@+id/checkschedule_Layout"
+        android:layout_below="@+id/shoprecord_Layout"
         android:layout_centerHorizontal="true" />
 
 </RelativeLayout>
