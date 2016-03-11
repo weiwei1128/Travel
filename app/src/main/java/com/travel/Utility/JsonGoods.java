@@ -227,7 +227,6 @@ public class JsonGoods extends AsyncTask<String, String, Map<String, String[][]>
                                             "goods_title", "goods_url","goods_money", "goods_content","goods_click", "goods_addtime"},
                                     "goods_id=" + jsonObjects[i][4], null, null, null, null, null);
                             if (goods_dul != null && goods_dul.getCount() > 0) {
-                                //有重複的資料
                                 //TODO 要更新click資料
                                 goods_dul.moveToFirst();
 //                                Log.e("2.25", "有重複的資料!" + goods_dul.getString(1) + "title: " + goods_dul.getString(2));

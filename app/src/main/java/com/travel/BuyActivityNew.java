@@ -80,6 +80,7 @@ public class BuyActivityNew extends AppCompatActivity {
         linearLayout = (LinearLayout) findViewById(R.id.buy_textlayout);
         backImg = (ImageView) findViewById(R.id.buy_backImg);
         ListImg = (ImageView) findViewById(R.id.buy_listImg);
+        viewPager = (ViewPager) findViewById(R.id.buy_viewpager);
         ListImg.setVisibility(View.INVISIBLE);
         backImg.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -116,7 +117,7 @@ public class BuyActivityNew extends AppCompatActivity {
             pages = (count / 10) + 1;
         else pages = (count / 10);
 
-        viewPager = (ViewPager) findViewById(R.id.buy_viewpager);
+
         //fragment(i) -> i代表第幾頁
         for (int i = 0; i < pages; i++) {
             fragments.add(new BuyFragmentNew(i + 1));
