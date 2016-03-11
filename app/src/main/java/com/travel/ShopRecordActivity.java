@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ImageView;
 
@@ -53,6 +54,7 @@ public class ShopRecordActivity extends AppCompatActivity {
         gridView = (GridView) findViewById(R.id.shop_record_gridview);
         adapter = new ShopRecordAdapter(ShopRecordActivity.this);
         gridView.setAdapter(adapter);
+        gridView.setOnItemClickListener(new itemlistener());
         backImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -60,6 +62,17 @@ public class ShopRecordActivity extends AppCompatActivity {
             }
         });
         new getShopRecord(adapter).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+    }
+
+    class itemlistener implements AdapterView.OnItemClickListener {
+
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            Bundle bundle = new Bundle();
+            bundle.putInt("WhichItem", position);
+            Functions.go(false, ShopRecordActivity.this, ShopRecordActivity.this,
+                    ShopRecordItemActivity.class, bundle);
+        }
     }
 
     class getShopRecord extends AsyncTask<String, Void, String> {

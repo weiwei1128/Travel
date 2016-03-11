@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF">
+
+    <LinearLayout
+        android:id="@+id/shoprecorditem_Layout"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:background="#5599FF"
+        android:gravity="center_vertical|center_horizontal">
+
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="40dp"
+            android:id="@+id/shoprecorditem_backImg"
+            android:src="@drawable/arrow_back_white"
+            android:layout_marginLeft="10dp"
+            android:background="@drawable/click_effect_general" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="訂單明細"
+            android:textSize="22dp"
+            android:gravity="center_vertical|center_horizontal"
+            android:background="#5599FF"
+            android:textColor="@color/white" />
+    </LinearLayout>
+
+    <GridView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/shoprecorditem_gridview"
+        android:layout_below="@+id/shoprecorditem_Layout"
+        android:layout_centerHorizontal="true" />
+
+</RelativeLayout>
