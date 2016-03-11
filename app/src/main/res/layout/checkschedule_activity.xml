@@ -6,7 +6,7 @@
     tools:context=".CheckScheduleActivity"
     android:background="#FFFFFF">
     <LinearLayout
-        android:id="@+id/checkschedule_Layout"
+        android:id="@+id/shoprecord_Layout"
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="45dp"
@@ -45,7 +45,7 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/checkschedule_Layout"
+        android:layout_below="@+id/shoprecord_Layout"
         android:layout_centerHorizontal="true"
         android:background="#33CCFF"
         android:id="@+id/linearLayout2">

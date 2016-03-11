@@ -28,9 +28,6 @@ import com.travel.Utility.DataBaseHelper;
 import com.travel.Utility.Functions;
 import com.travel.Utility.MyTextview;
 
-import java.util.Timer;
-import java.util.TimerTask;
-
 public class HomepageActivity extends AppCompatActivity {
     private Fragment contentFragment;
     MainImageFragment homefragment;
@@ -113,7 +110,7 @@ public class HomepageActivity extends AppCompatActivity {
         buyLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Functions.go(false, HomepageActivity.this, HomepageActivity.this, BuyActivityNew.class, null);
+                Functions.go(false, HomepageActivity.this, HomepageActivity.this, BuyActivity.class, null);
             }
         });
 
@@ -170,7 +167,7 @@ public class HomepageActivity extends AppCompatActivity {
         shoprecordImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Functions.go(false, HomepageActivity.this, HomepageActivity.this, BuyRecordActivity.class, null);
+                Functions.go(false, HomepageActivity.this, HomepageActivity.this, ShopRecordActivity.class, null);
             }
         });
         shoprecordImg.setOnTouchListener(new View.OnTouchListener() {
