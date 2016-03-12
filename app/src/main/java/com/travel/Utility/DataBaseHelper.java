@@ -12,7 +12,7 @@ import android.database.sqlite.SQLiteOpenHelper;
  */
 public class DataBaseHelper extends SQLiteOpenHelper {
     private static DataBaseHelper mInstance = null;
-    private static final int VERSION = 1;
+    private static final int VERSION = 2;
     private static final String DATABASE_NAME = "Travel1.db";
     private Context mcontext;
 
@@ -48,59 +48,67 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 +");";
         db.execSQL(DATABASE_CREATE_TABLE_MEMBER);
 
+        //景點資訊 偷偷記錄位置
         String DATABASE_CREATE_TABLE_LOCATION = "create table location("
-                +"_ID INTEGER PRIMARY KEY,"+"CurrentLat BLOB,"//2
-                +"CurrentLng BLOB"//3
+                +"_ID INTEGER PRIMARY KEY,"+"CurrentLat BLOB,"
+                +"CurrentLng BLOB"
                 +");";
         db.execSQL(DATABASE_CREATE_TABLE_LOCATION);
 
+        //景點資訊 原始資料
         String DATABASE_CREATE_TABLE_SPOTDATA_RAW = "create table spotDataRaw("
-                +"_ID INTEGER PRIMARY KEY,"+"spotId TEXT,"//1
-                +"spotName TEXT,"//2
-                +"spotAdd TEXT,"//3
-                +"spotLat BLOB,"//4
-                +"spotLng BLOB,"//5
-                +"picture1 TEXT,"//6
-                +"picture2 TEXT,"//7
-                +"picture3 TEXT,"//8
-                +"openTime TEXT,"//9
-                +"ticketInfo TEXT,"//10
-                +"infoDetail TEXT"//11
+                +"_ID INTEGER PRIMARY KEY,"+"spotId TEXT,"
+                +"spotName TEXT,"
+                +"spotAdd TEXT,"
+                +"spotLat BLOB,"
+                +"spotLng BLOB,"
+                +"picture1 TEXT,"
+                +"picture2 TEXT,"
+                +"picture3 TEXT,"
+                +"openTime TEXT,"
+                +"ticketInfo TEXT,"
+                +"infoDetail TEXT"
                 +");";
         db.execSQL(DATABASE_CREATE_TABLE_SPOTDATA_RAW);
 
+        //景點列表 排序過後
         String DATABASE_CREATE_TABLE_SPOTDATA_SORTED = "create table spotDataSorted("
-                +"_ID INTEGER PRIMARY KEY,"+"spotId TEXT,"//1
-                +"spotName TEXT,"//2
-                +"spotAdd TEXT,"//3
-                +"spotLat BLOB,"//4
-                +"spotLng BLOB,"//5
-                +"picture1 TEXT,"//6
-                +"picture2 TEXT,"//7
-                +"picture3 TEXT,"//8
-                +"openTime TEXT,"//9
-                +"ticketInfo TEXT,"//10
-                +"infoDetail TEXT"//11
+                +"_ID INTEGER PRIMARY KEY,"+"spotId TEXT,"
+                +"spotName TEXT,"
+                +"spotAdd TEXT,"
+                +"spotLat BLOB,"
+                +"spotLng BLOB,"
+                +"picture1 TEXT,"
+                +"picture2 TEXT,"
+                +"picture3 TEXT,"
+                +"openTime TEXT,"
+                +"ticketInfo TEXT,"
+                +"infoDetail TEXT"
                 +");";
         db.execSQL(DATABASE_CREATE_TABLE_SPOTDATA_SORTED);
 
+        //軌跡紀錄
         String DATABASE_CREATE_TABLE_TRACKROUTE = "create table trackRoute("
-                +"_ID INTEGER PRIMARY KEY,"+"routesCounter INTEGER,"//1
-                +"track_no INTEGER,"//2
-                +"track_lat BLOB,"//3
-                +"track_lng BLOB,"//4
-                +"track_start INTEGER"//5
+                +"_ID INTEGER PRIMARY KEY,"+"routesCounter INTEGER,"
+                +"track_no INTEGER,"
+                +"track_lat BLOB,"
+                +"track_lng BLOB,"
+                +"track_start INTEGER"
                 +");";
         db.execSQL(DATABASE_CREATE_TABLE_TRACKROUTE);
 
+        //旅遊日誌
         String DATABASE_CREATE_TABLE_TRAVELMEMO = "create table travelMemo("
-                +"_ID INTEGER PRIMARY KEY,"+"memo_no TEXT,"//1
-                +"memo_img BLOB,"//2
-                +"memo_area TEXT,"//3
-                +"memo_time TEXT,"//4
-                +"memo_content TEXT"//5
+                +"_ID INTEGER PRIMARY KEY,"+"totalCount TEXT,"
+                +"id TEXT,"
+                +"title TEXT,"
+                +"url TEXT,"
+                +"zhaiyao TEXT,"
+                +"click TEXT,"
+                +"addtime TEXT"
                 +");";
         db.execSQL(DATABASE_CREATE_TABLE_TRAVELMEMO);
+
         //伴手禮
         String DATABASE_CREATE_TABLE_GOODS = "create table goods("
                 +"_ID INTEGER PRIMARY KEY,"+"totalCount TEXT,"
@@ -149,7 +157,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         /** TODO 正式版要修改!!
-         * [0308] [BAD!] [若有相同名稱則重建]
+         * [0308] [BAD!] [若有相同名稱則重建] <-相同名稱是指哪個地方的名稱相同啊?! by Hua 3/12 06:08
          * **/
         db.execSQL("DROP TABLE IF EXISTS newMemorandum");
 

@@ -36,8 +36,7 @@
                 android:background="@drawable/click_effect_general" />
         </FrameLayout>
 
-        <LinearLayout
-            android:orientation="vertical"
+        <FrameLayout
             android:layout_width="fill_parent"
             android:layout_height="250dp"
             android:id="@+id/MemoDetailMap_Layout"
@@ -54,9 +53,31 @@
                 tools:ignore="MissingPrefix"
                 map:cameraTargetLat="24.029548"
                 map:cameraTargetLng="121.276745"
-                map:cameraZoom="6" />
+                map:cameraZoom="6"
+                android:layout_gravity="right|bottom" />
 
-        </LinearLayout>
+            <ImageView
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:id="@+id/MemoMapEnlarge_img"
+                android:src="@drawable/icon_enlarge"
+                android:layout_gravity="bottom|right"
+                android:layout_marginBottom="10dp"
+                android:layout_marginRight="10dp"
+                android:longClickable="true" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Title"
+                android:id="@+id/MemoDetailTitle"
+                android:layout_gravity="left|bottom"
+                android:layout_marginLeft="15dp"
+                android:layout_marginBottom="10dp"
+                android:textColor="#a4ffffff" />
+
+        </FrameLayout>
 
         <com.travel.ExpandableHeightGridView
             android:layout_width="wrap_content"
@@ -83,8 +104,11 @@
                 android:text="MemoDetailString"
                 android:id="@+id/MemoDetailString"
                 android:background="#a9d4f3"
-                android:layout_margin="10dp"
-                android:padding="5dp" />
+                android:padding="5dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp" />
 
         </LinearLayout>
 

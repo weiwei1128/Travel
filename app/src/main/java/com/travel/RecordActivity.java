@@ -21,6 +21,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.location.LocationProvider;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
@@ -57,8 +58,22 @@ import com.travel.Utility.Functions;
 import com.travel.Utility.TimeCountService;
 import com.travel.Utility.TrackRouteService;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.entity.mime.content.StringBody;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 
 public class RecordActivity extends FragmentActivity implements
@@ -811,7 +826,7 @@ public class RecordActivity extends FragmentActivity implements
             polylineOpt.add(latlng);
         }
 
-        polylineOpt.color(Color.RED);
+        polylineOpt.color(Color.parseColor("#a9d4f3"));
 
         Polyline line = mMap.addPolyline(polylineOpt);
         line.setWidth(10);
@@ -822,7 +837,103 @@ public class RecordActivity extends FragmentActivity implements
             polylineOpt.add(track_latlng);
         }*/
     }
+/*      // TODO Updload
+    private class Upload extends AsyncTask<String, Void, String> {
 
+        //{"act":"top","type":"tophot","size":"10"}
+        //http://zhiyou.lin366.com/api/news/index.aspx
+
+        //http://zhiyou.lin366.com/api/diy/index.aspx
+        //{"act":"add","uid":"ljd110@qq.com","title":"title","add_time":"2016-3-1",
+        // "link_url":"link_url","content":"content","jinwei":"129.000213,58.00012343",
+        // "piclist":[{"picurl":"pic1","jinwei":"129.000213,58.00012343","add_time":"2016-03-02"},
+        // {"picurl":"pic11","jinwei":"129.000213,58.00012343","add_time":"2016-03-02"}],
+        // "contentlist":[{"content":"content1","jinwei":"129.000213,58.00012343","add_time":"2016-03-02"},
+        // {"content":"content11","jinwei":"129.000213,58.00012343","add_time":"2016-03-02"}]}
+
+        @Override
+        protected String doInBackground(String... params) {
+            Log.e("3/13_", "=========Upload======doInBackground");
+
+            HttpClient client = new DefaultHttpClient();
+            HttpPost post = new HttpPost("http://zhiyou.lin366.com/api/diy/index.aspx");
+            MultipartEntity entity = new MultipartEntity();
+            Charset chars = Charset.forName("UTF-8");
+            try {
+                entity.addPart("json", new StringBody("{\"act\":\"add\",\"type\":\"tophot\",\"size\":\"100\"}", chars));
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+
+            post.setEntity(entity);
+            HttpResponse resp = null;
+            String result = null;
+            String states = null;
+            String message = "";
+            try {
+                resp = client.execute(post);
+                result = EntityUtils.toString(resp.getEntity());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            try {
+                states = new JSONObject(result.substring(
+                        result.indexOf("{"), result.lastIndexOf("}") + 1)).getString("states");
+            } catch (JSONException | NullPointerException e2) {
+                e2.printStackTrace();
+            }
+//            Log.e("3.10","result:"+result); //OK
+            if (states == null || states.equals("0"))
+                return null;
+            else {
+                JSONArray jsonArray = null;
+                try {
+                    jsonArray = new JSONObject(result).getJSONArray("list");
+//                    Log.e("3.9", jsonArray.length() + ":jsonArray長度"); //3.9 OK
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                if (jsonArray != null)
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        try {
+                            message = message + jsonArray.getJSONObject(i).getString("title") + "    ";
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+//                message="";//test
+//                Log.e("3.10","news: "+message); //3.10 OK
+                return message;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            DataBaseHelper helper = new DataBaseHelper(getApplicationContext());
+            SQLiteDatabase database = helper.getWritableDatabase();
+            Cursor news_cursor = database.query("news", new String[]{"title"}, null, null, null, null, null);
+            if (news_cursor != null && !s.equals("")) {
+//                Log.e("3.10","news cursor count: "+news_cursor.getCount());
+                news_cursor.moveToFirst();
+                if (news_cursor.getCount() == 0) {
+                    ContentValues cv = new ContentValues();
+                    cv.put("title", s);
+                    long result = database.insert("news", null, cv);
+//                    Log.e("3.10","news insert DB result: "+result);
+                } else if (!news_cursor.getString(0).equals(s)) { //資料不相同 -> 更新
+                    ContentValues cv = new ContentValues();
+                    cv.put("title", s);
+                    long result = database.update("news", cv, null, null);
+//                    Log.e("3.10","news update DB result: "+result);
+                }
+                news_cursor.close();
+            }
+//            else Log.e("3.10","news: cursor=NULL? message:"+s);
+            super.onPostExecute(s);
+        }
+    }
+*/
     // Android 系統返回鍵
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
