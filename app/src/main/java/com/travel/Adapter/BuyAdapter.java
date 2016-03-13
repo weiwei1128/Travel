@@ -141,7 +141,7 @@ public class BuyAdapter extends BaseAdapter {
             }
         }
         */
-A
+
         if (goods_cursor != null && goods_cursor.getCount() >= (pageNO - 1) * 10 + position) {
             goods_cursor.moveToPosition((pageNO - 1) * 10 + position);
             mcell.buyText.setText(goods_cursor.getString(2));
