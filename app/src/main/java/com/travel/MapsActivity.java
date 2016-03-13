@@ -359,9 +359,6 @@ public class MapsActivity extends FragmentActivity implements
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            if (mDialog.isShowing()) {
-                mDialog.dismiss();
-            }
             Functions.go(true,MapsActivity.this, MapsActivity.this, HomepageActivity.class, null);
         }
         return false;
