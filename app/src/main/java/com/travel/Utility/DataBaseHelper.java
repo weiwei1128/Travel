@@ -12,7 +12,7 @@ import android.database.sqlite.SQLiteOpenHelper;
  */
 public class DataBaseHelper extends SQLiteOpenHelper {
     private static DataBaseHelper mInstance = null;
-    private static final int VERSION = 2;
+    private static final int VERSION = 1;
     private static final String DATABASE_NAME = "Travel1.db";
     private Context mcontext;
 
@@ -99,6 +99,17 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
         //旅遊日誌
         String DATABASE_CREATE_TABLE_TRAVELMEMO = "create table travelMemo("
+                +"_ID INTEGER PRIMARY KEY,"+"memo_no TEXT,"
+                +"memo_title TEXT,"
+                +"memo_content TEXT,"
+                +"memo_img BLOB,"
+                +"memo_latlng BLOB,"
+                +"memo_time TEXT"
+                +");";
+        db.execSQL(DATABASE_CREATE_TABLE_TRAVELMEMO);
+
+/*        //旅遊日誌 日誌列表 同步Server的版本
+        String DATABASE_CREATE_TABLE_TRAVELMEMO = "create table travelMemo("
                 +"_ID INTEGER PRIMARY KEY,"+"totalCount TEXT,"
                 +"id TEXT,"
                 +"title TEXT,"
@@ -108,7 +119,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 +"addtime TEXT"
                 +");";
         db.execSQL(DATABASE_CREATE_TABLE_TRAVELMEMO);
-
+*/
         //伴手禮
         String DATABASE_CREATE_TABLE_GOODS = "create table goods("
                 +"_ID INTEGER PRIMARY KEY,"+"totalCount TEXT,"

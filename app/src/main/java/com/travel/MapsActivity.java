@@ -84,7 +84,7 @@ public class MapsActivity extends FragmentActivity implements
         registerReceiver(broadcastReceiver, new IntentFilter(TWSpotAPIFetcher.BROADCAST_ACTION));
 
         BitmapDrawable BitmapDraw = (BitmapDrawable)getResources().getDrawable(R.drawable.location);
-        MarkerIcon = Bitmap.createScaledBitmap(BitmapDraw.getBitmap(), 40, 70, false);
+        MarkerIcon = Bitmap.createScaledBitmap(BitmapDraw.getBitmap(), 40, 65, false);
 
         BackImg = (ImageView) findViewById(R.id.maps_backImg);
         BackImg.setOnClickListener(new View.OnClickListener() {
@@ -365,9 +365,6 @@ public class MapsActivity extends FragmentActivity implements
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            if (mDialog.isShowing()) {
-                mDialog.dismiss();
-            }
             Functions.go(true,MapsActivity.this, MapsActivity.this, HomepageActivity.class, null);
         }
         return false;
@@ -478,9 +475,9 @@ public class MapsActivity extends FragmentActivity implements
                 globalVariable.MarkerOptionsArray = markerOptionsArray;
             }
             for (MarkerOptions markerOptions : globalVariable.MarkerOptionsArray) {
-                    markerOptions.icon(BitmapDescriptorFactory.fromBitmap(MarkerIcon));
-                    mMap.addMarker(markerOptions);
-                }
+                markerOptions.icon(BitmapDescriptorFactory.fromBitmap(MarkerIcon));
+                mMap.addMarker(markerOptions);
+            }
             mDialog.dismiss();
             super.onPostExecute(markerOptionsArray);
         }

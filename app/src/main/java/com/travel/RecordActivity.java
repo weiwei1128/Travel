@@ -1,11 +1,13 @@
 package com.travel;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
@@ -23,7 +25,9 @@ import android.location.LocationProvider;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.preference.PreferenceManager;
+import android.provider.MediaStore;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
@@ -33,6 +37,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -70,11 +75,15 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class RecordActivity extends FragmentActivity implements
         LocationListener,
@@ -90,7 +99,7 @@ public class RecordActivity extends FragmentActivity implements
     // Location updates intervals in sec
     private static int UPDATE_INTERVAL = 5000; // 5 sec
     private static int FATEST_INTERVAL = 1000; // 1 sec
-    private static int DISPLACEMENT = 3;       // 5 meters
+    private static int DISPLACEMENT = 3;       // 3 meters
 
     private Location currentLocation;
     private Marker currentMarker;
@@ -102,31 +111,33 @@ public class RecordActivity extends FragmentActivity implements
     private Integer Track_no = 1;
     private Boolean record_start_boolean = false;
 
-    private ImageView BackImg;
-
     private Double CurrentLatitude;
     private Double CurrentLongitude;
     private LatLng CurrentLatlng;
 
     private Bitmap MarkerIcon;
+    private ArrayList<LatLng> TraceRoute;
 
     //3.10
     final int REQUEST_LOCATION = 2;
-    /**
-     * 記錄軌跡
-     */
-    private ArrayList<LatLng> TraceRoute;
+
+    //3.13
+    final int REQUEST_CAMERA = 99;
+    final int SELECT_FILE = 98;
 
     //====1.28 WEI====new UI //
-    LinearLayout record_start_layout, record_spot_layout, dialog_choose_layout, dialog_ok_layout;
-    ImageView record_start_img, record_spot_img, dialog_img;
-    TextView record_start_text, record_spot_text, dialog_header_text;
-    Dialog spotDialog;
-    TextView time_text;
-    ImageView record_completeImg;
+    private Dialog spotDialog;
+    private ScrollView dialog_scrollview;
+    private LinearLayout record_start_layout, record_spot_layout;
+    private LinearLayout dialog_choose_layout, dialog_confirm_layout, content_layout;
+    private RelativeLayout dialog_relativeLayout;
+    private ImageView BackImg, record_completeImg, record_start_img, record_spot_img, dialog_img;
+    private TextView time_text, record_start_text, record_spot_text;
+    private TextView dialog_header_text, title_textView, content_textView;
+    private EditText title_editText, content_editText;
+
     final Long[] starttime = new Long[1];
     int PHOTO = 99;
-    ScrollView dialog_scrollview;
     //----for upload image//
     Bitmap memo_img;
     long inDB = 0;
@@ -207,10 +218,18 @@ public class RecordActivity extends FragmentActivity implements
         spotDialog.setContentView(R.layout.record_memo_dialog);
 
         dialog_choose_layout = (LinearLayout) spotDialog.findViewById(R.id.dialog_choose_layout);
-        dialog_ok_layout = (LinearLayout) spotDialog.findViewById(R.id.dialog_ok_layout);
-        dialog_scrollview = (ScrollView) spotDialog.findViewById(R.id.dialog_scrollview);
-        dialog_img = (ImageView) spotDialog.findViewById(R.id.dialog_img);
         dialog_header_text = (TextView) spotDialog.findViewById(R.id.dialog_header_text);
+        dialog_scrollview = (ScrollView) spotDialog.findViewById(R.id.dialog_scrollview);
+        dialog_relativeLayout = (RelativeLayout) spotDialog.findViewById(R.id.dialog_relativeLayout);
+
+        dialog_img = (ImageView) spotDialog.findViewById(R.id.dialog_img);
+        content_layout = (LinearLayout) spotDialog.findViewById(R.id.content_layout);
+        title_textView = (TextView) spotDialog.findViewById(R.id.title_TextView);
+        content_textView = (TextView) spotDialog.findViewById(R.id.content_TextView);
+        title_editText = (EditText) spotDialog.findViewById(R.id.title_editText);
+        content_editText = (EditText) spotDialog.findViewById(R.id.content_editText);
+
+        dialog_confirm_layout = (LinearLayout) spotDialog.findViewById(R.id.dialog_confirm_layout);
         ImageView write = (ImageView) spotDialog.findViewById(R.id.dialog_write_img);
         ImageView camera = (ImageView) spotDialog.findViewById(R.id.dialog_camera_img);
         ImageView leave = (ImageView) spotDialog.findViewById(R.id.dialog_leave_img);
@@ -219,6 +238,9 @@ public class RecordActivity extends FragmentActivity implements
             @Override
             public void onClick(View v) {
                 if (spotDialog.isShowing())
+                    if (content_layout.getVisibility() == content_layout.VISIBLE) {
+                        content_layout.setVisibility(View.INVISIBLE);
+                    }
                     spotDialog.dismiss();
             }
         });
@@ -226,11 +248,51 @@ public class RecordActivity extends FragmentActivity implements
         camera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.e("2/3", "CAMERA");
+                Log.e("3/13_", "CAMERA");
+                final CharSequence[] items = { "相機", "相簿", "取消" };
+                AlertDialog.Builder builder = new AlertDialog.Builder(RecordActivity.this);
+                builder.setTitle("上傳照片");
+                builder.setItems(items, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int item) {
+                        if (items[item].equals("相機")) {
+                            Intent intent_camera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                            startActivityForResult(intent_camera, REQUEST_CAMERA);
+                        } else if (items[item].equals("相簿")) {
+                            Intent intent_photo = new Intent(Intent.ACTION_GET_CONTENT);
+                            intent_photo.setType("image/*");
+                            startActivityForResult(Intent.createChooser(intent_photo, "選擇檔案"),
+                                    SELECT_FILE);
+                        } else if (items[item].equals("取消")) {
+                            dialog.dismiss();
+                        }
+                    }
+                });
+                builder.show();
+                /*
                 Intent intentphoto = new Intent();
                 intentphoto.setType("image/*");
                 intentphoto.setAction(Intent.ACTION_GET_CONTENT);
                 startActivityForResult(intentphoto, PHOTO);
+                */
+            }
+        });
+
+        write.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                content_layout.setVisibility(View.VISIBLE);
+                if (dialog_scrollview.getVisibility() == dialog_scrollview.INVISIBLE) {
+                    dialog_scrollview.setVisibility(View.VISIBLE);
+                    RelativeLayout.LayoutParams otelParams = new RelativeLayout.LayoutParams(
+                            ViewGroup.LayoutParams.MATCH_PARENT, 400);
+                    otelParams.addRule(RelativeLayout.BELOW, R.id.dialog_header_text);
+                    dialog_scrollview.setLayoutParams(otelParams);
+                    dialog_relativeLayout.setVisibility(View.VISIBLE);
+                    dialog_confirm_layout.setVisibility(View.VISIBLE);
+                    dialog_confirm_layout.setOnClickListener(ok);
+                }
+
             }
         });
 
@@ -239,12 +301,14 @@ public class RecordActivity extends FragmentActivity implements
             public void onClick(View v) {
                 if (!spotDialog.isShowing()) {
                     dialog_choose_layout.setVisibility(View.VISIBLE);
-                    dialog_ok_layout.setVisibility(View.INVISIBLE);
+                    dialog_confirm_layout.setVisibility(View.INVISIBLE);
                     dialog_scrollview.setVisibility(View.INVISIBLE);
                     RelativeLayout.LayoutParams otelParams = new RelativeLayout.LayoutParams(
                             ViewGroup.LayoutParams.MATCH_PARENT, 0);
                     otelParams.addRule(RelativeLayout.BELOW, R.id.dialog_header_text);
                     dialog_scrollview.setLayoutParams(otelParams);
+                    dialog_relativeLayout.setVisibility(View.INVISIBLE);
+                    content_layout.setVisibility(View.INVISIBLE);
                     spotDialog.show();
                 }
             }
@@ -258,7 +322,7 @@ public class RecordActivity extends FragmentActivity implements
                     record_start_text.setTextColor(Color.parseColor("#FFFFFF"));
                     record_start_text.setText("停止紀錄");
                     record_start_img.performClick();
-                    record_start_img.setImageResource(R.drawable.selected_pause);
+                    record_start_img.setImageResource(R.drawable.record_selected_pause);
                     record_start_boolean = true;
                     //====1.29
                     time_text.setVisibility(View.VISIBLE);
@@ -315,30 +379,6 @@ public class RecordActivity extends FragmentActivity implements
                         intent_Trace.putExtra("isStart", false);
                         sendBroadcast(intent_Trace);
                     }
-/*
-                    // 停止紀錄 在資料庫中新增最後一筆 track_start=0 該段結尾
-                    DataBaseHelper helper = new DataBaseHelper(getApplicationContext());
-                    SQLiteDatabase database = helper.getWritableDatabase();
-                    Cursor trackRoute_cursor = database.query("trackRoute",
-                            new String[]{"routesCounter", "track_no", "track_lat",
-                                    "track_lng", "track_start"},
-                            null, null, null, null, null);
-                    if (trackRoute_cursor != null) {
-                        ContentValues cv = new ContentValues();
-                        cv.put("routesCounter", RoutesCounter);
-                        cv.put("track_no", Track_no);
-                        cv.put("track_lat", CurrentLatitude);
-                        cv.put("track_lng", CurrentLongitude);
-                        cv.put("track_start", 0);
-
-                        long result = database.insert("trackRoute", null, cv);
-                        Log.d("3/10_軌跡紀錄_END", result + " = DB INSERT RC:" + RoutesCounter
-                                + " no:" + Track_no + " 座標 " + CurrentLatitude + "," + CurrentLongitude);
-                        trackRoute_cursor.close();
-                    }
-                    LatLng latLng = new LatLng(CurrentLatitude, CurrentLongitude);
-                    DisplayRoute(latLng);
-*/
                 }
             }
         });
@@ -385,203 +425,6 @@ public class RecordActivity extends FragmentActivity implements
             trackRoute_cursor.close();
         }
     }
-
-    //----2.4----//
-    //click for photos
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (data != null) {
-            Uri uri = data.getData();
-            Log.d("2/4", "A_startActivityForResult" + uri);
-            ContentResolver cr = this.getContentResolver();
-            if (requestCode == PHOTO) {
-                try {
-                    Log.e("2.25", "uri:" + uri);
-                    memo_img = Functions.ScalePic(BitmapFactory.decodeStream(cr.openInputStream(uri)));
-                    dialog_img.setImageBitmap(memo_img);
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                }
-            }
-//            Toast.makeText(RecordActivity.this, "已上傳照片！", Toast.LENGTH_SHORT).show();
-
-            dialog_header_text.setText("已選擇照片");
-            dialog_scrollview.setVisibility(View.VISIBLE);
-            RelativeLayout.LayoutParams otelParams = new RelativeLayout.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT, 400);
-            otelParams.addRule(RelativeLayout.BELOW, R.id.dialog_header_text);
-            dialog_scrollview.setLayoutParams(otelParams);
-            dialog_ok_layout.setVisibility(View.VISIBLE);
-            dialog_ok_layout.setOnClickListener(dialog_ok);
-            dialog_choose_layout.setVisibility(View.INVISIBLE);
-        }
-        super.onActivityResult(requestCode, resultCode, data);
-    }
-
-    View.OnClickListener dialog_ok = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-
-
-            /**DB**/
-            DataBaseHelper helper = new DataBaseHelper(RecordActivity.this);
-            SQLiteDatabase db = helper.getReadableDatabase();
-            Cursor img_cursor = db.query("travelmemo", new String[]{"memo_no",
-                    "memo_img", "memo_area", "memo_time", "memo_content"}, null, null, null, null, null);
-            if (img_cursor != null) {
-                String date;
-                Time now = new Time(Time.getCurrentTimezone());
-                now.setToNow();
-                date = now.year + "/" + (now.month + 1) + "/" + now.monthDay;
-//                Log.d("2.11",date);
-                if (img_cursor.getCount() == 0) {
-                    ContentValues cv = new ContentValues();
-                    cv.put("memo_no", "1");
-                    cv.put("memo_area", "area");
-                    cv.put("memo_time", date);
-                    cv.put("memo_content", "內容");
-                    if (memo_img != null) {
-                        try {
-                            ByteArrayOutputStream stream2 = new ByteArrayOutputStream();
-                            Boolean a;
-                            a = memo_img.compress(Bitmap.CompressFormat.PNG, 10, stream2);
-                            Log.e("2.9", "compress " + a);
-                            byte[] bytes2 = stream2.toByteArray();
-                            cv.put("memo_img", bytes2);
-                        } catch (Exception e) {
-                            Log.e("EXCEPTION", e.toString());
-                        }
-                    }
-                    inDB = db.insert("travelmemo", null, cv);
-                    Log.e("2.10", "DB insert empty " + inDB);
-                } else {
-                    /*
-                    img_cursor.moveToFirst();
-                    while (!img_cursor.isLast()) {
-                        img_cursor.moveToNext();
-                        Log.e("2.9", "test!!!!");
-                        Log.e("2.9", img_cursor.getType(0) + "");
-                        Log.e("2.9", img_cursor.getString(0) + "");
-                    }
-                    */
-
-
-                    Log.e("2.9", "cursor(0)" + img_cursor.getCount());
-                    img_cursor.moveToLast();
-                    Log.e("2.9", "getType " + img_cursor.getType(0) + "getType2 " + img_cursor.getType(1));
-                    int id = Integer.parseInt(img_cursor.getString(0)) + 1;
-                    Log.e("2.9", "cursor(0)" + img_cursor.getString(0));
-                    ContentValues cv = new ContentValues();
-                    cv.put("memo_no", id);
-                    cv.put("memo_area", "area");
-                    cv.put("memo_time", date);
-                    cv.put("memo_content", "內容");
-                    if (memo_img != null) {
-                        ByteArrayOutputStream stream2 = new ByteArrayOutputStream();
-                        Boolean a;
-                        a = memo_img.compress(Bitmap.CompressFormat.PNG, 10, stream2);
-                        Log.e("2.9", "2compress " + a);
-                        byte[] bytes2 = stream2.toByteArray();
-                        cv.put("memo_img", bytes2);
-                    }
-                    inDB = db.insert("travelmemo", null, cv);
-                    Log.e("2.10", "DB insert not empty: " + inDB);
-
-                }
-            }
-            //2.9 for testing
-            /*
-            if (img_cursor.getCount() > 0) {
-                img_cursor.moveToFirst();
-                if (img_cursor.getBlob(1) != null) {
-                    byte[] d = img_cursor.getBlob(1);
-                    Bitmap bmp = BitmapFactory.decodeByteArray(d, 0, d.length);
-                    // /
-                    // //
-                    dialog_img.setImageBitmap(bmp);
-                }
-            }
-            */
-            if (inDB != -1)
-                Toast.makeText(RecordActivity.this, "已上傳照片！", Toast.LENGTH_SHORT).show();
-
-
-            img_cursor.close();
-            db.close();
-            helper.close();
-            if (spotDialog.isShowing()) ;
-            spotDialog.dismiss();
-        }
-    };
-
-    private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            //Update Your UI here..
-            if (intent != null) {
-                Long spent = intent.getLongExtra("spent", 99);
-                if (spent != 99) {
-                    //In this means getting correct value
-                    //UI set up
-                    record_start_layout.setBackgroundColor(Color.parseColor("#5599FF"));
-                    record_start_text.setTextColor(Color.parseColor("#FFFFFF"));
-                    record_start_text.setText("停止紀錄");
-                    record_start_img.performClick();
-                    record_start_img.setImageResource(R.drawable.selected_pause);
-                    record_start_boolean = true;
-                    time_text.setVisibility(View.VISIBLE);
-                    record_completeImg.setVisibility(View.VISIBLE);
-                    //UI update
-                    if (((spent / 1000) / 60) > 0)
-                        time_text.setText(((spent / 1000) / 60) + ":" + ((spent / 1000) % 60));
-                    else
-                        time_text.setText("00:" + ((spent / 1000) % 60));
-                }
-                Log.d("2/4", "fromBroadcast" + intent.getLongExtra("spent", 99));
-
-                Boolean isStart = intent.getBooleanExtra("isStart", false);
-                if (isStart) {
-                    Integer routesCounter = intent.getIntExtra("routesCounter", 1);
-                    Integer track_no = intent.getIntExtra("track_no", 1);
-                    Double track_lat = intent.getDoubleExtra("track_lat", 0);
-                    Double track_lng = intent.getDoubleExtra("track_lng", 0);
-                    LatLng track_latLng = new LatLng(track_lat, track_lng);
-                    if (!(routesCounter > 1 && track_no == 1)) {
-                        DisplayRoute(track_latLng);
-                    }
-                }
-
-                Boolean track_END = intent.getBooleanExtra("track_start", true);
-                if (!track_END) {
-                    Integer routesCounter = intent.getIntExtra("routesCounter", 1);
-                    Integer track_no = intent.getIntExtra("track_no", 1);
-                    Double track_lat = intent.getDoubleExtra("track_lat", 0);
-                    Double track_lng = intent.getDoubleExtra("track_lng", 0);
-                    LatLng track_latLng = new LatLng(track_lat, track_lng);
-                    if (!(routesCounter > 1 && track_no == 1)) {
-                        DisplayRoute(track_latLng);
-                    }
-                    DataBaseHelper helper = new DataBaseHelper(getApplicationContext());
-                    SQLiteDatabase database = helper.getWritableDatabase();
-                    Cursor trackRoute_cursor = database.query("trackRoute",
-                            new String[]{"routesCounter", "track_no", "track_lat", "track_lng", "track_start"},
-                            null, null, null, null, null);
-                    if (trackRoute_cursor != null) {
-                        ContentValues cv = new ContentValues();
-                        cv.put("routesCounter", routesCounter);
-                        cv.put("track_no", track_no);
-                        cv.put("track_lat", track_lat);
-                        cv.put("track_lng", track_lng);
-                        cv.put("track_start", track_END);
-                        long result = database.insert("trackRoute", null, cv);
-                        Log.d("3/10_軌跡紀錄_END", result + " = DB INSERT RC:" + routesCounter
-                                + " no:" + track_no + " 座標 " + track_lat + "," + track_lng);
-                    }
-                }
-            }
-        }
-    };
 
     @Override
     protected void onDestroy() {
@@ -648,6 +491,52 @@ public class RecordActivity extends FragmentActivity implements
                 setUpMap();
             }
         }
+    }
+
+    // 載入地圖
+    private void LoadtoMap() {
+        // Prompt the user to Enabled GPS
+        LocationManager service = (LocationManager) getSystemService(LOCATION_SERVICE);
+        boolean enabled = service.isProviderEnabled(LocationManager.GPS_PROVIDER);//NETWORK_PROVIDER);
+
+        // check if enabled and if not send user to the GSP settings
+        // Better solution would be to display a dialog and suggesting to
+        // go to the settings
+        if (!enabled) {
+            Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+            startActivity(intent);
+        }
+
+        // 建立Google API用戶端物件
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API).build();
+        // 建立Location請求物件
+        mLocationRequest = LocationRequest.create()
+                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)    // 設定優先讀取高精確度的位置資訊（GPS）
+                .setInterval(UPDATE_INTERVAL)        // 5 seconds, in milliseconds
+                .setFastestInterval(FATEST_INTERVAL) // 1 second, in milliseconds
+                .setSmallestDisplacement(DISPLACEMENT);
+
+        // Try to obtain the map from the SupportMapFragment.
+        mMap = ((SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map_record)).getMap();
+
+        // API 23 Needs to Check Permission
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                || ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+            // Check Permissions Now
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION);
+        } else {
+            mMap.setMyLocationEnabled(true);
+        }
+        mMap.getUiSettings().setCompassEnabled(true);       // 顯示指南針
+        mMap.getUiSettings().setZoomControlsEnabled(true);  // 顯示縮放控制按鈕
+        mMap.getUiSettings().setAllGesturesEnabled(true);
+        mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);         // 設定地圖類型
     }
 
     /**
@@ -744,54 +633,6 @@ public class RecordActivity extends FragmentActivity implements
         handleNewLocation(null);
     }
 
-
-    // 載入地圖
-    private void LoadtoMap() {
-        // Prompt the user to Enabled GPS
-        LocationManager service = (LocationManager) getSystemService(LOCATION_SERVICE);
-        boolean enabled = service.isProviderEnabled(LocationManager.GPS_PROVIDER);//NETWORK_PROVIDER);
-
-        // check if enabled and if not send user to the GSP settings
-        // Better solution would be to display a dialog and suggesting to
-        // go to the settings
-        if (!enabled) {
-            Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-            startActivity(intent);
-        }
-
-        // 建立Google API用戶端物件
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(LocationServices.API).build();
-        // 建立Location請求物件
-        mLocationRequest = LocationRequest.create()
-                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)    // 設定優先讀取高精確度的位置資訊（GPS）
-                .setInterval(UPDATE_INTERVAL)        // 5 seconds, in milliseconds
-                .setFastestInterval(FATEST_INTERVAL) // 1 second, in milliseconds
-                .setSmallestDisplacement(DISPLACEMENT);
-
-        // Try to obtain the map from the SupportMapFragment.
-        mMap = ((SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map_record)).getMap();
-
-        // API 23 Needs to Check Permission
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                || ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-
-            // Check Permissions Now
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION);
-        } else {
-            mMap.setMyLocationEnabled(true);
-        }
-        mMap.getUiSettings().setCompassEnabled(true);       // 顯示指南針
-        mMap.getUiSettings().setZoomControlsEnabled(true);  // 顯示縮放控制按鈕
-        mMap.getUiSettings().setAllGesturesEnabled(true);
-        mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);         // 設定地圖類型
-    }
-
-
     private void handleNewLocation(Location location) {
         Log.d(TAG, location.toString());
 
@@ -832,108 +673,229 @@ public class RecordActivity extends FragmentActivity implements
         line.setWidth(10);
 
         Log.d("3/10_畫出軌跡", "DisplayRoute" + track_latlng.toString());
-        /* //ArrayList寫法
-        for (LatLng latlng : track_latlng) {
-            polylineOpt.add(track_latlng);
-        }*/
     }
-/*      // TODO Updload
-    private class Upload extends AsyncTask<String, Void, String> {
 
-        //{"act":"top","type":"tophot","size":"10"}
-        //http://zhiyou.lin366.com/api/news/index.aspx
+    //----2.4----//
+    //click for photos
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (data != null) {
+            if (resultCode == RESULT_OK) {
+                if (requestCode == REQUEST_CAMERA) {
+                    memo_img = (Bitmap) data.getExtras().get("data");
+                    ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+                    memo_img.compress(Bitmap.CompressFormat.JPEG, 90, bytes);
+                    dialog_img.setImageBitmap(memo_img);
 
-        //http://zhiyou.lin366.com/api/diy/index.aspx
-        //{"act":"add","uid":"ljd110@qq.com","title":"title","add_time":"2016-3-1",
-        // "link_url":"link_url","content":"content","jinwei":"129.000213,58.00012343",
-        // "piclist":[{"picurl":"pic1","jinwei":"129.000213,58.00012343","add_time":"2016-03-02"},
-        // {"picurl":"pic11","jinwei":"129.000213,58.00012343","add_time":"2016-03-02"}],
-        // "contentlist":[{"content":"content1","jinwei":"129.000213,58.00012343","add_time":"2016-03-02"},
-        // {"content":"content11","jinwei":"129.000213,58.00012343","add_time":"2016-03-02"}]}
-
-        @Override
-        protected String doInBackground(String... params) {
-            Log.e("3/13_", "=========Upload======doInBackground");
-
-            HttpClient client = new DefaultHttpClient();
-            HttpPost post = new HttpPost("http://zhiyou.lin366.com/api/diy/index.aspx");
-            MultipartEntity entity = new MultipartEntity();
-            Charset chars = Charset.forName("UTF-8");
-            try {
-                entity.addPart("json", new StringBody("{\"act\":\"add\",\"type\":\"tophot\",\"size\":\"100\"}", chars));
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
-
-            post.setEntity(entity);
-            HttpResponse resp = null;
-            String result = null;
-            String states = null;
-            String message = "";
-            try {
-                resp = client.execute(post);
-                result = EntityUtils.toString(resp.getEntity());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            try {
-                states = new JSONObject(result.substring(
-                        result.indexOf("{"), result.lastIndexOf("}") + 1)).getString("states");
-            } catch (JSONException | NullPointerException e2) {
-                e2.printStackTrace();
-            }
-//            Log.e("3.10","result:"+result); //OK
-            if (states == null || states.equals("0"))
-                return null;
-            else {
-                JSONArray jsonArray = null;
-                try {
-                    jsonArray = new JSONObject(result).getJSONArray("list");
-//                    Log.e("3.9", jsonArray.length() + ":jsonArray長度"); //3.9 OK
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                    /* 將暫存檔儲存在外部儲存空間
+                    File destination = new File(Environment.getExternalStorageDirectory(),
+                            System.currentTimeMillis() + ".jpg");
+                    FileOutputStream fo;
+                    try {
+                        destination.createNewFile();
+                        fo = new FileOutputStream(destination);
+                        fo.write(bytes.toByteArray());
+                        fo.close();
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    */
                 }
-                if (jsonArray != null)
-                    for (int i = 0; i < jsonArray.length(); i++) {
+                if (requestCode == SELECT_FILE) {
+                    Uri uri = data.getData();
+                    ContentResolver cr = this.getContentResolver();
+                    try {
+                        Log.e("3/13_", "uri:" + uri);
+                        memo_img = Functions.ScalePic(BitmapFactory.decodeStream(cr.openInputStream(uri)));
+                        dialog_img.setImageBitmap(memo_img);
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            //dialog_header_text.setText("已選擇照片");
+            //dialog_choose_layout.setVisibility(View.INVISIBLE);
+            if (dialog_scrollview.getVisibility() == dialog_scrollview.INVISIBLE) {
+                dialog_scrollview.setVisibility(View.VISIBLE);
+                RelativeLayout.LayoutParams otelParams = new RelativeLayout.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT, 400);
+                otelParams.addRule(RelativeLayout.BELOW, R.id.dialog_header_text);
+                dialog_scrollview.setLayoutParams(otelParams);
+                dialog_relativeLayout.setVisibility(View.VISIBLE);
+                dialog_confirm_layout.setVisibility(View.VISIBLE);
+                dialog_confirm_layout.setOnClickListener(ok);
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    View.OnClickListener ok = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            /**DB**/ //title_editText, content_editText;
+            DataBaseHelper helper = new DataBaseHelper(RecordActivity.this);
+            SQLiteDatabase db = helper.getReadableDatabase();
+            Cursor img_cursor = db.query("travelmemo", new String[]{"memo_no",
+                    "memo_title", "memo_content", "memo_img", "memo_latlng", "memo_time"},
+                    null, null, null, null, null);
+            if (img_cursor != null) {
+                SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd");
+                Date date = new Date();
+                String dateString = fmt.format(date);
+                Log.d("3/13_", dateString);
+                if (img_cursor.getCount() == 0) {
+                    ContentValues cv = new ContentValues();
+                    cv.put("memo_no", "1");
+                    cv.put("memo_title", title_editText.getText().toString());
+                    cv.put("memo_content", content_editText.toString());
+                    if (CurrentLatlng != null) {
+                        cv.put("memo_latlng", CurrentLatlng.toString());
+                    }
+                    cv.put("memo_time", dateString);
+                    if (memo_img != null) {
                         try {
-                            message = message + jsonArray.getJSONObject(i).getString("title") + "    ";
-                        } catch (JSONException e) {
-                            e.printStackTrace();
+                            ByteArrayOutputStream stream2 = new ByteArrayOutputStream();
+                            Boolean a;
+                            a = memo_img.compress(Bitmap.CompressFormat.PNG, 10, stream2);
+                            Log.e("3/13_", "compress " + a);
+                            byte[] bytes2 = stream2.toByteArray();
+                            cv.put("memo_img", bytes2);
+                        } catch (Exception e) {
+                            Log.e("EXCEPTION", e.toString());
                         }
                     }
-//                message="";//test
-//                Log.e("3.10","news: "+message); //3.10 OK
-                return message;
-            }
-        }
+                    inDB = db.insert("travelmemo", null, cv);
+                    Log.e("3/13_", "DB insert empty " + inDB);
+                } else {
+                    /*
+                    img_cursor.moveToFirst();
+                    while (!img_cursor.isLast()) {
+                        img_cursor.moveToNext();
+                        Log.e("2.9", "test!!!!");
+                        Log.e("2.9", img_cursor.getType(0) + "");
+                        Log.e("2.9", img_cursor.getString(0) + "");
+                    }
+                    */
 
-        @Override
-        protected void onPostExecute(String s) {
-            DataBaseHelper helper = new DataBaseHelper(getApplicationContext());
-            SQLiteDatabase database = helper.getWritableDatabase();
-            Cursor news_cursor = database.query("news", new String[]{"title"}, null, null, null, null, null);
-            if (news_cursor != null && !s.equals("")) {
-//                Log.e("3.10","news cursor count: "+news_cursor.getCount());
-                news_cursor.moveToFirst();
-                if (news_cursor.getCount() == 0) {
+
+                    Log.e("3/13_", "cursor(0)" + img_cursor.getCount());
+                    img_cursor.moveToLast();
+                    Log.e("3/13_", "getType " + img_cursor.getType(0) + "getType2 " + img_cursor.getType(1));
+                    int id = Integer.parseInt(img_cursor.getString(0)) + 1;
+                    Log.e("3/13_", "cursor(0)" + img_cursor.getString(0));
                     ContentValues cv = new ContentValues();
-                    cv.put("title", s);
-                    long result = database.insert("news", null, cv);
-//                    Log.e("3.10","news insert DB result: "+result);
-                } else if (!news_cursor.getString(0).equals(s)) { //資料不相同 -> 更新
-                    ContentValues cv = new ContentValues();
-                    cv.put("title", s);
-                    long result = database.update("news", cv, null, null);
-//                    Log.e("3.10","news update DB result: "+result);
+                    cv.put("memo_no", id);
+                    cv.put("memo_area", "area");
+                    cv.put("memo_time", dateString);
+                    cv.put("memo_content", "內容");
+                    if (memo_img != null) {
+                        ByteArrayOutputStream stream2 = new ByteArrayOutputStream();
+                        Boolean a;
+                        a = memo_img.compress(Bitmap.CompressFormat.PNG, 10, stream2);
+                        Log.e("3/13_", "2compress " + a);
+                        byte[] bytes2 = stream2.toByteArray();
+                        cv.put("memo_img", bytes2);
+                    }
+                    inDB = db.insert("travelmemo", null, cv);
+                    Log.e("3/13_", "DB insert not empty: " + inDB);
+
                 }
-                news_cursor.close();
             }
-//            else Log.e("3.10","news: cursor=NULL? message:"+s);
-            super.onPostExecute(s);
+            //2.9 for testing
+            /*
+            if (img_cursor.getCount() > 0) {
+                img_cursor.moveToFirst();
+                if (img_cursor.getBlob(1) != null) {
+                    byte[] d = img_cursor.getBlob(1);
+                    Bitmap bmp = BitmapFactory.decodeByteArray(d, 0, d.length);
+                    // /
+                    // //
+                    dialog_img.setImageBitmap(bmp);
+                }
+            }
+            */
+            if (inDB != -1)
+                Toast.makeText(RecordActivity.this, "已上傳照片！", Toast.LENGTH_SHORT).show();
+
+            img_cursor.close();
+            db.close();
+            helper.close();
+            if (spotDialog.isShowing()) ;
+            spotDialog.dismiss();
         }
-    }
-*/
+    };
+
+    private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            //Update Your UI here..
+            if (intent != null) {
+                Long spent = intent.getLongExtra("spent", 99);
+                if (spent != 99) {
+                    //In this means getting correct value
+                    //UI set up
+                    record_start_layout.setBackgroundColor(Color.parseColor("#5599FF"));
+                    record_start_text.setTextColor(Color.parseColor("#FFFFFF"));
+                    record_start_text.setText("停止紀錄");
+                    record_start_img.performClick();
+                    record_start_img.setImageResource(R.drawable.record_selected_pause);
+                    record_start_boolean = true;
+                    time_text.setVisibility(View.VISIBLE);
+                    record_completeImg.setVisibility(View.VISIBLE);
+                    //UI update
+                    if (((spent / 1000) / 60) > 0)
+                        time_text.setText(((spent / 1000) / 60) + ":" + ((spent / 1000) % 60));
+                    else
+                        time_text.setText("00:" + ((spent / 1000) % 60));
+                }
+                Log.d("2/4", "fromBroadcast" + intent.getLongExtra("spent", 99));
+
+                Boolean isStart = intent.getBooleanExtra("isStart", false);
+                if (isStart) {
+                    Integer routesCounter = intent.getIntExtra("routesCounter", 1);
+                    Integer track_no = intent.getIntExtra("track_no", 1);
+                    Double track_lat = intent.getDoubleExtra("track_lat", 0);
+                    Double track_lng = intent.getDoubleExtra("track_lng", 0);
+                    LatLng track_latLng = new LatLng(track_lat, track_lng);
+                    if (!(routesCounter > 1 && track_no == 1)) {
+                        DisplayRoute(track_latLng);
+                    }
+                }
+
+                Boolean track_END = intent.getBooleanExtra("track_start", true);
+                if (!track_END) {
+                    Integer routesCounter = intent.getIntExtra("routesCounter", 1);
+                    Integer track_no = intent.getIntExtra("track_no", 1);
+                    Double track_lat = intent.getDoubleExtra("track_lat", 0);
+                    Double track_lng = intent.getDoubleExtra("track_lng", 0);
+                    LatLng track_latLng = new LatLng(track_lat, track_lng);
+                    if (!(routesCounter > 1 && track_no == 1)) {
+                        DisplayRoute(track_latLng);
+                    }
+                    DataBaseHelper helper = new DataBaseHelper(getApplicationContext());
+                    SQLiteDatabase database = helper.getWritableDatabase();
+                    Cursor trackRoute_cursor = database.query("trackRoute",
+                            new String[]{"routesCounter", "track_no", "track_lat", "track_lng", "track_start"},
+                            null, null, null, null, null);
+                    if (trackRoute_cursor != null) {
+                        ContentValues cv = new ContentValues();
+                        cv.put("routesCounter", routesCounter);
+                        cv.put("track_no", track_no);
+                        cv.put("track_lat", track_lat);
+                        cv.put("track_lng", track_lng);
+                        cv.put("track_start", track_END);
+                        long result = database.insert("trackRoute", null, cv);
+                        Log.d("3/10_軌跡紀錄_END", result + " = DB INSERT RC:" + routesCounter
+                                + " no:" + track_no + " 座標 " + track_lat + "," + track_lng);
+                    }
+                }
+            }
+        }
+    };
+
     // Android 系統返回鍵
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {

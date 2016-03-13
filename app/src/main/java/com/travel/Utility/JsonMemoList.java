@@ -199,7 +199,7 @@ public class JsonMemoList extends AsyncTask<String, String, Map<String, String[]
                         if (jsonObjects[i][0] != null && jsonObjects[i][1] != null
                                 && jsonObjects[i][2] != null && jsonObjects[i][3] != null
                                 && jsonObjects[i][4] != null && jsonObjects[i][5] != null) {
-                            Cursor travelMemo_dul = database.query(true, "travelMemo_dul", new String[]{"totalCount", "id",
+                            Cursor travelMemo_dul = database.query(true, "travelMemo", new String[]{"totalCount", "id",
                                             "title", "url","zhaiyao", "click", "addtime"},
                                     "id=" + jsonObjects[i][0], null, null, null, null, null);
                             if (travelMemo_dul != null && travelMemo_dul.getCount() > 0) {
