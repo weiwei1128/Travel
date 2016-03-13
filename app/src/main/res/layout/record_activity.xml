@@ -85,13 +85,36 @@
             android:layout_width="fill_parent"
             android:layout_height="match_parent"
             android:id="@+id/map_record"
-            tools:context="com.travel.RecordActivity"
+            tools:context="com.example.wei.travel.RecordActivity"
             android:name="com.google.android.gms.maps.SupportMapFragment"
             android:layout_gravity="right|top"
             tools:ignore="MissingPrefix"
             map:cameraTargetLat="24.029548"
             map:cameraTargetLng="121.076745"
             map:cameraZoom="9" />
+
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_gravity="center">
+
+            <ImageView
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:id="@+id/record_cameraImg"
+                android:layout_gravity="center_horizontal" />
+            <!--android:src="@drawable/camera"-->
+            <ImageView
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:id="@+id/record_postImg"
+                android:layout_gravity="center_horizontal" />
+
+            <!--android:src="@drawable/post"-->
+
+        </LinearLayout>
+
     </FrameLayout>
 
     <LinearLayout

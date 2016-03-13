@@ -4,9 +4,6 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Bitmap;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -34,12 +31,6 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
-import com.nostra13.universalimageloader.core.assist.FailReason;
-import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
-import com.travel.Utility.DataBaseHelper;
 import com.travel.Utility.Functions;
 
 import java.util.ArrayList;
@@ -63,19 +54,12 @@ public class RecordMemoDetailActivity extends AppCompatActivity implements
     private Location currentLocation;
     private Marker currentMarker;
 
-    private ImageLoader loader = ImageLoader.getInstance();
-    private DisplayImageOptions options;
-    private ImageLoadingListener listener;
-
-    private TextView MemoDetailTitleTextView, MemoDetailTextView;
-    private ImageView backImg, EnlargeImg;
     private ExpandableHeightGridView gridView;
-
-    private Integer mPosition;
-    private DataBaseHelper helper;
-    private SQLiteDatabase database;
-
-    private String[] image_url;
+    private TextView MemoDetailTextView;
+    private ImageView backImg;
+    private int[] image = {
+            R.drawable.spot1, R.drawable.spot2,
+            R.drawable.spot3, R.drawable.spot4};
 
 
 
@@ -93,67 +77,10 @@ public class RecordMemoDetailActivity extends AppCompatActivity implements
             }
         });
 
-        EnlargeImg = (ImageView) findViewById(R.id.MemoMapEnlarge_img);
-        EnlargeImg.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // TODO 放大地圖
-            }
-        });
-
-        MemoDetailTextView = (TextView) findViewById(R.id.MemoDetailString);
-        MemoDetailTitleTextView = (TextView) findViewById(R.id.MemoDetailTitle);
-
-
-        Bundle bundle = this.getIntent().getExtras();
-        if (bundle.containsKey("WhichItem")) {
-            mPosition = bundle.getInt("WhichItem");
-        }
-
-        options = new DisplayImageOptions.Builder()
-                .showImageOnFail(R.drawable.error)
-                .showImageForEmptyUri(R.drawable.empty)
-                .cacheInMemory()
-                .cacheOnDisc().build();
-        listener = new ImageLoadingListener() {
-            @Override
-            public void onLoadingStarted(String s, View view) {
-
-            }
-
-            @Override
-            public void onLoadingFailed(String s, View view, FailReason failReason) {
-
-            }
-
-            @Override
-            public void onLoadingComplete(String s, View view, Bitmap bitmap) {
-
-            }
-
-            @Override
-            public void onLoadingCancelled(String s, View view) {
-
-            }
-        };
-
-        ImageLoaderConfiguration configuration =
-                new ImageLoaderConfiguration.Builder(RecordMemoDetailActivity.this).build();
-        ImageLoader.getInstance().destroy();
-        ImageLoader.getInstance().init(configuration);
-
-        Cursor travelMemo_cursor = database.query("travelMemo", new String[]{"totalCount", "id",
-                "title", "url","zhaiyao", "click", "addtime"}, null, null, null, null, null);
-        if (travelMemo_cursor != null && travelMemo_cursor.getCount() > 0) {
-            travelMemo_cursor.moveToPosition(mPosition);
-            MemoDetailTitleTextView.setText(travelMemo_cursor.getString(2));
-            MemoDetailTextView.setText(travelMemo_cursor.getString(4));
-        }
-
         List<Map<String, Object>> items = new ArrayList<Map<String,Object>>();
-        for (int i = 0; i < image_url.length; i++) {
+        for (int i = 0; i < image.length; i++) {
             Map<String, Object> item = new HashMap<String, Object>();
-            item.put("image", image_url[i]);
+            item.put("image", image[i]);
             items.add(item);
         }
 
@@ -166,7 +93,11 @@ public class RecordMemoDetailActivity extends AppCompatActivity implements
         gridView.setAdapter(adapter);
         gridView.setExpanded(true);
 
+
+        MemoDetailTextView = (TextView) findViewById(R.id.MemoDetailString);
+        MemoDetailTextView.setText("好累，好想睡覺...zZzZ");
         setUpMapIfNeeded();
+
     }
 
     @Override

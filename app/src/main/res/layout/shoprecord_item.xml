@@ -37,6 +37,7 @@
         android:layout_below="@+id/shoprecorditem_no"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
+        android:src="@drawable/empty"
         android:layout_marginLeft="15dp" />
 
     <TextView

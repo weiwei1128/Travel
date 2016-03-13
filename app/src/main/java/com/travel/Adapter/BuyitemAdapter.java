@@ -47,9 +47,8 @@ public class BuyitemAdapter extends BaseAdapter {
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         options = new DisplayImageOptions.Builder()
                 .showImageOnFail(R.drawable.error)
-                .showImageOnLoading(R.drawable.empty)
                 .showImageForEmptyUri(R.drawable.empty)
-                .cacheInMemory(false)
+                .cacheInMemory()
                 .cacheOnDisc().build();
         listener = new ImageLoadingListener() {
             @Override

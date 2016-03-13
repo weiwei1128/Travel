@@ -77,8 +77,8 @@ public class SpotListAdapter extends BaseAdapter implements Filterable {
             }
             // get SpotData
             Cursor spotDataSorted_cursor = database.query("spotDataSorted",
-                    new String[]{"spotId", "spotName", "spotAdd", "spotLat", "spotLng", "picture1",
-                            "picture2", "picture3", "openTime", "ticketInfo", "infoDetail"},
+                    new String[]{"spotId", "spotName", "spotAdd","spotLat", "spotLng", "picture1",
+                            "picture2","picture3", "openTime", "ticketInfo", "infoDetail"},
                     null, null, null, null, null);
             if (spotDataSorted_cursor != null) {
                 while (spotDataSorted_cursor.moveToNext()) {
@@ -94,7 +94,7 @@ public class SpotListAdapter extends BaseAdapter implements Filterable {
                     String TicketInfo = spotDataSorted_cursor.getString(9);
                     String InfoDetail = spotDataSorted_cursor.getString(10);
                     globalVariable.SpotDataSorted.add(new SpotData(Id, Name, Latitude, Longitude, Add,
-                            Picture1, Picture2, Picture3, OpenTime, TicketInfo, InfoDetail));
+                            Picture1, Picture2, Picture3, OpenTime,TicketInfo, InfoDetail));
                 }
                 spotDataSorted_cursor.close();
             }
@@ -163,7 +163,7 @@ public class SpotListAdapter extends BaseAdapter implements Filterable {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         if (convertView == null) {
-            convertView = inflater.inflate(R.layout.spot_list, parent, false);
+            convertView = inflater.inflate(R.layout.spot_list,parent,false);
             mViewHolder = new ViewHolder();
             mViewHolder.SpotImg = (ImageView) convertView.findViewById(R.id.SpotImg);
             mViewHolder.SpotName = (TextView) convertView.findViewById(R.id.SpotName);

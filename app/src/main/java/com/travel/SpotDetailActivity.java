@@ -30,6 +30,7 @@ public class SpotDetailActivity extends AppCompatActivity {
     private ImageLoadingListener listener;
 
     Integer mPosition;
+    String mRegion;
     TextView SpotName, SpotOpenTime, SpotAddress, SpotTicketInfo, SpotDetail;
     ImageView SpotImg,BackImg;
 

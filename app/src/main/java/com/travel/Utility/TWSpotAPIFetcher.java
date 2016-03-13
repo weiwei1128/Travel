@@ -10,7 +10,6 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.stream.JsonReader;
 import com.travel.GlobalVariable;
 import com.travel.LocationService;
 import com.travel.SpotData;
@@ -56,11 +55,12 @@ public class TWSpotAPIFetcher extends AsyncTask<Void, Void, SpotJson> {
     @Override
     protected SpotJson doInBackground(Void... params) {
         Log.e("3/10_", "=========TWSpotAPIFetcher======doInBackground");
-        SpotJson spotJson = null;
+        String JsonString = "";
         try {
             //Create an HTTP client
             HttpClient client = new DefaultHttpClient();
-            HttpPost post = new HttpPost(SERVER_URL);
+            HttpPost post;
+            post = new HttpPost(SERVER_URL);
 
             //Perform the request and check the status code
             HttpResponse response = client.execute(post);
@@ -70,15 +70,12 @@ public class TWSpotAPIFetcher extends AsyncTask<Void, Void, SpotJson> {
                 HttpEntity entity = response.getEntity();
                 InputStream content = entity.getContent();
 
-                JsonReader reader = new JsonReader(new InputStreamReader(content, "UTF-8"));
-                GsonBuilder gsonBuilder = new GsonBuilder();
-                gsonBuilder.setDateFormat("M/d/yy hh:mm a");
-                Gson gson = gsonBuilder.create();
+                //Read the server response and attempt to parse it as JSON
+                BufferedReader reader = new BufferedReader(new InputStreamReader(content));
 
-                try {
-                    spotJson = gson.fromJson(reader, SpotJson.class);
-                } catch (Exception ex) {
-                    Log.e(TAG, "Gson: Failed to parse JSON due to: " + ex);
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    JsonString += line;
                 }
                 content.close();
             } else {
@@ -86,6 +83,16 @@ public class TWSpotAPIFetcher extends AsyncTask<Void, Void, SpotJson> {
             }
         } catch (Exception ex) {
             Log.e(TAG, "Failed to send HTTP POST request due to: " + ex);
+        }
+
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.setDateFormat("M/d/yy hh:mm a");
+        Gson gson = gsonBuilder.create();
+        SpotJson spotJson = null;
+        try {
+            spotJson = gson.fromJson(JsonString, SpotJson.class);
+        } catch (Exception ex) {
+            Log.e(TAG, "JsonString: Failed to parse JSON due to: " + ex);
         }
 
         Infos = spotJson.getInfos();

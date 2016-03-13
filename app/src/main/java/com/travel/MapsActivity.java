@@ -56,11 +56,6 @@ public class MapsActivity extends FragmentActivity implements
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
     private GoogleApiClient mGoogleApiClient;
     private LocationRequest mLocationRequest;
-    // Location updates intervals in sec
-    private static int UPDATE_INTERVAL = 5000; // 5 sec
-    private static int FATEST_INTERVAL = 1000; // 1 sec
-    private static int DISPLACEMENT = 3;       // 5 meters
-
     private Location currentLocation;
     private Marker currentMarker;
 
@@ -84,7 +79,7 @@ public class MapsActivity extends FragmentActivity implements
         registerReceiver(broadcastReceiver, new IntentFilter(TWSpotAPIFetcher.BROADCAST_ACTION));
 
         BitmapDrawable BitmapDraw = (BitmapDrawable)getResources().getDrawable(R.drawable.location);
-        MarkerIcon = Bitmap.createScaledBitmap(BitmapDraw.getBitmap(), 40, 65, false);
+        MarkerIcon = Bitmap.createScaledBitmap(BitmapDraw.getBitmap(), 40, 70, false);
 
         BackImg = (ImageView) findViewById(R.id.maps_backImg);
         BackImg.setOnClickListener(new View.OnClickListener() {
@@ -239,9 +234,8 @@ public class MapsActivity extends FragmentActivity implements
                 .addApi(LocationServices.API).build();
         mLocationRequest = LocationRequest.create()
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-                .setInterval(UPDATE_INTERVAL)        // 5 seconds, in milliseconds
-                .setFastestInterval(FATEST_INTERVAL) // 1 second, in milliseconds
-                .setSmallestDisplacement(DISPLACEMENT);
+                .setInterval(5000)        // 5 seconds, in milliseconds
+                .setFastestInterval(1000); // 1 second, in milliseconds
 
         // Try to obtain the map from the SupportMapFragment.
         mMap = ((SupportMapFragment) getSupportFragmentManager().
@@ -365,6 +359,9 @@ public class MapsActivity extends FragmentActivity implements
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if (mDialog.isShowing()) {
+                mDialog.dismiss();
+            }
             Functions.go(true,MapsActivity.this, MapsActivity.this, HomepageActivity.class, null);
         }
         return false;
@@ -475,9 +472,9 @@ public class MapsActivity extends FragmentActivity implements
                 globalVariable.MarkerOptionsArray = markerOptionsArray;
             }
             for (MarkerOptions markerOptions : globalVariable.MarkerOptionsArray) {
-                markerOptions.icon(BitmapDescriptorFactory.fromBitmap(MarkerIcon));
-                mMap.addMarker(markerOptions);
-            }
+                    markerOptions.icon(BitmapDescriptorFactory.fromBitmap(MarkerIcon));
+                    mMap.addMarker(markerOptions);
+                }
             mDialog.dismiss();
             super.onPostExecute(markerOptionsArray);
         }

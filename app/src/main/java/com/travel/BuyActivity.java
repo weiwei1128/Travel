@@ -19,7 +19,6 @@ import android.widget.Toast;
 
 import com.travel.Adapter.BuyFragmentViewPagerAdapter;
 import com.travel.Utility.DataBaseHelper;
-import com.travel.Utility.FlowLayout;
 import com.travel.Utility.Functions;
 
 import java.util.ArrayList;
@@ -78,6 +77,7 @@ public class BuyActivity extends AppCompatActivity {
         setContentView(R.layout.buy_activity_new);
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        linearLayout = (LinearLayout) findViewById(R.id.buy_textlayout);
         backImg = (ImageView) findViewById(R.id.buy_backImg);
         ListImg = (ImageView) findViewById(R.id.buy_listImg);
         viewPager = (ViewPager) findViewById(R.id.buy_viewpager);
@@ -119,20 +119,15 @@ public class BuyActivity extends AppCompatActivity {
 
 
         //fragment(i) -> i代表第幾頁
-        FlowLayout layout = new FlowLayout(BuyActivity.this);
-        layout = (FlowLayout) findViewById(R.id.buy_flowlayout);
-
         for (int i = 0; i < pages; i++) {
             fragments.add(new BuyFragment(i + 1));
-            TextView number2 = new TextView(this);
-            number2.setText(i + 1 + "  ");
-            number2.setTextColor(getResources().getColor(R.color.black));
-            if (i == 0) {
-                number2.setTextColor(getResources().getColor(R.color.peach));
-            }
-            textViews.add(number2);
-            layout.addView(number2);
-
+            TextView number = new TextView(this);
+            number.setText(i + 1 + "  ");
+            number.setTextColor(getResources().getColor(R.color.black));
+            if (i == 0)
+                number.setTextColor(getResources().getColor(R.color.peach));
+            textViews.add(number);
+            linearLayout.addView(number);
         }
 
 

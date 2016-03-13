@@ -271,14 +271,14 @@ public class HomepageActivity extends AppCompatActivity {
     }
 
     //3.5 Hua
-/*    @Override
+    @Override
     protected void onDestroy() {
         //stop LocationService in background
         stopService(new Intent(HomepageActivity.this, LocationService.class));
 
         super.onDestroy();
     }
-*/
+
     ////ImageSlide
     public void switchContent(Fragment fragment, String tag) {
         FragmentManager fragmentManager = getSupportFragmentManager();

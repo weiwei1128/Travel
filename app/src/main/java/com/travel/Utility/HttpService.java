@@ -61,8 +61,6 @@ public class HttpService extends Service {
         new News().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         new Special().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
-        //new JsonMemoList(context).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-
         return 1;
     }
 
