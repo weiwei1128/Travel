@@ -129,16 +129,19 @@
             android:enabled="true"
             android:exported="true" />
 
-        <activity android:name=".BuyRecordActivity" />
-        <activity android:name=".CheckScheduleMainActivity" />
-        <activity android:name=".BuyActivityNew" />
-        <activity android:name=".SpecialDetailActivity" />
 
-        <service
-            android:name=".Utility.LoadApiService"
-            android:enabled="true"
-            android:exported="true" >
-        </service>
+        <activity
+            android:name=".ShopRecordActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".CheckScheduleMainActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".SpecialDetailActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name="com.travel.ShopRecordItemActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>

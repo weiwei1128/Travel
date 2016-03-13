@@ -5,7 +5,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +14,6 @@ import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 import com.travel.R;
@@ -47,10 +45,10 @@ public class BuyAdapter extends BaseAdapter {
 
         options = new DisplayImageOptions.Builder()
                 .showImageOnFail(R.drawable.error)
-                .showImageOnLoading(R.drawable.loading)
+                .showImageOnLoading(R.drawable.empty)
                 .showImageForEmptyUri(R.drawable.empty)
-                .cacheInMemory()
-                .cacheOnDisc().build();
+                .cacheInMemory(false)
+                .cacheOnDisc(false).build();
         listener = new ImageLoadingListener() {
             @Override
             public void onLoadingStarted(String s, View view) {
@@ -81,7 +79,7 @@ public class BuyAdapter extends BaseAdapter {
         Cursor goods_cursor = database.query("goods", new String[]{"totalCount", "goods_id", "goods_title",
                 "goods_url", "goods_money", "goods_content", "goods_click", "goods_addtime"}, null, null, null, null, null);
         if (goods_cursor != null) {
-            Log.d("2.24", pageNO + "getCount:" + goods_cursor.getCount());
+//            Log.d("2.24", pageNO + "getCount:" + goods_cursor.getCount());
             number = goods_cursor.getCount();
             goods_cursor.close();
         }
@@ -89,11 +87,10 @@ public class BuyAdapter extends BaseAdapter {
             if (number / 10 + 1 == pageNO) {
 //                Log.e("3.10", "LastPage");
                 number = number % 10;
-            }
-            else number=10;
+            } else number = 10;
         } else
             number = 10;
-        Log.e("3.10", "buyAdapter: " + number);
+//        Log.e("3.10", "buyAdapter: " + number);
         return number;
     }
 
@@ -110,63 +107,61 @@ public class BuyAdapter extends BaseAdapter {
     @SuppressLint("InflateParams")
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        Log.d("3.7", "goods:" + pageNO);
-
-
+//        Log.d("3.7", "goods:" + pageNO);
         cell mcell;
-        View mview;
-        mview = inflater.inflate(R.layout.buy_item, null);
-        mcell = new cell(
-                (ImageView) mview.findViewById(R.id.buy_thingImg),
-                (TextView) mview.findViewById(R.id.buy_thingText),
-                (TextView) mview.findViewById(R.id.buything_clickText)
-        );
 
-        ImageLoaderConfiguration configuration = new ImageLoaderConfiguration.Builder(context).build();
-        ImageLoader.getInstance().init(configuration);
+        if (convertView == null) {
+            convertView = inflater.inflate(R.layout.buy_item, null);
+            mcell = new cell(
+                    (ImageView) convertView.findViewById(R.id.buy_thingImg),
+                    (TextView) convertView.findViewById(R.id.buy_thingText),
+                    (TextView) convertView.findViewById(R.id.buything_clickText)
+            );
+            convertView.setTag(mcell);
+        } else {
+            mcell = (cell) convertView.getTag();
+        }
+
 
         Cursor goods_cursor = database.query("goods", new String[]{"totalCount", "goods_id", "goods_title",
                 "goods_url", "goods_money", "goods_content", "goods_click", "goods_addtime"}, null, null, null, null, null);
 
-        if (mcell.buyImg != null)
-            mcell.buyImg.setScaleType(ImageView.ScaleType.CENTER_CROP);
 
         if (mcell.buyText.getText() == null)
             mcell.buyText.setText("資料錯誤");
-        //********0308
+
 //        Log.e("3.8", "==========page number" + pageNO);
+        /*
         if (goods_cursor != null && goods_cursor.getCount() >= (pageNO - 1) * 10) {
             goods_cursor.moveToPosition((pageNO - 1) * 10);
-//            Log.e("3.8", "1 name: "+goods_cursor.getString(2));
             int i = 1;
             while ((goods_cursor.isLast() || !(i >= 10))) {
                 goods_cursor.moveToNext();
                 i++;
-//                Log.e("3.8", i+"name: " + goods_cursor.getString(2));
             }
         }
-
+        */
+A
         if (goods_cursor != null && goods_cursor.getCount() >= (pageNO - 1) * 10 + position) {
             goods_cursor.moveToPosition((pageNO - 1) * 10 + position);
             mcell.buyText.setText(goods_cursor.getString(2));
             if (!(mcell.clickText.getText().toString().substring(3).startsWith("0") &&
                     mcell.clickText.getText().toString().endsWith("0")))
-//                Log.d("3.8", "click:000" + mcell.clickText.getText().toString());
                 if (goods_cursor.getString(6) != null)
                     mcell.clickText.append(goods_cursor.getString(6));
-            //http://zhiyou.lin366.com/
-            loader.displayImage("http://zhiyou.lin366.com/" + goods_cursor.getString(3)
-                    , mcell.buyImg, options, listener);
+            if (goods_cursor.getString(3) != null)
+                loader.displayImage("http://zhiyou.lin366.com/" + goods_cursor.getString(3)
+                        , mcell.buyImg, options, listener);
         }
-//        Log.d("3.8","click"+mcell.clickText.getText().toString().substring(3));
-        //**********0308
+//        if (mcell.buyImg != null)
+//            mcell.buyImg.setScaleType(ImageView.ScaleType.CENTER_CROP);
 
 
         if (goods_cursor != null)
             goods_cursor.close();
 
 
-        return mview;
+        return convertView;
     }
 
     public class cell {
