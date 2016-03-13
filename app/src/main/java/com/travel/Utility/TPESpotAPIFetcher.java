@@ -10,8 +10,10 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.stream.JsonReader;
 import com.travel.GlobalVariable;
 import com.travel.SpotData;
+import com.travel.SpotJson;
 import com.travel.TPESpotJson;
 
 import org.apache.http.HttpEntity;
@@ -50,7 +52,7 @@ public class TPESpotAPIFetcher extends AsyncTask<Void, Void, TPESpotJson> {
     @Override
     protected TPESpotJson doInBackground(Void... params) {
         Log.e("3/10_", "=========TPESpotJson======doInBackground");
-        String JsonString = "";
+        TPESpotJson spotJson = null;
         try {
             //Create an HTTP client
             HttpClient client = new DefaultHttpClient();
@@ -64,12 +66,15 @@ public class TPESpotAPIFetcher extends AsyncTask<Void, Void, TPESpotJson> {
                 HttpEntity entity = response.getEntity();
                 InputStream content = entity.getContent();
 
-                //Read the server response and attempt to parse it as JSON
-                BufferedReader reader = new BufferedReader(new InputStreamReader(content));
+                JsonReader reader = new JsonReader(new InputStreamReader(content, "UTF-8"));
+                GsonBuilder gsonBuilder = new GsonBuilder();
+                gsonBuilder.setDateFormat("M/d/yy hh:mm a");
+                Gson gson = gsonBuilder.create();
 
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    JsonString += line;
+                try {
+                    spotJson = gson.fromJson(reader, TPESpotJson.class);
+                } catch (Exception ex) {
+                    Log.e(TAG, "Gson: Failed to parse JSON due to: " + ex);
                 }
                 content.close();
             } else {
@@ -77,16 +82,6 @@ public class TPESpotAPIFetcher extends AsyncTask<Void, Void, TPESpotJson> {
             }
         } catch (Exception ex) {
             Log.e(TAG, "Failed to send HTTP POST request due to: " + ex);
-        }
-
-        GsonBuilder gsonBuilder = new GsonBuilder();
-        gsonBuilder.setDateFormat("M/d/yy hh:mm a");
-        Gson gson = gsonBuilder.create();
-        TPESpotJson spotJson = null;
-        try {
-            spotJson = gson.fromJson(JsonString, TPESpotJson.class);
-        } catch (Exception ex) {
-            Log.e(TAG, "JsonString: Failed to parse JSON due to: " + ex);
         }
 
         Result = spotJson.getResult();
@@ -196,7 +191,7 @@ public class TPESpotAPIFetcher extends AsyncTask<Void, Void, TPESpotJson> {
                             "spotName=\"" + Result.getResults()[i].getStitle() + "\"", null, null, null, null, null);
                     if (spotDataRaw_dul != null && spotDataRaw_dul.getCount() != 0) {
                         spotDataRaw_dul.moveToFirst();
-                        Log.e("3/8", "有重複的資料!" + i + "title: " + spotDataRaw_dul.getString(1));
+                        //Log.e("3/8", "有重複的資料!" + i + "title: " + spotDataRaw_dul.getString(1));
                     } else {
                         ContentValues cv = new ContentValues();
                         cv.put("spotId", i.toString());
