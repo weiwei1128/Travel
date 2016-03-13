@@ -7,7 +7,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
     <!--
-    The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
+ The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
          Google Maps Android API v2, but are recommended.
     -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
@@ -85,7 +85,7 @@
              Note that the API key is linked to the encryption key used to sign the APK.
              You need a different API key for each encryption key, including the release key that is used to
              sign the APK for publishing.
-             You can define the keys for the debug and release targets in src/debug/ and src/release/.
+             You can define the keys for the debug and release targets in src/debug/ and src/release/. 
         -->
         <!--
             <meta-data
@@ -108,43 +108,37 @@
         <activity
             android:name=".SpecialActivity"
             android:hardwareAccelerated="true" />
+
         <service android:name=".Utility.TimeCountService" />
         <service android:name=".LocationService" />
         <service android:name=".Utility.HttpService" />
+
         <activity
             android:name=".RecordMemoActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".RecordMemoDetailActivity"
             android:theme="@style/AppTheme.NoActionBar" />
+
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="cb492bd27bfb9a5607cb9e98fc7653b763470863" />
+
         <service
             android:name=".Utility.TrackRouteService"
             android:enabled="true"
             android:exported="true" />
+
         <activity android:name=".BuyRecordActivity" />
         <activity android:name=".CheckScheduleMainActivity" />
         <activity android:name=".BuyActivityNew" />
         <activity android:name=".SpecialDetailActivity" />
+
         <service
             android:name=".Utility.LoadApiService"
             android:enabled="true"
             android:exported="true" >
         </service>
-        <activity
-            android:name=".ShopRecordActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".CheckScheduleMainActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".SpecialDetailActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name="com.travel.ShopRecordItemActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
     </application>
-</manifest>
 
+</manifest>
