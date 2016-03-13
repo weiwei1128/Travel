@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <TextView
@@ -12,26 +13,76 @@
         android:id="@+id/dialog_header_text"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="10dp" />
+        android:layout_marginBottom="15dp" />
 
     <ScrollView
-        android:layout_width="wrap_content"
-        android:layout_height="300dp"
+        android:layout_width="match_parent"
+        android:layout_height="350dp"
         android:id="@+id/dialog_scrollview"
         android:layout_below="@+id/dialog_header_text"
-        android:layout_centerHorizontal="true" >
+        android:layout_centerHorizontal="true"
+        android:padding="10dp">
 
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/dialog_img"
-            android:layout_gravity="center" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/dialog_relativeLayout">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/dialog_img"
+                android:layout_gravity="center"
+                android:layout_centerHorizontal="true" />
+
+            <LinearLayout
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/content_layout"
+                android:layout_below="@+id/dialog_img"
+                android:orientation="vertical"
+                android:layout_centerHorizontal="true">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:text="標題"
+                    android:id="@+id/title_TextView"
+                    android:layout_centerHorizontal="true" />
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/title_editText"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerHorizontal="true" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:text="內容"
+                    android:id="@+id/content_TextView"
+                    android:layout_centerHorizontal="true" />
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textMultiLine"
+                    android:ems="10"
+                    android:id="@+id/content_editText"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true" />
+            </LinearLayout>
+
+
+        </RelativeLayout>
+
     </ScrollView>
 
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
+        android:layout_height="40dp"
         android:layout_below="@+id/dialog_scrollview"
         android:layout_centerHorizontal="true"
         android:id="@+id/dialog_choose_layout"
@@ -40,8 +91,7 @@
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:id="@+id/dialog_write_img"
-            android:src="@drawable/member_comment"
-            android:layout_marginRight="10dp"
+            android:src="@drawable/memo_note"
             android:layout_weight="1"
             android:background="@drawable/click_effect_general"
             android:clickable="true" />
@@ -50,8 +100,7 @@
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:id="@+id/dialog_camera_img"
-            android:src="@drawable/camera"
-            android:layout_marginRight="10dp"
+            android:src="@drawable/memo_camera"
             android:layout_weight="1"
             android:background="@drawable/click_effect_general"
             android:clickable="true" />
@@ -60,8 +109,7 @@
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:id="@+id/dialog_leave_img"
-            android:src="@drawable/places_ic_clear"
-            android:layout_marginRight="10dp"
+            android:src="@drawable/memo_cancel"
             android:layout_weight="1"
             android:background="@drawable/click_effect_general" />
     </LinearLayout>
@@ -69,15 +117,15 @@
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:layout_below="@+id/dialog_scrollview"
+        android:layout_height="50dp"
+        android:layout_below="@+id/dialog_choose_layout"
         android:layout_centerHorizontal="true"
-        android:id="@+id/dialog_ok_layout"
+        android:id="@+id/dialog_confirm_layout"
         android:background="@drawable/click_effect_general">
 
         <TextView
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:text="確  定"
             android:layout_gravity="center"
             android:gravity="center"
@@ -85,4 +133,5 @@
             android:textSize="20dp"
             android:textColor="@color/black" />
     </LinearLayout>
+
 </RelativeLayout>
