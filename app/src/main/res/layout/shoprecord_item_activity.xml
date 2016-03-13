@@ -38,4 +38,14 @@
         android:layout_below="@+id/shoprecorditem_Layout"
         android:layout_centerHorizontal="true" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="建  構  中"
+        android:layout_below="@+id/shoprecorditem_Layout"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="149dp"
+        android:textColor="@color/black"
+        android:textSize="25dp" />
+
 </RelativeLayout>

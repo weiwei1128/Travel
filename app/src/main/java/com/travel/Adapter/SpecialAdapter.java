@@ -14,7 +14,6 @@ import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 import com.travel.R;
@@ -130,11 +129,10 @@ public class SpecialAdapter extends BaseAdapter {
             if (special.getString(1) != null)
                 item.name.setText(special.getString(1));
             if (special.getString(4) != null)
-                item.what.setText("價格: "+special.getString(4));
+                item.what.setText("價格: " + special.getString(4));
             if (special.getString(2) != null)
                 if (special.getString(2).startsWith("http:"))
-                    loader.displayImage(special.getString(2)
-                            , item.m_img, options, listener);
+                    loader.displayImage(special.getString(2), item.m_img, options, listener);
                 else loader.displayImage("http://zhiyou.lin366.com/" + special.getString(2)
                         , item.m_img, options, listener);
         }
