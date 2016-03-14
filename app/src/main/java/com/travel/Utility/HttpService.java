@@ -12,9 +12,6 @@ import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
-import com.travel.GlobalVariable;
-import com.travel.SpotData;
-
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
@@ -210,7 +207,7 @@ public class HttpService extends Service {
             DataBaseHelper helper = new DataBaseHelper(context);
             SQLiteDatabase database = helper.getWritableDatabase();
             Cursor news_cursor = database.query("news", new String[]{"title"}, null, null, null, null, null);
-            if (news_cursor != null && !s.equals("")) {
+            if (news_cursor != null && s != null && !s.equals("")) {
 //                Log.e("3.10","news cursor count: "+news_cursor.getCount());
                 news_cursor.moveToFirst();
                 if (news_cursor.getCount() == 0) {
