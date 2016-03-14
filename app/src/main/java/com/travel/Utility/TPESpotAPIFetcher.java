@@ -173,14 +173,6 @@ public class TPESpotAPIFetcher extends AsyncTask<Void, Void, TPESpotJson> {
                     cv.put("ticketInfo", "");
                     cv.put("infoDetail", Result.getResults()[i].getXbody());
                     long result = database.insert("spotDataRaw", null, cv);
-                    globalVariable.SpotDataRaw.add(new SpotData(i.toString(),
-                            Result.getResults()[i].getStitle(),
-                            Double.valueOf(Result.getResults()[i].getLatitude()),
-                            Double.valueOf(Result.getResults()[i].getLongitude()),
-                            Result.getResults()[i].getAddress(),
-                            ImgString1, ImgString2, ImgString3,
-                            Result.getResults()[i].getMemoTime(), "",
-                            Result.getResults()[i].getXbody()));
                     //Log.d("3/8_沒有重複資料", result + " = DB INSERT " + i + " spotName " + Result.getResults()[i].getStitle());
                 }
             } else {
@@ -216,7 +208,6 @@ public class TPESpotAPIFetcher extends AsyncTask<Void, Void, TPESpotJson> {
                                     ImgString3 = ImgString.substring(StringPosition2, StringPosition3);
                                 }
                             }
-
                         }
                         cv.put("picture1", ImgString1);
                         cv.put("picture2", ImgString2);
@@ -225,14 +216,6 @@ public class TPESpotAPIFetcher extends AsyncTask<Void, Void, TPESpotJson> {
                         cv.put("ticketInfo", "");
                         cv.put("infoDetail", Result.getResults()[i].getXbody());
                         long result = database.insert("spotDataRaw", null, cv);
-                        globalVariable.SpotDataRaw.add(new SpotData(i.toString(),
-                                Result.getResults()[i].getStitle(),
-                                Double.valueOf(Result.getResults()[i].getLatitude()),
-                                Double.valueOf(Result.getResults()[i].getLongitude()),
-                                Result.getResults()[i].getAddress(),
-                                ImgString1, ImgString2, ImgString3,
-                                Result.getResults()[i].getMemoTime(), "",
-                                Result.getResults()[i].getXbody()));
                         //Log.d("3/8_新增過資料", result + " = DB INSERT " + i + "spotName " + Result.getResults()[i].getStitle());
                     }
                     if(spotDataRaw_dul!=null)

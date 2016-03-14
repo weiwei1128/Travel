@@ -7,17 +7,18 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="是否要記錄景點或上傳照片？"
+        android:text="是否要記錄景點心得或上傳照片？"
         android:textColor="@color/black"
-        android:textSize="20dp"
+        android:textSize="18dp"
         android:id="@+id/dialog_header_text"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="15dp" />
+        android:layout_marginBottom="20dp"
+        android:layout_marginTop="20dp" />
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="350dp"
+        android:layout_height="wrap_content"
         android:id="@+id/dialog_scrollview"
         android:layout_below="@+id/dialog_header_text"
         android:layout_centerHorizontal="true"
@@ -25,7 +26,7 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:id="@+id/dialog_relativeLayout">
 
             <ImageView
@@ -36,12 +37,13 @@
                 android:layout_centerHorizontal="true" />
 
             <LinearLayout
-                android:layout_width="300dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/content_layout"
                 android:layout_below="@+id/dialog_img"
                 android:orientation="vertical"
-                android:layout_centerHorizontal="true">
+                android:layout_centerHorizontal="true"
+                android:visibility="visible">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -86,7 +88,9 @@
         android:layout_below="@+id/dialog_scrollview"
         android:layout_centerHorizontal="true"
         android:id="@+id/dialog_choose_layout"
-        android:gravity="center_vertical">
+        android:gravity="center_vertical"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="15dp">
         <ImageView
             android:layout_width="30dp"
             android:layout_height="30dp"
@@ -117,7 +121,7 @@
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/dialog_choose_layout"
         android:layout_centerHorizontal="true"
         android:id="@+id/dialog_confirm_layout"
@@ -125,7 +129,7 @@
 
         <TextView
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_height="50dp"
             android:text="確  定"
             android:layout_gravity="center"
             android:gravity="center"
