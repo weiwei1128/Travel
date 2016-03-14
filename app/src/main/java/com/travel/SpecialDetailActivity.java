@@ -53,7 +53,7 @@ public class SpecialDetailActivity extends AppCompatActivity {
         options = new DisplayImageOptions.Builder()
                 .showImageOnFail(R.drawable.error)
                 .showImageForEmptyUri(R.drawable.empty)
-                .showImageOnLoading(R.drawable.loading)
+                .showImageOnLoading(R.drawable.loading2)
                 .cacheInMemory()
                 .cacheOnDisc().build();
         listener = new ImageLoadingListener() {

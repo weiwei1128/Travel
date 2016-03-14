@@ -24,9 +24,6 @@ public class BuyItemListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.buyitem_list_activity);
-        Bundle bundle = this.getIntent().getExtras();
-//        if (bundle.containsKey("WhichItem")) {
-//            lastItem = bundle.getInt("WhichItem");
 //        }
         listView = (ListView) findViewById(R.id.listview);
         backImg = (ImageView) findViewById(R.id.buyitemlist_backImg);

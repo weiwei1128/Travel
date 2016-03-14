@@ -45,7 +45,7 @@ public class BuyAdapter extends BaseAdapter {
 
         options = new DisplayImageOptions.Builder()
                 .showImageOnFail(R.drawable.error)
-                .showImageOnLoading(R.drawable.empty)
+                .showImageOnLoading(R.drawable.loading2)
                 .showImageForEmptyUri(R.drawable.empty)
                 .cacheInMemory(false)
                 .cacheOnDisc(false).build();
@@ -53,10 +53,13 @@ public class BuyAdapter extends BaseAdapter {
             @Override
             public void onLoadingStarted(String s, View view) {
 
+
             }
 
             @Override
             public void onLoadingFailed(String s, View view, FailReason failReason) {
+                ImageView imageView = (ImageView) view.findViewById(R.id.buy_thingImg);
+                loader.displayImage(null, imageView, options, listener);
 
             }
 

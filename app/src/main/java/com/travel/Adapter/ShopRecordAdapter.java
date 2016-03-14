@@ -38,10 +38,10 @@ public class ShopRecordAdapter extends BaseAdapter {
         database = helper.getWritableDatabase();
         options = new DisplayImageOptions.Builder()
                 .showImageOnFail(R.drawable.error)
-                .showImageOnLoading(R.drawable.loading)
+                .showImageOnLoading(R.drawable.loading2)
                 .showImageForEmptyUri(R.drawable.empty)
-                .cacheInMemory()
-                .cacheOnDisc().build();
+                .cacheInMemory(false)
+                .cacheOnDisc(false).build();
         listener = new ImageLoadingListener() {
             @Override
             public void onLoadingStarted(String s, View view) {
@@ -50,6 +50,8 @@ public class ShopRecordAdapter extends BaseAdapter {
 
             @Override
             public void onLoadingFailed(String s, View view, FailReason failReason) {
+                ImageView imageView = (ImageView) view.findViewById(R.id.shoprecorditem_img);
+                loader.displayImage(null, imageView, options, listener);
 
             }
 

@@ -41,9 +41,9 @@ public class SpecialAdapter extends BaseAdapter {
 
         options = new DisplayImageOptions.Builder()
                 .showImageOnFail(R.drawable.error)
-                .showImageOnLoading(R.drawable.loading)
+                .showImageOnLoading(R.drawable.loading2)
                 .showImageForEmptyUri(R.drawable.empty)
-                .cacheInMemory()
+                .cacheInMemory(false)
                 .cacheOnDisc().build();
         listener = new ImageLoadingListener() {
             @Override
@@ -53,7 +53,8 @@ public class SpecialAdapter extends BaseAdapter {
 
             @Override
             public void onLoadingFailed(String s, View view, FailReason failReason) {
-
+                ImageView imageView = (ImageView) view.findViewById(R.id.special_img);
+                loader.displayImage(null, imageView, options, listener);
             }
 
             @Override

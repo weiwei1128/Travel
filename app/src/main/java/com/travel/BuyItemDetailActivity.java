@@ -21,7 +21,6 @@ import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 import com.travel.Utility.DataBaseHelper;
@@ -102,6 +101,7 @@ public class BuyItemDetailActivity extends AppCompatActivity {
         //show image
         options = new DisplayImageOptions.Builder()
                 .showImageOnFail(R.drawable.error)
+                .showImageOnLoading(R.drawable.loading2)
                 .showImageForEmptyUri(R.drawable.empty)
                 .cacheInMemory()
                 .cacheOnDisc().build();
@@ -183,38 +183,6 @@ public class BuyItemDetailActivity extends AppCompatActivity {
         final List<String> goods_id = new ArrayList<>();
         DataBaseHelper helper = new DataBaseHelper(BuyItemDetailActivity.this);
         SQLiteDatabase database = helper.getWritableDatabase();
-        //show image init
-        options = new DisplayImageOptions.Builder()
-                .showImageOnFail(R.drawable.error)
-                .showImageForEmptyUri(R.drawable.empty)
-                .cacheInMemory()
-                .cacheOnDisc().build();
-        listener = new ImageLoadingListener() {
-            @Override
-            public void onLoadingStarted(String s, View view) {
-
-            }
-
-            @Override
-            public void onLoadingFailed(String s, View view, FailReason failReason) {
-
-            }
-
-            @Override
-            public void onLoadingComplete(String s, View view, Bitmap bitmap) {
-
-            }
-
-            @Override
-            public void onLoadingCancelled(String s, View view) {
-
-            }
-        };
-        ImageLoaderConfiguration configuration = new ImageLoaderConfiguration.Builder(
-                BuyItemDetailActivity.this).build();
-        ImageLoader.getInstance().init(configuration);
-        //show image init
-
         final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(BuyItemDetailActivity.this);
         final Cursor goods_cursor = database.query("goods", new String[]{"totalCount", "goods_id", "goods_title",
                 "goods_url", "goods_money", "goods_content", "goods_click", "goods_addtime"}, null, null, null, null, null);
@@ -229,7 +197,9 @@ public class BuyItemDetailActivity extends AppCompatActivity {
 
             moneyText.setText(goods_cursor.getString(4));
             numberText.setText("" + sharedPreferences.getInt(goods_cursor.getString(1), 0));
+
             Log.d("3.8", "shared:" + sharedPreferences.getInt(goods_cursor.getString(1), 0));
+
             loader.displayImage("http://zhiyou.lin366.com/" + goods_cursor.getString(3)
                     , Img, options, listener);
             goods_cursor.close();
@@ -238,8 +208,8 @@ public class BuyItemDetailActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 numberText.setText((Integer.valueOf(numberText.getText().toString() + "") + 1) + "");
-                totalText.setText(Integer.parseInt(moneyText.getText().toString())
-                        * Integer.valueOf(numberText.getText().toString() + "") + "");
+                totalText.setText((Integer.parseInt(moneyText.getText().toString())
+                        * Integer.valueOf(numberText.getText().toString()) + ""));
             }
         });
         delImg.setOnClickListener(new View.OnClickListener() {
@@ -285,8 +255,8 @@ public class BuyItemDetailActivity extends AppCompatActivity {
                     BuyAdd.cancel();
             }
         });
-        totalText.setText(Integer.valueOf(numberText.getText().toString() + "")
-                * Integer.valueOf(numberText.getText().toString() + "") + "");
+        totalText.setText(Integer.valueOf(numberText.getText().toString())
+                * Integer.valueOf(numberText.getText().toString()) + "");
 
         BuyAdd.show();
     }
@@ -355,7 +325,6 @@ public class BuyItemDetailActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String s) {
-            Log.e("3.10", "Buy item Detail onPostExecute");
             super.onPostExecute(s);
         }
     }
