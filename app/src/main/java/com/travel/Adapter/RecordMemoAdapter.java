@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -78,8 +79,9 @@ public class RecordMemoAdapter extends BaseAdapter {
     @Override
     public int getCount() {
         int number = 0;
-        Cursor travelMemo_cursor = database.query("travelMemo", new String[]{"totalCount", "id",
-                        "title", "url","zhaiyao", "click", "addtime"}, null, null, null, null, null);
+        Cursor travelMemo_cursor = database.query("travelmemo", new String[]{"memo_no",
+                        "memo_title", "memo_content", "memo_img", "memo_latlng", "memo_time"},
+                null, null, null, null, null);
         if (travelMemo_cursor != null) {
             number = travelMemo_cursor.getCount();
             travelMemo_cursor.close();
@@ -116,14 +118,19 @@ public class RecordMemoAdapter extends BaseAdapter {
         ImageLoaderConfiguration configuration = new ImageLoaderConfiguration.Builder(context).build();
         ImageLoader.getInstance().init(configuration);
 
-        Cursor travelMemo_cursor = database.query("travelMemo", new String[]{"totalCount", "id",
-                "title", "url","zhaiyao", "click", "addtime"}, null, null, null, null, null);
+        Cursor travelMemo_cursor = database.query("travelmemo", new String[]{"memo_no",
+                        "memo_title", "memo_content", "memo_img", "memo_latlng", "memo_time"},
+                null, null, null, null, null);
         if (travelMemo_cursor != null && travelMemo_cursor.getCount() > 0) {
             travelMemo_cursor.moveToPosition(position);
-            mViewHolder.MemoTitle.setText(travelMemo_cursor.getString(2));
+            mViewHolder.MemoTitle.setText(travelMemo_cursor.getString(1));
+            mViewHolder.MemoString.setText(travelMemo_cursor.getString(2));
+            // TODO 資料庫讀Bitmap
+            byte[] d = travelMemo_cursor.getBlob(3);
+            Bitmap bmp = BitmapFactory.decodeByteArray(d, 0, d.length);
+            //dialog_img.setImageBitmap(bmp);
             loader.displayImage(travelMemo_cursor.getString(3), mViewHolder.MemoImg, options, listener);
-            mViewHolder.MemoString.setText(travelMemo_cursor.getString(4));
-            mViewHolder.MemoTimeStamp.setText(travelMemo_cursor.getString(6));
+            mViewHolder.MemoTimeStamp.setText(travelMemo_cursor.getString(5));
             Log.d("3/13_", "img_url:" + travelMemo_cursor.getString(3));
         }
 

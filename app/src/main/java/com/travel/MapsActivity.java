@@ -359,6 +359,8 @@ public class MapsActivity extends FragmentActivity implements
             }
             location_cursor.close();
         }
+        database.close();
+        helper.close();
     }
 
     // Android 系統返回鍵
@@ -466,6 +468,8 @@ public class MapsActivity extends FragmentActivity implements
                     }
                     spotDataRaw_cursor.close();
                 }
+                database.close();
+                helper.close();
             }
             return MarkerOptionsArray;
         }

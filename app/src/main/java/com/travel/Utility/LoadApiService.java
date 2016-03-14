@@ -58,7 +58,6 @@ public class LoadApiService extends Service {
             TWSpotAPIFetcher twApi = new TWSpotAPIFetcher(context);
             if (spotDataRaw_cursor.getCount() == 0 || spotDataRaw_cursor.getCount() < 300) {
                 // 到景點API抓景點資訊
-                // TODO TW API放著在背景執行去動UI，結果好像就不了了之，沒有載入成功 哪招QAQ
                 Log.e("3/10_", "*****Download API*****");
                 if(!(tpeApi.getStatus() == AsyncTask.Status.RUNNING)) {
                     tpeApi.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
@@ -133,8 +132,7 @@ public class LoadApiService extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
-        // TODO: Return the communication channel to the service.
-        throw new UnsupportedOperationException("Not yet implemented");
+        return null;
     }
 
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {

@@ -36,6 +36,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -215,6 +216,7 @@ public class RecordActivity extends FragmentActivity implements
         });
 
         spotDialog = new Dialog(RecordActivity.this);
+        spotDialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
         spotDialog.setContentView(R.layout.record_memo_dialog);
 
         dialog_choose_layout = (LinearLayout) spotDialog.findViewById(R.id.dialog_choose_layout);
@@ -237,11 +239,17 @@ public class RecordActivity extends FragmentActivity implements
         leave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (spotDialog.isShowing())
+                if (spotDialog.isShowing()) {
                     if (content_layout.getVisibility() == content_layout.VISIBLE) {
                         content_layout.setVisibility(View.INVISIBLE);
+                        title_editText.setText("");
+                        content_editText.setText("");
+                    }
+                    if (memo_img != null) {
+                        dialog_img.setImageBitmap(null);
                     }
                     spotDialog.dismiss();
+                }
             }
         });
 
@@ -281,18 +289,25 @@ public class RecordActivity extends FragmentActivity implements
         write.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                content_layout.setVisibility(View.VISIBLE);
                 if (dialog_scrollview.getVisibility() == dialog_scrollview.INVISIBLE) {
                     dialog_scrollview.setVisibility(View.VISIBLE);
                     RelativeLayout.LayoutParams otelParams = new RelativeLayout.LayoutParams(
-                            ViewGroup.LayoutParams.MATCH_PARENT, 400);
+                            ViewGroup.LayoutParams.MATCH_PARENT, 600);
                     otelParams.addRule(RelativeLayout.BELOW, R.id.dialog_header_text);
                     dialog_scrollview.setLayoutParams(otelParams);
                     dialog_relativeLayout.setVisibility(View.VISIBLE);
                     dialog_confirm_layout.setVisibility(View.VISIBLE);
+                    RelativeLayout.LayoutParams otelParams2 = new RelativeLayout.LayoutParams(
+                            ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                    otelParams2.addRule(RelativeLayout.BELOW, R.id.dialog_choose_layout);
+                    dialog_confirm_layout.setLayoutParams(otelParams2);
                     dialog_confirm_layout.setOnClickListener(ok);
                 }
-
+                content_layout.setVisibility(View.VISIBLE);
+                RelativeLayout.LayoutParams otelParams = new RelativeLayout.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                otelParams.addRule(RelativeLayout.BELOW, R.id.dialog_img);
+                content_layout.setLayoutParams(otelParams);
             }
         });
 
@@ -301,7 +316,6 @@ public class RecordActivity extends FragmentActivity implements
             public void onClick(View v) {
                 if (!spotDialog.isShowing()) {
                     dialog_choose_layout.setVisibility(View.VISIBLE);
-                    dialog_confirm_layout.setVisibility(View.INVISIBLE);
                     dialog_scrollview.setVisibility(View.INVISIBLE);
                     RelativeLayout.LayoutParams otelParams = new RelativeLayout.LayoutParams(
                             ViewGroup.LayoutParams.MATCH_PARENT, 0);
@@ -309,6 +323,15 @@ public class RecordActivity extends FragmentActivity implements
                     dialog_scrollview.setLayoutParams(otelParams);
                     dialog_relativeLayout.setVisibility(View.INVISIBLE);
                     content_layout.setVisibility(View.INVISIBLE);
+                    RelativeLayout.LayoutParams otelParams2 = new RelativeLayout.LayoutParams(
+                            ViewGroup.LayoutParams.MATCH_PARENT, 0);
+                    otelParams2.addRule(RelativeLayout.BELOW, R.id.dialog_img);
+                    content_layout.setLayoutParams(otelParams2);
+                    dialog_confirm_layout.setVisibility(View.INVISIBLE);
+                    RelativeLayout.LayoutParams otelParams3 = new RelativeLayout.LayoutParams(
+                            ViewGroup.LayoutParams.MATCH_PARENT, 0);
+                    otelParams3.addRule(RelativeLayout.BELOW, R.id.dialog_choose_layout);
+                    dialog_confirm_layout.setLayoutParams(otelParams3);
                     spotDialog.show();
                 }
             }
@@ -331,9 +354,8 @@ public class RecordActivity extends FragmentActivity implements
 
                     DataBaseHelper helper = new DataBaseHelper(getApplicationContext());
                     SQLiteDatabase database = helper.getWritableDatabase();
-                    Cursor trackRoute_cursor = database.query("trackRoute",
-                            new String[]{"routesCounter", "track_no", "track_lat",
-                                    "track_lng", "track_start"},
+                    Cursor trackRoute_cursor = database.query("trackRoute", new String[]{"routesCounter",
+                                    "track_no", "track_lat", "track_lng", "track_start"},
                             null, null, null, null, null);
                     if (trackRoute_cursor != null) {
                         if (trackRoute_cursor.getCount() != 0) {
@@ -343,7 +365,10 @@ public class RecordActivity extends FragmentActivity implements
                                 Track_no++;
                             }
                         }
+                        trackRoute_cursor.close();
                     }
+                    database.close();
+                    helper.close();
 
                     Log.d("2.4", "isRunning?"
                             + Functions.isMyServiceRunning(RecordActivity.this, TimeCountService.class));
@@ -424,6 +449,8 @@ public class RecordActivity extends FragmentActivity implements
             }
             trackRoute_cursor.close();
         }
+        database.close();
+        helper.close();
     }
 
     @Override
@@ -721,11 +748,15 @@ public class RecordActivity extends FragmentActivity implements
             if (dialog_scrollview.getVisibility() == dialog_scrollview.INVISIBLE) {
                 dialog_scrollview.setVisibility(View.VISIBLE);
                 RelativeLayout.LayoutParams otelParams = new RelativeLayout.LayoutParams(
-                        ViewGroup.LayoutParams.MATCH_PARENT, 400);
+                        ViewGroup.LayoutParams.MATCH_PARENT, 600);
                 otelParams.addRule(RelativeLayout.BELOW, R.id.dialog_header_text);
                 dialog_scrollview.setLayoutParams(otelParams);
                 dialog_relativeLayout.setVisibility(View.VISIBLE);
                 dialog_confirm_layout.setVisibility(View.VISIBLE);
+                RelativeLayout.LayoutParams otelParams2 = new RelativeLayout.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                otelParams2.addRule(RelativeLayout.BELOW, R.id.dialog_choose_layout);
+                dialog_confirm_layout.setLayoutParams(otelParams2);
                 dialog_confirm_layout.setOnClickListener(ok);
             }
         }
@@ -735,7 +766,7 @@ public class RecordActivity extends FragmentActivity implements
     View.OnClickListener ok = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            /**DB**/ //title_editText, content_editText;
+            /**DB**/
             DataBaseHelper helper = new DataBaseHelper(RecordActivity.this);
             SQLiteDatabase db = helper.getReadableDatabase();
             Cursor img_cursor = db.query("travelmemo", new String[]{"memo_no",
@@ -770,27 +801,16 @@ public class RecordActivity extends FragmentActivity implements
                     inDB = db.insert("travelmemo", null, cv);
                     Log.e("3/13_", "DB insert empty " + inDB);
                 } else {
-                    /*
-                    img_cursor.moveToFirst();
-                    while (!img_cursor.isLast()) {
-                        img_cursor.moveToNext();
-                        Log.e("2.9", "test!!!!");
-                        Log.e("2.9", img_cursor.getType(0) + "");
-                        Log.e("2.9", img_cursor.getString(0) + "");
-                    }
-                    */
-
-
-                    Log.e("3/13_", "cursor(0)" + img_cursor.getCount());
                     img_cursor.moveToLast();
-                    Log.e("3/13_", "getType " + img_cursor.getType(0) + "getType2 " + img_cursor.getType(1));
                     int id = Integer.parseInt(img_cursor.getString(0)) + 1;
-                    Log.e("3/13_", "cursor(0)" + img_cursor.getString(0));
                     ContentValues cv = new ContentValues();
                     cv.put("memo_no", id);
-                    cv.put("memo_area", "area");
+                    cv.put("memo_title", title_editText.getText().toString());
+                    cv.put("memo_content", content_editText.toString());
+                    if (CurrentLatlng != null) {
+                        cv.put("memo_latlng", CurrentLatlng.toString());
+                    }
                     cv.put("memo_time", dateString);
-                    cv.put("memo_content", "內容");
                     if (memo_img != null) {
                         ByteArrayOutputStream stream2 = new ByteArrayOutputStream();
                         Boolean a;
@@ -805,26 +825,36 @@ public class RecordActivity extends FragmentActivity implements
                 }
             }
             //2.9 for testing
-            /*
+/*
             if (img_cursor.getCount() > 0) {
                 img_cursor.moveToFirst();
-                if (img_cursor.getBlob(1) != null) {
-                    byte[] d = img_cursor.getBlob(1);
+                if (img_cursor.getBlob(3) != null) {
+                    byte[] d = img_cursor.getBlob(3);
                     Bitmap bmp = BitmapFactory.decodeByteArray(d, 0, d.length);
-                    // /
-                    // //
                     dialog_img.setImageBitmap(bmp);
                 }
             }
-            */
-            if (inDB != -1)
-                Toast.makeText(RecordActivity.this, "已上傳照片！", Toast.LENGTH_SHORT).show();
-
+*/
+            if (inDB != -1) {
+                if (spotDialog.isShowing()) {
+                    if (content_layout.getVisibility() == content_layout.VISIBLE) {
+                        content_layout.setVisibility(View.INVISIBLE);
+                        title_editText.setText("");
+                        content_editText.setText("");
+                    }
+                    if (memo_img != null) {
+                        dialog_img.setImageBitmap(null);
+                    }
+                    spotDialog.dismiss();
+                }
+                Toast.makeText(RecordActivity.this, "已上傳！", Toast.LENGTH_SHORT).show();
+            }
             img_cursor.close();
             db.close();
             helper.close();
-            if (spotDialog.isShowing()) ;
-            spotDialog.dismiss();
+            if (spotDialog.isShowing()) {
+                spotDialog.dismiss();
+            }
         }
     };
 
@@ -891,6 +921,8 @@ public class RecordActivity extends FragmentActivity implements
                         Log.d("3/10_軌跡紀錄_END", result + " = DB INSERT RC:" + routesCounter
                                 + " no:" + track_no + " 座標 " + track_lat + "," + track_lng);
                     }
+                    database.close();
+                    helper.close();
                 }
             }
         }
@@ -900,12 +932,19 @@ public class RecordActivity extends FragmentActivity implements
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            Intent intent = new Intent();
-            intent.setClass(RecordActivity.this, HomepageActivity.class);
-            startActivity(intent);
-            finish();
+            if (spotDialog.isShowing()) {
+                if (content_layout.getVisibility() == content_layout.VISIBLE) {
+                    content_layout.setVisibility(View.INVISIBLE);
+                    title_editText.setText("");
+                    content_editText.setText("");
+                }
+                if (memo_img != null) {
+                    dialog_img.setImageBitmap(null);
+                }
+                spotDialog.dismiss();
+            }
+            Functions.go(true, RecordActivity.this, RecordActivity.this, HomepageActivity.class, null);
         }
-
         return false;
     }
 
