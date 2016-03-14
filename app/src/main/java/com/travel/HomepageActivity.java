@@ -23,6 +23,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.travel.ImageSlide.MainImageFragment;
 import com.travel.Utility.DataBaseHelper;
 import com.travel.Utility.Functions;
@@ -59,6 +61,10 @@ public class HomepageActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(HomepageActivity.this)
+                .build();
+        ImageLoader.getInstance().init(config);
+
         //判斷是否該關閉程式
         DataBaseHelper helper = new DataBaseHelper(HomepageActivity.this);
         SQLiteDatabase database = helper.getWritableDatabase();

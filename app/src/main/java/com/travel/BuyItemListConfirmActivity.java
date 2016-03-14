@@ -89,7 +89,7 @@ public class BuyItemListConfirmActivity extends AppCompatActivity {
                     buylistText.append(goods_cursor.getString(2) + " : "
                             + sharedPreferences.getInt(goods_cursor.getString(1), 0) + " 個 \n");
                     int money = Integer.valueOf(goods_cursor.getString(4));
-                    totalnumber = totalnumber + money * Integer.valueOf(sharedPreferences.getInt(goods_cursor.getString(1), 0));
+                    totalnumber = totalnumber + money * sharedPreferences.getInt(goods_cursor.getString(1), 0);
                 }
                 goods_cursor.moveToNext();
             }
@@ -97,7 +97,7 @@ public class BuyItemListConfirmActivity extends AppCompatActivity {
         if (goods_cursor != null)
             goods_cursor.close();
         totalText = (TextView) findViewById(R.id.buyitemlistconfirm_totalText);
-        totalText.setText(totalnumber + "");
+        totalText.setText(totalnumber+"");
     }
 
 

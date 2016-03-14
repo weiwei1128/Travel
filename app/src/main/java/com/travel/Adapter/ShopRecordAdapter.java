@@ -3,6 +3,7 @@ package com.travel.Adapter;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +11,10 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.assist.FailReason;
+import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 import com.travel.R;
 import com.travel.Utility.DataBaseHelper;
 
@@ -17,6 +22,10 @@ import com.travel.Utility.DataBaseHelper;
  * Created by wei on 2016/3/7.
  */
 public class ShopRecordAdapter extends BaseAdapter {
+
+    ImageLoader loader = ImageLoader.getInstance();
+    DisplayImageOptions options;
+    private ImageLoadingListener listener;
     LayoutInflater layoutInflater;
     Context m_context;
     DataBaseHelper helper;
@@ -27,6 +36,35 @@ public class ShopRecordAdapter extends BaseAdapter {
         this.m_context = context;
         helper = new DataBaseHelper(context);
         database = helper.getWritableDatabase();
+        options = new DisplayImageOptions.Builder()
+                .showImageOnFail(R.drawable.error)
+                .showImageOnLoading(R.drawable.loading2)
+                .showImageForEmptyUri(R.drawable.empty)
+                .cacheInMemory(false)
+                .cacheOnDisc(false).build();
+        listener = new ImageLoadingListener() {
+            @Override
+            public void onLoadingStarted(String s, View view) {
+
+            }
+
+            @Override
+            public void onLoadingFailed(String s, View view, FailReason failReason) {
+                ImageView imageView = (ImageView) view.findViewById(R.id.shoprecorditem_img);
+                loader.displayImage(null, imageView, options, listener);
+
+            }
+
+            @Override
+            public void onLoadingComplete(String s, View view, Bitmap bitmap) {
+
+            }
+
+            @Override
+            public void onLoadingCancelled(String s, View view) {
+
+            }
+        };
     }
 
     @Override
@@ -79,14 +117,15 @@ public class ShopRecordAdapter extends BaseAdapter {
             if (order_cursor.getString(2) != null)
                 item.order_date.setText(order_cursor.getString(2));
             if (order_cursor.getString(3) != null)
-                item.order_info.setText("姓名: "+order_cursor.getString(3));
+                item.order_info.setText("姓名: " + order_cursor.getString(3));
             if (order_cursor.getString(4) != null)
-                item.order_info.append("\n電話: "+order_cursor.getString(4));
+                item.order_info.append("\n電話: " + order_cursor.getString(4));
             if (order_cursor.getString(6) != null)
-                item.order_money.setText("$"+order_cursor.getString(6));
+                item.order_money.setText("$" + order_cursor.getString(6));
             if (order_cursor.getString(7) != null)
                 item.order_state.setText(order_cursor.getString(7));
         }
+        loader.displayImage(null, item.order_img, options, listener);
 
         if (order_cursor != null)
             order_cursor.close();

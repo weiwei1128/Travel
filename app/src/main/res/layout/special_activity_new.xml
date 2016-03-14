@@ -33,22 +33,21 @@
 
 
     </LinearLayout>
-    <LinearLayout
-        android:layout_below="@+id/special_Layout"
-        android:id="@+id/special_textlayout"
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_horizontal">
 
-    </LinearLayout>
+
+    <com.travel.Utility.FlowLayout
+        android:id="@+id/special_flowlayout"
+        android:layout_below="@+id/special_Layout"
+        android:gravity="center_horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
 
     <android.support.v4.view.ViewPager
         android:id="@+id/special_viewpager"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_below="@+id/special_textlayout">
+        android:layout_below="@+id/special_flowlayout">
 
     </android.support.v4.view.ViewPager>
 

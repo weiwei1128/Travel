@@ -32,8 +32,13 @@ public class MemberActivity extends AppCompatActivity {
         SQLiteDatabase database = helper.getWritableDatabase();
         Cursor member_cursor = database.query("member", new String[]{"account", "password",
                 "name", "phone", "email", "addr"}, null, null, null, null, null);
-        if (member_cursor == null || member_cursor.getCount() == 0)
+        if (member_cursor == null || member_cursor.getCount() == 0) {
+            if (member_cursor != null)
+                member_cursor.close();
+            if (database.isOpen())
+                database.close();
             finish();
+        }
         //======= MemberData =======//
         NameText = (TextView) findViewById(R.id.member_name_text);
         PhoneText = (TextView) findViewById(R.id.member_phone_text);
@@ -87,7 +92,8 @@ public class MemberActivity extends AppCompatActivity {
         shoprecordImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Functions.go(false,MemberActivity.this,MemberActivity.this,ShopRecordActivity.class,null);            }
+                Functions.go(false, MemberActivity.this, MemberActivity.this, ShopRecordActivity.class, null);
+            }
         });
         shoprecordImg.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -172,6 +178,8 @@ public class MemberActivity extends AppCompatActivity {
                 }
                 if (member_cursor != null)
                     member_cursor.close();
+                if (database.isOpen())
+                    database.close();
             }
         });
     }
@@ -183,6 +191,8 @@ public class MemberActivity extends AppCompatActivity {
                     DataBaseHelper helper = new DataBaseHelper(MemberActivity.this);
                     SQLiteDatabase database = helper.getWritableDatabase();
                     database.delete("member", null, null);
+                    if (database.isOpen())
+                        database.close();
                     Intent MyIntent = new Intent(Intent.ACTION_MAIN);
                     MyIntent.addCategory(Intent.CATEGORY_HOME);
                     MyIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -216,6 +226,8 @@ public class MemberActivity extends AppCompatActivity {
         }
         if (member_cursor != null)
             member_cursor.close();
+        if (database.isOpen())
+            database.close();
 
     }
 

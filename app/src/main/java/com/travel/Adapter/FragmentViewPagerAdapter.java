@@ -48,7 +48,7 @@ public class FragmentViewPagerAdapter extends PagerAdapter implements ViewPager.
         //1.12
 //        return fragments.size();
         if (fragments == null)
-            Log.d("1/12", "null");
+            return 0;
         return fragments.size();
         //1.12
     }

@@ -184,6 +184,8 @@ public class ServiceActivity extends AppCompatActivity {
         protected void onPostExecute(String s) {
             mDialog.dismiss();
             commentEdt.setText("");
+            if(s==null)
+                s = "與伺服器連線錯誤!";
             Toast.makeText(ServiceActivity.this,"===系統回復====\n"+s,Toast.LENGTH_SHORT).show();
             super.onPostExecute(s);
         }
