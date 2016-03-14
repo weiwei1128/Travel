@@ -285,24 +285,19 @@ public class BuyItemDetailActivity extends AppCompatActivity {
             String getString = null;
             try {
                 response = client.execute(post);
-                Log.d("3.10", "購物車項目? 1getString: " + response);
             } catch (IOException e) {
-                Log.e("3.10", e.toString());
+                e.printStackTrace();
             }
-            Log.d("3.10", "購物車項目: " + response.getEntity().toString());
 
             try {
-                Log.d("3.10", "購物車項目? 2getString: start");
                 getString = EntityUtils.toString(response.getEntity());
                 Log.d("3.10", "購物車項目? 2getString: " + getString);
-            } catch (IOException e) {
-                Log.e("3.10", "error!!!!!");
-                Log.e("3.10", e.toString() + "error");
+            } catch (IOException | NullPointerException e) {
+                e.printStackTrace();
             }
-            Log.e("3.10", "購物車項目? getString: " + getString);
 
 
-            if (getString.contains("guigelist"))
+            if (getString != null && getString.contains("guigelist"))
                 Log.d("3.11", "contain!!!");
 
             String state = null;
