@@ -38,6 +38,7 @@ public class ShopRecordActivity extends AppCompatActivity {
     ImageView backImg;
     GridView gridView;
     public ShopRecordAdapter adapter;
+    String Orderid;
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -68,10 +69,26 @@ public class ShopRecordActivity extends AppCompatActivity {
 
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            Bundle bundle = new Bundle();
-            bundle.putInt("WhichItem", position);
-            Functions.go(false, ShopRecordActivity.this, ShopRecordActivity.this,
-                    ShopRecordItemActivity.class, bundle);
+            DataBaseHelper helper = new DataBaseHelper(ShopRecordActivity.this);
+            SQLiteDatabase database = helper.getWritableDatabase();
+            Cursor order_cursor = database.query("shoporder", new String[]{"order_id", "order_no",
+                    "order_time", "order_name", "order_phone", "order_email",
+                    "order_money", "order_state"}, null, null, null, null, null);
+            String Order_id;
+            if(order_cursor!=null&&order_cursor.getCount()>=position){
+                order_cursor.moveToPosition(position);
+                Order_id = order_cursor.getString(0);
+                Bundle bundle = new Bundle();
+                bundle.putString("WhichItem", Order_id);
+                Functions.go(false, ShopRecordActivity.this, ShopRecordActivity.this,
+                        ShopRecordItemActivity.class, bundle);
+            }
+            if(order_cursor!=null)
+                order_cursor.close();
+            if(database.isOpen())
+                database.close();
+
+
         }
     }
 
@@ -236,7 +253,6 @@ public class ShopRecordActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
             }
-
             DataBaseHelper helper = new DataBaseHelper(context);
             SQLiteDatabase database = helper.getWritableDatabase();
             Cursor order_cursor = database.query("shoporder", new String[]{"order_id", "order_no",
