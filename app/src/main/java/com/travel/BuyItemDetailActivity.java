@@ -152,6 +152,8 @@ public class BuyItemDetailActivity extends AppCompatActivity {
 //        else Log.d("2.24", "not right!!!!" + ItemPosition);
         if (goods_cursor != null)
             goods_cursor.close();
+        if (database.isOpen())
+            database.close();
 
 
     }
