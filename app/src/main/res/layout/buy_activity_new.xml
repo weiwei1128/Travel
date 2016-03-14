@@ -46,9 +46,10 @@
         android:id="@+id/buy_flowlayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
         android:layout_marginLeft="3dp"
         android:layout_marginRight="3dp"
-        android:layout_below="@+id/buy_Layout"></com.travel.Utility.FlowLayout>
+        android:layout_below="@+id/buy_Layout"/>
     
 
 

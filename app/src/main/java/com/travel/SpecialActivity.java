@@ -7,7 +7,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageView;
@@ -37,14 +36,12 @@ public class SpecialActivity extends AppCompatActivity {
 
     @Override
     protected void onStart() {
-        Log.e("3.10", "Special onStart");
         super.onStart();
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        Log.e("3.10", "Special onCreate");
         setContentView(R.layout.special_activity_new);
         backImg = (ImageView) findViewById(R.id.special_backImg);
         flowLayout = (FlowLayout) findViewById(R.id.special_flowlayout);
@@ -52,7 +49,6 @@ public class SpecialActivity extends AppCompatActivity {
         backImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                finish();
                 Functions.go(true, SpecialActivity.this, SpecialActivity.this, HomepageActivity.class, null);
             }
         });
@@ -60,30 +56,26 @@ public class SpecialActivity extends AppCompatActivity {
         database = helper.getReadableDatabase();
         Cursor special = database.query("special_activity", new String[]{"special_id", "title", "img", "content", "price", "click"},
                 null, null, null, null, null);
-
         if (special != null) {
             FragmentNumber = special.getCount();
             special.close();
         }
         fragmentManager = this.getSupportFragmentManager();
 
-
-//        Log.e("3.10","specialNumber:"+FragmentNumber);
-//        new UI().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-//        /*
         if (FragmentNumber % 10 > 0)
             PageNo = (FragmentNumber / 10) + 1;
         else PageNo = FragmentNumber / 10;
+
         for (int i = 0; i < PageNo; i++) {
             fragments.add(new SpecialFragment((i + 1)));
             TextView number = new TextView(this);
             number.setText(i + 1 + "  ");
             number.setTextColor(getResources().getColor(R.color.black));
-            if (i == 0)
+            if (i == 0) {
                 number.setTextColor(getResources().getColor(R.color.peach));
+            }
             NoText.add(number);
             flowLayout.addView(number);
-//            textLayout.addView(number);
         }
         specialFragmentViewPagerAdapter = new SpecialFragmentViewPagerAdapter(this.getSupportFragmentManager(),
                 viewPager, fragments, this);
