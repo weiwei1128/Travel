@@ -1,6 +1,9 @@
 package com.travel;
 
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -11,8 +14,10 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.travel.Adapter.ShopRecordItemAdapter;
+import com.travel.Utility.DataBaseHelper;
 import com.travel.Utility.Functions;
 
 import org.apache.http.HttpResponse;
@@ -37,33 +42,34 @@ public class ShopRecordItemActivity extends AppCompatActivity {
     TextView Order_date, Order_no, Order_payment, Order_state, ship_way, ship_name, ship_tel, ship_addr,
             ship_message, money_item, money_ship, money_total;
     LinearLayout carLayout;
+    Context context = ShopRecordItemActivity.this;;
+    LayoutInflater inflater;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.shoprecord_item_activity);
-        setUp();
-        Context context = ShopRecordItemActivity.this;
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        //新增項目
-        View view = inflater.inflate(R.layout.shoprecord_item_caritem, null);
-        carLayout.addView(view);
-
+        setupUI();
+        inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         Bundle bundle = this.getIntent().getExtras();
         if (bundle.containsKey("WhichItem")) {
             OrderId = bundle.getString("WhichItem");
+            new getOrder().execute();
+            getDB();
+        } else {
+            Toast.makeText(ShopRecordItemActivity.this, "資料錯誤!!", Toast.LENGTH_SHORT).show();
         }
 
     }
 
-    void setUp() {
+    void setupUI() {
         carLayout = (LinearLayout) findViewById(R.id.shoprecord_itemlayout);
         backImg = (ImageView) findViewById(R.id.shoprecorditem_backImg);
-        Order_date = (TextView) findViewById(R.id.shoprecorditem_date);
+        Order_date = (TextView) findViewById(R.id.shoprecord_itemdate);
         Order_no = (TextView) findViewById(R.id.shoprecord_itemno);
         Order_payment = (TextView) findViewById(R.id.shoprecord_itempay);
-        Order_state = (TextView) findViewById(R.id.shoprecorditem_state);
+        Order_state = (TextView) findViewById(R.id.shoprecord_itemstate);
         ship_way = (TextView) findViewById(R.id.shoprecord_itemship);
         ship_name = (TextView) findViewById(R.id.shoprecord_itemcontact);
         ship_tel = (TextView) findViewById(R.id.shoprecord_itemphone);
@@ -82,6 +88,24 @@ public class ShopRecordItemActivity extends AppCompatActivity {
         });
     }
 
+    void getDB() {
+        DataBaseHelper helper = new DataBaseHelper(context);
+        SQLiteDatabase database = helper.getWritableDatabase();
+        Cursor order_cursor = database.query("shoporder", new String[]{"order_id", "order_no",
+                "order_time", "order_name", "order_phone", "order_email",
+                "order_money", "order_state"}, "order_id=" + OrderId, null, null, null, null);
+        if (order_cursor != null && order_cursor.getCount() > 0) {
+            order_cursor.moveToFirst();
+            if (order_cursor.getString(7) != null) {
+                Order_state.setText(order_cursor.getString(7));
+            }
+        }
+        if (order_cursor != null)
+            order_cursor.close();
+        if (database.isOpen())
+            database.close();
+    }
+
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -92,10 +116,23 @@ public class ShopRecordItemActivity extends AppCompatActivity {
     }
 
     class getOrder extends AsyncTask<String, Void, String[][]> {
+        ProgressDialog mDialog;
+
+        @Override
+        protected void onPreExecute() {
+            //Loading Dialog
+            mDialog = new ProgressDialog(ShopRecordItemActivity.this);
+            mDialog.setMessage("接收資料中......");
+            mDialog.setCancelable(false);
+            if (!mDialog.isShowing()) {
+                mDialog.show();
+            }
+            super.onPreExecute();
+        }
 
         @Override
         protected String[][] doInBackground(String... params) {
-            Log.i("3.11", "*************ShopRecord DO IN BACKGROUND");
+            Log.i("3.11", "*************ShopRecordITEM DO IN BACKGROUND" + OrderId);
             if (OrderId != null) {
                 String returnMessage[][] = null;
                 /*
@@ -132,6 +169,11 @@ public class ShopRecordItemActivity extends AppCompatActivity {
                 } catch (IOException | NullPointerException e) {
                     e.printStackTrace();
                 }
+                try {
+                    Log.e("3.15", "getString::" + getString);
+                } catch (NullPointerException e) {
+                    e.printStackTrace();
+                }
                 String state = null;
                 try {
                     state = new JSONObject(getString.substring(getString.indexOf("{"),
@@ -148,11 +190,12 @@ public class ShopRecordItemActivity extends AppCompatActivity {
                 }
                 if (jsonArray == null || jsonArray.length() == 0) {
                     returnMessage = new String[1][8];
+                    returnMessage[0][7] = "0";
                     //購物車沒有東西!!
                 } else {
                     itemCount = jsonArray.length();
                     returnMessage = new String[(itemCount + 1)][8];
-                    returnMessage[0][7]=itemCount+"";
+                    returnMessage[0][7] = itemCount + "";
                     for (int i = 0; i < itemCount; i++) {
                         try {
                             returnMessage[(i + 1)][0] = jsonArray.getJSONObject(i).getString("goods_title");
@@ -271,6 +314,42 @@ public class ShopRecordItemActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String[][] strings) {
+            mDialog.dismiss();
+            if (strings != null) {
+                int itemCount = Integer.parseInt(strings[0][7]);
+                for (int i = 0; i < itemCount; i++) {
+                    //0.1.3
+                    View view = inflater.inflate(R.layout.shoprecord_item_caritem, null);
+                    TextView name = (TextView) view.findViewById(R.id.shoprecord_itemname);
+                    TextView money = (TextView) view.findViewById(R.id.shoprecord_itemmoney);
+                    TextView count = (TextView) view.findViewById(R.id.shoprecord_itemcount);
+                    if (strings[(i + 1)][0] != null)
+                        name.setText(strings[(i + 1)][0]);
+                    if (strings[(i + 1)][2] != null)
+                        count.setText("  x"+strings[(i + 1)][2]);
+                    if (strings[(i + 1)][3] != null)
+                        money.setText("$" + strings[(i + 1)][3]);
+                    carLayout.addView(view);
+                }
+                if (strings[0][0] != null)
+                    Order_no.setText(strings[0][0]);
+                if (strings[0][1] != null)
+                    ship_name.setText(strings[0][1]);
+                if (strings[0][2] != null)
+                    money_total.setText("$" + strings[0][2]);
+                if (strings[0][2] != null)
+                    money_item.setText("$" + strings[0][2]);
+                if (strings[0][3] != null)
+                    Order_date.setText(strings[0][3]);
+                if (strings[0][4] != null)
+                    Order_payment.setText(strings[0][4]);
+                if (strings[0][5] != null)
+                    ship_tel.setText(strings[0][5]);
+                if (strings[0][6] != null)
+                    ship_message.setText(strings[0][6]);
+
+            }
+
             super.onPostExecute(strings);
         }
     }
