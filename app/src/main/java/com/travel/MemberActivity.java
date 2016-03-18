@@ -154,6 +154,7 @@ public class MemberActivity extends AppCompatActivity {
 
         //=======Logout=======//
         logoutLayout = (LinearLayout) findViewById(R.id.member_logout_layout);
+        /*
         logoutLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -182,6 +183,7 @@ public class MemberActivity extends AppCompatActivity {
                     database.close();
             }
         });
+        */
     }
 
     DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {

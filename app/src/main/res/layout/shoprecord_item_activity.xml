@@ -75,7 +75,6 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="2016/01/01 00:00"
                     android:id="@+id/shoprecord_itemdate"
                     android:layout_gravity="left"
                     android:textSize="15dp"
@@ -86,7 +85,6 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="#1234567890"
                     android:id="@+id/shoprecord_itemno"
                     android:layout_gravity="right"
                     android:textColor="@color/black"
@@ -112,7 +110,6 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="信用卡"
                     android:id="@+id/shoprecord_itempay"
                     android:layout_gravity="left"
                     android:textSize="15dp"
@@ -122,7 +119,6 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="待確認"
                     android:id="@+id/shoprecord_itemstate"
                     android:layout_gravity="right"
                     android:textColor="@color/black"
@@ -163,7 +159,6 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="新竹貨運"
                         android:id="@+id/shoprecord_itemship"
                         android:textColor="@color/black"
                         android:textSize="15dp"
@@ -186,7 +181,6 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="王大明"
                         android:id="@+id/shoprecord_itemcontact"
                         android:textColor="@color/black"
                         android:textSize="15dp"
@@ -202,7 +196,6 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="0912345678"
                         android:id="@+id/shoprecord_itemphone"
                         android:layout_marginLeft="70dp"
                         android:textColor="@color/black"
@@ -218,7 +211,6 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="台灣"
                         android:id="@+id/shoprecord_itemaddr"
                         android:layout_marginLeft="70dp"
                         android:textColor="@color/black"
@@ -240,7 +232,6 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="貨到前來電"
                         android:id="@+id/shoprecord_itemmessage"
                         android:textColor="@color/black"
                         android:textSize="15dp"
@@ -275,7 +266,6 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="$100"
                         android:id="@+id/shoprecord_itemaddmoney"
                         android:layout_weight="1"
                         android:layout_gravity="right"
@@ -300,7 +290,6 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="$0"
                         android:id="@+id/shoprecord_itemshipmoney"
                         android:gravity="right"
                         android:layout_weight="1"
@@ -323,7 +312,6 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="$100"
                         android:id="@+id/shoprecord_itemtotalmoney"
                         android:layout_weight="1"
                         android:gravity="right"
