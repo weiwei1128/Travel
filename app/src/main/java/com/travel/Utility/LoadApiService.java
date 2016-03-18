@@ -28,7 +28,8 @@ public class LoadApiService extends Service {
 
     @Override
     public void onCreate() {
-        context = this.getBaseContext();
+        Log.d("3/10_", "LoadApiService onCreate");
+        context = getApplicationContext();
         globalVariable = (GlobalVariable) context.getApplicationContext();
         registerReceiver(broadcastReceiver, new IntentFilter(TWSpotAPIFetcher.BROADCAST_ACTION));
         super.onCreate();

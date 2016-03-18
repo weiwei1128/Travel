@@ -3,12 +3,18 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ImageView
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="250dp"
-        android:scaleType="centerCrop"
-        android:id="@+id/MemoImageView"
-        android:layout_centerHorizontal="true" />
+        android:id="@+id/Memo_imageBar">
+
+        <FrameLayout
+            android:id="@+id/content_frame"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
 
     <TextView
         android:layout_width="250dp"
@@ -16,7 +22,7 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="Title"
         android:id="@+id/Title"
-        android:layout_below="@+id/MemoImageView"
+        android:layout_below="@+id/Memo_imageBar"
         android:layout_alignParentLeft="true"
         android:layout_marginLeft="5dp"
         android:layout_marginTop="5dp" />
@@ -27,7 +33,7 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="TimeStamp"
         android:id="@+id/TimeStamp"
-        android:layout_below="@+id/MemoImageView"
+        android:layout_below="@+id/Memo_imageBar"
         android:layout_alignParentRight="true"
         android:layout_marginRight="5dp"
         android:layout_marginTop="5dp" />
@@ -37,7 +43,7 @@
         android:layout_height="20dp"
         android:id="@+id/imageView_time"
         android:src="@drawable/icon_time"
-        android:layout_below="@+id/MemoImageView"
+        android:layout_below="@+id/Memo_imageBar"
         android:layout_toLeftOf="@+id/TimeStamp"
         android:layout_marginRight="10dp"
         android:layout_marginTop="7dp" />

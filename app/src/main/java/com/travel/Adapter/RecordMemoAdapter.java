@@ -49,10 +49,10 @@ public class RecordMemoAdapter extends BaseAdapter {
 
         options = new DisplayImageOptions.Builder()
                 .showImageOnFail(R.drawable.error)
-                .showImageOnLoading(R.drawable.loading)
+                .showImageOnLoading(R.drawable.loading2)
                 .showImageForEmptyUri(R.drawable.empty)
-                .cacheInMemory()
-                .cacheOnDisc().build();
+                .cacheInMemory(false)
+                .cacheOnDisc(false).build();
         listener = new ImageLoadingListener() {
             @Override
             public void onLoadingStarted(String s, View view) {
@@ -79,13 +79,20 @@ public class RecordMemoAdapter extends BaseAdapter {
     @Override
     public int getCount() {
         int number = 0;
-        Cursor travelMemo_cursor = database.query("travelmemo", new String[]{"memo_no",
-                        "memo_title", "memo_content", "memo_img", "memo_latlng", "memo_time"},
+        Cursor trackRoute_cursor = database.query("trackRoute",
+                new String[]{"routesCounter", "track_no", "track_lat", "track_lng",
+                        "track_start", "track_title", "track_totaltime", "track_completetime"},
                 null, null, null, null, null);
-        if (travelMemo_cursor != null) {
-            number = travelMemo_cursor.getCount();
-            travelMemo_cursor.close();
+        if (trackRoute_cursor != null) {
+            if (trackRoute_cursor.getCount() != 0) {
+                trackRoute_cursor.moveToLast();
+                number = trackRoute_cursor.getInt(0);
+            }
+            trackRoute_cursor.close();
         }
+        database.close();
+        helper.close();
+
         return number;
     }
 

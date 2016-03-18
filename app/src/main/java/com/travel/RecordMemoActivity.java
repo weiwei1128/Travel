@@ -1,5 +1,7 @@
 package com.travel;
 
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
@@ -11,6 +13,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.travel.Adapter.RecordMemoAdapter;
+import com.travel.Utility.DataBaseHelper;
 import com.travel.Utility.Functions;
 
 import java.text.SimpleDateFormat;
@@ -20,7 +23,7 @@ import java.util.Date;
 public class RecordMemoActivity extends AppCompatActivity {
 
     ImageView backImg;
-    TextView  MemoTodayTime;
+    TextView  DateOfLastOne;
 
     private Button record_travel_button;
 
@@ -53,10 +56,27 @@ public class RecordMemoActivity extends AppCompatActivity {
             }
         });
 
-        MemoTodayTime = (TextView) findViewById(R.id.TodayTime);
-        SimpleDateFormat DateFormat = new SimpleDateFormat("yyyy/MM/dd");
-        Date date=new Date();
-        MemoTodayTime.setText(DateFormat.format(date));
+        DateOfLastOne = (TextView) findViewById(R.id.LastOneDate);
+        DataBaseHelper helper = new DataBaseHelper(getApplicationContext());
+        SQLiteDatabase database = helper.getWritableDatabase();
+        Cursor trackRoute_cursor = database.query("trackRoute",
+                new String[]{"routesCounter", "track_no", "track_lat", "track_lng",
+                        "track_start", "track_title", "track_totaltime", "track_completetime"},
+                "track_start=\"0\"", null, null, null, null, null);
+        if (trackRoute_cursor != null) {
+            if (trackRoute_cursor.getCount() != 0) {
+                trackRoute_cursor.moveToLast();
+                String dateString = trackRoute_cursor.getString(7);
+                DateOfLastOne.setText(dateString);
+            } else {
+                SimpleDateFormat DateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                Date date=new Date();
+                DateOfLastOne.setText(DateFormat.format(date));
+            }
+            trackRoute_cursor.close();
+        }
+        database.close();
+        helper.close();
 
         mlistView = (ListView) findViewById(R.id.recordmemo_listView);
 

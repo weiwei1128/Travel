@@ -24,7 +24,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
     public static DataBaseHelper getmInstance(Context ctx){
         //make sure do not accidentally leak Activity's context.
-        if(mInstance ==null){
+        if(mInstance == null){
             mInstance = new DataBaseHelper(ctx.getApplicationContext());
         }
         return mInstance;
@@ -93,14 +93,17 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 +"track_no INTEGER,"
                 +"track_lat BLOB,"
                 +"track_lng BLOB,"
-                +"track_start INTEGER"
+                +"track_start INTEGER,"
+                +"track_title TEXT,"
+                +"track_totaltime TEXT,"
+                +"track_completetime TEXT"
                 +");";
         db.execSQL(DATABASE_CREATE_TABLE_TRACKROUTE);
 
         //旅遊日誌
         String DATABASE_CREATE_TABLE_TRAVELMEMO = "create table travelMemo("
-                +"_ID INTEGER PRIMARY KEY,"+"memo_no TEXT,"
-                +"memo_title TEXT,"
+                +"_ID INTEGER PRIMARY KEY,"+"memo_routesCounter INTEGER,"
+                +"memo_trackNo INTEGER,"
                 +"memo_content TEXT,"
                 +"memo_img BLOB,"
                 +"memo_latlng BLOB,"

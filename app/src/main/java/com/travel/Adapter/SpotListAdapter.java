@@ -119,9 +119,10 @@ public class SpotListAdapter extends BaseAdapter implements Filterable {
 
         options = new DisplayImageOptions.Builder()
                 .showImageOnFail(R.drawable.error)
+                .showImageOnLoading(R.drawable.loading2)
                 .showImageForEmptyUri(R.drawable.empty)
-                .cacheInMemory()
-                .cacheOnDisc().build();
+                .cacheInMemory(false)
+                .cacheOnDisc(false).build();
         listener = new ImageLoadingListener() {
             @Override
             public void onLoadingStarted(String s, View view) {

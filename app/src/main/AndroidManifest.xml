@@ -129,6 +129,11 @@
             android:enabled="true"
             android:exported="true" />
 
+        <service
+            android:name=".Utility.LoadApiService"
+            android:enabled="true"
+            android:exported="true" >
+        </service>
 
         <activity
             android:name=".ShopRecordActivity"

@@ -73,8 +73,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="TodayTime"
-        android:id="@+id/TodayTime"
+        android:text="LastOneDate"
+        android:id="@+id/LastOneDate"
         android:layout_below="@+id/recordmemo_btn_Layout"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="10dp"
@@ -83,7 +83,7 @@
     <ListView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/TodayTime"
+        android:layout_below="@+id/LastOneDate"
         android:id="@+id/recordmemo_listView"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true" />
