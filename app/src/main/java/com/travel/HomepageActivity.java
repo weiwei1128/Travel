@@ -28,6 +28,8 @@ import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.travel.ImageSlide.MainImageFragment;
 import com.travel.Utility.DataBaseHelper;
 import com.travel.Utility.Functions;
+import com.travel.Utility.HttpService;
+import com.travel.Utility.LoadApiService;
 import com.travel.Utility.MyTextview;
 
 public class HomepageActivity extends AppCompatActivity {
@@ -44,6 +46,7 @@ public class HomepageActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         //判斷是否該關閉程式
+        /*
         DataBaseHelper helper = new DataBaseHelper(HomepageActivity.this);
         SQLiteDatabase database = helper.getWritableDatabase();
         Cursor member_cursor = database.query("member", new String[]{"account", "password",
@@ -54,6 +57,7 @@ public class HomepageActivity extends AppCompatActivity {
             database.close();
             finish();
         }
+        */
         super.onResume();
     }
 
@@ -64,10 +68,18 @@ public class HomepageActivity extends AppCompatActivity {
         ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(HomepageActivity.this)
                 .build();
         ImageLoader.getInstance().init(config);
+        //0317 搬家搬家
+        Intent intent_LoadApiService = new Intent(HomepageActivity.this, LoadApiService.class);
+        startService(intent_LoadApiService);
 
+        Intent intent = new Intent(HomepageActivity.this, HttpService.class);
+        startService(intent);
+        //0317
         //判斷是否該關閉程式
+
         DataBaseHelper helper = new DataBaseHelper(HomepageActivity.this);
         SQLiteDatabase database = helper.getWritableDatabase();
+        /*
         Cursor member_cursor = database.query("member", new String[]{"account", "password",
                 "name", "phone", "email", "addr"}, null, null, null, null, null);
         if (member_cursor == null || member_cursor.getCount() == 0) {
@@ -76,6 +88,7 @@ public class HomepageActivity extends AppCompatActivity {
             database.close();
             finish();
         }
+        */
         linearLayout = (LinearLayout) findViewById(R.id.main_main_layout);
 
         //Goodthing

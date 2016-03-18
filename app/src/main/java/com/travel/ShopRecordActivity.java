@@ -75,7 +75,7 @@ public class ShopRecordActivity extends AppCompatActivity {
                     "order_time", "order_name", "order_phone", "order_email",
                     "order_money", "order_state"}, null, null, null, null, null);
             String Order_id;
-            if(order_cursor!=null&&order_cursor.getCount()>=position){
+            if (order_cursor != null && order_cursor.getCount() >= position) {
                 order_cursor.moveToPosition(position);
                 Order_id = order_cursor.getString(0);
                 Bundle bundle = new Bundle();
@@ -83,9 +83,9 @@ public class ShopRecordActivity extends AppCompatActivity {
                 Functions.go(false, ShopRecordActivity.this, ShopRecordActivity.this,
                         ShopRecordItemActivity.class, bundle);
             }
-            if(order_cursor!=null)
+            if (order_cursor != null)
                 order_cursor.close();
-            if(database.isOpen())
+            if (database.isOpen())
                 database.close();
 
 
