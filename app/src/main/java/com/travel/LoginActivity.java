@@ -79,13 +79,12 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.login_activity);
         //globalVariable = (GlobalVariable) getApplicationContext();
 
-        Intent intent_LoadApiService = new Intent(LoginActivity.this, LoadApiService.class);
-        startService(intent_LoadApiService);
+        Intent intent_LoadApi = new Intent(LoginActivity.this, LoadApiService.class);
+        startService(intent_LoadApi);
 
         Intent intent = new Intent(LoginActivity.this, HttpService.class);
         startService(intent);
-        //Intent intent = new Intent(LoginActivity.this, HttpService.class);
-        //startService(intent);
+
         /////////// 檢查登入狀態
         checkLogin();
 

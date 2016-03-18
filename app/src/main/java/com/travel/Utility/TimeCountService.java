@@ -31,8 +31,8 @@ public class TimeCountService extends Service {
         public void run() {
             Long now = System.currentTimeMillis();
             Long spent = now - start_time;
-            Log.e("2.4", "--------------");
-            Log.e("2.4", "總時間：" + ((spent / 1000) / 60) + "分" + ((spent / 1000) % 60) + "秒");
+            Log.e("3/16", "--------------");
+            Log.e("3/16", "總時間：" + ((spent / 1000) / 60) + "分" + ((spent / 1000) % 60) + "秒");
             //send for UI update
             Intent intent = new Intent(BROADCAST_ACTION);
             intent.putExtra("spent", spent);
