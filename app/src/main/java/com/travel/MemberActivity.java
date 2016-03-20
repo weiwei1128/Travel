@@ -28,8 +28,10 @@ public class MemberActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.member_activity);
+
         DataBaseHelper helper = new DataBaseHelper(MemberActivity.this);
         SQLiteDatabase database = helper.getWritableDatabase();
+
         Cursor member_cursor = database.query("member", new String[]{"account", "password",
                 "name", "phone", "email", "addr"}, null, null, null, null, null);
         if (member_cursor == null || member_cursor.getCount() == 0) {
@@ -37,8 +39,10 @@ public class MemberActivity extends AppCompatActivity {
                 member_cursor.close();
             if (database.isOpen())
                 database.close();
+            Functions.go(false,MemberActivity.this,MemberActivity.this,LoginActivity.class,null);
             finish();
         }
+
         //======= MemberData =======//
         NameText = (TextView) findViewById(R.id.member_name_text);
         PhoneText = (TextView) findViewById(R.id.member_phone_text);
@@ -154,7 +158,7 @@ public class MemberActivity extends AppCompatActivity {
 
         //=======Logout=======//
         logoutLayout = (LinearLayout) findViewById(R.id.member_logout_layout);
-        /*
+
         logoutLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -183,7 +187,7 @@ public class MemberActivity extends AppCompatActivity {
                     database.close();
             }
         });
-        */
+
     }
 
     DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
