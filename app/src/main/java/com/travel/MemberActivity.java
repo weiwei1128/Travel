@@ -81,7 +81,7 @@ public class MemberActivity extends AppCompatActivity {
         homeImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Functions.go(false, MemberActivity.this, MemberActivity.this, HomepageActivity.class, null);
+//                Functions.go(false, MemberActivity.this, MemberActivity.this, HomepageActivity.class, null);
                 finish();
             }
         });

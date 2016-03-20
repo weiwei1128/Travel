@@ -43,6 +43,7 @@ public class HomepageActivity extends AppCompatActivity {
     TextView memberText, shoprecordText, moreText;
     ImageView memberImg, shoprecordImg, moreImg;
     MyTextview textview;
+    Bundle bundle;
 
 
     //3.10 Hua
@@ -80,7 +81,8 @@ public class HomepageActivity extends AppCompatActivity {
 
         UI();
         registerReceiver(getNewsBroadcast, new IntentFilter("news"));
-
+        registerReceiver(getNewsBroadcast, new IntentFilter("banner"));
+        bundle = savedInstanceState;
         //TODO 跑馬燈 需要做連結?
         String message = "讀取資料中";
         /*
@@ -108,7 +110,7 @@ public class HomepageActivity extends AppCompatActivity {
         /////跑馬燈
 
         FragmentManager fragmentManager = getSupportFragmentManager();
-        if (savedInstanceState != null) {
+        if (bundle != null) {
             if (fragmentManager.findFragmentByTag(MainImageFragment.ARG_ITEM_ID) != null) {
                 homefragment = (MainImageFragment) fragmentManager
                         .findFragmentByTag(MainImageFragment.ARG_ITEM_ID);
@@ -118,7 +120,6 @@ public class HomepageActivity extends AppCompatActivity {
             homefragment = new MainImageFragment();
             switchContent(homefragment, MainImageFragment.ARG_ITEM_ID);
         }
-
 
     }
 
@@ -139,6 +140,19 @@ public class HomepageActivity extends AppCompatActivity {
                         news_cursor.close();
 
                     textview.setText(message);
+                }
+                if (intent.getBooleanExtra("banner", false)) {
+//                    HomepageActivity.this.onCreate(null);
+                    /*
+                    FragmentManager fragmentManager = getSupportFragmentManager();
+                    if (fragmentManager.findFragmentByTag(MainImageFragment.ARG_ITEM_ID) != null) {
+                        fragmentManager
+                                .findFragmentByTag(MainImageFragment.ARG_ITEM_ID).
+                        homefragment = (MainImageFragment) fragmentManager
+                                .findFragmentByTag(MainImageFragment.ARG_ITEM_ID);
+                        contentFragment = homefragment;
+                    }*/
+
                 }
             }
         }

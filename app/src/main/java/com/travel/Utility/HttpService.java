@@ -135,7 +135,9 @@ public class HttpService extends Service {
 
         @Override
         protected void onPostExecute(String s) {
-
+            Intent intent = new Intent("banner");
+            intent.putExtra("banner", true);
+            sendBroadcast(intent);
             super.onPostExecute(s);
 
         }
