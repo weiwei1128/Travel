@@ -23,24 +23,46 @@ public class MemberActivity extends AppCompatActivity {
     ImageView homeImg, shoprecordImg, moreImg;
     LinearLayout homeLayout, shoprecordLayout, moreLayout, logoutLayout;
     TextView homeText, shoprecordText, moreText, NameText, PhoneText, EmailText, AddrText;
+    AlertDialog goLogin;
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (!Functions.ifLogin(MemberActivity.this)) {
+            // 設置對話框標題
+            goLogin.setTitle("系統提示");
+            goLogin.setCancelable(false);
+            // 設置對話框消息
+            goLogin.setMessage("請先登入");
+            // 添加選擇按鈕並注冊監聽
+            goLogin.setButton("確定", listenerLogin);
+            goLogin.setButton2("取消", listenerLogin);
+            // 顯示對話框
+            if (!goLogin.isShowing())
+                goLogin.show();
+        }else {
+            memberData();
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.member_activity);
+        goLogin = new AlertDialog.Builder(MemberActivity.this).create();
+        if (!Functions.ifLogin(MemberActivity.this)) {
 
-        DataBaseHelper helper = new DataBaseHelper(MemberActivity.this);
-        SQLiteDatabase database = helper.getWritableDatabase();
-
-        Cursor member_cursor = database.query("member", new String[]{"account", "password",
-                "name", "phone", "email", "addr"}, null, null, null, null, null);
-        if (member_cursor == null || member_cursor.getCount() == 0) {
-            if (member_cursor != null)
-                member_cursor.close();
-            if (database.isOpen())
-                database.close();
-            Functions.go(false,MemberActivity.this,MemberActivity.this,LoginActivity.class,null);
-            finish();
+            // 設置對話框標題
+            goLogin.setTitle("系統提示");
+            goLogin.setCancelable(false);
+            // 設置對話框消息
+            goLogin.setMessage("請先登入");
+            // 添加選擇按鈕並注冊監聽
+            goLogin.setButton("確定", listenerLogin);
+            goLogin.setButton2("取消", listenerLogin);
+            // 顯示對話框
+            if (!goLogin.isShowing())
+                goLogin.show();
         }
 
         //======= MemberData =======//
@@ -194,6 +216,7 @@ public class MemberActivity extends AppCompatActivity {
         public void onClick(DialogInterface dialog, int which) {
             switch (which) {
                 case AlertDialog.BUTTON_POSITIVE:// "確認"按鈕退出程序
+
                     DataBaseHelper helper = new DataBaseHelper(MemberActivity.this);
                     SQLiteDatabase database = helper.getWritableDatabase();
                     database.delete("member", null, null);
@@ -210,6 +233,22 @@ public class MemberActivity extends AppCompatActivity {
 
                     break;
                 case AlertDialog.BUTTON_NEGATIVE:// "取消"第二個按鈕取消對話框
+                    break;
+                default:
+                    break;
+            }
+        }
+    };
+
+
+    DialogInterface.OnClickListener listenerLogin = new DialogInterface.OnClickListener() {
+        public void onClick(DialogInterface dialog, int which) {
+            switch (which) {
+                case AlertDialog.BUTTON_POSITIVE:// "確認"按鈕前往登入
+                    Functions.go(false, MemberActivity.this, MemberActivity.this, LoginActivity.class, null);
+                    break;
+                case AlertDialog.BUTTON_NEGATIVE:// "取消"第二個按鈕取消對話框
+                    Functions.go(true, MemberActivity.this, MemberActivity.this, HomepageActivity.class, null);
                     break;
                 default:
                     break;
