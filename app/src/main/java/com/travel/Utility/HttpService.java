@@ -11,6 +11,7 @@ import android.os.AsyncTask;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.widget.TextView;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -36,8 +37,8 @@ import java.util.Map;
  */
 public class HttpService extends Service {
     Context context;
-    //GlobalVariable globalVariable;
 
+    //GlobalVariable globalVariable;
     @Override
     public IBinder onBind(Intent intent) {
         return null;
@@ -112,9 +113,9 @@ public class HttpService extends Service {
                 e2.printStackTrace();
             }
 
-            Log.d("3.7", "BannerService result:" + result);
+//            Log.d("3.7", "BannerService result:" + result);
             if (jsonArray != null) {
-                Log.d("3.7", "BannerService result:" + jsonArray.length());
+//                Log.d("3.7", "BannerService result:" + jsonArray.length());
                 SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.putInt("count", jsonArray.length());
@@ -134,6 +135,7 @@ public class HttpService extends Service {
 
         @Override
         protected void onPostExecute(String s) {
+
             super.onPostExecute(s);
 
         }
@@ -334,6 +336,10 @@ public class HttpService extends Service {
         @Override
         protected void onPostExecute(Map<String, String[][]> s) {
             if (s != null) {
+                Intent intent = new Intent("news");
+                intent.putExtra("news", true);
+                sendBroadcast(intent);
+
                 String[][] jsonObjects = s.get("item");
 //                Log.e("3.10","special_activity item size:"+jsonObjects.length);
                 DataBaseHelper helper = new DataBaseHelper(context);
