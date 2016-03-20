@@ -79,16 +79,7 @@ public class HomepageActivity extends AppCompatActivity {
 
         DataBaseHelper helper = new DataBaseHelper(HomepageActivity.this);
         SQLiteDatabase database = helper.getWritableDatabase();
-        /*
-        Cursor member_cursor = database.query("member", new String[]{"account", "password",
-                "name", "phone", "email", "addr"}, null, null, null, null, null);
-        if (member_cursor == null || member_cursor.getCount() == 0) {
-            if (member_cursor != null)
-                member_cursor.close();
-            database.close();
-            finish();
-        }
-        */
+
         linearLayout = (LinearLayout) findViewById(R.id.main_main_layout);
 
         //Goodthing
