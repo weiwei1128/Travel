@@ -631,9 +631,9 @@ public class LoginActivity extends AppCompatActivity {
                 a.schedule(new TimerTask() {
                     @Override
                     public void run() {
-                        Intent intent = new Intent();
-                        intent.setClass(LoginActivity.this, HomepageActivity.class);
-                        startActivity(intent);
+//                        Intent intent = new Intent();
+//                        intent.setClass(LoginActivity.this, HomepageActivity.class);
+//                        startActivity(intent);
                         finish();
                     }
                 },

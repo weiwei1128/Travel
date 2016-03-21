@@ -2,9 +2,10 @@ package com.travel.Utility;
 
 import android.app.Activity;
 import android.app.ActivityManager;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Matrix;
@@ -153,5 +154,15 @@ public class Functions {
         }
     }
 
+    public static Boolean ifLogin(Context context) {
+        DataBaseHelper helper = new DataBaseHelper(context);
+        SQLiteDatabase database = helper.getWritableDatabase();
 
+        Cursor member_cursor = database.query("member", new String[]{"account", "password",
+                "name", "phone", "email", "addr"}, null, null, null, null, null);
+        if (member_cursor == null || member_cursor.getCount() == 0)
+            return false;
+        else return true;
+
+    }
 }

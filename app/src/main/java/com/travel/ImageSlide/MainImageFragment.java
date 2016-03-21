@@ -236,9 +236,9 @@ public class MainImageFragment extends Fragment {
         protected List<Product> doInBackground(String... params) {
             //0307
             SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-            Log.d("3.7", "Image Slide!!!" + sharedPreferences.getInt("count", 0));
+//            Log.d("3.7", "Image Slide!!!" + sharedPreferences.getInt("count", 0));
             for(int i=0;i<sharedPreferences.getInt("count", 0);i++){
-                Log.d("3.7", "!!!" + sharedPreferences.getString("img"+ i, ""));
+//                Log.d("3.7", "!!!" + sharedPreferences.getString("img"+ i, ""));
                 String imgUrl=sharedPreferences.getString("img"+ i, "");
                 if(!imgUrl.equals("")) {
                     product = new Product();
