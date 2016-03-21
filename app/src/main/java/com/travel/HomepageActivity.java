@@ -3,8 +3,11 @@ package com.travel;
 /*/Users/wei/android-sdks*/
 
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
@@ -39,6 +42,9 @@ public class HomepageActivity extends AppCompatActivity {
             memberLayout, shoprecordLayout, moreLayout, serviceLayout, goodthingLayout;
     TextView memberText, shoprecordText, moreText;
     ImageView memberImg, shoprecordImg, moreImg;
+    MyTextview textview;
+    Bundle bundle;
+
 
     //3.10 Hua
     GlobalVariable globalVariable;
@@ -46,19 +52,16 @@ public class HomepageActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         //判斷是否該關閉程式
-        /*
-        DataBaseHelper helper = new DataBaseHelper(HomepageActivity.this);
-        SQLiteDatabase database = helper.getWritableDatabase();
-        Cursor member_cursor = database.query("member", new String[]{"account", "password",
-                "name", "phone", "email", "addr"}, null, null, null, null, null);
-        if (member_cursor == null || member_cursor.getCount() == 0) {
-            if (member_cursor != null)
-                member_cursor.close();
-            database.close();
-            finish();
-        }
-        */
+//        if(!Functions.ifLogin(HomepageActivity.this))
+//            finish();
         super.onResume();
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (getNewsBroadcast != null)
+            unregisterReceiver(getNewsBroadcast);
+        super.onDestroy();
     }
 
     @Override
@@ -75,20 +78,87 @@ public class HomepageActivity extends AppCompatActivity {
         Intent intent = new Intent(HomepageActivity.this, HttpService.class);
         startService(intent);
         //0317
-        //判斷是否該關閉程式
 
-        DataBaseHelper helper = new DataBaseHelper(HomepageActivity.this);
-        SQLiteDatabase database = helper.getWritableDatabase();
+        UI();
+        registerReceiver(getNewsBroadcast, new IntentFilter("news"));
+        registerReceiver(getNewsBroadcast, new IntentFilter("banner"));
+        bundle = savedInstanceState;
+        //TODO 跑馬燈 需要做連結?
+        String message = "讀取資料中";
         /*
-        Cursor member_cursor = database.query("member", new String[]{"account", "password",
-                "name", "phone", "email", "addr"}, null, null, null, null, null);
-        if (member_cursor == null || member_cursor.getCount() == 0) {
-            if (member_cursor != null)
-                member_cursor.close();
-            database.close();
-            finish();
+        Cursor news_cursor = database.query("news", new String[]{"title"}, null, null, null, null, null);
+        if (news_cursor != null && news_cursor.getCount() > 0) {
+            news_cursor.moveToFirst();
+            message = news_cursor.getString(0);
         }
+        if (news_cursor != null)
+            news_cursor.close();
         */
+        textview = new MyTextview(this);
+        textview.setText(message);
+        textview.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        params.gravity = Gravity.CENTER_VERTICAL;
+        linearLayout.addView(textview,
+                new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
+        );
+
+        //little trick
+        ((LinearLayout.LayoutParams) textview.getLayoutParams()).gravity = Gravity.CENTER_VERTICAL;
+        textview.scrollText(20);////開始跑囉
+        textview.setTextColor(Color.BLACK);
+        /////跑馬燈
+
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        if (bundle != null) {
+            if (fragmentManager.findFragmentByTag(MainImageFragment.ARG_ITEM_ID) != null) {
+                homefragment = (MainImageFragment) fragmentManager
+                        .findFragmentByTag(MainImageFragment.ARG_ITEM_ID);
+                contentFragment = homefragment;
+            }
+        } else {
+            homefragment = new MainImageFragment();
+            switchContent(homefragment, MainImageFragment.ARG_ITEM_ID);
+        }
+
+    }
+
+    private BroadcastReceiver getNewsBroadcast = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent != null) {
+                if (intent.getBooleanExtra("news", false)) {
+                    DataBaseHelper helper = new DataBaseHelper(HomepageActivity.this);
+                    SQLiteDatabase database = helper.getWritableDatabase();
+                    String message = "讀取資料中";
+                    Cursor news_cursor = database.query("news", new String[]{"title"}, null, null, null, null, null);
+                    if (news_cursor != null && news_cursor.getCount() > 0) {
+                        news_cursor.moveToFirst();
+                        message = news_cursor.getString(0);
+                    }
+                    if (news_cursor != null)
+                        news_cursor.close();
+
+                    textview.setText(message);
+                }
+                if (intent.getBooleanExtra("banner", false)) {
+//                    HomepageActivity.this.onCreate(null);
+                    /*
+                    FragmentManager fragmentManager = getSupportFragmentManager();
+                    if (fragmentManager.findFragmentByTag(MainImageFragment.ARG_ITEM_ID) != null) {
+                        fragmentManager
+                                .findFragmentByTag(MainImageFragment.ARG_ITEM_ID).
+                        homefragment = (MainImageFragment) fragmentManager
+                                .findFragmentByTag(MainImageFragment.ARG_ITEM_ID);
+                        contentFragment = homefragment;
+                    }*/
+
+                }
+            }
+        }
+    };
+
+    void UI() {
         linearLayout = (LinearLayout) findViewById(R.id.main_main_layout);
 
         //Goodthing
@@ -247,45 +317,6 @@ public class HomepageActivity extends AppCompatActivity {
         });
         //======= MORE =======//
 
-
-        //TODO 跑馬燈 需要做連結?
-        String message = "讀取資料錯誤";
-        Cursor news_cursor = database.query("news", new String[]{"title"}, null, null, null, null, null);
-        if (news_cursor != null && news_cursor.getCount() > 0) {
-            news_cursor.moveToFirst();
-            message = news_cursor.getString(0);
-        }
-        if (news_cursor != null)
-            news_cursor.close();
-        MyTextview textview = new MyTextview(this);
-        textview.setText(message);
-        textview.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        params.gravity = Gravity.CENTER_VERTICAL;
-        linearLayout.addView(textview,
-                new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
-        );
-
-        //little trick
-        ((LinearLayout.LayoutParams) textview.getLayoutParams()).gravity = Gravity.CENTER_VERTICAL;
-        textview.scrollText(20);////開始跑囉
-        textview.setTextColor(Color.BLACK);
-        /////跑馬燈
-
-
-        ////ImageSlide
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        if (savedInstanceState != null) {
-            if (fragmentManager.findFragmentByTag(MainImageFragment.ARG_ITEM_ID) != null) {
-                homefragment = (MainImageFragment) fragmentManager
-                        .findFragmentByTag(MainImageFragment.ARG_ITEM_ID);
-                contentFragment = homefragment;
-            }
-        } else {
-            homefragment = new MainImageFragment();
-            switchContent(homefragment, MainImageFragment.ARG_ITEM_ID);
-        }
-        ////ImageSlide
 
     }
 
