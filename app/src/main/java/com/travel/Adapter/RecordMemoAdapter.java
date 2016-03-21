@@ -5,16 +5,12 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.graphics.Typeface;
+import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.BaseAdapter;
-import android.widget.Gallery;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -45,9 +41,10 @@ public class RecordMemoAdapter extends BaseAdapter {
 
     private Integer RouteConter = 1;
 
+    private Integer mDotsCount;
     private ArrayList<Bitmap> bitmapArrayList = new ArrayList<Bitmap>();
     private List<ArrayList<Bitmap>> listOfBitmapArray = new ArrayList<ArrayList<Bitmap>>();
-    private int mDotsCount;
+
 
     public RecordMemoAdapter(Context mcontext) {
         this.context = mcontext;
@@ -118,8 +115,7 @@ public class RecordMemoAdapter extends BaseAdapter {
         if (convertView == null) {
             convertView = inflater.inflate(R.layout.record_memo_list,parent,false);
             mViewHolder = new ViewHolder();
-            mViewHolder.gallery = (Gallery) convertView.findViewById(R.id.gallery);
-            mViewHolder.mDotsLayout = (LinearLayout) convertView.findViewById(R.id.image_count);
+            mViewHolder.MemoViewPager = (ViewPager) convertView.findViewById(R.id.MemoViewPager);
             //mViewHolder.MemoImg = (ImageView) convertView.findViewById(R.id.MemoImageView);
             mViewHolder.MemoTitle = (TextView) convertView.findViewById(R.id.Title);
             mViewHolder.MemoTotalTime = (TextView) convertView.findViewById(R.id.TimeStamp);
@@ -147,7 +143,7 @@ public class RecordMemoAdapter extends BaseAdapter {
 
                 Cursor memo_cursor = database.query("travelmemo", new String[]{"memo_routesCounter", "memo_trackNo",
                                 "memo_content", "memo_img", "memo_latlng", "memo_time"},
-                        "memo_routesCounter=\"" + RouteConter + "\"", null, null, null, null, null);
+                        "memo_routesCounter=\"" + RouteConter + "\" AND memo_content!=\"null\"", null, null, null, null, null);
                 if (memo_cursor != null) {
                     if (memo_cursor.getCount() != 0) {
                         memo_cursor.moveToFirst();
@@ -155,9 +151,9 @@ public class RecordMemoAdapter extends BaseAdapter {
                     } else {
                         mViewHolder.MemoString.setText("");
                     }
+                    memo_cursor.close();
                 }
 
-                // TODO need to modify 二微陣列
                 Cursor img_cursor = database.query("travelmemo", new String[]{"memo_routesCounter", "memo_trackNo",
                                 "memo_content", "memo_img", "memo_latlng", "memo_time"},
                         "memo_routesCounter=\"" + RouteConter + "\" AND memo_img!=\"null\"", null, null, null, null, null);
@@ -172,70 +168,37 @@ public class RecordMemoAdapter extends BaseAdapter {
                             byte[] d = img_cursor.getBlob(3);
                             bitmapArrayList.add(BitmapFactory.decodeByteArray(d, 0, d.length));
                         }
-                        // TODO 前後滑動會重複新增!
-                        //if (listOfBitmapArray.size() != 0)
-                            //listOfBitmapArray.get(position).clear();
+                        Log.e("3/19_", "position: " + position);
                         listOfBitmapArray.add(position, bitmapArrayList);
                     } else {
-                        Log.e("3/18_", "img_cursor = 0");
+                        bitmapArrayList.clear();
+                        listOfBitmapArray.add(position, bitmapArrayList);
+                        Log.e("3/18_", "img_cursor = 0 " + listOfBitmapArray.get(position).toString());
                     }
+                    MemoViewPagerAdapter adapter = new MemoViewPagerAdapter(context, position, listOfBitmapArray);
+                    mViewHolder.MemoViewPager.setAdapter(adapter);
+                    //adapter.notifyDataSetChanged();
                     img_cursor.close();
                 } else {
                     Log.e("3/18_", "img_cursor = null");
                 }
 
-                mViewHolder.gallery.setAdapter(new MemoImageSlideAdapter(context, position, listOfBitmapArray));
-                mDotsCount = mViewHolder.gallery.getAdapter().getCount();
-                mViewHolder.mDotsText = new TextView[mDotsCount];
-
-                for (int i = 0; i < mDotsCount; i++) {
-                    mViewHolder.mDotsText[i] = new TextView(context);
-                    mViewHolder.mDotsText[i].setText(".");
-                    mViewHolder.mDotsText[i].setTextSize(45);
-                    mViewHolder.mDotsText[i].setTypeface(null, Typeface.BOLD);
-                    mViewHolder.mDotsText[i].setTextColor(android.graphics.Color.GRAY);
-                    mViewHolder.mDotsLayout.addView(mViewHolder.mDotsText[i]);
-                }
-
-                mViewHolder.gallery.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                    @Override
-                    public void onItemSelected(AdapterView adapterView, View view, int pos, long l) {
-
-                        for (int i = 0; i < mDotsCount; i++) {
-                            mViewHolder.mDotsText[i].setTextColor(Color.GRAY);
-                        }
-
-                        mViewHolder.mDotsText[pos].setTextColor(Color.WHITE);
-                    }
-
-                    @Override
-                    public void onNothingSelected(AdapterView adapterView) {
-
-                    }
-                });
-
-                if (memo_cursor != null)
-                    memo_cursor.close();
-
-                if (img_cursor != null)
-                    img_cursor.close();
             }
+            trackRoute_cursor.close();
         }
 
 /*
         if (mViewHolder.MemoImg != null)
             mViewHolder.MemoImg.setScaleType(ImageView.ScaleType.CENTER_CROP);
 */
-        if (trackRoute_cursor != null)
-            trackRoute_cursor.close();
 
         return convertView;
     }
 
     private static class ViewHolder {
-        Gallery gallery;
         //ImageView MemoImg;
-        TextView mDotsText[], MemoTitle, MemoTotalTime, MemoString;
-        LinearLayout mDotsLayout;
+        ViewPager MemoViewPager;
+        TextView MemoTitle, MemoTotalTime, MemoString;
+        //LinearLayout mDotsLayout;
     }
 }

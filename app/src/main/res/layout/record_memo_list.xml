@@ -3,32 +3,21 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- This is the Gallery -->
-    <Gallery xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/gallery"
-        android:layout_width="fill_parent"
-        android:layout_height="250dp"/>
-
-    <!-- This LinearLayout if for the dots -->
-    <LinearLayout android:id="@+id/image_count"
-        android:layout_below="@+id/gallery"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center"
-        android:background="#00000000">
-    </LinearLayout>
+    <android.support.v4.view.ViewPager
+        android:layout_width="match_parent"
+        android:layout_height="350dp"
+        android:id="@+id/MemoViewPager"/>
 
     <TextView
-        android:layout_width="250dp"
+        android:layout_width="240dp"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="Title"
         android:id="@+id/Title"
-        android:layout_below="@+id/image_count"
+        android:layout_below="@+id/MemoViewPager"
         android:layout_alignParentLeft="true"
-        android:layout_marginLeft="5dp"
-        android:layout_marginTop="5dp" />
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="7dp" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -36,20 +25,20 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="TimeStamp"
         android:id="@+id/TimeStamp"
-        android:layout_below="@+id/image_count"
+        android:layout_below="@+id/MemoViewPager"
         android:layout_alignParentRight="true"
-        android:layout_marginRight="5dp"
-        android:layout_marginTop="5dp" />
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="8dp" />
 
     <ImageView
         android:layout_width="20dp"
         android:layout_height="20dp"
         android:id="@+id/imageView_time"
         android:src="@drawable/icon_time"
-        android:layout_below="@+id/image_count"
+        android:layout_below="@+id/MemoViewPager"
         android:layout_toLeftOf="@+id/TimeStamp"
         android:layout_marginRight="10dp"
-        android:layout_marginTop="7dp" />
+        android:layout_marginTop="10dp" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -61,6 +50,6 @@
         android:layout_alignParentLeft="true"
         android:layout_marginLeft="25dp"
         android:layout_marginTop="5dp"
-        android:layout_marginBottom="5dp" />
+        android:layout_marginBottom="15dp" />
 
 </RelativeLayout>
