@@ -19,7 +19,6 @@ import android.widget.Toast;
 
 import com.travel.Adapter.BuyFragmentViewPagerAdapter;
 import com.travel.Utility.DataBaseHelper;
-import com.travel.Utility.FlowLayout;
 import com.travel.Utility.Functions;
 
 import java.util.ArrayList;
@@ -32,10 +31,8 @@ public class BuyActivity extends AppCompatActivity {
     DataBaseHelper helper;
     SQLiteDatabase database;
     ImageView backImg, ListImg;
-    //0307
-    LinearLayout linearLayout;
-    int count = 0;
-    public ArrayList<TextView> textViews = new ArrayList<>();
+    int count = 0, pageNo = 1, pages = 0,minus = pageNo-1;
+    TextView number, lastPage, nextPage;
 
     @Override
     protected void onResume() {
@@ -56,21 +53,6 @@ public class BuyActivity extends AppCompatActivity {
         super.onResume();
     }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-    }
-
-    @Override
-    protected void onStart() {
-        Log.e("3.10", "buyActivity onStart!");
-        super.onStart();
-    }
-
-    @Override
-    protected void onRestart() {
-        super.onRestart();
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,24 +60,18 @@ public class BuyActivity extends AppCompatActivity {
         setContentView(R.layout.buy_activity_new);
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        backImg = (ImageView) findViewById(R.id.buy_backImg);
-        ListImg = (ImageView) findViewById(R.id.buy_listImg);
-        viewPager = (ViewPager) findViewById(R.id.buy_viewpager);
-        ListImg.setVisibility(View.INVISIBLE);
-        backImg.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Functions.go(true, BuyActivity.this, BuyActivity.this, HomepageActivity.class, null);
-            }
-        });
+        UI();
 
-        int howmany = sharedPreferences.getInt("InBuyList", 0);
+
         helper = new DataBaseHelper(BuyActivity.this);
         database = helper.getWritableDatabase();
         Cursor goods_cursor = database.query("goods", new String[]{"totalCount", "goods_id", "goods_title",
                 "goods_url", "goods_money", "goods_content", "goods_addtime"}, null, null, null, null, null);
-
-
+        if (goods_cursor != null) {
+            count = goods_cursor.getCount();
+            goods_cursor.close();
+        }
+        int howmany = sharedPreferences.getInt("InBuyList", 0);
         if (howmany > 0) {
             ListImg.setVisibility(View.VISIBLE);
             ListImg.setOnClickListener(new View.OnClickListener() {
@@ -107,32 +83,26 @@ public class BuyActivity extends AppCompatActivity {
             });
         }
 
-        if (goods_cursor != null) {
-            count = goods_cursor.getCount();
-            goods_cursor.close();
-        }
 //        Log.d("3.7", "" + count);
-        int pages = 0;
+
         if (count % 10 > 0)
             pages = (count / 10) + 1;
         else pages = (count / 10);
 
 
         //fragment(i) -> i代表第幾頁
-        FlowLayout layout = new FlowLayout(BuyActivity.this);
-        layout = (FlowLayout) findViewById(R.id.buy_flowlayout);
+        LinearLayout layout = (LinearLayout) findViewById(R.id.buy_textLayout);
+        TextView textView = new TextView(this);
+        textView.setText("/" + pages);
+        textView.setTextColor((Color.parseColor("#000000")));
+        number = new TextView(this);
+        number.setText("1");
+        number.setTextColor((Color.parseColor("#FF0088")));
+        layout.addView(number);
+        layout.addView(textView);
 
         for (int i = 0; i < pages; i++) {
             fragments.add(new BuyFragment(i + 1));
-            TextView number2 = new TextView(this);
-            number2.setText(i + 1 + "  ");
-            number2.setTextColor(getResources().getColor(R.color.black));
-            if (i == 0) {
-                number2.setTextColor(getResources().getColor(R.color.peach));
-            }
-            textViews.add(number2);
-            layout.addView(number2);
-
         }
 
 
@@ -146,6 +116,35 @@ public class BuyActivity extends AppCompatActivity {
 //        Log.e("3.8", "currentItem:" + viewPager.getCurrentItem() + "" + adapter.getCurrentPosition());
     }
 
+    void UI() {
+        lastPage = (TextView) findViewById(R.id.lastpage_text);
+        lastPage.setVisibility(View.INVISIBLE);
+        nextPage = (TextView) findViewById(R.id.nextpage_text);
+        backImg = (ImageView) findViewById(R.id.buy_backImg);
+        ListImg = (ImageView) findViewById(R.id.buy_listImg);
+        viewPager = (ViewPager) findViewById(R.id.buy_viewpager);
+        ListImg.setVisibility(View.INVISIBLE);
+        backImg.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Functions.go(true, BuyActivity.this, BuyActivity.this, HomepageActivity.class, null);
+            }
+        });
+        lastPage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                viewPager.setCurrentItem(pageNo-2);
+            }
+        });
+        nextPage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                viewPager.setCurrentItem(pageNo);
+
+            }
+        });
+    }
+
     private class PageListener implements ViewPager.OnPageChangeListener {
         @Override
         public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -153,10 +152,16 @@ public class BuyActivity extends AppCompatActivity {
         }
 
         public void onPageSelected(int position) {
-//            Log.e("3.8", "**********onPageSelected" + position);
-            for (int i = 0; i < textViews.size(); i++)
-                textViews.get(i).setTextColor(Color.parseColor("#000000"));
-            textViews.get(position).setTextColor(Color.parseColor("#FF0088"));
+            pageNo = position + 1;
+            if (pageNo == pages)
+                nextPage.setVisibility(View.INVISIBLE);
+            else nextPage.setVisibility(View.VISIBLE);
+            if (pageNo == 1)
+                lastPage.setVisibility(View.INVISIBLE);
+            else lastPage.setVisibility(View.VISIBLE);
+            minus = pageNo-1;
+            String get = String.valueOf(position + 1);
+            number.setText(get);
         }
 
         @Override

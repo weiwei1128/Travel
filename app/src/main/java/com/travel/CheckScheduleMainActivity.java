@@ -22,17 +22,19 @@ public class CheckScheduleMainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setupWebview();
+        /*
         if (Functions.ifLogin(CheckScheduleMainActivity.this)) {
             setContentView(R.layout.check_schedule_main_activity); //0309
             listView = (ListView) findViewById(R.id.checkschedule_listview); //0309
             adapter = new CheckScheduleAdapter(CheckScheduleMainActivity.this); //0309
             listView.setAdapter(adapter); //0309
-//        listView.setOnItemClickListener(new itemClickListener()); //0309
+        listView.setOnItemClickListener(new itemClickListener()); //0309
 
         } else {
             setupWebview();
         }
-
+*/
 
 //        setContentView(R.layout.check_schedule_main_activity); //0309
         backImg = (ImageView) findViewById(R.id.checkschedulelist_backImg);
