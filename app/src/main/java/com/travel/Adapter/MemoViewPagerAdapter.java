@@ -4,7 +4,6 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.support.v4.view.PagerAdapter;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -55,9 +54,8 @@ public class MemoViewPagerAdapter extends PagerAdapter {
     public Object instantiateItem(ViewGroup container, int position) {
         View itemView = inflater.inflate(R.layout.record_memo_item, container, false);
         ImageView MemoImage = (ImageView) itemView.findViewById(R.id.imageView);
-        if (listOfBitmapArray.get(mLocation).isEmpty()) {
+        if (mCount == 0) {
             MemoImage.setImageResource(R.drawable.empty);
-            Log.e("3/18_", listOfBitmapArray.get(mLocation).toString());
         } else {
             MemoImage.setImageBitmap(listOfBitmapArray.get(mLocation).get(position));
         }
