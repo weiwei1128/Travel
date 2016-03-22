@@ -25,10 +25,7 @@ import com.travel.Utility.HttpService;
 import com.travel.Utility.LoadApiService;
 import com.travel.Utility.MyTextview;
 
-public class HomepageActivity
-        extends FragmentActivity
-//        extends AppCompatActivity
-{
+public class HomepageActivity extends FragmentActivity {
     private Fragment contentFragment;
     MainImageFragment homefragment;
     LinearLayout homeLayout, memberLayout, shoprecordLayout, moreLayout;
@@ -62,6 +59,8 @@ public class HomepageActivity
         UI();
         changeFragment(mainFragment);
         homeImg.setClickable(false);
+        homeImg.setImageResource(R.drawable.tab_selected_home);
+        homeText.setTextColor(Color.parseColor("#0044BB"));
 
 
         ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(HomepageActivity.this)
@@ -75,14 +74,11 @@ public class HomepageActivity
     }
 
 
-    // TODO 0321
     private void changeFragment(Fragment f) {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.fragment_test, f);
         transaction.commit();
     }
-    //0321
-
 
     void UI() {
 
@@ -97,7 +93,12 @@ public class HomepageActivity
             @Override
             public void onClick(View v) {
                 changeFragment(mainFragment);
-
+                memberImg.setImageResource(R.drawable.member_img_click);
+                memberText.setTextColor(getResources().getColor(R.color.gray));
+                moreImg.setImageResource(R.drawable.more_img_click);
+                moreText.setTextColor(Color.parseColor("#555555"));
+                shoprecordImg.setImageResource(R.drawable.record_img_click);
+                shoprecordText.setTextColor(Color.parseColor("#555555"));
                 homeImg.setClickable(false);
                 memberImg.setClickable(true);
                 shoprecordImg.setClickable(true);
@@ -151,15 +152,19 @@ public class HomepageActivity
                     // 顯示對話框
                     if (!goLogin.isShowing())
                         goLogin.show();
-                }else {
+                } else {
                     changeFragment(memberFragment);
-
+                    moreImg.setImageResource(R.drawable.more_img_click);
+                    moreText.setTextColor(Color.parseColor("#555555"));
+                    homeText.setTextColor(R.color.gray);
+                    homeImg.setImageResource(R.drawable.click_home_img);
+                    shoprecordImg.setImageResource(R.drawable.record_img_click);
+                    shoprecordText.setTextColor(Color.parseColor("#555555"));
                     homeImg.setClickable(true);
                     memberImg.setClickable(false);
                     shoprecordImg.setClickable(true);
                     moreImg.setClickable(true);
                 }
-
 
 
             }
@@ -208,8 +213,15 @@ public class HomepageActivity
                     // 顯示對話框
                     if (!goLogin.isShowing())
                         goLogin.show();
-                }else {
+                } else {
                     changeFragment(shopRecordFragment);
+                    
+                    memberImg.setImageResource(R.drawable.member_img_click);
+                    memberText.setTextColor(getResources().getColor(R.color.gray));
+                    moreImg.setImageResource(R.drawable.more_img_click);
+                    moreText.setTextColor(Color.parseColor("#555555"));
+                    homeText.setTextColor(R.color.gray);
+                    homeImg.setImageResource(R.drawable.click_home_img);
 
                     homeImg.setClickable(true);
                     memberImg.setClickable(false);
@@ -232,8 +244,6 @@ public class HomepageActivity
             @Override
             public void onClick(View v) {
                 Functions.ClickTouchEvent(shoprecordImg, shoprecordText, "shoprecord", true, 356735);
-                shoprecordImg.setImageResource(R.drawable.record_img_click);
-                shoprecordText.setTextColor(Color.parseColor("#555555"));
             }
         });
         shoprecordLayout.setOnTouchListener(new View.OnTouchListener() {
@@ -255,6 +265,12 @@ public class HomepageActivity
             @Override
             public void onClick(View v) {
                 //TODO next Page....
+                /*
+                memberImg.setImageResource(R.drawable.member_img_click);
+                memberText.setTextColor(getResources().getColor(R.color.gray));
+                homeText.setTextColor(R.color.gray);
+                homeImg.setImageResource(R.drawable.click_home_img);
+                */
                 homeImg.setClickable(true);
                 memberImg.setClickable(true);
                 shoprecordImg.setClickable(true);

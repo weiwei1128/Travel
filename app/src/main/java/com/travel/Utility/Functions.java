@@ -94,8 +94,6 @@ public class Functions {
                 textView.setTextColor(Color.parseColor("#0044BB"));
                 if (isClick) {
                     imageView.performClick();
-                    imageView.setImageResource(R.drawable.click_home_img);
-                    textView.setTextColor(Color.parseColor("#555555"));
                 }
                 if (event == MotionEvent.ACTION_UP) {
                     imageView.setImageResource(R.drawable.click_home_img);
@@ -109,8 +107,6 @@ public class Functions {
                 textView.setTextColor(Color.parseColor("#0044BB"));
                 if (isClick) {
                     imageView.performClick();
-                    imageView.setImageResource(R.drawable.member_img_click);
-                    textView.setTextColor(Color.parseColor("#555555"));
                 }
                 if (event == MotionEvent.ACTION_UP) {
                     imageView.setImageResource(R.drawable.member_img_click);
@@ -124,8 +120,6 @@ public class Functions {
                 textView.setTextColor(Color.parseColor("#0044BB"));
                 if (isClick) {
                     imageView.performClick();
-                    imageView.setImageResource(R.drawable.record_img_click);
-                    textView.setTextColor(Color.parseColor("#555555"));
                 }
                 if (event == MotionEvent.ACTION_UP) {
                     imageView.setImageResource(R.drawable.record_img_click);

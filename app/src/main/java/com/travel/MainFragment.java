@@ -46,7 +46,7 @@ public class MainFragment extends Fragment {
 
     @Override
     public void onResume() {
-        Log.e("3.22","=========Main onResume");
+//        Log.e("3.22","=========Main onResume");
         if (getNewsBroadcast == null) {
             context.registerReceiver(getNewsBroadcast, new IntentFilter("news"));
             context.registerReceiver(getNewsBroadcast, new IntentFilter("banner"));
@@ -68,7 +68,7 @@ public class MainFragment extends Fragment {
 
     @Override
     public void onDestroy() {
-        Log.e("3.22","=========Main onDestroy");
+//        Log.e("3.22","=========Main onDestroy");
         if (getNewsBroadcast != null)
             context.unregisterReceiver(getNewsBroadcast);
         super.onDestroy();
@@ -77,7 +77,7 @@ public class MainFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.e("3.22", "=========Main onCreate");
+//        Log.e("3.22", "=========Main onCreate");
         this.context = getActivity();
         this.getSavedInstanceState = savedInstanceState;
         context.registerReceiver(getNewsBroadcast, new IntentFilter("news"));
@@ -119,7 +119,7 @@ public class MainFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Log.e("3.22", "=========Main onCreateView");
+//        Log.e("3.22", "=========Main onCreateView");
         View view = inflater.inflate(R.layout.main_fragment, container, false);
         LinearLayout linearLayout = (LinearLayout) view.findViewById(R.id.main_main_layout);
         UI(view);
@@ -207,7 +207,6 @@ public class MainFragment extends Fragment {
     public void onStop() {
         super.onStop();
         ifStop = true;
-        Log.e("3.22", "main fragment stop!");
     }
 
     /**
