@@ -72,6 +72,8 @@ public class RecordMemoDetailActivity extends AppCompatActivity implements
     private ExpandableHeightGridView gridView;
 
     private Integer mPosition;
+    private Integer RouteConter = 1;
+
     private DataBaseHelper helper;
     private SQLiteDatabase database;
 
@@ -83,6 +85,9 @@ public class RecordMemoDetailActivity extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_record_memo_detail);
+
+        helper = new DataBaseHelper(getApplicationContext());
+        database = helper.getWritableDatabase();
 
         backImg = (ImageView) findViewById(R.id.MemoDetail_backImg);
         backImg.setOnClickListener(new View.OnClickListener() {
@@ -108,6 +113,33 @@ public class RecordMemoDetailActivity extends AppCompatActivity implements
         Bundle bundle = this.getIntent().getExtras();
         if (bundle.containsKey("WhichItem")) {
             mPosition = bundle.getInt("WhichItem");
+        }
+
+        Cursor trackRoute_cursor = database.query("trackRoute",
+                new String[]{"routesCounter", "track_no", "track_lat", "track_lng",
+                        "track_start", "track_title", "track_totaltime", "track_completetime"},
+                "track_start=\"0\"", null, null, null, null, null);
+        if (trackRoute_cursor != null) {
+            if (trackRoute_cursor.getCount() != 0) {
+                trackRoute_cursor.moveToPosition(trackRoute_cursor.getCount() - mPosition - 1);
+
+                MemoDetailTitleTextView.setText(trackRoute_cursor.getString(5));
+                //MemoDetailTextView.setText(trackRoute_cursor.getString(4));
+                RouteConter = trackRoute_cursor.getInt(0);
+
+                Cursor memo_cursor = database.query("travelmemo", new String[]{"memo_routesCounter", "memo_trackNo",
+                                "memo_content", "memo_img", "memo_latlng", "memo_time"},
+                        "memo_routesCounter=\"" + RouteConter + "\" AND memo_content!=\"null\"", null, null, null, null, null);
+                if (memo_cursor != null) {
+                    if (memo_cursor.getCount() != 0) {
+                        memo_cursor.moveToFirst();
+                        //mViewHolder.MemoString.setText(memo_cursor.getString(2));
+                    } else {
+                        //mViewHolder.MemoString.setText("");
+                    }
+                    memo_cursor.close();
+                }
+            }
         }
 
         options = new DisplayImageOptions.Builder()
@@ -235,22 +267,7 @@ public class RecordMemoDetailActivity extends AppCompatActivity implements
      */
     private void setUpMap() {
 
-        mMap.setOnMapClickListener(this);
-        mMap.setOnMapLongClickListener(this);
-        mMap.setOnMarkerClickListener(this);
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
-        }
-        mMap.setMyLocationEnabled(true);                    // 顯示定位按鈕
-        mMap.getUiSettings().setAllGesturesEnabled(true);
-        mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);         // 設定地圖類型
+
 
         //CameraUpdate center = CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lon),18);
         //mMap.moveCamera(center);
@@ -338,6 +355,7 @@ public class RecordMemoDetailActivity extends AppCompatActivity implements
         mMap = ((SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map_recordMemo)).getMap();
 
+        mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);         // 設定地圖類型
     }
 
     private void handleNewLocation(Location location) {

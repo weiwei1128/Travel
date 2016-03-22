@@ -10,7 +10,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -23,15 +22,11 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.location.LocationProvider;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
-import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
-import android.text.format.Time;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -61,27 +56,10 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.travel.Utility.DataBaseHelper;
 import com.travel.Utility.Functions;
-import com.travel.Utility.TimeCountService;
 import com.travel.Utility.TrackRouteService;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.mime.MultipartEntity;
-import org.apache.http.entity.mime.content.StringBody;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -279,7 +257,7 @@ public class RecordActivity extends FragmentActivity implements
                 }
                 dialog_scrollview.setVisibility(View.VISIBLE);
                 RelativeLayout.LayoutParams otelParams = new RelativeLayout.LayoutParams(
-                        ViewGroup.LayoutParams.MATCH_PARENT, 600);
+                        ViewGroup.LayoutParams.MATCH_PARENT, 500);
                 otelParams.addRule(RelativeLayout.BELOW, R.id.dialog_header_text);
                 dialog_scrollview.setLayoutParams(otelParams);
 
@@ -302,7 +280,7 @@ public class RecordActivity extends FragmentActivity implements
                             ContentValues cv = new ContentValues();
                             cv.put("memo_routesCounter", RoutesCounter);
                             cv.put("memo_trackNo", Track_no);
-                            cv.put("memo_content", content_editText.toString());
+                            cv.put("memo_content", content_editText.getText().toString());
                             if (CurrentLatlng != null) {
                                 cv.put("memo_latlng", CurrentLatlng.toString());
                             }
@@ -312,7 +290,7 @@ public class RecordActivity extends FragmentActivity implements
                             cv.put("memo_time", dateString);
                             inDB = db.insert("travelmemo", null, cv);
                             Log.e("3/13_", "DB insert content" + inDB + " content:"
-                                    + content_editText.toString() + " Addtime " + dateString);
+                                    + content_editText.getText().toString() + " Addtime " + dateString);
 
                             if (inDB != -1) {
                                 if (spotDialog.isShowing()) {
@@ -409,6 +387,7 @@ public class RecordActivity extends FragmentActivity implements
                 }
             }
         });
+        record_spot_layout.setClickable(false);
 
         record_start_layout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -517,8 +496,16 @@ public class RecordActivity extends FragmentActivity implements
                     }
                 }
                 trackRoute_cursor.moveToLast();
-                RoutesCounter = trackRoute_cursor.getInt(0);
-                Track_no = trackRoute_cursor.getInt(1);
+                track_start = trackRoute_cursor.getInt(4);
+                if (track_start == 0) {
+                    RoutesCounter = trackRoute_cursor.getInt(0) + 1;
+                    Track_no = 1;
+                } else {
+                    RoutesCounter = trackRoute_cursor.getInt(0);
+                    Track_no = trackRoute_cursor.getInt(1);
+                }
+
+
             }
             trackRoute_cursor.close();
         }
@@ -768,7 +755,7 @@ public class RecordActivity extends FragmentActivity implements
             polylineOpt.add(latlng);
         }
 
-        polylineOpt.color(Color.parseColor("#5599FF"));
+        polylineOpt.color(Color.parseColor("#2BB7EC"));
 
         Polyline line = mMap.addPolyline(polylineOpt);
         line.setWidth(10);
@@ -784,8 +771,8 @@ public class RecordActivity extends FragmentActivity implements
             if (resultCode == RESULT_OK) {
                 if (requestCode == REQUEST_CAMERA) {
                     memo_img = (Bitmap) data.getExtras().get("data");
-                    ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-                    memo_img.compress(Bitmap.CompressFormat.JPEG, 90, bytes);
+                    //ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+                    //memo_img.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
                     dialog_img.setImageBitmap(memo_img);
 
                     /* 將暫存檔儲存在外部儲存空間
@@ -822,7 +809,7 @@ public class RecordActivity extends FragmentActivity implements
             }
             dialog_scrollview.setVisibility(View.VISIBLE);
             RelativeLayout.LayoutParams otelParams = new RelativeLayout.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT, 600);
+                    ViewGroup.LayoutParams.MATCH_PARENT, 500);
             otelParams.addRule(RelativeLayout.BELOW, R.id.dialog_header_text);
             dialog_scrollview.setLayoutParams(otelParams);
 
@@ -855,7 +842,7 @@ public class RecordActivity extends FragmentActivity implements
                     try {
                         ByteArrayOutputStream stream2 = new ByteArrayOutputStream();
                         Boolean a;
-                        a = memo_img.compress(Bitmap.CompressFormat.PNG, 10, stream2);
+                        a = memo_img.compress(Bitmap.CompressFormat.JPEG, 50, stream2);
                         Log.e("3/13_", "compress " + a);
                         byte[] bytes2 = stream2.toByteArray();
                         cv.put("memo_img", bytes2);

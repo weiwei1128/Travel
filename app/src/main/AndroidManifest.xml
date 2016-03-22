@@ -110,10 +110,9 @@
             android:name=".SpecialActivity"
             android:hardwareAccelerated="true" />
 
-        <service android:name=".Utility.TimeCountService" />
-        <service android:name=".LocationService" />
         <service android:name=".Utility.HttpService" />
         <service android:name=".Utility.LoadApiService" />
+        <service android:name=".Utility.TrackRouteService" />
 
         <activity
             android:name=".RecordMemoActivity"
@@ -126,16 +125,6 @@
             android:name="io.fabric.ApiKey"
             android:value="cb492bd27bfb9a5607cb9e98fc7653b763470863" />
 
-        <service
-            android:name=".Utility.TrackRouteService"
-            android:enabled="true"
-            android:exported="true" />
-
-        <service
-            android:name=".Utility.LoadApiService"
-            android:enabled="true"
-            android:exported="true" >
-        </service>
 
         <activity
             android:name=".ShopRecordActivity"
