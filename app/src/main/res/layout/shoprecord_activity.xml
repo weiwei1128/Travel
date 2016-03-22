@@ -12,14 +12,6 @@
         android:background="#5599FF"
         android:gravity="center_vertical|center_horizontal">
 
-        <ImageView
-            android:layout_width="30dp"
-            android:layout_height="40dp"
-            android:id="@+id/shoprecordlist_backImg"
-            android:src="@drawable/arrow_back_white"
-            android:layout_marginLeft="10dp"
-            android:background="@drawable/click_effect_general" />
-
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="50dp"

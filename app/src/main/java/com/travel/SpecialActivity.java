@@ -2,6 +2,7 @@ package com.travel;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -10,12 +11,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.travel.Adapter.SpecialFragmentViewPagerAdapter;
 import com.travel.Utility.DataBaseHelper;
-import com.travel.Utility.FlowLayout;
 import com.travel.Utility.Functions;
 
 import java.util.ArrayList;
@@ -23,9 +24,9 @@ import java.util.List;
 
 public class SpecialActivity extends AppCompatActivity {
     ImageView backImg;
-    FlowLayout flowLayout;
+    LinearLayout layout;
     int FragmentNumber = 0;
-    int PageNo = 0;
+    int PageNo = 0,pageNo = 1, pages = 0;
     ViewPager viewPager;
     List<Fragment> fragments = new ArrayList<>();
     List<TextView> NoText = new ArrayList<>();
@@ -33,6 +34,7 @@ public class SpecialActivity extends AppCompatActivity {
     DataBaseHelper helper;
     SQLiteDatabase database;
     FragmentManager fragmentManager;
+    TextView number, lastPage, nextPage;;
 
     @Override
     protected void onStart() {
@@ -43,13 +45,29 @@ public class SpecialActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.special_activity_new);
+        lastPage = (TextView) findViewById(R.id.lastpage_text);
+        lastPage.setVisibility(View.INVISIBLE);
+        nextPage = (TextView) findViewById(R.id.nextpage_text);
         backImg = (ImageView) findViewById(R.id.special_backImg);
-        flowLayout = (FlowLayout) findViewById(R.id.special_flowlayout);
+        layout = (LinearLayout) findViewById(R.id.special_textLayout);
         viewPager = (ViewPager) findViewById(R.id.special_viewpager);
         backImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Functions.go(true, SpecialActivity.this, SpecialActivity.this, HomepageActivity.class, null);
+            }
+        });
+        lastPage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                viewPager.setCurrentItem(pageNo-2);
+            }
+        });
+        nextPage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                viewPager.setCurrentItem(pageNo);
+
             }
         });
         helper = new DataBaseHelper(SpecialActivity.this);
@@ -66,16 +84,18 @@ public class SpecialActivity extends AppCompatActivity {
             PageNo = (FragmentNumber / 10) + 1;
         else PageNo = FragmentNumber / 10;
 
+
+        TextView textView = new TextView(this);
+        textView.setText("/" + PageNo);
+        textView.setTextColor((Color.parseColor("#000000")));
+        number = new TextView(this);
+        number.setText("1");
+        number.setTextColor((Color.parseColor("#FF0088")));
+        layout.addView(number);
+        layout.addView(textView);
+
         for (int i = 0; i < PageNo; i++) {
             fragments.add(new SpecialFragment((i + 1)));
-            TextView number = new TextView(this);
-            number.setText(i + 1 + "  ");
-            number.setTextColor(getResources().getColor(R.color.black));
-            if (i == 0) {
-                number.setTextColor(getResources().getColor(R.color.peach));
-            }
-            NoText.add(number);
-            flowLayout.addView(number);
         }
         specialFragmentViewPagerAdapter = new SpecialFragmentViewPagerAdapter(this.getSupportFragmentManager(),
                 viewPager, fragments, this);
@@ -95,10 +115,15 @@ public class SpecialActivity extends AppCompatActivity {
         }
 
         public void onPageSelected(int position) {
-//            Log.e("3.8", "**********onPageSelected" + position);
-            for (int i = 0; i < NoText.size(); i++)
-                NoText.get(i).setTextColor(getResources().getColor(R.color.black));
-            NoText.get(position).setTextColor(getResources().getColor(R.color.peach));
+            pageNo = position + 1;
+            if (pageNo == pages)
+                nextPage.setVisibility(View.INVISIBLE);
+            else nextPage.setVisibility(View.VISIBLE);
+            if (pageNo == 1)
+                lastPage.setVisibility(View.INVISIBLE);
+            else lastPage.setVisibility(View.VISIBLE);
+            String get = String.valueOf(position + 1);
+            number.setText(get);
         }
 
         @Override

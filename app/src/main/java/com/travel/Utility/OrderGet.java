@@ -1,22 +1,10 @@
-package com.travel;
+package com.travel.Utility;
 
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
-import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
-import android.view.KeyEvent;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.GridView;
-import android.widget.ImageView;
-
-import com.travel.Adapter.ShopRecordAdapter;
-import com.travel.Utility.DataBaseHelper;
-import com.travel.Utility.Functions;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -33,79 +21,24 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 
-public class ShopRecordActivity extends AppCompatActivity {
+/**
+ * Created by wei on 2016/3/22.
+ */
+public class OrderGet extends AsyncTask<String, Void, String> {
+    String UserId;
+    Context context;
+    Functions.TaskCallBack taskCallBack;
 
-    ImageView backImg;
-    GridView gridView;
-    public ShopRecordAdapter adapter;
-    String Orderid;
-
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK)
-            Functions.go(true, ShopRecordActivity.this, ShopRecordActivity.this, HomepageActivity.class, null);
-        return false;
+    public OrderGet(Context context, String UserId, Functions.TaskCallBack callBack) {
+        this.context = context;
+        this.UserId = UserId;
+        this.taskCallBack = callBack;
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.shoprecord_activity);
-        backImg = (ImageView) findViewById(R.id.shoprecordlist_backImg);
-        gridView = (GridView) findViewById(R.id.shop_record_gridview);
-        adapter = new ShopRecordAdapter(ShopRecordActivity.this);
-        gridView.setAdapter(adapter);
-        gridView.setOnItemClickListener(new itemlistener());
-        backImg.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Functions.go(true, ShopRecordActivity.this, ShopRecordActivity.this, HomepageActivity.class, null);
-            }
-        });
-        new getShopRecord(adapter).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-    }
-
-    class itemlistener implements AdapterView.OnItemClickListener {
-
-        @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            DataBaseHelper helper = new DataBaseHelper(ShopRecordActivity.this);
-            SQLiteDatabase database = helper.getWritableDatabase();
-            Cursor order_cursor = database.query("shoporder", new String[]{"order_id", "order_no",
-                    "order_time", "order_name", "order_phone", "order_email",
-                    "order_money", "order_state"}, null, null, null, null, null);
-            String Order_id;
-            if (order_cursor != null && order_cursor.getCount() >= position) {
-                order_cursor.moveToPosition(position);
-                Order_id = order_cursor.getString(0);
-                Bundle bundle = new Bundle();
-                bundle.putString("WhichItem", Order_id);
-                Functions.go(false, ShopRecordActivity.this, ShopRecordActivity.this,
-                        ShopRecordItemActivity.class, bundle);
-            }
-            if (order_cursor != null)
-                order_cursor.close();
-            if (database.isOpen())
-                database.close();
-
-
-        }
-    }
-
-    class getShopRecord extends AsyncTask<String, Void, String> {
-        String UserId = "ljd110@qq.com";
-        Context context = ShopRecordActivity.this;
-        ShopRecordAdapter adapter;
-
-        getShopRecord(ShopRecordAdapter shopRecordAdapter) {
-            this.adapter = shopRecordAdapter;
-        }
-
-        @Override
-        protected String doInBackground(String... params) {
-            Log.i("3.11", "*************ShopRecord DO IN BACKGROUND");
-            String returnMessage = null;
-
+    protected String doInBackground(String... params) {
+        String returnMessage = null;
+        if (UserId != null) {
             HttpClient client = new DefaultHttpClient();
             HttpPost post = new HttpPost("http://zhiyou.lin366.com/api/order/index.aspx");
             MultipartEntity multipartEntity = new MultipartEntity();
@@ -313,15 +246,16 @@ public class ShopRecordActivity extends AppCompatActivity {
                 order_cursor.close();
             }
             database.close();
-            return returnMessage;
         }
+        return returnMessage;
+    }
 
-        @Override
-        protected void onPostExecute(String s) {
-            Log.i("3.11", "shoprecord on PostExecute:" + s);
-            if (s != null)
-                adapter.notifyDataSetChanged();
-            super.onPostExecute(s);
-        }
+    @Override
+    protected void onPostExecute(String s) {
+        if (s == null)
+            taskCallBack.TaskDone(false);
+        else taskCallBack.TaskDone(true);
+        super.onPostExecute(s);
     }
 }
+

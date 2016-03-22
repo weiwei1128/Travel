@@ -29,8 +29,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/member_Layout"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="65dp">
+        android:layout_centerHorizontal="true">
 
         <LinearLayout
             android:orientation="horizontal"
@@ -231,131 +230,6 @@
                 android:layout_marginTop="10dp" />
 
         </LinearLayout>
-    </LinearLayout>
-
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:background="@color/white"
-        android:layout_marginTop="10dp">
-
-        <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="3dp"
-            android:layout_weight="1"
-            android:background="@drawable/click_effect_general"
-            android:clickable="true"
-            android:id="@+id/member_home_layout">
-
-            <ImageView
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:id="@+id/member_home_img"
-                android:layout_gravity="center"
-                android:clickable="true"
-                android:src="@drawable/click_home_img" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="首頁"
-                android:layout_gravity="center"
-                android:id="@+id/member_home_text"
-                android:textColor="@color/gray"
-                android:textSize="14dp" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="3dp"
-            android:layout_weight="1" >
-
-            <ImageView
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_gravity="center"
-                android:clickable="true"
-                android:src="@drawable/tab_selected_member" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="會員"
-                android:layout_gravity="center"
-                android:textColor="#0044BB"
-                android:textSize="14dp" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="3dp"
-            android:layout_weight="1"
-            android:background="@drawable/click_effect_general"
-            android:id="@+id/member_shoprecord_layout">
-
-            <ImageView
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:id="@+id/member_shoprecord_img"
-                android:layout_gravity="center"
-                android:clickable="true"
-                android:src="@drawable/record_img_click" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="訂購紀錄"
-                android:layout_gravity="center"
-                android:id="@+id/member_shoprecord_text"
-                android:textColor="@color/gray"
-                android:textSize="14dp" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="3dp"
-            android:layout_weight="1"
-            android:background="@drawable/click_effect_general"
-            android:id="@+id/member_more_layout">
-
-            <ImageView
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:id="@+id/member_more_img"
-                android:layout_gravity="center"
-                android:clickable="true"
-                android:src="@drawable/more_img_click" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="更多"
-                android:layout_gravity="center"
-                android:id="@+id/member_more_text"
-                android:textColor="@color/gray"
-                android:textSize="14dp" />
-        </LinearLayout>
-
-
     </LinearLayout>
 
 </RelativeLayout>

@@ -48,8 +48,6 @@ public class Functions {
         return false;
     }
 
-    //----2.4 WEI----//
-    // check if picture size too big
     public static Bitmap ScalePic(Bitmap bitmap) {
         Bitmap GetImage = null;
         int oldWidth = bitmap.getWidth();
@@ -96,8 +94,6 @@ public class Functions {
                 textView.setTextColor(Color.parseColor("#0044BB"));
                 if (isClick) {
                     imageView.performClick();
-                    imageView.setImageResource(R.drawable.click_home_img);
-                    textView.setTextColor(Color.parseColor("#555555"));
                 }
                 if (event == MotionEvent.ACTION_UP) {
                     imageView.setImageResource(R.drawable.click_home_img);
@@ -111,8 +107,6 @@ public class Functions {
                 textView.setTextColor(Color.parseColor("#0044BB"));
                 if (isClick) {
                     imageView.performClick();
-                    imageView.setImageResource(R.drawable.member_img_click);
-                    textView.setTextColor(Color.parseColor("#555555"));
                 }
                 if (event == MotionEvent.ACTION_UP) {
                     imageView.setImageResource(R.drawable.member_img_click);
@@ -126,8 +120,6 @@ public class Functions {
                 textView.setTextColor(Color.parseColor("#0044BB"));
                 if (isClick) {
                     imageView.performClick();
-                    imageView.setImageResource(R.drawable.record_img_click);
-                    textView.setTextColor(Color.parseColor("#555555"));
                 }
                 if (event == MotionEvent.ACTION_UP) {
                     imageView.setImageResource(R.drawable.record_img_click);
@@ -164,5 +156,10 @@ public class Functions {
             return false;
         else return true;
 
+    }
+    public interface TaskCallBack {
+        /** method That Does Something When Task Is Done
+         * @param OrderNeedUpdate if Order record updated*/
+        public void TaskDone(Boolean OrderNeedUpdate);
     }
 }

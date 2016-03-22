@@ -42,7 +42,8 @@ public class ShopRecordItemActivity extends AppCompatActivity {
     TextView Order_date, Order_no, Order_payment, Order_state, ship_way, ship_name, ship_tel, ship_addr,
             ship_message, money_item, money_ship, money_total;
     LinearLayout carLayout;
-    Context context = ShopRecordItemActivity.this;;
+    Context context = ShopRecordItemActivity.this;
+    ;
     LayoutInflater inflater;
 
     @Override
@@ -83,7 +84,7 @@ public class ShopRecordItemActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Functions.go(true, ShopRecordItemActivity.this, ShopRecordItemActivity.this,
-                        ShopRecordActivity.class, null);
+                        null, null);
             }
         });
     }
@@ -111,7 +112,7 @@ public class ShopRecordItemActivity extends AppCompatActivity {
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK)
             Functions.go(true, ShopRecordItemActivity.this, ShopRecordItemActivity.this,
-                    ShopRecordActivity.class, null);
+                    null, null);
         return false;
     }
 
@@ -326,7 +327,7 @@ public class ShopRecordItemActivity extends AppCompatActivity {
                     if (strings[(i + 1)][0] != null)
                         name.setText(strings[(i + 1)][0]);
                     if (strings[(i + 1)][2] != null)
-                        count.setText("  x"+strings[(i + 1)][2]);
+                        count.setText("  x" + strings[(i + 1)][2]);
                     if (strings[(i + 1)][3] != null)
                         money.setText("$" + strings[(i + 1)][3]);
                     carLayout.addView(view);

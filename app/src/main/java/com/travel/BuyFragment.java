@@ -42,7 +42,6 @@ public class BuyFragment extends Fragment {
         gridView.setNumColumns(2);
         gridView.setAdapter(adapter);
         gridView.setOnItemClickListener(new itemListener());
-        Log.d("3.8", "adapter!" + adapter.getCount());
         if (adapter.getCount() == 0)
             Toast.makeText(context, "尚無資料!", Toast.LENGTH_SHORT).show();
         return view;
