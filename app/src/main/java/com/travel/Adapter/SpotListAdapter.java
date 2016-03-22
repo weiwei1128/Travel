@@ -131,7 +131,8 @@ public class SpotListAdapter extends BaseAdapter implements Filterable {
 
             @Override
             public void onLoadingFailed(String s, View view, FailReason failReason) {
-
+                ImageView imageView = (ImageView) view.findViewById(R.id.SpotImg);
+                loader.displayImage(null, imageView, options, listener);
             }
 
             @Override
