@@ -48,8 +48,6 @@ public class Functions {
         return false;
     }
 
-    //----2.4 WEI----//
-    // check if picture size too big
     public static Bitmap ScalePic(Bitmap bitmap) {
         Bitmap GetImage = null;
         int oldWidth = bitmap.getWidth();
@@ -164,5 +162,10 @@ public class Functions {
             return false;
         else return true;
 
+    }
+    public interface TaskCallBack {
+        /** method That Does Something When Task Is Done
+         * @param OrderNeedUpdate if Order record updated*/
+        public void TaskDone(Boolean OrderNeedUpdate);
     }
 }
