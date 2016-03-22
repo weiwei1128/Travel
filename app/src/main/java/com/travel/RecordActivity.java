@@ -257,7 +257,7 @@ public class RecordActivity extends FragmentActivity implements
                 }
                 dialog_scrollview.setVisibility(View.VISIBLE);
                 RelativeLayout.LayoutParams otelParams = new RelativeLayout.LayoutParams(
-                        ViewGroup.LayoutParams.MATCH_PARENT, 600);
+                        ViewGroup.LayoutParams.MATCH_PARENT, 500);
                 otelParams.addRule(RelativeLayout.BELOW, R.id.dialog_header_text);
                 dialog_scrollview.setLayoutParams(otelParams);
 
@@ -771,8 +771,8 @@ public class RecordActivity extends FragmentActivity implements
             if (resultCode == RESULT_OK) {
                 if (requestCode == REQUEST_CAMERA) {
                     memo_img = (Bitmap) data.getExtras().get("data");
-                    ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-                    memo_img.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+                    //ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+                    //memo_img.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
                     dialog_img.setImageBitmap(memo_img);
 
                     /* 將暫存檔儲存在外部儲存空間
@@ -809,7 +809,7 @@ public class RecordActivity extends FragmentActivity implements
             }
             dialog_scrollview.setVisibility(View.VISIBLE);
             RelativeLayout.LayoutParams otelParams = new RelativeLayout.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT, 600);
+                    ViewGroup.LayoutParams.MATCH_PARENT, 500);
             otelParams.addRule(RelativeLayout.BELOW, R.id.dialog_header_text);
             dialog_scrollview.setLayoutParams(otelParams);
 

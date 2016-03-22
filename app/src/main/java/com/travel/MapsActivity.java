@@ -70,7 +70,7 @@ public class MapsActivity extends FragmentActivity implements
     private ImageView BackImg;
     private Button SpotMapBtn, SpotListBtn;
 
-    private ProgressDialog mDialog = null;
+    private ProgressDialog mDialog;
 
     //3.10
     final int REQUEST_LOCATION = 2;
@@ -80,6 +80,7 @@ public class MapsActivity extends FragmentActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.maps_activity);
         globalVariable = (GlobalVariable) getApplicationContext();
+        mDialog = new ProgressDialog(MapsActivity.this);
 
         registerReceiver(broadcastReceiver, new IntentFilter(TWSpotAPIFetcher.BROADCAST_ACTION));
 
@@ -118,16 +119,14 @@ public class MapsActivity extends FragmentActivity implements
 
         if (!globalVariable.isAPILoaded) {
             Log.e("3/10_", "API is not ready");
-            mDialog = new ProgressDialog(MapsActivity.this);
-            mDialog.setMessage("景點資料載入中...");
-            mDialog.setCancelable(false);
+            mDialog.setMessage("景點API載入中...");
+            //mDialog.setCancelable(false);
             mDialog.show();
         } else {
             if (globalVariable.MarkerOptionsArray.isEmpty()) {
                 Log.e("3/10_", "Marker is not ready");
-                mDialog = new ProgressDialog(MapsActivity.this);
-                mDialog.setMessage("景點資料載入中...");
-                mDialog.setCancelable(false);
+                mDialog.setMessage("景點Marker載入中...");
+                //mDialog.setCancelable(false);
                 mDialog.show();
                 // Get Marker Info
                 new GetMarkerInfo(MapsActivity.this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
@@ -367,7 +366,12 @@ public class MapsActivity extends FragmentActivity implements
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            Functions.go(true,MapsActivity.this, MapsActivity.this, HomepageActivity.class, null);
+            if (mDialog.isShowing()) {
+                mDialog.dismiss();
+                Functions.go(true, MapsActivity.this, MapsActivity.this, HomepageActivity.class, null);
+            } else {
+                Functions.go(true, MapsActivity.this, MapsActivity.this, HomepageActivity.class, null);
+            }
         }
         return false;
     }
