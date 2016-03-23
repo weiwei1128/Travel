@@ -5,40 +5,44 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.daimajia.slider.library.Indicators.PagerIndicator;
+import com.daimajia.slider.library.SliderLayout;
+import com.daimajia.slider.library.SliderTypes.BaseSliderView;
+import com.daimajia.slider.library.SliderTypes.DefaultSliderView;
+import com.daimajia.slider.library.Tricks.ViewPagerEx;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
+import com.travel.ImageSlide.PageIndicator;
 import com.travel.R;
 import com.travel.Utility.DataBaseHelper;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Tinghua on 2016/3/3.
  */
-public class RecordMemoAdapter extends BaseAdapter {
+public class RecordMemoAdapter extends BaseAdapter implements ViewPagerEx.OnPageChangeListener {
 
     private LayoutInflater inflater;
     private ViewHolder mViewHolder;
 
-    private ImageLoader loader = ImageLoader.getInstance();
-    private DisplayImageOptions options;
-    private ImageLoadingListener listener;
-
     private Context context;
     private DataBaseHelper helper;
     private SQLiteDatabase database;
+
+    private Integer RouteConter = 1;
+
 
     public RecordMemoAdapter(Context mcontext) {
         this.context = mcontext;
@@ -47,33 +51,7 @@ public class RecordMemoAdapter extends BaseAdapter {
         helper = new DataBaseHelper(mcontext);
         database = helper.getWritableDatabase();
 
-        options = new DisplayImageOptions.Builder()
-                .showImageOnFail(R.drawable.error)
-                .showImageOnLoading(R.drawable.loading2)
-                .showImageForEmptyUri(R.drawable.empty)
-                .cacheInMemory(false)
-                .cacheOnDisc(false).build();
-        listener = new ImageLoadingListener() {
-            @Override
-            public void onLoadingStarted(String s, View view) {
 
-            }
-
-            @Override
-            public void onLoadingFailed(String s, View view, FailReason failReason) {
-
-            }
-
-            @Override
-            public void onLoadingComplete(String s, View view, Bitmap bitmap) {
-
-            }
-
-            @Override
-            public void onLoadingCancelled(String s, View view) {
-
-            }
-        };
     }
 
     @Override
@@ -90,9 +68,6 @@ public class RecordMemoAdapter extends BaseAdapter {
             }
             trackRoute_cursor.close();
         }
-        database.close();
-        helper.close();
-
         return number;
     }
 
@@ -111,9 +86,10 @@ public class RecordMemoAdapter extends BaseAdapter {
         if (convertView == null) {
             convertView = inflater.inflate(R.layout.record_memo_list,parent,false);
             mViewHolder = new ViewHolder();
-            mViewHolder.MemoImg = (ImageView) convertView.findViewById(R.id.MemoImageView);
+            mViewHolder.ImageSlider = (SliderLayout) convertView.findViewById(R.id.slider);
+            mViewHolder.pagerIndicator = (PagerIndicator) convertView.findViewById(R.id.custom_indicator);
             mViewHolder.MemoTitle = (TextView) convertView.findViewById(R.id.Title);
-            mViewHolder.MemoTimeStamp = (TextView) convertView.findViewById(R.id.TimeStamp);
+            mViewHolder.MemoTotalTime = (TextView) convertView.findViewById(R.id.TimeStamp);
             mViewHolder.MemoString = (TextView) convertView.findViewById(R.id.MemoString);
 
             convertView.setTag(mViewHolder);
@@ -122,36 +98,84 @@ public class RecordMemoAdapter extends BaseAdapter {
             mViewHolder = (ViewHolder) convertView.getTag();
         }
 
-        ImageLoaderConfiguration configuration = new ImageLoaderConfiguration.Builder(context).build();
-        ImageLoader.getInstance().init(configuration);
+        Cursor trackRoute_cursor = database.query("trackRoute",
+                new String[]{"routesCounter", "track_no", "track_lat", "track_lng",
+                        "track_start", "track_title", "track_totaltime", "track_completetime"},
+                "track_start=\"0\"", null, null, null, null, null);
+        if (trackRoute_cursor != null) {
+            if (trackRoute_cursor.getCount() != 0) {
+                trackRoute_cursor.moveToPosition(trackRoute_cursor.getCount()-position-1);
+                mViewHolder.MemoTitle.setText(trackRoute_cursor.getString(5));
+                mViewHolder.MemoTotalTime.setText(trackRoute_cursor.getString(6));
+                RouteConter = trackRoute_cursor.getInt(0);
 
-        Cursor travelMemo_cursor = database.query("travelmemo", new String[]{"memo_no",
-                        "memo_title", "memo_content", "memo_img", "memo_latlng", "memo_time"},
-                null, null, null, null, null);
-        if (travelMemo_cursor != null && travelMemo_cursor.getCount() > 0) {
-            travelMemo_cursor.moveToPosition(position);
-            mViewHolder.MemoTitle.setText(travelMemo_cursor.getString(1));
-            mViewHolder.MemoString.setText(travelMemo_cursor.getString(2));
-            // TODO 資料庫讀Bitmap
-            byte[] d = travelMemo_cursor.getBlob(3);
-            Bitmap bmp = BitmapFactory.decodeByteArray(d, 0, d.length);
-            //dialog_img.setImageBitmap(bmp);
-            loader.displayImage(travelMemo_cursor.getString(3), mViewHolder.MemoImg, options, listener);
-            mViewHolder.MemoTimeStamp.setText(travelMemo_cursor.getString(5));
-            Log.d("3/13_", "img_url:" + travelMemo_cursor.getString(3));
+                Cursor memo_cursor = database.query("travelmemo", new String[]{"memo_routesCounter", "memo_trackNo",
+                                "memo_content", "memo_img", "memo_latlng", "memo_time"},
+                        "memo_routesCounter=\"" + RouteConter + "\" AND memo_content!=\"null\"", null, null, null, null, null);
+                if (memo_cursor != null) {
+                    if (memo_cursor.getCount() != 0) {
+                        memo_cursor.moveToFirst();
+                        mViewHolder.MemoString.setText(memo_cursor.getString(2));
+                    } else {
+                        mViewHolder.MemoString.setText("");
+                    }
+                    memo_cursor.close();
+                }
+
+                Cursor img_cursor = database.query("travelmemo", new String[]{"memo_routesCounter", "memo_trackNo",
+                                "memo_content", "memo_img", "memo_latlng", "memo_time"},
+                        "memo_routesCounter=\"" + RouteConter + "\" AND memo_img!=\"null\"", null, null, null, null, null);
+                if (img_cursor != null) {
+                    int number;
+                    mViewHolder.ImageSlider.removeAllSliders();
+                    if (img_cursor.getCount() != 0) {
+                        number = img_cursor.getCount();
+                        Log.e("3/18_", "img count:" + number);
+                        while (img_cursor.moveToNext()) {
+                            Log.e("3/18_", "img: " + img_cursor.getBlob(3));
+                            byte[] d = img_cursor.getBlob(3);
+                            DefaultSliderView sliderView = new DefaultSliderView(context);
+                            sliderView.image(BitmapFactory.decodeByteArray(d, 0, d.length))
+                                    .setScaleType(BaseSliderView.ScaleType.Fit);
+                            mViewHolder.ImageSlider.addSlider(sliderView);
+                        }
+                        Log.e("3/19_", "position: " + position);
+                    } else {
+                        DefaultSliderView sliderView = new DefaultSliderView(context);
+                        sliderView.image(R.drawable.empty)
+                                .setScaleType(BaseSliderView.ScaleType.Fit);
+                        mViewHolder.ImageSlider.addSlider(sliderView);
+                        Log.e("3/18_", "img_cursor = 0 ");
+                    }
+                    mViewHolder.ImageSlider.setCustomIndicator(mViewHolder.pagerIndicator);
+                    mViewHolder.ImageSlider.stopAutoCycle();
+                    mViewHolder.ImageSlider.addOnPageChangeListener(this);
+                }
+            }
+            trackRoute_cursor.close();
         }
-
-        if (mViewHolder.MemoImg != null)
-            mViewHolder.MemoImg.setScaleType(ImageView.ScaleType.CENTER_CROP);
-
-        if (travelMemo_cursor != null)
-            travelMemo_cursor.close();
 
         return convertView;
     }
 
+    @Override
+    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+    }
+
+    @Override
+    public void onPageSelected(int position) {
+
+    }
+
+    @Override
+    public void onPageScrollStateChanged(int state) {
+
+    }
+
     private static class ViewHolder {
-        ImageView MemoImg;
-        TextView MemoTitle, MemoTimeStamp, MemoString;
+        SliderLayout ImageSlider;
+        PagerIndicator pagerIndicator;
+        TextView MemoTitle, MemoTotalTime, MemoString;
     }
 }

@@ -91,7 +91,7 @@ public class RecordMemoActivity extends AppCompatActivity {
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             Bundle bundle = new Bundle();
             bundle.putInt("WhichItem", position);
-            Functions.go(false, RecordMemoActivity.this, RecordMemoActivity.this, RecordMemoDetailActivity.class, bundle);
+            //Functions.go(false, RecordMemoActivity.this, RecordMemoActivity.this, RecordMemoDetailActivity.class, bundle);
         }
     }
 

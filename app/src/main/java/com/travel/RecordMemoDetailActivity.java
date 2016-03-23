@@ -13,16 +13,22 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.daimajia.slider.library.Indicators.PagerIndicator;
+import com.daimajia.slider.library.SliderLayout;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
@@ -39,6 +45,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
+import com.travel.Adapter.RecordMemoAdapter;
 import com.travel.Utility.DataBaseHelper;
 import com.travel.Utility.Functions;
 
@@ -50,10 +57,7 @@ import java.util.Map;
 public class RecordMemoDetailActivity extends AppCompatActivity implements
         LocationListener,
         GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener,
-        GoogleMap.OnMapClickListener,
-        GoogleMap.OnMapLongClickListener,
-        GoogleMap.OnMarkerClickListener {
+        GoogleApiClient.OnConnectionFailedListener {
 
     public static final String TAG = RecordMemoDetailActivity.class.getSimpleName();
 
@@ -72,8 +76,12 @@ public class RecordMemoDetailActivity extends AppCompatActivity implements
     private ExpandableHeightGridView gridView;
 
     private Integer mPosition;
+    private Integer RouteConter = 1;
+
     private DataBaseHelper helper;
     private SQLiteDatabase database;
+
+    private ListView mlistView;
 
     private String[] image_url;
 
@@ -83,6 +91,9 @@ public class RecordMemoDetailActivity extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_record_memo_detail);
+
+        helper = new DataBaseHelper(getApplicationContext());
+        database = helper.getWritableDatabase();
 
         backImg = (ImageView) findViewById(R.id.MemoDetail_backImg);
         backImg.setOnClickListener(new View.OnClickListener() {
@@ -110,45 +121,23 @@ public class RecordMemoDetailActivity extends AppCompatActivity implements
             mPosition = bundle.getInt("WhichItem");
         }
 
-        options = new DisplayImageOptions.Builder()
-                .showImageOnFail(R.drawable.error)
-                .showImageForEmptyUri(R.drawable.empty)
-                .cacheInMemory()
-                .cacheOnDisc().build();
-        listener = new ImageLoadingListener() {
-            @Override
-            public void onLoadingStarted(String s, View view) {
+        Cursor trackRoute_cursor = database.query("trackRoute",
+                new String[]{"routesCounter", "track_no", "track_lat", "track_lng",
+                        "track_start", "track_title", "track_totaltime", "track_completetime"},
+                "track_start=\"0\"", null, null, null, null, null);
+        if (trackRoute_cursor != null) {
+            if (trackRoute_cursor.getCount() != 0) {
+                trackRoute_cursor.moveToPosition(trackRoute_cursor.getCount() - mPosition - 1);
 
+                MemoDetailTitleTextView.setText(trackRoute_cursor.getString(5));
+                RouteConter = trackRoute_cursor.getInt(0);
+
+                mlistView = (ListView) findViewById(R.id.MemoContent_listView);
+                MemoDetailAdapter mAdapter = new MemoDetailAdapter(getApplicationContext(), RouteConter);
+                mlistView.setAdapter(mAdapter);
             }
-
-            @Override
-            public void onLoadingFailed(String s, View view, FailReason failReason) {
-
-            }
-
-            @Override
-            public void onLoadingComplete(String s, View view, Bitmap bitmap) {
-
-            }
-
-            @Override
-            public void onLoadingCancelled(String s, View view) {
-
-            }
-        };
-
-        ImageLoaderConfiguration configuration =
-                new ImageLoaderConfiguration.Builder(RecordMemoDetailActivity.this).build();
-        ImageLoader.getInstance().destroy();
-        ImageLoader.getInstance().init(configuration);
-
-        Cursor travelMemo_cursor = database.query("travelMemo", new String[]{"totalCount", "id",
-                "title", "url","zhaiyao", "click", "addtime"}, null, null, null, null, null);
-        if (travelMemo_cursor != null && travelMemo_cursor.getCount() > 0) {
-            travelMemo_cursor.moveToPosition(mPosition);
-            MemoDetailTitleTextView.setText(travelMemo_cursor.getString(2));
-            MemoDetailTextView.setText(travelMemo_cursor.getString(4));
         }
+
 
         List<Map<String, Object>> items = new ArrayList<Map<String,Object>>();
         for (int i = 0; i < image_url.length; i++) {
@@ -235,22 +224,7 @@ public class RecordMemoDetailActivity extends AppCompatActivity implements
      */
     private void setUpMap() {
 
-        mMap.setOnMapClickListener(this);
-        mMap.setOnMapLongClickListener(this);
-        mMap.setOnMarkerClickListener(this);
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
-        }
-        mMap.setMyLocationEnabled(true);                    // 顯示定位按鈕
-        mMap.getUiSettings().setAllGesturesEnabled(true);
-        mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);         // 設定地圖類型
+
 
         //CameraUpdate center = CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lon),18);
         //mMap.moveCamera(center);
@@ -338,6 +312,7 @@ public class RecordMemoDetailActivity extends AppCompatActivity implements
         mMap = ((SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map_recordMemo)).getMap();
 
+        mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);         // 設定地圖類型
     }
 
     private void handleNewLocation(Location location) {
@@ -359,18 +334,75 @@ public class RecordMemoDetailActivity extends AppCompatActivity implements
 
     }
 
-    @Override
-    public void onMapClick(LatLng latLng) {
+    private class MemoDetailAdapter extends BaseAdapter {
 
+        private Context context;
+        private LayoutInflater inflater;
+        private ViewHolder mViewHolder;
+        private Integer routeCounter = 1;
+
+        public MemoDetailAdapter(Context mcontext, Integer rs) {
+            this.context = mcontext;
+            inflater = LayoutInflater.from(mcontext);
+            routeCounter = rs;
+        }
+
+        @Override
+        public int getCount() {
+            int number = 0;
+            Cursor memo_cursor = database.query("travelmemo", new String[]{"memo_routesCounter", "memo_trackNo",
+                            "memo_content", "memo_img", "memo_latlng", "memo_time"},
+                    "memo_routesCounter=\"" + routeCounter + "\" AND memo_content!=\"null\"", null, null, null, null, null);
+            if (memo_cursor != null) {
+                if (memo_cursor.getCount() != 0) {
+                    number = memo_cursor.getCount();
+                }
+                memo_cursor.close();
+            }
+            return number;
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return position;
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            if (convertView == null) {
+                convertView = inflater.inflate(R.layout.record_memo_list,parent,false);
+                mViewHolder = new ViewHolder();
+                mViewHolder.MemoString = (TextView) convertView.findViewById(R.id.MemoString);
+
+                convertView.setTag(mViewHolder);
+
+            } else {
+                mViewHolder = (ViewHolder) convertView.getTag();
+            }
+            Cursor memo_cursor = database.query("travelmemo", new String[]{"memo_routesCounter", "memo_trackNo",
+                            "memo_content", "memo_img", "memo_latlng", "memo_time"},
+                    "memo_routesCounter=\"" + routeCounter + "\" AND memo_content!=\"null\"", null, null, null, null, null);
+            if (memo_cursor != null) {
+                if (memo_cursor.getCount() != 0) {
+                    memo_cursor.moveToPosition(position);
+                    mViewHolder.MemoString.setText(memo_cursor.getString(2));
+                } else {
+                    mViewHolder.MemoString.setText("未上傳景點心得。");
+                }
+                memo_cursor.close();
+            }
+            return convertView;
+        }
+
+        private class ViewHolder {
+            TextView MemoString;
+        }
     }
 
-    @Override
-    public void onMapLongClick(LatLng latLng) {
 
-    }
-
-    @Override
-    public boolean onMarkerClick(Marker marker) {
-        return false;
-    }
 }
