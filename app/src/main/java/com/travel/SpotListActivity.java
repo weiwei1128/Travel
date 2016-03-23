@@ -150,10 +150,8 @@ public class SpotListActivity extends Activity implements
             //TODO 2.2 在list還沒跑出來之前打字會發生error
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (!mDialog.isShowing()) {
-                    Log.d("3.9_景點搜尋", s.toString());
-                    mAdapter.getFilter().filter(s.toString());
-                }
+                Log.d("3.9_景點搜尋", s.toString());
+                mAdapter.getFilter().filter(s.toString());
             }
 
             @Override

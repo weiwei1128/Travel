@@ -143,7 +143,7 @@ public class TWSpotAPIFetcher extends AsyncTask<Void, Void, SpotJson> {
                     cv.put("ticketInfo", Infos.getInfo()[i].getTicketinfo());
                     cv.put("infoDetail", Infos.getInfo()[i].getToldescribe());
                     long result = database.insert("spotDataRaw", null, cv);
-                    //Log.d("3/8_沒有重複資料", result + " = DB INSERT " + i + " spotName " + Infos.getInfo()[i].getName());
+                    Log.d("3/8_沒有重複資料", result + " = DB INSERT " + i + " spotName " + Infos.getInfo()[i].getName());
                 }
             } else {
                 for (Integer i = 0; i < InfoLength; i++) {
@@ -153,7 +153,7 @@ public class TWSpotAPIFetcher extends AsyncTask<Void, Void, SpotJson> {
                             "spotName=\"" + Infos.getInfo()[i].getName()+ "\"", null, null, null, null, null);
                     if (spotDataRaw_dul != null && spotDataRaw_dul.getCount() != 0) {
                         spotDataRaw_dul.moveToFirst();
-                        //Log.e("3/8", "有重複的資料!" + i + "title: " + spotDataRaw_dul.getString(1));
+                        Log.e("3/8", "有重複的資料!" + i + "title: " + spotDataRaw_dul.getString(1));
                     } else {
                         ContentValues cv = new ContentValues();
                         cv.put("spotName", Infos.getInfo()[i].getName());
@@ -167,7 +167,7 @@ public class TWSpotAPIFetcher extends AsyncTask<Void, Void, SpotJson> {
                         cv.put("ticketInfo", Infos.getInfo()[i].getTicketinfo());
                         cv.put("infoDetail", Infos.getInfo()[i].getToldescribe());
                         long result = database.insert("spotDataRaw", null, cv);
-                        //Log.d("3/8_新增過資料", result + " = DB INSERT " + i + "spotName " + Infos.getInfo()[i].getName());
+                        Log.d("3/8_新增過資料", result + " = DB INSERT " + i + "spotName " + Infos.getInfo()[i].getName());
                     }
                     if(spotDataRaw_dul!=null)
                         spotDataRaw_dul.close();
