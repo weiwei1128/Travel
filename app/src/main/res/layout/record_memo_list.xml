@@ -41,7 +41,7 @@
     <ImageView
         android:layout_width="20dp"
         android:layout_height="20dp"
-        android:id="@+id/imageView_time"
+        android:id="@+id/MemoImageView"
         android:src="@drawable/icon_time"
         android:layout_below="@+id/Memo_imageBar"
         android:layout_toLeftOf="@+id/TimeStamp"

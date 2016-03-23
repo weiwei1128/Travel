@@ -364,7 +364,7 @@ public class HttpService extends Service {
                             cv.put("price", jsonObjects[i][4]);
                             cv.put("click", jsonObjects[i][5]);
                             long result = database.insert("special_activity", null, cv);
-                            Log.d("3.10", "special_activity: " + result + " = DB INSERT" + i + "title " + jsonObjects[i][1]);
+//                            Log.d("3.10", "special_activity: " + result + " = DB INSERT" + i + "title " + jsonObjects[i][1]);
                         }
                     else { //資料庫已經有資料了!
                         for (int i = 0; i < jsonObjects.length; i++) {
@@ -392,7 +392,7 @@ public class HttpService extends Service {
                                         !special_dul.getString(4).equals(jsonObjects[i][4]) ||
                                         !special_dul.getString(5).equals(jsonObjects[i][5])) {
                                     long result = database.update("special_activity", cv, "special_id=?", new String[]{jsonObjects[i][0]});
-                                    Log.e("3.10", "special_activity updated: " + result + " title: " + jsonObjects[i][1]);
+//                                    Log.e("3.10", "special_activity updated: " + result + " title: " + jsonObjects[i][1]);
                                 }
                             } else {
                                 //資料庫存在 但資料不存在
@@ -404,7 +404,7 @@ public class HttpService extends Service {
                                 cv.put("price", jsonObjects[i][4]);
                                 cv.put("click", jsonObjects[i][5]);
                                 long result = database.insert("special_activity", null, cv);
-                                Log.d("3.10", "special_activity insert: " + result + " = DB INSERT" + i + "title " + jsonObjects[i][1]);
+//                                Log.d("3.10", "special_activity insert: " + result + " = DB INSERT" + i + "title " + jsonObjects[i][1]);
                             }
                             if (special_dul != null)
                                 special_dul.close();
@@ -505,7 +505,7 @@ public class HttpService extends Service {
                     state = new JSONObject(getString.substring(
                             getString.indexOf("{"), getString.lastIndexOf("}") + 1)).getString("states");
                     totalcount = new JSONObject(getString).getString("totalCount");
-                } catch (JSONException e) {
+                } catch (JSONException | NullPointerException e) {
                     e.printStackTrace();
                 }
                 //BOTH states and totalCount should be upgraded

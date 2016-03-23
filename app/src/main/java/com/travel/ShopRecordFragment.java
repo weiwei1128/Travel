@@ -81,7 +81,7 @@ public class ShopRecordFragment extends Fragment {
                 "name", "phone", "email", "addr"}, null, null, null, null, null);
         Cursor order_cursor = database.query("shoporder", new String[]{"order_id", "order_no",
                 "order_time", "order_name", "order_phone", "order_email",
-                "order_money", "order_state"}, null, null, null, null, null);
+                "order_money", "order_state","order_schedule"}, null, null, null, null, null);
         if (member_cursor != null && member_cursor.getCount() > 0) {
             member_cursor.moveToFirst();
             this.userId = member_cursor.getString(0);
@@ -105,7 +105,7 @@ public class ShopRecordFragment extends Fragment {
             SQLiteDatabase database = helper.getWritableDatabase();
             Cursor order_cursor = database.query("shoporder", new String[]{"order_id", "order_no",
                     "order_time", "order_name", "order_phone", "order_email",
-                    "order_money", "order_state"}, null, null, null, null, null);
+                    "order_money", "order_state","order_schedule"}, null, null, null, null, null);
             String Order_id;
             if (order_cursor != null && order_cursor.getCount() >= position) {
                 order_cursor.moveToPosition(position);
@@ -124,6 +124,7 @@ public class ShopRecordFragment extends Fragment {
 
     private void methodThatDoesSomethingWhenTaskIsDone(Boolean a) {
         if(a){//need to updated
+            Log.e("3.23","need to update shoprecord!");
             new OrderGet(context, userId, new Functions.TaskCallBack() {
                 @Override
                 public void TaskDone(Boolean OrderNeedUpdate) {

@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -38,10 +37,9 @@ import java.nio.charset.Charset;
 /**
  * 0309 LinearLayout
  * Ontouch失效 ->>> 把裡面的textview clickable設成false就成功了 但Onclick仍然失效
- *
- * **/
+ **/
 public class ServiceActivity extends AppCompatActivity {
-    ImageView backImg, moreImg;
+    ImageView backImg;
     EditText commentEdt;
     LinearLayout sendLayout;
     String name, email, phone;
@@ -51,7 +49,6 @@ public class ServiceActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.service_activity);
         backImg = (ImageView) findViewById(R.id.service_backImg);
-        moreImg = (ImageView) findViewById(R.id.service_moreImg);
         commentEdt = (EditText) findViewById(R.id.service_edit);
         sendLayout = (LinearLayout) findViewById(R.id.service_send_layout);
         DataBaseHelper helper = new DataBaseHelper(ServiceActivity.this);
@@ -71,7 +68,7 @@ public class ServiceActivity extends AppCompatActivity {
         sendLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("3.9","ServiceActivity sendLayout clicked!"+commentEdt.getText().toString());
+//                Log.d("3.9", "ServiceActivity sendLayout clicked!" + commentEdt.getText().toString());
                 if (commentEdt.getText().toString().equals(""))
                     Toast.makeText(ServiceActivity.this, "沒有輸入資料！", Toast.LENGTH_SHORT).show();
                 else
@@ -82,7 +79,7 @@ public class ServiceActivity extends AppCompatActivity {
         backImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.e("1/29", "SERVICE2" + commentEdt.getText().toString());
+//                Log.e("1/29", "SERVICE2" + commentEdt.getText().toString());
                 if (!commentEdt.getText().toString().equals("")) {
                     // 創建退出對話框
                     AlertDialog isExit = new AlertDialog.Builder(ServiceActivity.this).create();
@@ -149,14 +146,14 @@ public class ServiceActivity extends AppCompatActivity {
 
         @Override
         protected String doInBackground(String... params) {
-            Log.e("3.9","Service do in background");
+//            Log.e("3.9", "Service do in background");
             HttpClient client = new DefaultHttpClient();
             HttpPost post = new HttpPost("http://zhiyou.lin366.com/api/feedback/index.aspx");
             MultipartEntity entity = new MultipartEntity();
             Charset chars = Charset.forName("UTF-8");
             try {
                 entity.addPart("json",
-                        new StringBody("{\"act\":\"add\",\"title\":\"title\",\"name\":\""+name+"\",\"email\":\""+email+"\",\"content\":\""+m_messgae+"\",\"tel\":\""+phone+"\"}", chars));
+                        new StringBody("{\"act\":\"add\",\"title\":\"title\",\"name\":\"" + name + "\",\"email\":\"" + email + "\",\"content\":\"" + m_messgae + "\",\"tel\":\"" + phone + "\"}", chars));
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
@@ -184,9 +181,9 @@ public class ServiceActivity extends AppCompatActivity {
         protected void onPostExecute(String s) {
             mDialog.dismiss();
             commentEdt.setText("");
-            if(s==null)
+            if (s == null)
                 s = "與伺服器連線錯誤!";
-            Toast.makeText(ServiceActivity.this,"===系統回復====\n"+s,Toast.LENGTH_SHORT).show();
+            Toast.makeText(ServiceActivity.this, "===系統回復====\n" + s, Toast.LENGTH_SHORT).show();
             super.onPostExecute(s);
         }
 

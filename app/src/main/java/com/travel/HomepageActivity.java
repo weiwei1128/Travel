@@ -215,7 +215,7 @@ public class HomepageActivity extends FragmentActivity {
                         goLogin.show();
                 } else {
                     changeFragment(shopRecordFragment);
-                    
+
                     memberImg.setImageResource(R.drawable.member_img_click);
                     memberText.setTextColor(getResources().getColor(R.color.gray));
                     moreImg.setImageResource(R.drawable.more_img_click);

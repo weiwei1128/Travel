@@ -72,7 +72,8 @@ public class ShopRecordAdapter extends BaseAdapter {
         int number = 0;
 
         Cursor order_cursor = database.query("shoporder", new String[]{"order_id", "order_no",
-                        "order_time", "order_name", "order_phone", "order_email", "order_money", "order_state"},
+                        "order_time", "order_name", "order_phone", "order_email",
+                        "order_money", "order_state","order_schedule"},
                 null, null, null, null, null);
         if (order_cursor != null) {
             number = order_cursor.getCount();
@@ -109,7 +110,7 @@ public class ShopRecordAdapter extends BaseAdapter {
             item = (item) convertView.getTag();
         Cursor order_cursor = database.query("shoporder", new String[]{"order_id", "order_no",
                 "order_time", "order_name", "order_phone", "order_email", "order_money",
-                "order_state"}, null, null, null, null, null);
+                "order_state","order_schedule"}, null, null, null, null, null);
         if (order_cursor != null && order_cursor.getCount() >= position) {
             order_cursor.moveToPosition(position);
             if (order_cursor.getString(1) != null)

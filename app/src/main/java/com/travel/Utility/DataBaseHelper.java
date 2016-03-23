@@ -13,7 +13,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DataBaseHelper extends SQLiteOpenHelper {
     private static DataBaseHelper mInstance = null;
     private static final int VERSION = 1;
-    private static final String DATABASE_NAME = "Travel1.db";
+    private static final String DATABASE_NAME = "Travel2.db";
     private Context mcontext;
 
     public DataBaseHelper(Context context){
@@ -152,7 +152,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 +"_ID INTEGER PRIMARY KEY,"+"title TEXT"
                 +");";
         db.execSQL(DATABASE_CREATE_TABLE_NEWS);
-        System.out.println("database CREATE");
 
         String DATABASE_CREATE_TABLE_SHOPRECORD = "create table shoporder("
                 +"_ID INTEGER PRIMARY KEY,"+"order_id TEXT,"
@@ -162,9 +161,14 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 +"order_phone TEXT,"
                 +"order_email TEXT,"
                 +"order_money TEXT,"
-                +"order_state TEXT"
+                +"order_state TEXT,"
+                +"order_schedule INTEGER DEFAULT 0"
                 +");";
         db.execSQL(DATABASE_CREATE_TABLE_SHOPRECORD);
+
+
+
+
         System.out.println("database CREATE");
     }
 

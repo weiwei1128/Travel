@@ -49,12 +49,13 @@ dependencies {
         transitive = true;
     }
     compile 'com.google.android.gms:play-services:8.4.0'
-    compile 'com.google.android.gms:play-services:8.4.0'
     compile 'com.android.support:support-v4:23.2.0'
     compile 'com.android.support:appcompat-v7:23.2.0'
     compile 'com.android.support:design:23.2.0'
     compile 'com.google.android.gms:play-services-ads:8.4.0'
     compile 'com.google.android.gms:play-services-identity:8.4.0'
     compile 'com.google.android.gms:play-services-gcm:8.4.0'
-    compile 'org.apache.httpcomponents:httpmime:4.3.2'
+    compile ('org.apache.httpcomponents:httpmime:4.3.2'){
+        exclude module: 'org.apache.httpcomponents:httpclient'
+    }
 }

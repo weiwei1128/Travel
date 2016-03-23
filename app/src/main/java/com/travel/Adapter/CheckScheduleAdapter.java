@@ -13,14 +13,16 @@ import com.travel.R;
  */
 public class CheckScheduleAdapter extends BaseAdapter {
     LayoutInflater layoutInflater;
+    int count=0;
 
-    public CheckScheduleAdapter(Context context){
+    public CheckScheduleAdapter(Context context,int Count){
         layoutInflater = LayoutInflater.from(context);
+        this.count = Count;
     }
 
     @Override
     public int getCount() {
-        return 5;
+        return count;
     }
 
     @Override
@@ -35,7 +37,7 @@ public class CheckScheduleAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        View view = layoutInflater.inflate(R.layout.check_schedule_main_item,null);
+        View view = layoutInflater.inflate(R.layout.checkschedule_item,null);
         return view;
     }
 

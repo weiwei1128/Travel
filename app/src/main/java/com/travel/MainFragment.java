@@ -12,7 +12,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -190,7 +189,7 @@ public class MainFragment extends Fragment {
         scheduleLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Functions.go(false, getActivity(), context, CheckScheduleMainActivity.class, null);
+                Functions.go(false, getActivity(), context, CheckScheduleActivity.class, null);
             }
         });
     }

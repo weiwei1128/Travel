@@ -94,7 +94,7 @@ public class ShopRecordItemActivity extends AppCompatActivity {
         SQLiteDatabase database = helper.getWritableDatabase();
         Cursor order_cursor = database.query("shoporder", new String[]{"order_id", "order_no",
                 "order_time", "order_name", "order_phone", "order_email",
-                "order_money", "order_state"}, "order_id=" + OrderId, null, null, null, null);
+                "order_money", "order_state","order_schedule"}, "order_id=" + OrderId, null, null, null, null);
         if (order_cursor != null && order_cursor.getCount() > 0) {
             order_cursor.moveToFirst();
             if (order_cursor.getString(7) != null) {
