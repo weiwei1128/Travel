@@ -50,7 +50,7 @@ public class HttpService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.d("3.7", "Service onStartCommand");
+//        Log.d("3.7", "Service onStartCommand");
 
         //利用 executeOnExecutor 確切執行非同步作業
         new Banner().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);

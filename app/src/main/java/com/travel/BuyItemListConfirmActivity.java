@@ -33,7 +33,7 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 
 public class BuyItemListConfirmActivity extends AppCompatActivity {
-    ImageView backImg, moreImg;
+    ImageView backImg;
     TextView buylistText, totalText;
     DataBaseHelper helper;
     SQLiteDatabase database;
@@ -57,7 +57,6 @@ public class BuyItemListConfirmActivity extends AppCompatActivity {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         helper = new DataBaseHelper(BuyItemListConfirmActivity.this);
         database = helper.getWritableDatabase();
-        moreImg = (ImageView) findViewById(R.id.buyitemlistconfirm_moreImg);
         buylistText = (TextView) findViewById(R.id.buyitemlistconfirm_listText);
         backImg = (ImageView) findViewById(R.id.buyitemlistconfirm_backImg);
         confrimLayout = (LinearLayout) findViewById(R.id.buyitemlistconfirm_confirmLay);
@@ -83,8 +82,8 @@ public class BuyItemListConfirmActivity extends AppCompatActivity {
         if (goods_cursor != null && goods_cursor.getCount() != 0) {
             goods_cursor.moveToFirst();
             while (!goods_cursor.isAfterLast()) {
-                Log.d("2.24", "確認sharedPreferences:" + goods_cursor.getString(2) + " 數目： " +
-                        sharedPreferences.getInt(goods_cursor.getString(1), 0));
+//                Log.d("2.24", "確認sharedPreferences:" + goods_cursor.getString(2) + " 數目： " +
+//                sharedPreferences.getInt(goods_cursor.getString(1), 0));
                 if (sharedPreferences.getInt(goods_cursor.getString(1), 0) != 0) {
                     buylistText.append(goods_cursor.getString(2) + " : "
                             + sharedPreferences.getInt(goods_cursor.getString(1), 0) + " 個 \n");
@@ -97,7 +96,7 @@ public class BuyItemListConfirmActivity extends AppCompatActivity {
         if (goods_cursor != null)
             goods_cursor.close();
         totalText = (TextView) findViewById(R.id.buyitemlistconfirm_totalText);
-        totalText.setText(totalnumber+"");
+        totalText.setText(totalnumber + "");
     }
 
 
@@ -108,8 +107,8 @@ public class BuyItemListConfirmActivity extends AppCompatActivity {
      * "sname":"sname","stel":"stel","semail":"semail","sstate":"sstate",
      * "scity":"scity","saddress":"saddress","carlist":[{"gid":"123","num":"1"},
      * {"gid":"123","num":"2"}]}
-     *
-     *
+     * <p/>
+     * <p/>
      * 回傳資料
      * {"states":"1","msg":"加入成功","id":"45"}
      */
@@ -157,7 +156,6 @@ public class BuyItemListConfirmActivity extends AppCompatActivity {
             } catch (JSONException | NullPointerException e) {
                 e.printStackTrace();
             }
-
 
 
             return null;

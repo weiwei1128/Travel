@@ -82,7 +82,7 @@ public class SpecialAdapter extends BaseAdapter {
             if (number / 10 + 1 == page_no) {
                 number = number % 10;
             } else number = 10;
-        Log.e("3.10", "special:" + number);
+//        Log.e("3.10", "special:" + number);
         return number;
     }
 

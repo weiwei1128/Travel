@@ -155,6 +155,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
         String DATABASE_CREATE_TABLE_SHOPRECORD = "create table shoporder("
                 +"_ID INTEGER PRIMARY KEY,"+"order_id TEXT,"
+                +"order_userid TEXT,"
                 +"order_no TEXT,"
                 +"order_time TEXT,"
                 +"order_name TEXT,"
