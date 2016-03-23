@@ -95,7 +95,7 @@ public class OrderList extends AsyncTask<String,Void,Boolean> {
             if((foodlist==null||foodlist.length()==0)&&(jindianlist==null||jindianlist.length()==0)){
                 DataBaseHelper helper = new DataBaseHelper(context);
                 SQLiteDatabase database = helper.getWritableDatabase();
-                Cursor order_cursor = database.query("shoporder", new String[]{"order_id", "order_no",
+                Cursor order_cursor = database.query("shoporder", new String[]{"order_id","order_userid ", "order_no",
                         "order_time", "order_name", "order_phone", "order_email",
                         "order_money", "order_state","order_schedule"},
                         "order_id=" + OrderId, null, null, null, null);

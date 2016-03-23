@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.Toast;
 
 import com.travel.Adapter.ShopRecordAdapter;
 import com.travel.Utility.DataBaseHelper;
@@ -86,10 +87,10 @@ public class ShopRecordFragment extends Fragment {
             if (userId != null) {
                 adapter = new ShopRecordAdapter(context, userId);
                 gridView.setAdapter(adapter);
-                Cursor order_cursor = database.query("shoporder", new String[]{"order_id", "order_no",
+                Cursor order_cursor = database.query("shoporder", new String[]{"order_id","order_userid ", "order_no",
                                 "order_time", "order_name", "order_phone", "order_email",
-                                "order_money", "order_state", "order_schedule"}, "order_id=" + userId,
-                        null, null, null, null);
+                                "order_money", "order_state", "order_schedule"}, "order_userid="+ "\"" + userId+ "\"",
+                        null, null, null, null,null);
                 if (order_cursor != null) {
                     order_cursor.moveToFirst();
                     this.OldCount = order_cursor.getCount();
@@ -102,6 +103,9 @@ public class ShopRecordFragment extends Fragment {
 
         if (database.isOpen())
             database.close();
+
+        if(OldCount==0)
+            Toast.makeText(context,"尚無資料!",Toast.LENGTH_SHORT).show();
     }
 
     class itemlistener implements AdapterView.OnItemClickListener {
@@ -110,9 +114,9 @@ public class ShopRecordFragment extends Fragment {
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             DataBaseHelper helper = new DataBaseHelper(context);
             SQLiteDatabase database = helper.getWritableDatabase();
-            Cursor order_cursor = database.query("shoporder", new String[]{"order_id", "order_no",
+            Cursor order_cursor = database.query("shoporder", new String[]{"order_id","order_userid ", "order_no",
                             "order_time", "order_name", "order_phone", "order_email",
-                            "order_money", "order_state", "order_schedule"}, "order_id=" + userId,
+                            "order_money", "order_state", "order_schedule"}, "order_userid="+ "\"" + userId+ "\"",
                     null, null, null, null);
             String Order_id;
             if (order_cursor != null && order_cursor.getCount() >= position) {

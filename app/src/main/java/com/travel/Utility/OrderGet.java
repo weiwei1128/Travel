@@ -189,7 +189,7 @@ public class OrderGet extends AsyncTask<String, Void, String> {
             }
             DataBaseHelper helper = new DataBaseHelper(context);
             SQLiteDatabase database = helper.getWritableDatabase();
-            Cursor order_cursor = database.query("shoporder", new String[]{"order_id", "order_no",
+            Cursor order_cursor = database.query("shoporder", new String[]{"order_id","order_userid ", "order_no",
                     "order_time", "order_name", "order_phone", "order_email",
                     "order_money", "order_state","order_schedule"}, null, null, null, null, null);
             if (order_cursor != null) {
@@ -197,6 +197,7 @@ public class OrderGet extends AsyncTask<String, Void, String> {
                 if (order_cursor.getCount() == 0) {//是新的資料庫 -> 新增資料
                     for (String[] string : jsonObjects) {//會跑[H][]次
                         cv.clear();
+                        cv.put("order_userid", UserId);
                         cv.put("order_id", string[0]);
                         cv.put("order_no", string[1]);
                         cv.put("order_time", string[2]);
@@ -211,7 +212,7 @@ public class OrderGet extends AsyncTask<String, Void, String> {
 
                 } else { //已經有資料庫了->確認是否有重複資料 ->確認是否要更新狀態 // -> 確認是否有新的資料
                     for (String[] string : jsonObjects) {
-                        Cursor order_cursor_dul = database.query("shoporder", new String[]{"order_id", "order_no",
+                        Cursor order_cursor_dul = database.query("shoporder", new String[]{"order_id","order_userid ", "order_no",
                                         "order_time", "order_name", "order_phone",
                                         "order_email", "order_money", "order_state","order_schedule"},
                                 "order_id=" + string[0], null, null, null, null);
@@ -229,6 +230,7 @@ public class OrderGet extends AsyncTask<String, Void, String> {
                             }
                         } else {
                             cv.clear();
+                            cv.put("order_userid", UserId);
                             cv.put("order_id", string[0]);
                             cv.put("order_no", string[1]);
                             cv.put("order_time", string[2]);
