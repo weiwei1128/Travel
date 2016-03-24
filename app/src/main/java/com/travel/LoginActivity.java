@@ -11,7 +11,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -26,7 +25,6 @@ import com.travel.Utility.DataBaseHelper;
 import com.travel.Utility.HttpService;
 import com.travel.Utility.LoadApiService;
 import com.travel.Utility.MyAnimation;
-import com.travel.Utility.OrderUpdate;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -96,12 +94,11 @@ public class LoginActivity extends AppCompatActivity {
         accountText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("11.18", "textView clicked");
+//                Log.d("11.18", "textView clicked");
                 View view = accountText;
                 MyAnimation test = new MyAnimation(view, 150, true);
                 accountText.startAnimation(test);
                 accountEdit.setVisibility(View.VISIBLE);
-                accountEdit.setText("請輸入帳號");
                 //make the keyboard show
                 accountEdit.requestFocus();
                 getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
@@ -110,12 +107,11 @@ public class LoginActivity extends AppCompatActivity {
         passText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("11.18", "pass clicked");
+//                Log.d("11.18", "pass clicked");
                 View view = passText;
                 MyAnimation myAnimation = new MyAnimation(view, 150, true);
                 passText.startAnimation(myAnimation);
                 passEdit.setVisibility(View.VISIBLE);
-                passEdit.setText("請輸入密碼");
                 //make the keyboard show
                 passEdit.requestFocus();
                 getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
@@ -124,20 +120,6 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
         //11.18 按下textview的動畫
-        accountEdit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (accountEdit.getText().toString().equals("請輸入帳號"))
-                    accountEdit.setText("");
-            }
-        });
-        passEdit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (passEdit.getText().toString().equals("請輸入密碼"))
-                    passEdit.setText("");
-            }
-        });
         loginText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -228,10 +210,6 @@ public class LoginActivity extends AppCompatActivity {
                 });
                 signDialog.setCancelable(false);
                 signDialog.show();
-                //TODO 測試的帳密
-                accountEdit.setText("ljd110@qq.com");
-                passEdit.setText("ljd110@qq.com");
-                Toast.makeText(LoginActivity.this, "建構中", Toast.LENGTH_SHORT).show();
             }
         });
         //11.18 登入textview
@@ -423,7 +401,7 @@ public class LoginActivity extends AppCompatActivity {
         Context context;
         ShopRecordAdapter adapter;
 
-        public getShopRecord(ShopRecordAdapter shopRecordAdapter,Context context,String userId) {
+        public getShopRecord(ShopRecordAdapter shopRecordAdapter, Context context, String userId) {
             this.adapter = shopRecordAdapter;
             this.context = context;
             this.UserId = userId;
@@ -431,9 +409,9 @@ public class LoginActivity extends AppCompatActivity {
 
         @Override
         protected String doInBackground(String... params) {
-            Log.i("3.11", "*************ShopRecord DO IN BACKGROUND");
+//            Log.i("3.11", "*************ShopRecord DO IN BACKGROUND");
             String returnMessage = null;
-            if(UserId!=null) {
+            if (UserId != null) {
                 HttpClient client = new DefaultHttpClient();
                 HttpPost post = new HttpPost("http://zhiyou.lin366.com/api/order/index.aspx");
                 MultipartEntity multipartEntity = new MultipartEntity();
@@ -647,12 +625,13 @@ public class LoginActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String s) {
-            Log.i("3.11", "shoprecord on PostExecute:" + s);
+//            Log.i("3.11", "shoprecord on PostExecute:" + s);
             if (s != null)
                 adapter.notifyDataSetChanged();
             super.onPostExecute(s);
         }
     }
+
     class login_Data extends AsyncTask<String, Void, String> {
         public String maccount, mpassword, mName, mPhone, mEmail, mAddr, login_result;
         Boolean OK = false;
@@ -703,7 +682,7 @@ public class LoginActivity extends AppCompatActivity {
                 total = EntityUtils.toString(resp9.getEntity());
 
                 //取得登入會員資料
-                Log.e("2.26", "msg:" + total);
+//                Log.e("2.26", "msg:" + total);
                 String state = null;
                 try {
                     state = new JSONObject(total.substring(
@@ -776,7 +755,8 @@ public class LoginActivity extends AppCompatActivity {
 //                    Log.e("2.26", "phone: " + mPhone);
 //                    Log.e("2.26", "Email: " + mEmail);
 //                    Log.e("2.26", "Address: " + mAddr);
-                } else Log.e("2.26", "state: " + state);
+                }
+//                else Log.e("2.26", "state: " + state);
 
 
                 /*
@@ -798,7 +778,7 @@ public class LoginActivity extends AppCompatActivity {
 //                Log.d("1/7", "IOException");
                 e.printStackTrace();
             }
-            Log.d("2.26", "login result: " + login_result);
+//            Log.d("2.26", "login result: " + login_result);
 
             return total;
         }
@@ -806,19 +786,13 @@ public class LoginActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String string) {
             mDialog.dismiss();
-            int oldCount = 0;
             /** 新增會員資料 **/
             if (OK) {
                 DataBaseHelper helper = new DataBaseHelper(LoginActivity.this);
                 SQLiteDatabase database = helper.getWritableDatabase();
                 Cursor member_cursor = database.query("member", new String[]{"account", "password",
                         "name", "phone", "email", "addr"}, null, null, null, null, null);
-                Cursor order_cursor = database.query("shoporder", new String[]{"order_id", "order_no",
-                        "order_time", "order_name", "order_phone", "order_email",
-                        "order_money", "order_state"}, null, null, null, null, null);
 
-                if(order_cursor!=null)
-                    oldCount = order_cursor.getCount();
                 if (member_cursor != null && member_cursor.getCount() > 0) {
                     database.delete("member", null, null);
                 }
@@ -843,8 +817,9 @@ public class LoginActivity extends AppCompatActivity {
             if (!OK)
                 login_result = "錯誤:" + login_result;
             else login_result = "成功登入！";
-            final Toast toast = Toast.makeText(getApplicationContext()
-                    , "=====測試結果=====" + "\n" + login_result, Toast.LENGTH_LONG);
+            final Toast toast = Toast.makeText(getApplicationContext(),
+//                    "=====測試結果=====" + "\n" +
+                    login_result, Toast.LENGTH_LONG);
             toast.show();
             //custom time
             Handler handler = new Handler();
@@ -859,9 +834,8 @@ public class LoginActivity extends AppCompatActivity {
             Timer a = new Timer();
 
             if (OK)
-                //如果正確才會跳到下個畫面
+            //如果正確才會跳到下個畫面
             {
-                final int finalOldCount = oldCount;
                 a.schedule(new TimerTask() {
                                @Override
                                public void run() {
