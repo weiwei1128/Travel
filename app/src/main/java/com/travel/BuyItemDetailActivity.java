@@ -521,8 +521,8 @@ public class BuyItemDetailActivity extends AppCompatActivity {
                                 "goods_bigid=" + "\"" + itemID + "\"" + " and goods_itemid=" + "\"" + cartItem[i][0] + "\"", null,
                                 null, null, null);
 
-                        if (goods_cursor != null&&goods_cursor.getCount()>0) {//DB已經有這個大項目裡的這個小項目(i)
-                            Log.i("3.24", i + "!!!insertDB! in second if"+itemID+"  "+cartItem[i][0]+"====="+goods_cursor.getCount());
+                        if (goods_cursor != null && goods_cursor.getCount() > 0) {//DB已經有這個大項目裡的這個小項目(i)
+                            Log.i("3.24", i + "!!!insertDB! in second if" + itemID + "  " + cartItem[i][0] + "=====" + goods_cursor.getCount());
                             goods_cursor.close();
                         } else {//大項目裡面沒有小項目!! ->> 新增
                             cv.clear();

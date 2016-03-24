@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -82,6 +83,7 @@ public class ShopRecordAdapter extends BaseAdapter {
             number = order_cursor.getCount();
             order_cursor.close();
         }
+        Log.e("3.24", "getCount!" + number);
         return number;
     }
 
@@ -113,21 +115,21 @@ public class ShopRecordAdapter extends BaseAdapter {
             item = (item) convertView.getTag();
         Cursor order_cursor = database.query("shoporder", new String[]{"order_id", "order_userid ", "order_no",
                 "order_time", "order_name", "order_phone", "order_email", "order_money",
-                "order_state", "order_schedule"}, "order_id=" + "\"" + UserId + "\"", null, null, null, null);
+                "order_state", "order_schedule"}, "order_userid=" + "\"" + UserId + "\"", null, null, null, null);
         if (order_cursor != null && order_cursor.getCount() >= position) {
             order_cursor.moveToPosition(position);
-            if (order_cursor.getString(1) != null)
-                item.order_no.setText(order_cursor.getString(1));
             if (order_cursor.getString(2) != null)
-                item.order_date.setText(order_cursor.getString(2));
+                item.order_no.setText(order_cursor.getString(2));
             if (order_cursor.getString(3) != null)
-                item.order_info.setText("姓名: " + order_cursor.getString(3));
+                item.order_date.setText(order_cursor.getString(3));
             if (order_cursor.getString(4) != null)
-                item.order_info.append("\n電話: " + order_cursor.getString(4));
-            if (order_cursor.getString(6) != null)
-                item.order_money.setText("$" + order_cursor.getString(6));
+                item.order_info.setText("姓名: " + order_cursor.getString(4));
+            if (order_cursor.getString(5) != null)
+                item.order_info.append("\n電話: " + order_cursor.getString(5));
             if (order_cursor.getString(7) != null)
-                item.order_state.setText(order_cursor.getString(7));
+                item.order_money.setText("$" + order_cursor.getString(7));
+            if (order_cursor.getString(8) != null)
+                item.order_state.setText(order_cursor.getString(8));
         }
         loader.displayImage(null, item.order_img, options, listener);
 
