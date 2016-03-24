@@ -617,9 +617,8 @@ public class HttpService extends Service {
                                                 "goods_title", "goods_url", "goods_money", "goods_content", "goods_click", "goods_addtime"},
                                         "goods_id=" + jsonObjects[i][4], null, null, null, null, null);
                                 if (goods_dul != null && goods_dul.getCount() > 0) {
-                                    //TODO 要更新click資料
+                                    //TODO 要更新click資料？
                                     goods_dul.moveToFirst();
-//                                Log.e("2.25", "有重複的資料!" + goods_dul.getString(1) + "title: " + goods_dul.getString(2));
                                 } else {
                                     ContentValues cv = new ContentValues();
                                     cv.put("goods_title", jsonObjects[i][0]);
@@ -643,8 +642,6 @@ public class HttpService extends Service {
 //                Log.d("2.19", "something NULL!" + jsonObjects + " :jsonObjects");
                 if (goods_cursor != null)
                     goods_cursor.close();
-//            database.endTransaction();
-//            database.close();
             }
             super.onPostExecute(stringStringMap);
         }

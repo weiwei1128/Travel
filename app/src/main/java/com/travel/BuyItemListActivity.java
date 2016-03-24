@@ -1,5 +1,7 @@
 package com.travel;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -43,18 +45,48 @@ public class BuyItemListActivity extends AppCompatActivity {
         confirmLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("12/30", "listconfirmLayout CLICKED!!!");
-                Bundle bundle = new Bundle();
-                bundle.putInt("WhichItem", lastItem);
-                Functions.go(false, BuyItemListActivity.this, BuyItemListActivity.this,
-                        BuyItemListConfirmActivity.class, null
+                if (!Functions.ifLogin(BuyItemListActivity.this)) {
+                    AlertDialog goLogin = new AlertDialog.Builder(BuyItemListActivity.this).create();
+
+                    // 設置對話框標題
+                    goLogin.setTitle("系統提示");
+                    goLogin.setCancelable(false);
+                    // 設置對話框消息
+                    goLogin.setMessage("請先登入");
+                    // 添加選擇按鈕並注冊監聽
+                    goLogin.setButton("確定", listenerLogin);
+                    goLogin.setButton2("取消", listenerLogin);
+                    // 顯示對話框
+                    if (!goLogin.isShowing())
+                        goLogin.show();
+                } else {
+                    Log.d("12/30", "listconfirmLayout CLICKED!!!");
+                    Bundle bundle = new Bundle();
+                    bundle.putInt("WhichItem", lastItem);
+                    Functions.go(false, BuyItemListActivity.this, BuyItemListActivity.this,
+                            BuyItemListConfirmActivity.class, null
 //                        bundle
-                );
+                    );
+                }
             }
         });
         adapter = new BuyitemAdapter(this);
         listView.setAdapter(adapter);
     }
+
+    DialogInterface.OnClickListener listenerLogin = new DialogInterface.OnClickListener() {
+        public void onClick(DialogInterface dialog, int which) {
+            switch (which) {
+                case AlertDialog.BUTTON_POSITIVE:// "確認"按鈕前往登入
+                    Functions.go(false, BuyItemListActivity.this, BuyItemListActivity.this, LoginActivity.class, null);
+                    break;
+                case AlertDialog.BUTTON_NEGATIVE:// "取消"第二個按鈕取消對話框
+                    break;
+                default:
+                    break;
+            }
+        }
+    };
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {

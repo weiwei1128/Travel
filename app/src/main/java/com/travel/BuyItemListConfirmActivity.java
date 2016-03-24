@@ -76,27 +76,49 @@ public class BuyItemListConfirmActivity extends AppCompatActivity {
             }
         });
 
-        int totalnumber = 0;
+        int totalnumber = 0, getitemPosition = 0, BiginCart = 0, totalmoney = 0;
+        String BigitemID = null, SmallitemID = null, itemName = null;
         Cursor goods_cursor = database.query("goods", new String[]{"totalCount", "goods_id", "goods_title",
                 "goods_url", "goods_money", "goods_content", "goods_addtime"}, null, null, null, null, null);
         if (goods_cursor != null && goods_cursor.getCount() != 0) {
-            goods_cursor.moveToFirst();
-            while (!goods_cursor.isAfterLast()) {
-//                Log.d("2.24", "確認sharedPreferences:" + goods_cursor.getString(2) + " 數目： " +
-//                sharedPreferences.getInt(goods_cursor.getString(1), 0));
-                if (sharedPreferences.getInt(goods_cursor.getString(1), 0) != 0) {
-                    buylistText.append(goods_cursor.getString(2) + " : "
-                            + sharedPreferences.getInt(goods_cursor.getString(1), 0) + " 個 \n");
-                    int money = Integer.valueOf(goods_cursor.getString(4));
-                    totalnumber = totalnumber + money * sharedPreferences.getInt(goods_cursor.getString(1), 0);
+            while (goods_cursor.moveToNext()) {
+                BiginCart = sharedPreferences.getInt("InBuyListg" + goods_cursor.getString(1), 0);
+                if (BiginCart > 0) {
+                    for (int k = 0; k < BiginCart; k++) {
+                        String a = sharedPreferences.getString("InBuyListg" + goods_cursor.getString(1) + "id" + (k + 1), null);
+                        int smallItemCount = sharedPreferences.getInt("InBuyListgC" + goods_cursor.getString(1) + "id" + (k + 1), 0);
+                        if (a != null && smallItemCount != 0) {
+
+                            BigitemID = goods_cursor.getString(1);
+                            getitemPosition = k + 1;
+                            SmallitemID = a;
+
+                            if (BigitemID != null && SmallitemID != null) {
+                                Cursor goods_cursor_big = database.query("goodsitem", new String[]{"goods_bigid",
+                                                "goods_itemid", "goods_title", "goods_money", "goods_url"},
+                                        "goods_bigid=? and goods_itemid=?", new String[]{BigitemID, SmallitemID}, null, null, null);
+                                goods_cursor_big.moveToFirst();
+                                int money = Integer.valueOf(goods_cursor_big.getString(3)) * smallItemCount;
+                                totalmoney = totalmoney + money;
+                                buylistText.append(goods_cursor.getString(2) + " " + goods_cursor_big.getString(2) + " : "
+                                        + smallItemCount + " 個 " + " $" + money + "\n");
+                            }
+                        }
+                    }
                 }
-                goods_cursor.moveToNext();
+//                else {//這個大項目沒有小項目在購物車裡面
+//                    Log.e("3.24", "這不是我要的!!!!" + getPosition + "." + position+"///"+goods_cursor.getString(1));
+//                }
+//                Log.i("3.24","我在while裡面!!!要執行下一輪");
+
             }
         }
+
+        //////////^^^^^
         if (goods_cursor != null)
             goods_cursor.close();
         totalText = (TextView) findViewById(R.id.buyitemlistconfirm_totalText);
-        totalText.setText(totalnumber + "");
+        totalText.setText(totalmoney + "");
     }
 
 

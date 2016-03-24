@@ -13,7 +13,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DataBaseHelper extends SQLiteOpenHelper {
     private static DataBaseHelper mInstance = null;
     private static final int VERSION = 1;
-    private static final String DATABASE_NAME = "Travel2.db";
+    private static final String DATABASE_NAME = "Travel.db";
     private Context mcontext;
 
     public DataBaseHelper(Context context){
@@ -135,6 +135,15 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 +"goods_addtime TEXT"
                 +");";
         db.execSQL(DATABASE_CREATE_TABLE_GOODS);
+        //0324 伴手禮小項目
+        String DATABASE_CREATE_TABLE_GOODSITEM = "create table goodsitem("
+                +"_ID INTEGER PRIMARY KEY,"+"goods_bigid TEXT,"
+                +"goods_itemid TEXT,"
+                +"goods_title TEXT,"
+                +"goods_money TEXT,"
+                +"goods_url TEXT"
+                +");";
+        db.execSQL(DATABASE_CREATE_TABLE_GOODSITEM);
 
         //即時好康
         String DATABASE_CREATE_TABLE_SPECIAL = "create table special_activity("
