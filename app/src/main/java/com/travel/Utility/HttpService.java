@@ -119,14 +119,30 @@ public class HttpService extends Service {
 //            Log.d("3.7", "BannerService result:" + result);
             if (jsonArray != null) {
 //                Log.d("3.7", "BannerService result:" + jsonArray.length());
+                DataBaseHelper helper = new DataBaseHelper(context);
+                SQLiteDatabase database = helper.getWritableDatabase();
+                Cursor cursor = database.query("banner", new String[]{"img_url"}, null, null, null, null, null);
+                if (cursor != null && cursor.getCount() > 0)
+                    database.delete("banner", null, null);
+                if (cursor != null)
+                    cursor.close();
+                ContentValues contentValues = new ContentValues();
+
                 SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.putInt("count", jsonArray.length());
-                 final int anInt = jsonArray.length();
+                final int anInt = jsonArray.length();
                 for (int i = 0; i < jsonArray.length(); i++) {
                     try {
                         editor.putString("img" + i,
                                 "http://zhiyou.lin366.com" + jsonArray.getJSONObject(i).getString("img_url"));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    try {
+                        contentValues.clear();
+                        contentValues.put("img_url", "http://zhiyou.lin366.com" + jsonArray.getJSONObject(i).getString("img_url"));
+                        database.insert("banner",null,contentValues);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }

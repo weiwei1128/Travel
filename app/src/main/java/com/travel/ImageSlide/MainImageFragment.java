@@ -3,32 +3,27 @@ package com.travel.ImageSlide;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
 import com.travel.R;
 import com.travel.Utility.DataBaseHelper;
-import com.travel.Utility.HttpService;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
@@ -63,7 +58,6 @@ public class MainImageFragment extends Fragment {
     ProgressBar progressBar;
 
 
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,7 +73,7 @@ public class MainImageFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.main_image_frament, container, false);
         findViewById(view);
-        putProgressLayout = (RelativeLayout)view.findViewById(R.id.img_slideshow_layout);
+        putProgressLayout = (RelativeLayout) view.findViewById(R.id.img_slideshow_layout);
         progressBar = new ProgressBar(activity.getBaseContext());
         RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -127,6 +121,7 @@ public class MainImageFragment extends Fragment {
 
         return view;
     }
+
     private void findViewById(View view) {
         mViewPager = (ViewPager) view.findViewById(R.id.view_pager);
         mIndicator = (CirclePageIndicator) view.findViewById(R.id.indicator);
@@ -166,7 +161,7 @@ public class MainImageFragment extends Fragment {
             task = new RequestImgTask(activity);
             task.execute();
         } else {
-            Log.d("LoadImage","no internet");
+            Log.d("LoadImage", "no internet");
         }
     }
 
@@ -239,26 +234,19 @@ public class MainImageFragment extends Fragment {
         @Override
         protected List<Product> doInBackground(String... params) {
             //0307
-            DataBaseHelper helper= new DataBaseHelper(context);
-            SQLiteDatabase database= helper.getWritableDatabase();
+            DataBaseHelper helper = new DataBaseHelper(context);
+            SQLiteDatabase database = helper.getWritableDatabase();
             Cursor cursor = database.query("banner", new String[]{"img_url"}, null, null, null, null, null);
-            if(cursor!=null){
-                while (cursor.moveToNext())
-                    Log.i("3.25","Getting Banner~"+cursor.getString(0));
-                cursor.close();
-            }
-            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-//            Log.d("3.7", "Image Slide!!!" + sharedPreferences.getInt("count", 0));
-            for(int i=0;i<sharedPreferences.getInt("count", 0);i++){
-//                Log.d("3.7", "!!!" + sharedPreferences.getString("img"+ i, ""));
-                String imgUrl=sharedPreferences.getString("img"+ i, "");
-                if(!imgUrl.equals("")) {
+            if (cursor != null) {
+                while (cursor.moveToNext()) {
+//                    Log.i("3.25", "Getting Banner~" + cursor.getString(0));
                     product = new Product();
                     product.setId(434);
                     product.setName("Pattern - Fractal Wallpaper");
-                    product.setImageUrl(imgUrl);
+                    product.setImageUrl(cursor.getString(0));
                     productsAdd.add(product);
                 }
+                cursor.close();
             }
 /*
             product = new Product();
@@ -299,22 +287,22 @@ public class MainImageFragment extends Fragment {
         protected void onPostExecute(List<Product> results) {
             if (activityWeakRef != null && !activityWeakRef.get().isFinishing()) {
                 if (error != null && error instanceof IOException) {
-                    Log.d("LoadImage","time out");
+                    Log.d("LoadImage", "time out");
                 } else if (error != null) {
-                    Log.d("LoadImage","error occured");
+                    Log.d("LoadImage", "error occured");
                 } else {
                     products = results;
-                    if(results!=null){
-                        if(products!=null && products.size()!=0){
+                    if (results != null) {
+                        if (products != null && products.size() != 0) {
 //                            putProgressLayout.removeView(progressBar);
                             mViewPager.setAdapter(new ImageSliderAdapter(activity,
-                                    products,MainImageFragment.this));
+                                    products, MainImageFragment.this));
                             mIndicator.setViewPager(mViewPager);
                             runnable(products.size());
-                            handler.postDelayed(animateViewPager,ANIM_VIEWPAGER_DELAY);
+                            handler.postDelayed(animateViewPager, ANIM_VIEWPAGER_DELAY);
                         }
-                    }else{
-                        Log.d("LoadImage","noProducts");
+                    } else {
+                        Log.d("LoadImage", "noProducts");
                     }
                 }
             }

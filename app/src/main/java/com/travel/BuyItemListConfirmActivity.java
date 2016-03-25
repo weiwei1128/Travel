@@ -46,7 +46,13 @@ public class BuyItemListConfirmActivity extends AppCompatActivity {
     DataBaseHelper helper;
     SQLiteDatabase database;
     LinearLayout confrimLayout;
+    //get shop list item
     final HashMap<String, Integer> cartList = new HashMap<>();
+    //get remove list
+    final HashSet<String> removeList = new HashSet<>();
+    int removeCount = 0;
+    final HashMap<Integer, String> remove = new HashMap<>();
+
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -62,10 +68,8 @@ public class BuyItemListConfirmActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.buyitem_list_confirm_activity);
-        //get remove list
-        final HashSet<String> removeList = new HashSet<>();
 
-        //get shop list item
+
         final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         helper = new DataBaseHelper(BuyItemListConfirmActivity.this);
         database = helper.getWritableDatabase();
@@ -130,12 +134,18 @@ public class BuyItemListConfirmActivity extends AppCompatActivity {
             while (goods_cursor.moveToNext()) {
                 BiginCart = sharedPreferences.getInt("InBuyListg" + goods_cursor.getString(1), 0);
                 removeList.add("InBuyListg" + goods_cursor.getString(1));
+                removeCount++;
+                remove.put(removeCount, "InBuyListg" + goods_cursor.getString(1));
                 if (BiginCart > 0) {
                     for (int k = 0; k < BiginCart; k++) {
                         String a = sharedPreferences.getString("InBuyListg" + goods_cursor.getString(1) + "id" + (k + 1), null);
                         int smallItemCount = sharedPreferences.getInt("InBuyListgC" + goods_cursor.getString(1) + "id" + (k + 1), 0);
                         removeList.add("InBuyListg" + goods_cursor.getString(1) + "id" + (k + 1));
                         removeList.add("InBuyListgC" + goods_cursor.getString(1) + "id" + (k + 1));
+                        removeCount++;
+                        remove.put(removeCount, "InBuyListg" + goods_cursor.getString(1) + "id" + (k + 1));
+                        removeCount++;
+                        remove.put(removeCount, "InBuyListgC" + goods_cursor.getString(1) + "id" + (k + 1));
                         if (a != null && smallItemCount != 0) {
 
                             BigitemID = goods_cursor.getString(1);
@@ -278,7 +288,13 @@ public class BuyItemListConfirmActivity extends AppCompatActivity {
         protected void onPostExecute(final String s) {
             super.onPostExecute(s);
             if (s != null) {
-                if(progressDialog.isShowing())
+                SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(BuyItemListConfirmActivity.this);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                for (Object key : remove.keySet()) {
+                    editor.remove(remove.get(key));
+                    System.out.println(key + " : " + remove.get(key));
+                }
+                if (progressDialog.isShowing())
                     progressDialog.dismiss();
                 progressDialog.setCancelable(false);
                 progressDialog.setMessage("送出成功\n即將跳轉至付款畫面");
@@ -293,6 +309,7 @@ public class BuyItemListConfirmActivity extends AppCompatActivity {
                                            BuyItemListConfirmWebview.class, bundle);
                                    if (progressDialog.isShowing())
                                        progressDialog.dismiss();
+                                   finish();
                                }
                            },
                         1500

@@ -50,8 +50,8 @@ public class BuyItemListConfirmWebview extends AppCompatActivity {
         backImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Functions.go(true, BuyItemListConfirmWebview.this, BuyItemListConfirmWebview.this,
-                        BuyItemListConfirmActivity.class, null);
+                Functions.go(false, BuyItemListConfirmWebview.this, BuyItemListConfirmWebview.this,
+                        BuyActivity.class, null);
             }
         });
 
