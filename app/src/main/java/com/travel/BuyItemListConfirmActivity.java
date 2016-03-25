@@ -68,6 +68,9 @@ public class BuyItemListConfirmActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.buyitem_list_confirm_activity);
+        Bundle bundle = this.getIntent().getExtras();
+        if(bundle!=null&&bundle.containsKey("AfterPay")&&bundle.getBoolean("AfterPay"))
+            finish();
 
 
         final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);

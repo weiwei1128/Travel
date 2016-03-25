@@ -61,8 +61,9 @@ public class BuyItemListConfirmWebview extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Bundle bundle = new Bundle();
+                bundle.putBoolean("AfterPay",true);
                 Functions.go(false, BuyItemListConfirmWebview.this, BuyItemListConfirmWebview.this,
-                        BuyActivity.class, null);
+                        BuyActivity.class, bundle);
                 finish();
             }
         });
