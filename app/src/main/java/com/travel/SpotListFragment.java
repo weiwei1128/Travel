@@ -33,7 +33,6 @@ import com.google.android.gms.location.LocationServices;
 import com.travel.Adapter.SpotListFragmentViewPagerAdapter;
 import com.travel.Utility.DataBaseHelper;
 import com.travel.Utility.GetSpotsNSort;
-import com.travel.Utility.SpotListViewPagerFragment;
 
 import java.util.ArrayList;
 import java.util.List;

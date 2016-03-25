@@ -1,4 +1,4 @@
-package com.travel.Utility;
+package com.travel;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
