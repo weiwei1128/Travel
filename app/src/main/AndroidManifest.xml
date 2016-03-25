@@ -62,8 +62,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".MapsActivity"
-            android:label="@string/title_activity_maps"
+            android:name=".SpotActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".BuyActivity"
@@ -80,7 +79,6 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".RecordActivity"
-            android:label="@string/title_activity_record"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".LoginActivity"
