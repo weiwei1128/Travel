@@ -110,9 +110,12 @@ public class SpotDetailActivity extends AppCompatActivity {
         BackImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Functions.go(true, SpotDetailActivity.this, SpotDetailActivity.this, SpotListActivity.class, null);
+                Bundle bundle = new Bundle();
+                bundle.putInt("position", 1);
+                Functions.go(true, SpotDetailActivity.this, SpotDetailActivity.this, SpotActivity.class, bundle);
             }
         });
+
         Bundle bundle = this.getIntent().getExtras();
         if (bundle.containsKey("WhichItem")) {
             mPosition = bundle.getInt("WhichItem");
@@ -183,7 +186,9 @@ public class SpotDetailActivity extends AppCompatActivity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if(keyCode==KeyEvent.KEYCODE_BACK) {
-            Functions.go(true, SpotDetailActivity.this, SpotDetailActivity.this, SpotListActivity.class, null);
+            Bundle bundle = new Bundle();
+            bundle.putInt("position", 1);
+            Functions.go(true, SpotDetailActivity.this, SpotDetailActivity.this, SpotActivity.class, bundle);
         }
         return false;
     }

@@ -129,21 +129,27 @@ public class RecordMemoDetailActivity extends AppCompatActivity implements
         }
 
 
-        List<Map<String, Object>> items = new ArrayList<Map<String, Object>>();
-        for (int i = 0; i < image_url.length; i++) {
-            Map<String, Object> item = new HashMap<String, Object>();
-            item.put("image", image_url[i]);
-            items.add(item);
+        Cursor img_cursor = database.query("travelmemo", new String[]{"memo_routesCounter", "memo_trackNo",
+                        "memo_content", "memo_img", "memo_latlng", "memo_time"},
+                "memo_routesCounter=\"" + RouteConter + "\" AND memo_img!=\"null\"", null, null, null, null, null);
+        if (img_cursor != null) {
+            if (img_cursor.getCount() != 0) {
+                List<Map<String, Object>> items = new ArrayList<Map<String,Object>>();
+                while (img_cursor.moveToNext()) {
+                    Map<String, Object> item = new HashMap<String, Object>();
+                    item.put("image", img_cursor.getBlob(3));
+                    items.add(item);
+                }
+                SimpleAdapter adapter = new SimpleAdapter(this,
+                        items, R.layout.memo_detail_grid, new String[]{"image"},
+                        new int[]{R.id.memoDetailGrid_image});
+                gridView = (ExpandableHeightGridView)findViewById(R.id.MemoDetail_gridView);
+                gridView.setNumColumns(3);
+                gridView.setAdapter(adapter);
+                gridView.setExpanded(true);
+            }
+            img_cursor.close();
         }
-
-        SimpleAdapter adapter = new SimpleAdapter(this,
-                items, R.layout.memo_detail_grid, new String[]{"image"},
-                new int[]{R.id.memoDetailGrid_image});
-
-        gridView = (ExpandableHeightGridView) findViewById(R.id.MemoDetail_gridView);
-        gridView.setNumColumns(3);
-        gridView.setAdapter(adapter);
-        gridView.setExpanded(true);
 
         setUpMapIfNeeded();
     }

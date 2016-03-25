@@ -10,6 +10,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
+
+import com.daimajia.slider.library.Indicators.PagerIndicator;
+import com.daimajia.slider.library.SliderLayout;
+import com.daimajia.slider.library.SliderTypes.BaseSliderView;
+import com.daimajia.slider.library.SliderTypes.DefaultSliderView;
+import com.daimajia.slider.library.Tricks.ViewPagerEx;
+import com.travel.R;
+import com.travel.Utility.DataBaseHelper;
+
 /*
 import com.daimajia.slider.library.Indicators.PagerIndicator;
 import com.daimajia.slider.library.SliderLayout;
@@ -17,15 +26,11 @@ import com.daimajia.slider.library.SliderTypes.BaseSliderView;
 import com.daimajia.slider.library.SliderTypes.DefaultSliderView;
 import com.daimajia.slider.library.Tricks.ViewPagerEx;
 */
-import com.travel.R;
-import com.travel.Utility.DataBaseHelper;
 
 /**
  * Created by Tinghua on 2016/3/3.
  */
-public class RecordMemoAdapter extends BaseAdapter
-//        implements ViewPagerEx.OnPageChangeListener
-{
+public class RecordMemoAdapter extends BaseAdapter implements ViewPagerEx.OnPageChangeListener {
 
     private LayoutInflater inflater;
     private ViewHolder mViewHolder;
@@ -76,12 +81,11 @@ public class RecordMemoAdapter extends BaseAdapter
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        /*
         if (convertView == null) {
-            convertView = inflater.inflate(R.layout.record_memo_list, parent, false);
+            convertView = inflater.inflate(R.layout.record_memo_list,parent,false);
             mViewHolder = new ViewHolder();
-//            mViewHolder.ImageSlider = (SliderLayout) convertView.findViewById(R.id.slider);
-//            mViewHolder.pagerIndicator = (PagerIndicator) convertView.findViewById(R.id.custom_indicator);
+            mViewHolder.ImageSlider = (SliderLayout) convertView.findViewById(R.id.slider);
+            mViewHolder.pagerIndicator = (PagerIndicator) convertView.findViewById(R.id.custom_indicator);
             mViewHolder.MemoTitle = (TextView) convertView.findViewById(R.id.Title);
             mViewHolder.MemoTotalTime = (TextView) convertView.findViewById(R.id.TimeStamp);
             mViewHolder.MemoString = (TextView) convertView.findViewById(R.id.MemoString);
@@ -148,10 +152,9 @@ public class RecordMemoAdapter extends BaseAdapter
             }
             trackRoute_cursor.close();
         }
-*/
+
         return convertView;
     }
-/*
     @Override
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
@@ -166,10 +169,10 @@ public class RecordMemoAdapter extends BaseAdapter
     public void onPageScrollStateChanged(int state) {
 
     }
-*/
+
     private static class ViewHolder {
-//        SliderLayout ImageSlider;
-//        PagerIndicator pagerIndicator;
+        SliderLayout ImageSlider;
+        PagerIndicator pagerIndicator;
         TextView MemoTitle, MemoTotalTime, MemoString;
     }
 }

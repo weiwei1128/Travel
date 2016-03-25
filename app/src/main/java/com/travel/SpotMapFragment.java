@@ -149,6 +149,8 @@ public class SpotMapFragment extends Fragment implements
             mGoogleApiClient.connect();
         }
         if (!globalVariable.MarkerOptionsArray.isEmpty()) {
+            if(MarkerIcon == null)
+                MarkerIcon = decodeBitmapFromResource(getResources(), R.drawable.location, 10, 18);
             for (MarkerOptions markerOptions : globalVariable.MarkerOptionsArray) {
                 markerOptions.icon(BitmapDescriptorFactory.fromBitmap(MarkerIcon));
                 mMap.addMarker(markerOptions);
