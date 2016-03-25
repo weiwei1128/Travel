@@ -163,6 +163,8 @@ public class BuyItemDetailActivity extends AppCompatActivity {
     }
 
     void setupAddDialog() {
+
+
         Bundle bundle = new Bundle();
         bundle.putInt("WhichItem", ItemPosition);
         //=====0308 test popping Dialog
@@ -301,7 +303,12 @@ public class BuyItemDetailActivity extends AppCompatActivity {
 
 
         final String finalItemId = itemId;
-        final int[] finalNumber = {sharedPreferences.getInt("InBuyList", 0)};//購物車總數
+        final int[] finalNumber = {sharedPreferences.getInt("InBuyList", 0)};//購物車總數\
+        if(sharedPreferences.getBoolean("AfterPay",false)) {
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putBoolean("AfterPay", false);
+            editor.apply();
+        }
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -1,6 +1,8 @@
 package com.travel;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 import android.view.View;
@@ -60,10 +62,12 @@ public class BuyItemListConfirmWebview extends AppCompatActivity {
         backImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Bundle bundle = new Bundle();
-                bundle.putBoolean("AfterPay",true);
+                SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(BuyItemListConfirmWebview.this);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putBoolean("AfterPay",true);
+                editor.apply();
                 Functions.go(false, BuyItemListConfirmWebview.this, BuyItemListConfirmWebview.this,
-                        BuyActivity.class, bundle);
+                        BuyActivity.class, null);
                 finish();
             }
         });

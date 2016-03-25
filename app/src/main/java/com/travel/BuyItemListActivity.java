@@ -2,7 +2,9 @@ package com.travel;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -21,6 +23,15 @@ public class BuyItemListActivity extends AppCompatActivity {
     ImageView backImg, moreImg;
     LinearLayout confirmLayout;
     int lastItem = 0;
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        if(sharedPreferences.getBoolean("AfterPay",false))
+            finish();
+
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

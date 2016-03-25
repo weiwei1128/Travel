@@ -104,8 +104,7 @@ public class ShopRecordFragment extends Fragment {
         if (database.isOpen())
             database.close();
 
-        if(OldCount==0)
-            Toast.makeText(context,"尚無資料!",Toast.LENGTH_SHORT).show();
+
     }
 
     class itemlistener implements AdapterView.OnItemClickListener {
@@ -144,7 +143,8 @@ public class ShopRecordFragment extends Fragment {
                         adapter.notifyDataSetChanged();
                 }
             }).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-        }
+        }else if(OldCount==0)
+            Toast.makeText(context,"尚無資料!",Toast.LENGTH_SHORT).show();
     }
 
 

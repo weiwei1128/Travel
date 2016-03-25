@@ -124,11 +124,11 @@ public class BuyItemListConfirmActivity extends AppCompatActivity {
 
                 //TODO need modify!
 //                Toast.makeText(BuyItemListConfirmActivity.this, "建構中!", Toast.LENGTH_SHORT).show();
-                Log.i("3.24", "要remove的東西:" + removeList.size());
+//                Log.i("3.24", "要remove的東西:" + removeList.size());
             }
         });
 //        removeList.add(sharedPreferences.getString("InBuyList", null) + "");
-        Log.i("3.24", "INBUYLIST:" + sharedPreferences.getInt("InBuyList", 0));
+//        Log.i("3.24", "INBUYLIST:" + sharedPreferences.getInt("InBuyList", 0));
         int totalnumber = 0, getitemPosition = 0, BiginCart = 0, totalmoney = 0;
         String BigitemID = null, SmallitemID = null, itemName = null;
         Cursor goods_cursor = database.query("goods", new String[]{"totalCount", "goods_id", "goods_title",
