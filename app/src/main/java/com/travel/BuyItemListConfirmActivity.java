@@ -290,10 +290,11 @@ public class BuyItemListConfirmActivity extends AppCompatActivity {
             if (s != null) {
                 SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(BuyItemListConfirmActivity.this);
                 SharedPreferences.Editor editor = sharedPreferences.edit();
-                for (Object key : remove.keySet()) {
-                    editor.remove(remove.get(key));
-                    System.out.println(key + " : " + remove.get(key));
-                }
+                editor.clear();
+//                for (Object key : remove.keySet()) {
+//                    editor.remove(remove.get(key));
+//                    System.out.println(key + " : " + remove.get(key));
+//                }
                 if (progressDialog.isShowing())
                     progressDialog.dismiss();
                 progressDialog.setCancelable(false);
