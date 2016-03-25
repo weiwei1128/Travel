@@ -1,5 +1,6 @@
 package com.travel;
 
+import android.app.ProgressDialog;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -34,6 +35,8 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class BuyItemListConfirmActivity extends AppCompatActivity {
     ImageView backImg;
@@ -109,18 +112,7 @@ public class BuyItemListConfirmActivity extends AppCompatActivity {
                 for (Object key : cartList.keySet()) {
                     System.out.println(key + " : " + cartList.get(key));
                 }
-                String carlist = "";
-                Boolean first = true;
-                for (Object key : cartList.keySet()) {
 
-                    if (first) {
-                        first = false;
-                        carlist = "{\"gid\":\"" + key + "\",\"num\":\"" + cartList.get(key) + "\"}";
-                    } else
-                        carlist = carlist + ",{\"gid\":\"" + key + "\",\"num\":\"" + cartList.get(key) + "\"}";
-//                    System.out.println(key + " : " + cartList.get(key));
-                }
-                Log.i("3.24", "carList:" + carlist);
 
                 //TODO need modify!
                 Toast.makeText(BuyItemListConfirmActivity.this, "建構中!", Toast.LENGTH_SHORT).show();
@@ -198,11 +190,11 @@ public class BuyItemListConfirmActivity extends AppCompatActivity {
      * "sname":"sname","stel":"stel","semail":"semail","sstate":"sstate",
      * "scity":"scity","saddress":"saddress","carlist":[{"gid":"123","num":"1"},
      * {"gid":"123","num":"2"}]}
-     * <p/>
+     * <p>
      * express!=null
      * payment!=null
-     * <p/>
-     * <p/>
+     * <p>
+     * <p>
      * 回傳資料
      * {"states":"1","msg":"加入成功","id":"45"}
      */
@@ -215,7 +207,17 @@ public class BuyItemListConfirmActivity extends AppCompatActivity {
             HttpPost post = new HttpPost("http://zhiyou.lin366.com/api/order/index.aspx");
             MultipartEntity multipartEntity = new MultipartEntity();
             Charset charset = Charset.forName("UTF-8");
-            ;
+            String carlist = "";
+            Boolean first = true;
+            for (Object key : cartList.keySet()) {
+                if (first) {
+                    first = false;
+                    carlist = "{\"gid\":\"" + key + "\",\"num\":\"" + cartList.get(key) + "\"}";
+                } else
+                    carlist = carlist + ",{\"gid\":\"" + key + "\",\"num\":\"" + cartList.get(key) + "\"}";
+//                    System.out.println(key + " : " + cartList.get(key));
+            }
+//            Log.i("3.24", "carList:" + carlist);
             try {
                 multipartEntity.addPart("json",
                         new StringBody("{\"act\":\"add\"," +
@@ -225,9 +227,7 @@ public class BuyItemListConfirmActivity extends AppCompatActivity {
                                 + "\",\"payment\":\"" + 3 + "\",\"sname\":\"" + nameS
                                 + "\",\"stel\":\"" + phoneS + "\",\"semail\":\"" + emailS
                                 + "\",\"sstate\":\"" + "" + "\",\"scity\":\"" + ""
-                                + "\",\"saddress\":\"" + addrS + "\",\"carlist\":[" +
-                                "{\"gid\":\"" + "!!!數字!!" + "\",\"num\":\"" + "!!!數字!!!" + "\"}," +
-                                "{\"gid\":\"" + "!!!數字!!" + "\",\"num\":\"" + "!!!數字!!" + "\"}]}", charset));
+                                + "\",\"saddress\":\"" + addrS + "\",\"carlist\":[" + carlist + "]}", charset));
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
@@ -237,28 +237,54 @@ public class BuyItemListConfirmActivity extends AppCompatActivity {
             try {
                 response = client.execute(post);
             } catch (IOException e) {
-                Log.e("3.10", e.toString());
+                e.printStackTrace();
             }
+            //{"states":"1","msg":"加入成功","id":"60"}
             try {
                 getString = EntityUtils.toString(response.getEntity());
             } catch (IOException | NullPointerException e) {
-                Log.e("3.10", e.toString() + "error");
+                e.printStackTrace();
+//                Log.e("3.10", e.toString() + "error");
             }
             String state = null;
-            String totalcount = null;
             try {
                 state = new JSONObject(getString.substring(getString.indexOf("{"), getString.lastIndexOf("}") + 1)).getString("states");
             } catch (JSONException | NullPointerException e) {
                 e.printStackTrace();
             }
-
-
-            return null;
+            if (state == null || state.equals("0"))
+                return null;
+            else {
+                String id = null;
+                try {
+                    id = new JSONObject(getString.substring(getString.indexOf("{"), getString.lastIndexOf("}") + 1)).getString("id");
+                } catch (JSONException | NullPointerException e) {
+                    e.printStackTrace();
+                }
+                return id;
+            }
         }
 
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
+            if (s != null) {
+                ProgressDialog progressDialog = new ProgressDialog(BuyItemListConfirmActivity.this);
+                progressDialog.setCancelable(false);
+                progressDialog.setMessage("送出成功\n即將跳轉至付款畫面");
+                Timer a = new Timer();
+                a.schedule(new TimerTask() {
+                               @Override
+                               public void run() {
+
+                               }
+                           },
+                        1500
+                );
+
+            }else {
+                Toast.makeText(BuyItemListConfirmActivity.this,"傳送失敗!",Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
