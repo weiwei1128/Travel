@@ -109,9 +109,10 @@ public class BuyItemListConfirmActivity extends AppCompatActivity {
                     }
                     member_cursor.close();//old85->102
                 }
-                for (Object key : cartList.keySet()) {
-                    System.out.println(key + " : " + cartList.get(key));
-                }
+                new SendOrder().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+//                for (Object key : cartList.keySet()) {
+//                    System.out.println(key + " : " + cartList.get(key));
+//                }
 
 
                 //TODO need modify!
@@ -190,16 +191,24 @@ public class BuyItemListConfirmActivity extends AppCompatActivity {
      * "sname":"sname","stel":"stel","semail":"semail","sstate":"sstate",
      * "scity":"scity","saddress":"saddress","carlist":[{"gid":"123","num":"1"},
      * {"gid":"123","num":"2"}]}
-     * <p>
+     * <p/>
      * express!=null
      * payment!=null
-     * <p>
-     * <p>
+     * <p/>
+     * <p/>
      * 回傳資料
      * {"states":"1","msg":"加入成功","id":"45"}
      */
     class SendOrder extends AsyncTask<String, Void, String> {
-//String idS, nameS = null, phoneS = null, emailS = null, addrS = null;
+        //String idS, nameS = null, phoneS = null, emailS = null, addrS = null;
+        final ProgressDialog progressDialog = new ProgressDialog(BuyItemListConfirmActivity.this);
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressDialog.setMessage("傳送資料中...");
+            progressDialog.show();
+        }
 
         @Override
         protected String doInBackground(String... params) {
@@ -266,24 +275,31 @@ public class BuyItemListConfirmActivity extends AppCompatActivity {
         }
 
         @Override
-        protected void onPostExecute(String s) {
+        protected void onPostExecute(final String s) {
             super.onPostExecute(s);
             if (s != null) {
-                ProgressDialog progressDialog = new ProgressDialog(BuyItemListConfirmActivity.this);
+                if(progressDialog.isShowing())
+                    progressDialog.dismiss();
                 progressDialog.setCancelable(false);
                 progressDialog.setMessage("送出成功\n即將跳轉至付款畫面");
+                progressDialog.show();
                 Timer a = new Timer();
                 a.schedule(new TimerTask() {
                                @Override
                                public void run() {
-
+                                   Bundle bundle = new Bundle();
+                                   bundle.putString("confirmId", s);
+                                   Functions.go(false, BuyItemListConfirmActivity.this, BuyItemListConfirmActivity.this,
+                                           BuyItemListConfirmWebview.class, bundle);
+                                   if (progressDialog.isShowing())
+                                       progressDialog.dismiss();
                                }
                            },
                         1500
                 );
 
-            }else {
-                Toast.makeText(BuyItemListConfirmActivity.this,"傳送失敗!",Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(BuyItemListConfirmActivity.this, "傳送失敗!", Toast.LENGTH_SHORT).show();
             }
         }
     }
