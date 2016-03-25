@@ -79,6 +79,7 @@ public class HttpService extends Service {
      * 各種JSON
      **/
     private class Banner extends AsyncTask<String, Void, String> {
+
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -121,6 +122,7 @@ public class HttpService extends Service {
                 SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.putInt("count", jsonArray.length());
+                 final int anInt = jsonArray.length();
                 for (int i = 0; i < jsonArray.length(); i++) {
                     try {
                         editor.putString("img" + i,

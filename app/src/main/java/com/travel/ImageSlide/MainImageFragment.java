@@ -25,6 +25,7 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
 import com.travel.R;
+import com.travel.Utility.HttpService;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
