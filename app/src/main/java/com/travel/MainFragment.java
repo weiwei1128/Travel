@@ -189,7 +189,7 @@ public class MainFragment extends Fragment {
         scheduleLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Functions.go(false, getActivity(), context, CheckScheduleMainActivity.class, null);
+                Functions.go(false, getActivity(), context, CheckScheduleActivity.class, null);
             }
         });
     }

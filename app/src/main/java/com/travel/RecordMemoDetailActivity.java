@@ -6,29 +6,23 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Bitmap;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.RecyclerView;
-import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.daimajia.slider.library.Indicators.PagerIndicator;
-import com.daimajia.slider.library.SliderLayout;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
@@ -42,10 +36,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
-import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
-import com.travel.Adapter.RecordMemoAdapter;
 import com.travel.Utility.DataBaseHelper;
 import com.travel.Utility.Functions;
 
@@ -84,7 +75,6 @@ public class RecordMemoDetailActivity extends AppCompatActivity implements
     private ListView mlistView;
 
     private String[] image_url;
-
 
 
     @Override
@@ -138,27 +128,22 @@ public class RecordMemoDetailActivity extends AppCompatActivity implements
             }
         }
 
-        Cursor img_cursor = database.query("travelmemo", new String[]{"memo_routesCounter", "memo_trackNo",
-                        "memo_content", "memo_img", "memo_latlng", "memo_time"},
-                "memo_routesCounter=\"" + RouteConter + "\" AND memo_img!=\"null\"", null, null, null, null, null);
-        if (img_cursor != null) {
-            if (img_cursor.getCount() != 0) {
-                List<Map<String, Object>> items = new ArrayList<Map<String,Object>>();
-                while (img_cursor.moveToNext()) {
-                    Map<String, Object> item = new HashMap<String, Object>();
-                    item.put("image", img_cursor.getBlob(3));
-                    items.add(item);
-                }
-                SimpleAdapter adapter = new SimpleAdapter(this,
-                        items, R.layout.memo_detail_grid, new String[]{"image"},
-                        new int[]{R.id.memoDetailGrid_image});
-                gridView = (ExpandableHeightGridView)findViewById(R.id.MemoDetail_gridView);
-                gridView.setNumColumns(3);
-                gridView.setAdapter(adapter);
-                gridView.setExpanded(true);
-            }
-            img_cursor.close();
+
+        List<Map<String, Object>> items = new ArrayList<Map<String, Object>>();
+        for (int i = 0; i < image_url.length; i++) {
+            Map<String, Object> item = new HashMap<String, Object>();
+            item.put("image", image_url[i]);
+            items.add(item);
         }
+
+        SimpleAdapter adapter = new SimpleAdapter(this,
+                items, R.layout.memo_detail_grid, new String[]{"image"},
+                new int[]{R.id.memoDetailGrid_image});
+
+        gridView = (ExpandableHeightGridView) findViewById(R.id.MemoDetail_gridView);
+        gridView.setNumColumns(3);
+        gridView.setAdapter(adapter);
+        gridView.setExpanded(true);
 
         setUpMapIfNeeded();
     }
@@ -228,7 +213,6 @@ public class RecordMemoDetailActivity extends AppCompatActivity implements
      * This should only be called once and when we are sure that {@link #mMap} is not null.
      */
     private void setUpMap() {
-
 
 
         //CameraUpdate center = CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lon),18);
@@ -380,7 +364,7 @@ public class RecordMemoDetailActivity extends AppCompatActivity implements
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             if (convertView == null) {
-                convertView = inflater.inflate(R.layout.record_memo_list,parent,false);
+                convertView = inflater.inflate(R.layout.record_memo_list, parent, false);
                 mViewHolder = new ViewHolder();
                 mViewHolder.MemoString = (TextView) convertView.findViewById(R.id.MemoString);
 

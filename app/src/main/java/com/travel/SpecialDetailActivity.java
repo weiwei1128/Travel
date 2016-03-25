@@ -3,8 +3,8 @@ package com.travel;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageView;
@@ -12,15 +12,14 @@ import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 import com.travel.Utility.DataBaseHelper;
 import com.travel.Utility.Functions;
 
 public class SpecialDetailActivity extends AppCompatActivity {
-    ImageView itemImg,backImg;
-    TextView itemTitle,itemContent;
+    ImageView itemImg, backImg;
+    TextView itemTitle, itemContent;
     DataBaseHelper helper;
     SQLiteDatabase database;
     int itemPosition;
@@ -33,21 +32,21 @@ public class SpecialDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.special_detail_activity);
         Bundle bundle = this.getIntent().getExtras();
-        if(bundle!=null)
-        if (bundle.containsKey("WhichItem")) {
-            itemPosition = bundle.getInt("WhichItem");
-        }
-        itemImg = (ImageView)findViewById(R.id.specailitem_Img);
-        backImg = (ImageView)findViewById(R.id.specialitem_backImg);
-        itemTitle = (TextView)findViewById(R.id.specialitemName_Text);
-        itemContent = (TextView)findViewById(R.id.specailitemDetail_text);
+        if (bundle != null)
+            if (bundle.containsKey("WhichItem")) {
+                itemPosition = bundle.getInt("WhichItem");
+            }
+        itemImg = (ImageView) findViewById(R.id.specailitem_Img);
+        backImg = (ImageView) findViewById(R.id.specialitem_backImg);
+        itemTitle = (TextView) findViewById(R.id.specialitemName_Text);
+        itemContent = (TextView) findViewById(R.id.specailitemDetail_text);
         DataBaseHelper helper = new DataBaseHelper(SpecialDetailActivity.this);
         SQLiteDatabase database = helper.getWritableDatabase();
         backImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Functions.go(true,SpecialDetailActivity.this,SpecialDetailActivity.this,
-                        SpecialActivity.class,null);
+                Functions.go(true, SpecialDetailActivity.this, SpecialDetailActivity.this,
+                        SpecialActivity.class, null);
             }
         });
         options = new DisplayImageOptions.Builder()
@@ -83,17 +82,17 @@ public class SpecialDetailActivity extends AppCompatActivity {
         Cursor special = database.query("special_activity", new String[]{"special_id",
                         "title", "img", "content", "price", "click"},
                 null, null, null, null, null);
-        if(special!=null) {
+        if (special != null) {
             if (special.getCount() >= itemPosition) {
                 special.moveToPosition(itemPosition);
-                if(special.getString(1)!=null)
-                itemTitle.setText(special.getString(1));
+                if (special.getString(1) != null)
+                    itemTitle.setText(special.getString(1));
                 if (special.getString(2).startsWith("http:"))
                     loader.displayImage(special.getString(2)
                             , itemImg, options, listener);
                 else loader.displayImage("http://zhiyou.lin366.com/" + special.getString(2)
                         , itemImg, options, listener);
-                if(special.getString(3)!=null)
+                if (special.getString(3) != null)
                     itemContent.setText(special.getString(3));
             }
             special.close();
@@ -102,9 +101,9 @@ public class SpecialDetailActivity extends AppCompatActivity {
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if(keyCode==KeyEvent.KEYCODE_BACK)
-            Functions.go(true,SpecialDetailActivity.this,SpecialDetailActivity.this,
-                    SpecialActivity.class,null);
+        if (keyCode == KeyEvent.KEYCODE_BACK)
+            Functions.go(true, SpecialDetailActivity.this, SpecialDetailActivity.this,
+                    SpecialActivity.class, null);
         return false;
     }
 }

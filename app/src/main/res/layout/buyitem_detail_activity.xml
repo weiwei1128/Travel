@@ -65,16 +65,6 @@
             android:layout_weight="1" />
 
         <ImageView
-            android:id="@+id/buyitemMore_Img"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_gravity="center_vertical|right"
-            android:src="@drawable/icon_share"
-            android:layout_marginRight="10dp"
-            android:background="@drawable/click_effect_general"
-            android:clickable="true" />
-
-        <ImageView
             android:id="@+id/buyitemAdd_Img"
             android:layout_width="30dp"
             android:layout_height="30dp"

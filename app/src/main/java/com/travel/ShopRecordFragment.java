@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.Toast;
 
 import com.travel.Adapter.ShopRecordAdapter;
 import com.travel.Utility.DataBaseHelper;
@@ -43,7 +44,7 @@ public class ShopRecordFragment extends Fragment {
 
     @Override
     public void onResume() {
-        Log.e("3.22", "!!!!!!shop record on resume!!!!!!");
+//        Log.e("3.22", "!!!!!!shop record on resume!!!!!!");
         new OrderUpdate(userId, OldCount, context, new Functions.TaskCallBack() {
             @Override
             public void TaskDone(Boolean Update) {
@@ -72,29 +73,38 @@ public class ShopRecordFragment extends Fragment {
 
     void UI(View view) {
         gridView = (GridView) view.findViewById(R.id.shop_record_gridview);
-        adapter = new ShopRecordAdapter(context);
-        gridView.setAdapter(adapter);
+
+
         gridView.setOnItemClickListener(new itemlistener());
         DataBaseHelper helper = new DataBaseHelper(context);
         SQLiteDatabase database = helper.getWritableDatabase();
         Cursor member_cursor = database.query("member", new String[]{"account", "password",
                 "name", "phone", "email", "addr"}, null, null, null, null, null);
-        Cursor order_cursor = database.query("shoporder", new String[]{"order_id", "order_no",
-                "order_time", "order_name", "order_phone", "order_email",
-                "order_money", "order_state"}, null, null, null, null, null);
+
         if (member_cursor != null && member_cursor.getCount() > 0) {
             member_cursor.moveToFirst();
             this.userId = member_cursor.getString(0);
+            if (userId != null) {
+                adapter = new ShopRecordAdapter(context, userId);
+                gridView.setAdapter(adapter);
+                Cursor order_cursor = database.query("shoporder", new String[]{"order_id","order_userid ", "order_no",
+                                "order_time", "order_name", "order_phone", "order_email",
+                                "order_money", "order_state", "order_schedule"}, "order_userid="+ "\"" + userId+ "\"",
+                        null, null, null, null,null);
+                if (order_cursor != null) {
+                    order_cursor.moveToFirst();
+                    this.OldCount = order_cursor.getCount();
+                    order_cursor.close();
+                }
+            }
         }
         if (member_cursor != null)
             member_cursor.close();
-        if (order_cursor != null) {
-            order_cursor.moveToFirst();
-            this.OldCount = order_cursor.getCount();
-            order_cursor.close();
-        }
+
         if (database.isOpen())
             database.close();
+
+
     }
 
     class itemlistener implements AdapterView.OnItemClickListener {
@@ -103,9 +113,10 @@ public class ShopRecordFragment extends Fragment {
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             DataBaseHelper helper = new DataBaseHelper(context);
             SQLiteDatabase database = helper.getWritableDatabase();
-            Cursor order_cursor = database.query("shoporder", new String[]{"order_id", "order_no",
-                    "order_time", "order_name", "order_phone", "order_email",
-                    "order_money", "order_state"}, null, null, null, null, null);
+            Cursor order_cursor = database.query("shoporder", new String[]{"order_id","order_userid ", "order_no",
+                            "order_time", "order_name", "order_phone", "order_email",
+                            "order_money", "order_state", "order_schedule"}, "order_userid="+ "\"" + userId+ "\"",
+                    null, null, null, null);
             String Order_id;
             if (order_cursor != null && order_cursor.getCount() >= position) {
                 order_cursor.moveToPosition(position);
@@ -123,15 +134,17 @@ public class ShopRecordFragment extends Fragment {
 
 
     private void methodThatDoesSomethingWhenTaskIsDone(Boolean a) {
-        if(a){//need to updated
+        if (a) {//need to updated
+            Log.e("3.23", "need to update shoprecord!");
             new OrderGet(context, userId, new Functions.TaskCallBack() {
                 @Override
                 public void TaskDone(Boolean OrderNeedUpdate) {
-                    if(OrderNeedUpdate)//有收到更新資料
+                    if (OrderNeedUpdate)//有收到更新資料
                         adapter.notifyDataSetChanged();
                 }
             }).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-        }
+        }else if(OldCount==0)
+            Toast.makeText(context,"尚無資料!",Toast.LENGTH_SHORT).show();
     }
 
 

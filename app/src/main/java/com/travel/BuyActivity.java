@@ -9,7 +9,6 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageView;
@@ -31,8 +30,9 @@ public class BuyActivity extends AppCompatActivity {
     DataBaseHelper helper;
     SQLiteDatabase database;
     ImageView backImg, ListImg;
-    int count = 0, pageNo = 1, pages = 0,minus = pageNo-1;
+    int count = 0, pageNo = 1, pages = 0, minus = pageNo - 1;
     TextView number, lastPage, nextPage;
+
 
     @Override
     protected void onResume() {
@@ -49,6 +49,8 @@ public class BuyActivity extends AppCompatActivity {
                             BuyActivity.this, BuyItemListActivity.class, null);
                 }
             });
+        } else {
+            ListImg.setVisibility(View.INVISIBLE);
         }
         super.onResume();
     }
@@ -81,7 +83,9 @@ public class BuyActivity extends AppCompatActivity {
                             BuyActivity.this, BuyItemListActivity.class, null);
                 }
             });
-        }
+        } else
+            ListImg.setVisibility(View.INVISIBLE);
+
 
 //        Log.d("3.7", "" + count);
 
@@ -113,8 +117,9 @@ public class BuyActivity extends AppCompatActivity {
         viewPager.setOnPageChangeListener(new PageListener());
         if (adapter.getCount() == 0)
             Toast.makeText(BuyActivity.this, "尚無資料!", Toast.LENGTH_SHORT).show();
-//        Log.e("3.8", "currentItem:" + viewPager.getCurrentItem() + "" + adapter.getCurrentPosition());
+        //        Log.e("3.8", "currentItem:" + viewPager.getCurrentItem() + "" + adapter.getCurrentPosition());
     }
+
 
     void UI() {
         lastPage = (TextView) findViewById(R.id.lastpage_text);
@@ -133,7 +138,7 @@ public class BuyActivity extends AppCompatActivity {
         lastPage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                viewPager.setCurrentItem(pageNo-2);
+                viewPager.setCurrentItem(pageNo - 2);
             }
         });
         nextPage.setOnClickListener(new View.OnClickListener() {
@@ -159,7 +164,7 @@ public class BuyActivity extends AppCompatActivity {
             if (pageNo == 1)
                 lastPage.setVisibility(View.INVISIBLE);
             else lastPage.setVisibility(View.VISIBLE);
-            minus = pageNo-1;
+            minus = pageNo - 1;
             String get = String.valueOf(position + 1);
             number.setText(get);
         }

@@ -16,39 +16,14 @@
     <uses-permission-sdk-23 android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission-sdk-23 android:name="android.permission.ACCESS_FINE_LOCATION" />
 
-    <!-- Include following permission if you load images from Internet -->
-    <uses-permission android:name="android.permission.INTERNET" />
-    <!-- Include following permission if you want to cache images on SD card -->
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-
     <application
         android:name=".GlobalVariable"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
-        android:theme="@style/AppTheme.NoActionBar">
+        android:label="@string/app_name">
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
-
-        <activity
-            android:name=".SpotActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".HomepageActivity"
-            android:theme="@style/AppTheme.NoActionBar">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".BuyActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".BuyItemDetailActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -61,7 +36,40 @@
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="@string/google_maps_key" />
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="cb492bd27bfb9a5607cb9e98fc7653b763470863" />
 
+        <service android:name=".Utility.TimeCountService" />
+        <service android:name=".LocationService" />
+        <service android:name=".Utility.HttpService" />
+        <service
+            android:name=".Utility.TrackRouteService"
+            android:enabled="true"
+            android:exported="true" />
+        <service
+            android:name=".Utility.LoadApiService"
+            android:enabled="true"
+            android:exported="true" />
+
+        <activity
+            android:name=".HomepageActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".SpotActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".BuyActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".BuyItemDetailActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".SpotListActivity"
             android:theme="@style/AppTheme.NoActionBar"
@@ -74,23 +82,7 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".LoginActivity"
-            android:theme="@style/AppTheme.NoActionBar">
-
-        </activity>
-
-        <!--
-             The API key for Google Maps-based APIs is defined as a string resource.
-             (See the file "res/values/google_maps_api.xml").
-             Note that the API key is linked to the encryption key used to sign the APK.
-             You need a different API key for each encryption key, including the release key that is used to
-             sign the APK for publishing.
-             You can define the keys for the debug and release targets in src/debug/ and src/release/. 
-        -->
-        <!--
-            <meta-data
-            android:name="com.google.android.geo.API_KEY"
-            android:value="@string/google_maps_key" />
-        -->
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".BuyItemListActivity"
             android:theme="@style/AppTheme.NoActionBar" />
@@ -98,43 +90,38 @@
             android:name=".BuyItemListConfirmActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".CheckScheduleActivity"
+            android:name=".CheckScheduleOKActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".MemberActivity"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".ServiceActivity" />
+        <activity
+            android:name=".ServiceActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".SpecialActivity"
-            android:hardwareAccelerated="true" />
-
-        <service android:name=".Utility.HttpService" />
-        <service android:name=".Utility.LoadApiService" />
-        <service android:name=".Utility.TrackRouteService" />
-
+            android:hardwareAccelerated="true"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".RecordMemoActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".RecordMemoDetailActivity"
             android:theme="@style/AppTheme.NoActionBar" />
-
-        <meta-data
-            android:name="io.fabric.ApiKey"
-            android:value="cb492bd27bfb9a5607cb9e98fc7653b763470863" />
-
-
         <activity
             android:name=".ShopRecordActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".CheckScheduleMainActivity"
+            android:name=".CheckScheduleActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".SpecialDetailActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name="com.travel.ShopRecordItemActivity"
+            android:name=".ShopRecordItemActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".BuyItemListConfirmWebview"
             android:theme="@style/AppTheme.NoActionBar" />
     </application>
 

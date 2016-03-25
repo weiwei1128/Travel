@@ -50,7 +50,7 @@ public class HttpService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.d("3.7", "Service onStartCommand");
+//        Log.d("3.7", "Service onStartCommand");
 
         //利用 executeOnExecutor 確切執行非同步作業
         new Banner().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
@@ -79,6 +79,7 @@ public class HttpService extends Service {
      * 各種JSON
      **/
     private class Banner extends AsyncTask<String, Void, String> {
+
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -118,13 +119,30 @@ public class HttpService extends Service {
 //            Log.d("3.7", "BannerService result:" + result);
             if (jsonArray != null) {
 //                Log.d("3.7", "BannerService result:" + jsonArray.length());
+                DataBaseHelper helper = new DataBaseHelper(context);
+                SQLiteDatabase database = helper.getWritableDatabase();
+                Cursor cursor = database.query("banner", new String[]{"img_url"}, null, null, null, null, null);
+                if (cursor != null && cursor.getCount() > 0)
+                    database.delete("banner", null, null);
+                if (cursor != null)
+                    cursor.close();
+                ContentValues contentValues = new ContentValues();
+
                 SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.putInt("count", jsonArray.length());
+                final int anInt = jsonArray.length();
                 for (int i = 0; i < jsonArray.length(); i++) {
                     try {
                         editor.putString("img" + i,
                                 "http://zhiyou.lin366.com" + jsonArray.getJSONObject(i).getString("img_url"));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    try {
+                        contentValues.clear();
+                        contentValues.put("img_url", "http://zhiyou.lin366.com" + jsonArray.getJSONObject(i).getString("img_url"));
+                        database.insert("banner",null,contentValues);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -364,7 +382,7 @@ public class HttpService extends Service {
                             cv.put("price", jsonObjects[i][4]);
                             cv.put("click", jsonObjects[i][5]);
                             long result = database.insert("special_activity", null, cv);
-                            Log.d("3.10", "special_activity: " + result + " = DB INSERT" + i + "title " + jsonObjects[i][1]);
+//                            Log.d("3.10", "special_activity: " + result + " = DB INSERT" + i + "title " + jsonObjects[i][1]);
                         }
                     else { //資料庫已經有資料了!
                         for (int i = 0; i < jsonObjects.length; i++) {
@@ -392,7 +410,7 @@ public class HttpService extends Service {
                                         !special_dul.getString(4).equals(jsonObjects[i][4]) ||
                                         !special_dul.getString(5).equals(jsonObjects[i][5])) {
                                     long result = database.update("special_activity", cv, "special_id=?", new String[]{jsonObjects[i][0]});
-                                    Log.e("3.10", "special_activity updated: " + result + " title: " + jsonObjects[i][1]);
+//                                    Log.e("3.10", "special_activity updated: " + result + " title: " + jsonObjects[i][1]);
                                 }
                             } else {
                                 //資料庫存在 但資料不存在
@@ -404,7 +422,7 @@ public class HttpService extends Service {
                                 cv.put("price", jsonObjects[i][4]);
                                 cv.put("click", jsonObjects[i][5]);
                                 long result = database.insert("special_activity", null, cv);
-                                Log.d("3.10", "special_activity insert: " + result + " = DB INSERT" + i + "title " + jsonObjects[i][1]);
+//                                Log.d("3.10", "special_activity insert: " + result + " = DB INSERT" + i + "title " + jsonObjects[i][1]);
                             }
                             if (special_dul != null)
                                 special_dul.close();
@@ -505,7 +523,7 @@ public class HttpService extends Service {
                     state = new JSONObject(getString.substring(
                             getString.indexOf("{"), getString.lastIndexOf("}") + 1)).getString("states");
                     totalcount = new JSONObject(getString).getString("totalCount");
-                } catch (JSONException e) {
+                } catch (JSONException | NullPointerException e) {
                     e.printStackTrace();
                 }
                 //BOTH states and totalCount should be upgraded
@@ -617,9 +635,8 @@ public class HttpService extends Service {
                                                 "goods_title", "goods_url", "goods_money", "goods_content", "goods_click", "goods_addtime"},
                                         "goods_id=" + jsonObjects[i][4], null, null, null, null, null);
                                 if (goods_dul != null && goods_dul.getCount() > 0) {
-                                    //TODO 要更新click資料
+                                    //TODO 要更新click資料？
                                     goods_dul.moveToFirst();
-//                                Log.e("2.25", "有重複的資料!" + goods_dul.getString(1) + "title: " + goods_dul.getString(2));
                                 } else {
                                     ContentValues cv = new ContentValues();
                                     cv.put("goods_title", jsonObjects[i][0]);
@@ -643,8 +660,6 @@ public class HttpService extends Service {
 //                Log.d("2.19", "something NULL!" + jsonObjects + " :jsonObjects");
                 if (goods_cursor != null)
                     goods_cursor.close();
-//            database.endTransaction();
-//            database.close();
             }
             super.onPostExecute(stringStringMap);
         }

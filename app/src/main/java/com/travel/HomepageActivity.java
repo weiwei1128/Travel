@@ -1,11 +1,35 @@
 package com.travel;
 
-/*/Users/wei/android-sdks*/
+/****
+//
+//                       _oo0oo_
+//                      o8888888o
+//                      88" . "88
+//                      (| -_- |)
+//                      0\  =  /0
+//                    ___/`---'\___
+//                  .' \\|     |// '.
+//                 / \\|||  :  |||// \
+//                / _||||| -:- |||||- \
+//               |   | \\\  -  /// |   |
+//               | \_|  ''\---/''  |_/ |
+//               \  .-\__  '-'  ___/-. /
+//             ___'. .'  /--.--\  `. .'___
+//          ."" '<  `.___\_<|>_/___.' >' "".
+//         | | :  `- \`.;`\ _ /`;.`/ - ` : | |
+//         \  \ `_.   \_ __\ /__ _/   .-` /  /
+//     =====`-.____`.___ \_____/___.-`___.-'=====
+//                       `=---='
+//
+//
+//     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//
+//               佛祖保佑         永無BUG
+/****/
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -42,17 +66,6 @@ public class HomepageActivity extends FragmentActivity {
     GlobalVariable globalVariable;
 
     @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    protected void onDestroy() {
-
-        super.onDestroy();
-    }
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fragment_test);
@@ -60,7 +73,7 @@ public class HomepageActivity extends FragmentActivity {
         changeFragment(mainFragment);
         homeImg.setClickable(false);
         homeImg.setImageResource(R.drawable.tab_selected_home);
-        homeText.setTextColor(Color.parseColor("#0044BB"));
+        homeText.setTextColor(getResources().getColor(R.color.blue_click));
 
 
         ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(HomepageActivity.this)
@@ -87,36 +100,16 @@ public class HomepageActivity extends FragmentActivity {
         homeImg = (ImageView) findViewById(R.id.main_home_img);
         homeText = (TextView) findViewById(R.id.main_home_text);
         homeLayout = (LinearLayout) findViewById(R.id.main_home_layout);
-        homeText.setTextColor(R.color.gray);
-        homeImg.setImageResource(R.drawable.click_home_img);
-        homeImg.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                changeFragment(mainFragment);
-                memberImg.setImageResource(R.drawable.member_img_click);
-                memberText.setTextColor(getResources().getColor(R.color.gray));
-                moreImg.setImageResource(R.drawable.more_img_click);
-                moreText.setTextColor(Color.parseColor("#555555"));
-                shoprecordImg.setImageResource(R.drawable.record_img_click);
-                shoprecordText.setTextColor(Color.parseColor("#555555"));
-                homeImg.setClickable(false);
-                memberImg.setClickable(true);
-                shoprecordImg.setClickable(true);
-                moreImg.setClickable(true);
-            }
-        });
-        homeImg.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                Functions.ClickTouchEvent(homeImg, homeText, "home", false, event.getAction());
-                return false;
-            }
-        });
-
+        homeText.setTextColor(getResources().getColor(R.color.gray));
+        homeImg.setImageResource(R.drawable.tab_home);
         homeLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Functions.ClickTouchEvent(homeImg, homeText, "home", true, 356735);
+                changeFragment(mainFragment);
+                memberClick(false);
+                homeClick(true);
+                moreClick(false);
+                orderClick(false);
             }
         });
         homeLayout.setOnTouchListener(new View.OnTouchListener() {
@@ -133,9 +126,10 @@ public class HomepageActivity extends FragmentActivity {
         memberImg = (ImageView) findViewById(R.id.main_member_img);
         memberText = (TextView) findViewById(R.id.main_member_text);
         memberLayout = (LinearLayout) findViewById(R.id.main_member_layout);
-        memberImg.setImageResource(R.drawable.member_img_click);
+        memberImg.setImageResource(R.drawable.tab_member);
         memberText.setTextColor(getResources().getColor(R.color.gray));
-        memberImg.setOnClickListener(new View.OnClickListener() {
+
+        memberLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (!Functions.ifLogin(HomepageActivity.this)) {
@@ -154,32 +148,13 @@ public class HomepageActivity extends FragmentActivity {
                         goLogin.show();
                 } else {
                     changeFragment(memberFragment);
-                    moreImg.setImageResource(R.drawable.more_img_click);
-                    moreText.setTextColor(Color.parseColor("#555555"));
-                    homeText.setTextColor(R.color.gray);
-                    homeImg.setImageResource(R.drawable.click_home_img);
-                    shoprecordImg.setImageResource(R.drawable.record_img_click);
-                    shoprecordText.setTextColor(Color.parseColor("#555555"));
-                    homeImg.setClickable(true);
-                    memberImg.setClickable(false);
-                    shoprecordImg.setClickable(true);
-                    moreImg.setClickable(true);
+                    memberClick(true);
+                    homeClick(false);
+                    moreClick(false);
+                    orderClick(false);
                 }
 
 
-            }
-        });
-        memberImg.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                Functions.ClickTouchEvent(memberImg, memberText, "member", false, event.getAction());
-                return false;
-            }
-        });
-        memberLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Functions.ClickTouchEvent(memberImg, memberText, "member", true, 356735);
             }
         });
         memberLayout.setOnTouchListener(new View.OnTouchListener() {
@@ -194,9 +169,9 @@ public class HomepageActivity extends FragmentActivity {
         shoprecordImg = (ImageView) findViewById(R.id.main_shoprecord_img);
         shoprecordText = (TextView) findViewById(R.id.main_shoprecord_text);
         shoprecordLayout = (LinearLayout) findViewById(R.id.main_shoprecord_layout);
-        shoprecordImg.setImageResource(R.drawable.record_img_click);
-        shoprecordText.setTextColor(Color.parseColor("#555555"));
-        shoprecordImg.setOnClickListener(new View.OnClickListener() {
+        shoprecordImg.setImageResource(R.drawable.tab_record);
+        shoprecordText.setTextColor(getResources().getColor(R.color.gray));
+        shoprecordLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (!Functions.ifLogin(HomepageActivity.this)) {
@@ -215,35 +190,11 @@ public class HomepageActivity extends FragmentActivity {
                         goLogin.show();
                 } else {
                     changeFragment(shopRecordFragment);
-                    
-                    memberImg.setImageResource(R.drawable.member_img_click);
-                    memberText.setTextColor(getResources().getColor(R.color.gray));
-                    moreImg.setImageResource(R.drawable.more_img_click);
-                    moreText.setTextColor(Color.parseColor("#555555"));
-                    homeText.setTextColor(R.color.gray);
-                    homeImg.setImageResource(R.drawable.click_home_img);
-
-                    homeImg.setClickable(true);
-                    memberImg.setClickable(false);
-                    shoprecordImg.setClickable(true);
-                    moreImg.setClickable(true);
+                    memberClick(false);
+                    homeClick(false);
+                    moreClick(false);
+                    orderClick(true);
                 }
-
-//                Functions.go(false, HomepageActivity.this, HomepageActivity.this, ShopRecordActivity.class, null);
-
-            }
-        });
-        shoprecordImg.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                Functions.ClickTouchEvent(shoprecordImg, shoprecordText, "shoprecord", false, event.getAction());
-                return false;
-            }
-        });
-        shoprecordLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Functions.ClickTouchEvent(shoprecordImg, shoprecordText, "shoprecord", true, 356735);
             }
         });
         shoprecordLayout.setOnTouchListener(new View.OnTouchListener() {
@@ -259,31 +210,8 @@ public class HomepageActivity extends FragmentActivity {
         moreImg = (ImageView) findViewById(R.id.main_more_img);
         moreText = (TextView) findViewById(R.id.main_more_text);
         moreLayout = (LinearLayout) findViewById(R.id.main_more_layout);
-        moreImg.setImageResource(R.drawable.more_img_click);
-        moreText.setTextColor(Color.parseColor("#555555"));
-        moreImg.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //TODO next Page....
-                /*
-                memberImg.setImageResource(R.drawable.member_img_click);
-                memberText.setTextColor(getResources().getColor(R.color.gray));
-                homeText.setTextColor(R.color.gray);
-                homeImg.setImageResource(R.drawable.click_home_img);
-                */
-                homeImg.setClickable(true);
-                memberImg.setClickable(true);
-                shoprecordImg.setClickable(true);
-                moreImg.setClickable(false);
-            }
-        });
-        moreImg.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                Functions.ClickTouchEvent(moreImg, moreText, "more", false, event.getAction());
-                return false;
-            }
-        });
+        moreImg.setImageResource(R.drawable.tab_more);
+        moreText.setTextColor(getResources().getColor(R.color.gray));
         moreLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -302,6 +230,55 @@ public class HomepageActivity extends FragmentActivity {
 
     }
 
+    void homeClick(Boolean yes) {
+        if (yes) {
+            homeText.setTextColor(getResources().getColor(R.color.blue_click));
+            homeImg.setImageResource(R.drawable.tab_selected_home);
+            homeLayout.setClickable(false);
+        } else {
+            homeText.setTextColor(getResources().getColor(R.color.gray));
+            homeImg.setImageResource(R.drawable.tab_home);
+            homeLayout.setClickable(true);
+        }
+    }
+
+    void memberClick(Boolean yes) {
+        if (yes) {
+            memberText.setTextColor(getResources().getColor(R.color.blue_click));
+            memberImg.setImageResource(R.drawable.tab_selected_member);
+            memberLayout.setClickable(false);
+
+        } else {
+            memberText.setTextColor(getResources().getColor(R.color.gray));
+            memberImg.setImageResource(R.drawable.tab_member);
+            memberLayout.setClickable(true);
+        }
+    }
+
+    void orderClick(Boolean yes) {
+        if (yes) {
+            shoprecordText.setTextColor(getResources().getColor(R.color.blue_click));
+            shoprecordImg.setImageResource(R.drawable.tab_selected_record);
+            shoprecordLayout.setClickable(false);
+        } else {
+            shoprecordText.setTextColor(getResources().getColor(R.color.gray));
+            shoprecordImg.setImageResource(R.drawable.tab_record);
+            shoprecordLayout.setClickable(true);
+        }
+    }
+
+    void moreClick(Boolean yes) {
+        if (yes) {
+            moreText.setTextColor(getResources().getColor(R.color.blue_click));
+            moreImg.setImageResource(R.drawable.tab_selected_more);
+            moreLayout.setClickable(false);
+        } else {
+            moreText.setTextColor(getResources().getColor(R.color.gray));
+            moreImg.setImageResource(R.drawable.tab_more);
+            moreLayout.setClickable(true);
+        }
+    }
+
     //3.5 Hua
 /*    @Override
     protected void onDestroy() {
@@ -315,11 +292,6 @@ public class HomepageActivity extends FragmentActivity {
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        /*
-        if (contentFragment instanceof MainImageFragment) {
-            outState.putString("content", MainImageFragment.ARG_ITEM_ID);
-        }
-        */
         super.onSaveInstanceState(outState);
     }
 

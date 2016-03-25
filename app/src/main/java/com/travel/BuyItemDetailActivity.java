@@ -1,6 +1,8 @@
 package com.travel;
 
 import android.app.Dialog;
+import android.app.ProgressDialog;
+import android.content.ContentValues;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -9,6 +11,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Html;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -33,6 +36,7 @@ import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -40,7 +44,9 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class BuyItemDetailActivity extends AppCompatActivity {
 
@@ -54,6 +60,7 @@ public class BuyItemDetailActivity extends AppCompatActivity {
     DataBaseHelper helper;
     SQLiteDatabase database;
     String itemID;
+    String[][] cartItem;
 
     //按下返回鍵
     @Override
@@ -90,12 +97,6 @@ public class BuyItemDetailActivity extends AppCompatActivity {
         });
         AddImg = (ImageView) findViewById(R.id.buyitemAdd_Img);
         AddImg.setVisibility(View.INVISIBLE);
-        AddImg.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setupAddDialog();
-            }
-        });
 
 
         //show image
@@ -145,47 +146,56 @@ public class BuyItemDetailActivity extends AppCompatActivity {
             if (goods_cursor.getString(3) != null)
                 loader.displayImage("http://zhiyou.lin366.com/" + goods_cursor.getString(3)
                         , ItemImg, options, listener);
-            Log.e("3.10", "id:" + itemID);
-            new checkitem().execute();
+//            Log.e("3.10", "id:" + itemID);
+            if (goods_cursor != null)
+                goods_cursor.close();
+            new checkitem(new Functions.TaskCallBack() {
+                @Override
+                public void TaskDone(Boolean OrderNeedUpdate) {
+                    methodThatDoesSomethingWhenTaskIsDone(OrderNeedUpdate);
+                }
+            }).execute();
         }
 
 //        else Log.d("2.24", "not right!!!!" + ItemPosition);
-        if (goods_cursor != null)
-            goods_cursor.close();
-        if (database.isOpen())
-            database.close();
 
 
     }
 
     void setupAddDialog() {
+
+
         Bundle bundle = new Bundle();
         bundle.putInt("WhichItem", ItemPosition);
         //=====0308 test popping Dialog
+        //------------Dialog
         final Dialog BuyAdd = new Dialog(BuyItemDetailActivity.this);
         BuyAdd.setCancelable(true);
         BuyAdd.requestWindowFeature(Window.FEATURE_NO_TITLE);
         BuyAdd.setCanceledOnTouchOutside(true);
         BuyAdd.setContentView(R.layout.dialog_buyitem);
-        LinearLayout linearLayout = (LinearLayout) BuyAdd.findViewById(R.id.dialog_buyitem_layout);
-        View view = LayoutInflater.from(BuyItemDetailActivity.this)
-                .inflate(R.layout.buylist_item, null);
-        linearLayout.addView(view);
-        TextView nameText = (TextView) view.findViewById(R.id.buyitemlist_nameTxt);
-        TextView fromText = (TextView) view.findViewById(R.id.buyitemlist_fromTxt);
-        final TextView moneyText = (TextView) view.findViewById(R.id.butitemlist_moneyTxt);
-        ImageView Img = (ImageView) view.findViewById(R.id.buyitemlist_itemImg);
-        ImageView delImg = (ImageView) view.findViewById(R.id.buyitemlist_delImg);
-        final TextView numberText = (TextView) view.findViewById(R.id.buyitemlist_numbertext);
-        final TextView totalText = (TextView) view.findViewById(R.id.buyitemlist_totalTxt);
-        Button addButton = (Button) view.findViewById(R.id.buyitemlist_addbutton);
-        Button minusButton = (Button) view.findViewById(R.id.buyitemlist_minusbutton);
+
+        final TextView totalPrice = (TextView) BuyAdd.findViewById(R.id.dialog_buyitem_totalPrice);
+        final int[] totalprice = {0};
         Button okButton = (Button) BuyAdd.findViewById(R.id.dialog_buyitem_OkButton);
         Button cancelButton = (Button) BuyAdd.findViewById(R.id.dialog_buyitem_CancelButton);
+        LinearLayout linearLayout = (LinearLayout) BuyAdd.findViewById(R.id.dialog_buyitem_layout);
+        //------------Dialog view
+        final SharedPreferences sharedPreferences = PreferenceManager
+                .getDefaultSharedPreferences(BuyItemDetailActivity.this);
+
+        final TextView[] nameText = new TextView[cartItem.length],
+                fromText = new TextView[cartItem.length],
+                moneyText = new TextView[cartItem.length],
+                numberText = new TextView[cartItem.length],
+                totalText = new TextView[cartItem.length];
+        ImageView[] Img = new ImageView[cartItem.length], delImg = new ImageView[cartItem.length];
+        Button[] addButton = new Button[cartItem.length], minusButton = new Button[cartItem.length];
+        String itemName = null, itemImg = null, itemId = null;
+
         final List<String> goods_id = new ArrayList<>();
         DataBaseHelper helper = new DataBaseHelper(BuyItemDetailActivity.this);
         SQLiteDatabase database = helper.getWritableDatabase();
-        final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(BuyItemDetailActivity.this);
         final Cursor goods_cursor = database.query("goods", new String[]{"totalCount", "goods_id", "goods_title",
                 "goods_url", "goods_money", "goods_content", "goods_click", "goods_addtime"}, null, null, null, null, null);
         if (goods_cursor != null && goods_cursor.getCount() >= ItemPosition) {
@@ -194,58 +204,191 @@ public class BuyItemDetailActivity extends AppCompatActivity {
             goods_id.clear();
             goods_id.add(goods_cursor.getString(1));
 
-            nameText.setText(goods_cursor.getString(2));
-            fromText.setText(goods_cursor.getString(2));
-
-            moneyText.setText(goods_cursor.getString(4));
-            numberText.setText("" + sharedPreferences.getInt(goods_cursor.getString(1), 0));
-
-            Log.d("3.8", "shared:" + sharedPreferences.getInt(goods_cursor.getString(1), 0));
-
-            loader.displayImage("http://zhiyou.lin366.com/" + goods_cursor.getString(3)
-                    , Img, options, listener);
+            //0324
+            if (goods_cursor.getString(1) != null)
+                itemId = goods_cursor.getString(1);
+            if (goods_cursor.getString(2) != null)
+                itemName = goods_cursor.getString(2);
+            if (goods_cursor.getString(3) != null)
+                itemImg = goods_cursor.getString(3);
             goods_cursor.close();
         }
-        addButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                numberText.setText((Integer.valueOf(numberText.getText().toString() + "") + 1) + "");
-                totalText.setText((Integer.parseInt(moneyText.getText().toString())
-                        * Integer.valueOf(numberText.getText().toString()) + ""));
-            }
-        });
-        delImg.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                numberText.setText("0");
-                totalText.setText(Integer.parseInt(numberText.getText().toString())
-                        * Integer.valueOf(numberText.getText().toString() + ""));
-            }
-        });
-        minusButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (Integer.valueOf(numberText.getText().toString() + "") > 0) {
-                    numberText.setText((Integer.valueOf(numberText.getText().toString() + "") - 1) + "");
-                    totalText.setText(Integer.parseInt(moneyText.getText().toString() + "")
-                            * Integer.valueOf(numberText.getText().toString() + "") + "");
+        if (database.isOpen())
+            database.close();
+
+
+        for (int i = 0; i < cartItem.length; i++) {
+            View view = LayoutInflater.from(BuyItemDetailActivity.this)
+                    .inflate(R.layout.buylist_item, null);
+            linearLayout.addView(view);
+
+            nameText[i] = (TextView) view.findViewById(R.id.buyitemlist_nameTxt);
+            fromText[i] = (TextView) view.findViewById(R.id.buyitemlist_itemTxt);
+            moneyText[i] = (TextView) view.findViewById(R.id.butitemlist_moneyTxt);
+            Img[i] = (ImageView) view.findViewById(R.id.buyitemlist_itemImg);
+            delImg[i] = (ImageView) view.findViewById(R.id.buyitemlist_delImg);
+            numberText[i] = (TextView) view.findViewById(R.id.buyitemlist_numbertext);
+            totalText[i] = (TextView) view.findViewById(R.id.buyitemlist_totalTxt);
+            addButton[i] = (Button) view.findViewById(R.id.buyitemlist_addbutton);
+            minusButton[i] = (Button) view.findViewById(R.id.buyitemlist_minusbutton);
+ /*
+  editor.putInt("InBuyList", finalnumber);//the total count of the cart
+  editor.putInt("InBuyListg" + finalItemId, smallItemCount);//這個大項目裡面有幾個小項目在購物車裡
+  editor.putString("InBuyListg" + finalItemId+"id"+smallItemCount, cartItem[i][0]);//第幾個小項目的id
+  editor.putInt("InBuyListgC" + finalItemId+"id"+smallItemCount, Integer.valueOf(numberText[i].getText().toString()));//第幾個小項目的數量
+        *int howmany = sharedPreferences.getInt("InBuyList", 0);
+        * **/
+            //確認大項目裡的小項目有沒有在購物車裡面
+            if (sharedPreferences.getInt("InBuyListg" + itemId, 0) > 0) {//這個大項目有小項目在購物車裡面
+//                Log.e("3.24","這個大項目有小項目在購物車裡面"+itemId+"幾個"+sharedPreferences.getInt("InBuyListg"+itemId,0));
+                for (int k = 0; k < sharedPreferences.getInt("InBuyListg" + itemId, 0); k++) {
+                    String a = sharedPreferences.getString("InBuyListg" + itemId + "id" + (k + 1), "NULL");
+//                    Log.e("3.24","id:"+a);
+                    if (a.equals(cartItem[i][0]) && sharedPreferences.getInt("InBuyListgC" + itemId + "id" + (k + 1), 0) != 0) {
+                        numberText[i].setText(sharedPreferences.getInt("InBuyListgC" + itemId + "id" + (k + 1), 0) + "");
+//                        Log.e("3.24","這個項目有在購物車裡面!!!"+cartItem[i][1]+"有幾個:"
+//                                +sharedPreferences.getInt("InBuyListgC" + itemId+"id"+(k+1),0));
+                    }
                 }
             }
-        });
-        final int[] number = {sharedPreferences.getInt("InBuyList", 0)};
+
+            nameText[i].setText(itemName);
+            fromText[i].setText(cartItem[i][1]);
+            moneyText[i].setText(cartItem[i][2]);
+            totalText[i].setText(Integer.valueOf(moneyText[i].getText().toString())
+                    * Integer.valueOf(numberText[i].getText().toString()) + "");
+            totalprice[0] += Integer.valueOf(totalText[i].getText().toString());
+            totalPrice.setText(totalprice[0] + "");
+            loader.displayImage("http://zhiyou.lin366.com/" + itemImg, Img[i], options, listener);
+
+            final int finalI = i;
+            addButton[i].setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    numberText[finalI].setText((Integer.valueOf(numberText[finalI].getText().toString()) + 1) + "");
+                    totalText[finalI].setText((Integer.parseInt(moneyText[finalI].getText().toString())
+                            * Integer.valueOf(numberText[finalI].getText().toString())) + "");
+                    totalprice[0] += (Integer.parseInt(moneyText[finalI].getText().toString()));
+                    totalPrice.setText(totalprice[0] + "");
+                }
+            });
+            delImg[i].setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    totalprice[0] = totalprice[0]
+                            - (Integer.parseInt(numberText[finalI].getText().toString()) * Integer.parseInt(moneyText[finalI].getText().toString()));
+                    numberText[finalI].setText("0");
+                    totalText[finalI].setText(Integer.parseInt(numberText[finalI].getText().toString())
+                            * Integer.valueOf(numberText[finalI].getText().toString()) + "");
+                    totalPrice.setText(totalprice[0] + "");
+                }
+            });
+            minusButton[i].setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (Integer.valueOf(numberText[finalI].getText().toString()) > 0) {
+                        numberText[finalI].setText((Integer.valueOf(numberText[finalI].getText().toString()) - 1) + "");
+                        totalText[finalI].setText(Integer.parseInt(moneyText[finalI].getText().toString())
+                                * Integer.valueOf(numberText[finalI].getText().toString()) + "");
+                        totalprice[0] = totalprice[0] - (Integer.parseInt(moneyText[finalI].getText().toString()));
+                        totalPrice.setText(totalprice[0] + "");
+                    }
+                }
+            });
+
+
+        }
+
+        //------------Dialog view
+
+
+        final String finalItemId = itemId;
+        final int[] finalNumber = {sharedPreferences.getInt("InBuyList", 0)};//購物車總數\
+        if(sharedPreferences.getBoolean("AfterPay",false)) {
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putBoolean("AfterPay", false);
+            editor.apply();
+        }
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (goods_id.get(0) != null) {
-                    number[0]++;
-                    SharedPreferences.Editor editor = sharedPreferences.edit();
-                    editor.putInt(goods_id.get(0), Integer.valueOf(numberText.getText().toString() + ""));
-                    editor.putInt("InBuyList", number[0]);
-//                            Log.d("3.8", "InBuyList number[0]:"+number[0]);
-                    editor.putInt("InBuyList" + number[0], ItemPosition);
-                    editor.apply();
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                int smallItemCount = 0;//大項目裡在購物車裡的小項目總數
+                //確認大項目裡的小項目有沒有在購物車裡面
+                HashSet<String> List = new HashSet<String>();
+                Set<String> test = null;
+                if (sharedPreferences.contains(finalItemId))
+                    test = sharedPreferences.getStringSet(finalItemId, null);
+                if (test == null)
+                    test = new HashSet<String>();
 
-                } else Log.d("3.8", "null");
+//                hs.add("一月");
+//                hs.add("二月");
+//                editor.putStringSet("KEY_STR_SET", hs);
+                int count = sharedPreferences.getInt("InBuyListg" + finalItemId, 0);//這個大項目有幾個小項目在購物車裡
+                for (int i = 0; i < cartItem.length; i++) {
+                    if (count > 0) { //這個大項目有小項目在購物車裡面
+                        for (int k = 0; k < count; k++) {
+                            String a = sharedPreferences.getString("InBuyListg" + finalItemId + "id" + (k + 1), "NULL");//shared裡的第K個小項目id
+                            if (Integer.valueOf(numberText[i].getText().toString()) > 0) {
+                                //                   editor.putString("InBuyListg" + finalItemId + "id" + smallItemCount, cartItem[i][0]);//第幾個小項目的id
+
+                                if (a.equals(cartItem[i][0])) {//第i個小項目id有在shared裡
+                                    editor.putInt("InBuyListgC" + finalItemId + "id" + (k + 1), Integer.valueOf(numberText[i].getText().toString()));
+                                    editor.apply();
+                                    List.add(cartItem[i][0]);
+                                    List.add(cartItem[i][0] + numberText[i].getText().toString());
+                                } else {
+                                    smallItemCount++;
+                                    finalNumber[0]++;
+                                    editor.putInt("InBuyList", finalNumber[0]);//the total count of the cart
+                                    editor.putInt("InBuyListg" + finalItemId, smallItemCount);//這個大項目裡面有幾個小項目在購物車裡
+                                    editor.putString("InBuyListg" + finalItemId + "id" + smallItemCount, cartItem[i][0]);//第幾個小項目的id
+                                    editor.putInt("InBuyListgC" + finalItemId + "id" + smallItemCount,
+                                            Integer.valueOf(numberText[i].getText().toString()));//第幾個小項目的數量
+                                    editor.apply();
+                                    List.add(cartItem[i][0]);
+                                    List.add(cartItem[i][0] + numberText[i].getText().toString());
+                                }
+                            } else {
+                                if (a.equals(cartItem[i][0])) {
+                                    smallItemCount--;
+                                    finalNumber[0]--;
+                                    editor.putInt("InBuyList", finalNumber[0]);//the total count of the cart
+                                    editor.putInt("InBuyListg" + finalItemId, smallItemCount);//這個大項目裡面有幾個小項目在購物車裡
+                                    editor.putString("InBuyListg" + finalItemId + "id" + smallItemCount, cartItem[i][0]);//第幾個小項目的id
+                                    editor.putInt("InBuyListgC" + finalItemId + "id" + smallItemCount,
+                                            Integer.valueOf(numberText[i].getText().toString()));//第幾個小項目的數量
+
+                                    List.add(cartItem[i][0]);
+                                    List.add(cartItem[i][0] + numberText[i].getText().toString());
+                                    editor.apply();
+                                }
+                            }
+                        }
+                    } else {
+                        if (Integer.valueOf(numberText[i].getText().toString()) > 0) {
+                            smallItemCount++;
+                            finalNumber[0]++;
+                            editor.putInt("InBuyList", finalNumber[0]);//the total count of the cart
+                            editor.putInt("InBuyListg" + finalItemId, smallItemCount);//這個大項目裡面有幾個小項目在購物車裡
+                            editor.putString("InBuyListg" + finalItemId + "id" + smallItemCount, cartItem[i][0]);//第幾個小項目的id
+                            editor.putInt("InBuyListgC" + finalItemId + "id" + smallItemCount,
+                                    Integer.valueOf(numberText[i].getText().toString()));//第幾個小項目的數量
+                            List.add(cartItem[i][0]);
+                            List.add(cartItem[i][0] + numberText[i].getText().toString());
+                            editor.apply();
+                        }
+                    }
+                }
+                if (List.size() > 0) {
+                    editor.putStringSet(finalItemId, List);
+                    Log.e("3.24", "inList!!!!");
+                    Log.e("3.24", List.toString());
+                    editor.apply();
+                }
+                if (sharedPreferences.contains(finalItemId))
+                    Log.e("3.24", "contain!!!" + sharedPreferences.getStringSet(finalItemId, null));
                 if (BuyAdd.isShowing())
                     BuyAdd.cancel();
             }
@@ -257,20 +400,52 @@ public class BuyItemDetailActivity extends AppCompatActivity {
                     BuyAdd.cancel();
             }
         });
-        totalText.setText(Integer.valueOf(numberText.getText().toString())
-                * Integer.valueOf(numberText.getText().toString()) + "");
+
 
         BuyAdd.show();
     }
 
-    class checkitem extends AsyncTask<String, Void, String> {
+    private void methodThatDoesSomethingWhenTaskIsDone(Boolean a) {
+        if (a) {
+//            Log.e("3.24","確認項目array長度"+cartItem.length);//OK
+            AddImg.setVisibility(View.VISIBLE);
+            AddImg.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    setupAddDialog();
+                }
+            });
+        }
+    }
+
+    class checkitem extends AsyncTask<String, Void, Boolean> {
+        ProgressDialog mDialog;
+        Functions.TaskCallBack taskCallBack;
+
+        public checkitem(Functions.TaskCallBack taskCallBack) {
+            this.taskCallBack = taskCallBack;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            mDialog = new ProgressDialog(BuyItemDetailActivity.this);
+            mDialog.setMessage("讀取資料中......");
+            mDialog.setCancelable(false);
+            if (!mDialog.isShowing()) {
+                mDialog.show();
+            }
+            super.onPreExecute();
+        }
+
         /**
          * http://zhiyou.lin366.com/api/article/show.aspx
          * {"act":"show","id”:"609","type":"goods"}
          */
+
         @Override
-        protected String doInBackground(String... params) {
+        protected Boolean doInBackground(String... params) {
             Log.e("3.9", "=========checkitem======doInBackground" + itemID);
+            Boolean result = false;
             HttpClient client = new DefaultHttpClient();
             HttpPost post = new HttpPost("http://zhiyou.lin366.com/api/article/show.aspx");
             MultipartEntity multipartEntity = new MultipartEntity();
@@ -291,37 +466,101 @@ public class BuyItemDetailActivity extends AppCompatActivity {
 
             try {
                 getString = EntityUtils.toString(response.getEntity());
-                Log.d("3.10", "購物車項目? 2getString: " + getString);
             } catch (IOException | NullPointerException e) {
                 e.printStackTrace();
             }
-
-
-            if (getString != null && getString.contains("guigelist"))
-                Log.d("3.11", "contain!!!");
-
+            String test = Html.fromHtml(getString).toString();
             String state = null;
-            String totalcount = null;
             try {
-                state = new JSONObject(getString.substring(getString.indexOf("{"), getString.lastIndexOf("}") + 1)).getString("states");
+                state = new JSONObject(test.substring(test.indexOf("{"), test.lastIndexOf("}") + 1)).getString("states");
             } catch (JSONException | NullPointerException e) {
                 e.printStackTrace();
             }
-            Log.d("3.10", "inBuy Item Detail: states" + state);
-            /*
+//            Log.d("3.10", "inBuy Item Detail: states" + state);
+            if (state == null || state.equals("0"))
+                return false;
+
             JSONArray jsonArray = null;
             try {
                 jsonArray = new JSONObject(getString).getJSONArray("guigelist");
-            } catch (JSONException e) {
+            } catch (JSONException | NullPointerException e) {
                 e.printStackTrace();
             }
-            Log.e("3.10","購物車項目?"+jsonArray+"getString: "+getString);
-            */
-            return null;
+            if (jsonArray != null && jsonArray.length() > 0) {
+                Log.e("3.10", "購物車項目?" + jsonArray + "length:" + jsonArray.length());
+                cartItem = new String[jsonArray.length()][4];
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    try {
+                        cartItem[i][0] = jsonArray.getJSONObject(i).getString("id");
+                    } catch (JSONException | NullPointerException e) {
+                        e.printStackTrace();
+                    }
+                    try {
+                        cartItem[i][1] = jsonArray.getJSONObject(i).getString("guige");
+                    } catch (JSONException | NullPointerException e) {
+                        e.printStackTrace();
+                    }
+                    try {
+                        String sellprice = jsonArray.getJSONObject(i).getString("money");
+                        if (sellprice.contains(".")) {//有小數點!!
+                            sellprice = sellprice.substring(0, sellprice.indexOf("."));
+                        }
+                        cartItem[i][2] = sellprice;
+                    } catch (JSONException | NullPointerException e) {
+                        e.printStackTrace();
+                    }
+                    try {
+                        cartItem[i][3] = jsonArray.getJSONObject(i).getString("img_url");
+                    } catch (JSONException | NullPointerException e) {
+                        e.printStackTrace();
+                    }
+                }
+                result = true;
+                ContentValues cv = new ContentValues();
+                Cursor goods_cursor_big = database.query("goodsitem", new String[]{"goods_bigid",
+                                "goods_itemid", "goods_title", "goods_money", "goods_url"},
+                        "goods_bigid=" + "\"" + itemID + "\"", null, null, null, null);
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    if (goods_cursor_big != null) {//DB已經有這個大項目了->確認這個小項目在嗎
+                        Log.i("3.24", i + "!!!insertDB! in if");
+                        Cursor goods_cursor = database.query("goodsitem", new String[]{"goods_bigid",
+                                        "goods_itemid", "goods_title", "goods_money", "goods_url"},
+                                "goods_bigid=" + "\"" + itemID + "\"" + " and goods_itemid=" + "\"" + cartItem[i][0] + "\"", null,
+                                null, null, null);
+
+                        if (goods_cursor != null && goods_cursor.getCount() > 0) {//DB已經有這個大項目裡的這個小項目(i)
+                            Log.i("3.24", i + "!!!insertDB! in second if" + itemID + "  " + cartItem[i][0] + "=====" + goods_cursor.getCount());
+                            goods_cursor.close();
+                        } else {//大項目裡面沒有小項目!! ->> 新增
+                            cv.clear();
+                            cv.put("goods_bigid", itemID);
+                            cv.put("goods_itemid", cartItem[i][0]);
+                            cv.put("goods_title", cartItem[i][1]);
+                            cv.put("goods_money", cartItem[i][2]);
+                            cv.put("goods_url", cartItem[i][3]);
+                            long result2 = database.insert("goodsitem", null, cv);
+                            Log.i("3.24", i + "!!!insertDB!" + result2);
+                        }
+                    } else {
+                        cv.clear();
+                        cv.put("goods_bigid", itemID);
+                        cv.put("goods_itemid", cartItem[i][0]);
+                        cv.put("goods_title", cartItem[i][1]);
+                        cv.put("goods_money", cartItem[i][2]);
+                        cv.put("goods_url", cartItem[i][3]);
+                        long result2 = database.insert("goodsitem", null, cv);
+                        Log.i("3.24", i + "~~~~~insertDB!" + result2);
+                    }
+                }
+            }
+            return result;
         }
 
         @Override
-        protected void onPostExecute(String s) {
+        protected void onPostExecute(Boolean s) {
+            if (mDialog.isShowing())
+                mDialog.dismiss();
+            taskCallBack.TaskDone(s);
             super.onPostExecute(s);
         }
     }
