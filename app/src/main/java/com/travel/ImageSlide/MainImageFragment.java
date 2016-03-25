@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -25,6 +27,7 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
 import com.travel.R;
+import com.travel.Utility.DataBaseHelper;
 import com.travel.Utility.HttpService;
 
 import java.io.IOException;
@@ -236,6 +239,14 @@ public class MainImageFragment extends Fragment {
         @Override
         protected List<Product> doInBackground(String... params) {
             //0307
+            DataBaseHelper helper= new DataBaseHelper(context);
+            SQLiteDatabase database= helper.getWritableDatabase();
+            Cursor cursor = database.query("banner", new String[]{"img_url"}, null, null, null, null, null);
+            if(cursor!=null){
+                while (cursor.moveToNext())
+                    Log.i("3.25","Getting Banner~"+cursor.getString(0));
+                cursor.close();
+            }
             SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
 //            Log.d("3.7", "Image Slide!!!" + sharedPreferences.getInt("count", 0));
             for(int i=0;i<sharedPreferences.getInt("count", 0);i++){

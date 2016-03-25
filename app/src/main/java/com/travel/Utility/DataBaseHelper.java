@@ -162,6 +162,11 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 +");";
         db.execSQL(DATABASE_CREATE_TABLE_NEWS);
 
+        String DATABASE_CREATE_TABLE_BANNER = "create table banner("
+                +"_ID INTEGER PRIMARY KEY,"+"img_url TEXT"
+                +");";
+        db.execSQL(DATABASE_CREATE_TABLE_BANNER);
+
         String DATABASE_CREATE_TABLE_SHOPRECORD = "create table shoporder("
                 +"_ID INTEGER PRIMARY KEY,"+"order_id TEXT,"
                 +"order_userid TEXT,"
