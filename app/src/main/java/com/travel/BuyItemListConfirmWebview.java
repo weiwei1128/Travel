@@ -2,6 +2,7 @@ package com.travel;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.KeyEvent;
 import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -29,6 +30,15 @@ public class BuyItemListConfirmWebview extends AppCompatActivity {
 
     }
 
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            Functions.go(true, BuyItemListConfirmWebview.this, BuyItemListConfirmWebview.this, BuyActivity.class, null);
+        }
+
+        return false;
+    }
+
     void setWebView(String id) {
 
         String myURL = "http://zhiyou.lin366.com/pay.aspx?id=" + id;
@@ -50,11 +60,14 @@ public class BuyItemListConfirmWebview extends AppCompatActivity {
         backImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Bundle bundle = new Bundle();
                 Functions.go(false, BuyItemListConfirmWebview.this, BuyItemListConfirmWebview.this,
                         BuyActivity.class, null);
+                finish();
             }
         });
 
     }
+
 
 }

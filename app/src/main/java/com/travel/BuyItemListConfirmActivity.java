@@ -120,7 +120,7 @@ public class BuyItemListConfirmActivity extends AppCompatActivity {
 
 
                 //TODO need modify!
-                Toast.makeText(BuyItemListConfirmActivity.this, "建構中!", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(BuyItemListConfirmActivity.this, "建構中!", Toast.LENGTH_SHORT).show();
                 Log.i("3.24", "要remove的東西:" + removeList.size());
             }
         });
@@ -291,6 +291,7 @@ public class BuyItemListConfirmActivity extends AppCompatActivity {
                 SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(BuyItemListConfirmActivity.this);
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.clear();
+                editor.apply();
 //                for (Object key : remove.keySet()) {
 //                    editor.remove(remove.get(key));
 //                    System.out.println(key + " : " + remove.get(key));
