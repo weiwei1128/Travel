@@ -66,23 +66,22 @@ public class SpotDetailActivity extends AppCompatActivity {
             }
             // get SpotData
             Cursor spotDataSorted_cursor = database.query("spotDataSorted",
-                    new String[]{"spotId", "spotName", "spotAdd","spotLat", "spotLng", "picture1",
+                    new String[]{"spotName", "spotAdd","spotLat", "spotLng", "picture1",
                             "picture2","picture3", "openTime", "ticketInfo", "infoDetail", "distance"},
                     null, null, null, null, null);
             if (spotDataSorted_cursor != null) {
                 while (spotDataSorted_cursor.moveToNext()) {
-                    String Id = spotDataSorted_cursor.getString(0);
-                    String Name = spotDataSorted_cursor.getString(1);
-                    String Add = spotDataSorted_cursor.getString(2);
-                    Double Latitude = spotDataSorted_cursor.getDouble(3);
-                    Double Longitude = spotDataSorted_cursor.getDouble(4);
-                    String Picture1 = spotDataSorted_cursor.getString(5);
-                    String Picture2 = spotDataSorted_cursor.getString(6);
-                    String Picture3 = spotDataSorted_cursor.getString(7);
-                    String OpenTime = spotDataSorted_cursor.getString(8);
-                    String TicketInfo = spotDataSorted_cursor.getString(9);
-                    String InfoDetail = spotDataSorted_cursor.getString(10);
-                    globalVariable.SpotDataSorted.add(new SpotData(Id, Name, Latitude, Longitude, Add,
+                    String Name = spotDataSorted_cursor.getString(0);
+                    String Add = spotDataSorted_cursor.getString(1);
+                    Double Latitude = spotDataSorted_cursor.getDouble(2);
+                    Double Longitude = spotDataSorted_cursor.getDouble(3);
+                    String Picture1 = spotDataSorted_cursor.getString(4);
+                    String Picture2 = spotDataSorted_cursor.getString(5);
+                    String Picture3 = spotDataSorted_cursor.getString(6);
+                    String OpenTime = spotDataSorted_cursor.getString(7);
+                    String TicketInfo = spotDataSorted_cursor.getString(8);
+                    String InfoDetail = spotDataSorted_cursor.getString(9);
+                    globalVariable.SpotDataSorted.add(new SpotData(Name, Latitude, Longitude, Add,
                             Picture1, Picture2, Picture3, OpenTime,TicketInfo, InfoDetail));
                 }
                 spotDataSorted_cursor.close();

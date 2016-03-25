@@ -165,7 +165,7 @@ public class MainFragment extends Fragment {
         spotLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Functions.go(false, getActivity(), context, MapsActivity.class, null);
+                Functions.go(false, getActivity(), context, SpotActivity.class, null);
             }
         });
 

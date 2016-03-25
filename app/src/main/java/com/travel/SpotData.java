@@ -4,7 +4,6 @@ package com.travel;
  * Created by Tinghua on 2016/3/7.
  */
 public class SpotData {
-    private String Id;   //景點店家編號
     private String Name;        //景點店家名稱
     private double Latitude;    //景點店家緯度
     private double Longitude;   //景點店家經度
@@ -18,11 +17,10 @@ public class SpotData {
     private String InfoDetail;
 
     //建立物件時需帶入景點店家名稱、景點店家緯度、景點店家經度
-    public SpotData (String id, String name, double latitude, double longitude,
+    public SpotData (String name, double latitude, double longitude,
                      String add, String picture1, String picture2, String picture3,
                      String openTime, String ticketInfo ,String infoDetail) {
         //將資訊帶入類別屬性
-        Id = id;
         Name = name;
         Latitude = latitude;
         Longitude = longitude;
@@ -33,11 +31,6 @@ public class SpotData {
         OpenTime = openTime;
         TicketInfo = ticketInfo;
         InfoDetail = infoDetail;
-    }
-
-    //取得店家編號
-    public String getId() {
-        return Id;
     }
 
     //取得店家名稱
@@ -60,7 +53,7 @@ public class SpotData {
         Distance = distance;
     }
 
-    //取的店家距離
+    //取得店家距離
     public double getDistance() {
         return Distance;
     }
