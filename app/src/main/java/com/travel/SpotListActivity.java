@@ -90,7 +90,7 @@ public class SpotListActivity extends Activity implements
         globalVariable = (GlobalVariable) getApplicationContext();
 
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
-        mAdapter = new SpotListAdapter(SpotListActivity.this);
+        //mAdapter = new SpotListAdapter(SpotListActivity.this);
         mlistView = (ListView) findViewById(R.id.spotlist_listView);
         mlistView.setOnItemClickListener(new itemListener());
 
@@ -110,7 +110,7 @@ public class SpotListActivity extends Activity implements
         BackImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Functions.go(true,SpotListActivity.this, SpotListActivity.this, MapsActivity.class, null);
+                Functions.go(true,SpotListActivity.this, SpotListActivity.this, SpotActivity.class, null);
             }
         });
 
@@ -118,7 +118,7 @@ public class SpotListActivity extends Activity implements
         SpotMapBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Functions.go(false,SpotListActivity.this, SpotListActivity.this, MapsActivity.class, null);
+                Functions.go(false,SpotListActivity.this, SpotListActivity.this, SpotActivity.class, null);
             }
         });
 
@@ -304,7 +304,7 @@ public class SpotListActivity extends Activity implements
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            Functions.go(true,SpotListActivity.this, SpotListActivity.this, MapsActivity.class, null);
+            Functions.go(true,SpotListActivity.this, SpotListActivity.this, SpotActivity.class, null);
         }
         return false;
     }

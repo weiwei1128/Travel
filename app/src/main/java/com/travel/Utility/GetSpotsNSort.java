@@ -8,8 +8,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.travel.GlobalVariable;
 import com.travel.SpotData;
 
@@ -44,12 +42,11 @@ public class GetSpotsNSort extends AsyncTask<Void, Void, ArrayList<SpotData>> {
 
     @Override
     protected ArrayList<SpotData> doInBackground(Void... param) {
-        Log.e("3/10_", "=========GetSpotsNSort======doInBackground");
+        Log.e("3/23_", "=========GetSpotsNSort======doInBackground");
         ArrayList<SpotData> mSpotData = new ArrayList<SpotData>();
         if (globalVariable.isAPILoaded) {
             Integer SpotCount = globalVariable.SpotDataRaw.size();
             for (int i = 0; i < SpotCount; i++) {
-                String Id = globalVariable.SpotDataRaw.get(i).getId();
                 String Name = globalVariable.SpotDataRaw.get(i).getName();
                 String Add = globalVariable.SpotDataRaw.get(i).getAdd();
                 Double Latitude = globalVariable.SpotDataRaw.get(i).getLatitude();
@@ -60,38 +57,37 @@ public class GetSpotsNSort extends AsyncTask<Void, Void, ArrayList<SpotData>> {
                 String OpenTime = globalVariable.SpotDataRaw.get(i).getOpenTime();
                 String TicketInfo = globalVariable.SpotDataRaw.get(i).getTicketInfo();
                 String InfoDetail = globalVariable.SpotDataRaw.get(i).getInfoDetail();
-                mSpotData.add(new SpotData(Id, Name, Latitude, Longitude, Add,
+                mSpotData.add(new SpotData(Name, Latitude, Longitude, Add,
                         Picture1, Picture2, Picture3, OpenTime, TicketInfo, InfoDetail));
             }
         } else {
             // retrieve Spots from DB
             DataBaseHelper helper = new DataBaseHelper(mcontext);
             SQLiteDatabase database = helper.getWritableDatabase();
-            Cursor spotDataRaw_cursor = database.query("spotDataRaw", new String[]{"spotId", "spotName", "spotAdd",
+            Cursor spotDataRaw_cursor = database.query("spotDataRaw", new String[]{"spotName", "spotAdd",
                             "spotLat", "spotLng", "picture1", "picture2","picture3",
                             "openTime", "ticketInfo", "infoDetail"},
                     null, null, null, null, null);
             if (spotDataRaw_cursor != null) {
                 while (spotDataRaw_cursor.moveToNext()) {
-                    String Id = spotDataRaw_cursor.getString(0);
-                    String Name = spotDataRaw_cursor.getString(1);
-                    String Add = spotDataRaw_cursor.getString(2);
-                    Double Latitude = spotDataRaw_cursor.getDouble(3);
-                    Double Longitude = spotDataRaw_cursor.getDouble(4);
-                    String Picture1 = spotDataRaw_cursor.getString(5);
-                    String Picture2 = spotDataRaw_cursor.getString(6);
-                    String Picture3 = spotDataRaw_cursor.getString(7);
-                    String OpenTime = spotDataRaw_cursor.getString(8);
-                    String TicketInfo = spotDataRaw_cursor.getString(9);
-                    String InfoDetail = spotDataRaw_cursor.getString(10);
-                    mSpotData.add(new SpotData(Id, Name, Latitude, Longitude, Add,
+                    String Name = spotDataRaw_cursor.getString(0);
+                    String Add = spotDataRaw_cursor.getString(1);
+                    Double Latitude = spotDataRaw_cursor.getDouble(2);
+                    Double Longitude = spotDataRaw_cursor.getDouble(3);
+                    String Picture1 = spotDataRaw_cursor.getString(4);
+                    String Picture2 = spotDataRaw_cursor.getString(5);
+                    String Picture3 = spotDataRaw_cursor.getString(6);
+                    String OpenTime = spotDataRaw_cursor.getString(7);
+                    String TicketInfo = spotDataRaw_cursor.getString(8);
+                    String InfoDetail = spotDataRaw_cursor.getString(9);
+                    mSpotData.add(new SpotData(Name, Latitude, Longitude, Add,
                             Picture1, Picture2, Picture3, OpenTime,TicketInfo, InfoDetail));
                 }
                 spotDataRaw_cursor.close();
             }
         }
 
-        Log.e("3/10_排序", "景點開始排序");
+        Log.e("3/23_排序", "景點開始排序");
         for (SpotData mSpot : mSpotData) {
             //for迴圈將距離帶入，判斷距離為Distance function
             //需帶入使用者取得定位後的緯度、經度、景點店家緯度、經度。
@@ -109,10 +105,10 @@ public class GetSpotsNSort extends AsyncTask<Void, Void, ArrayList<SpotData>> {
             mcontext.sendBroadcast(intent);
         }
 
-        Log.e("3/10_", "=========GetSpotsNSort======Write to DB");
+        Log.e("3/23_", "=========GetSpotsNSort======Write to DB");
         DataBaseHelper helper = new DataBaseHelper(mcontext);
         SQLiteDatabase database = helper.getWritableDatabase();
-        Cursor spotDataSorted_cursor = database.query("spotDataSorted", new String[]{"spotId", "spotName", "spotAdd",
+        Cursor spotDataSorted_cursor = database.query("spotDataSorted", new String[]{"spotName", "spotAdd",
                         "spotLat", "spotLng", "picture1", "picture2", "picture3",
                         "openTime", "ticketInfo", "infoDetail"},
                 null, null, null, null, null);
@@ -121,7 +117,6 @@ public class GetSpotsNSort extends AsyncTask<Void, Void, ArrayList<SpotData>> {
             if (spotDataSorted_cursor.getCount() == 0) {
                 for (int i = 0; i < SpotDataSize; i++) {
                     ContentValues cv = new ContentValues();
-                    cv.put("spotId", i);
                     cv.put("spotName", mSpotData.get(i).getName());
                     cv.put("spotAdd", mSpotData.get(i).getAdd());
                     cv.put("spotLat", mSpotData.get(i).getLatitude());
@@ -139,7 +134,6 @@ public class GetSpotsNSort extends AsyncTask<Void, Void, ArrayList<SpotData>> {
                 database.delete("spotDataSorted", null, null);
                 for (int i = 0; i < SpotDataSize; i++) {
                     ContentValues cv = new ContentValues();
-                    cv.put("spotId", i);
                     cv.put("spotName", mSpotData.get(i).getName());
                     cv.put("spotAdd", mSpotData.get(i).getAdd());
                     cv.put("spotLat", mSpotData.get(i).getLatitude());
@@ -161,7 +155,7 @@ public class GetSpotsNSort extends AsyncTask<Void, Void, ArrayList<SpotData>> {
 
     protected void onPostExecute(ArrayList<SpotData> SpotData) {
         if (!SpotData.isEmpty()) {
-            Log.e("3/10_GetSpotsNSort", "DONE");
+            Log.e("3/23_GetSpotsNSort", "DONE");
         }
         super.onPostExecute(SpotData);
     }

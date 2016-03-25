@@ -26,7 +26,6 @@ import com.travel.Utility.DataBaseHelper;
 import com.travel.Utility.HttpService;
 import com.travel.Utility.LoadApiService;
 import com.travel.Utility.MyAnimation;
-import com.travel.Utility.OrderUpdate;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;

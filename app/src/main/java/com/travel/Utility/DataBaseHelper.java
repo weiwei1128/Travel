@@ -57,8 +57,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
         //景點資訊 原始資料
         String DATABASE_CREATE_TABLE_SPOTDATA_RAW = "create table spotDataRaw("
-                +"_ID INTEGER PRIMARY KEY,"+"spotId TEXT,"
-                +"spotName TEXT,"
+                +"_ID INTEGER PRIMARY KEY,"+"spotName TEXT,"
                 +"spotAdd TEXT,"
                 +"spotLat BLOB,"
                 +"spotLng BLOB,"
@@ -73,8 +72,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
         //景點列表 排序過後
         String DATABASE_CREATE_TABLE_SPOTDATA_SORTED = "create table spotDataSorted("
-                +"_ID INTEGER PRIMARY KEY,"+"spotId TEXT,"
-                +"spotName TEXT,"
+                +"_ID INTEGER PRIMARY KEY,"+"spotName TEXT,"
                 +"spotAdd TEXT,"
                 +"spotLat BLOB,"
                 +"spotLng BLOB,"
@@ -171,7 +169,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         /** TODO 正式版要修改!!
-         * [0308] [BAD!] [若有相同名稱則重建] <-相同名稱是指哪個地方的名稱相同啊?! by Hua 3/12 06:08
+         * [0308] [BAD!] [若有相同名稱則重建]
          * **/
         db.execSQL("DROP TABLE IF EXISTS newMemorandum");
 

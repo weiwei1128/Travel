@@ -12,7 +12,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.stream.JsonReader;
 import com.travel.GlobalVariable;
-import com.travel.LocationService;
 import com.travel.SpotData;
 import com.travel.SpotJson;
 
@@ -23,7 +22,6 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 
-import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
@@ -69,14 +67,17 @@ public class TWSpotAPIFetcher extends AsyncTask<Void, Void, SpotJson> {
             if (statusLine.getStatusCode() == 200) {
                 HttpEntity entity = response.getEntity();
                 InputStream content = entity.getContent();
+                Log.d("3/10_TWSpotJson", "response from server");
 
                 JsonReader reader = new JsonReader(new InputStreamReader(content, "UTF-8"));
+                Log.d("3/10_TWSpotJson", "JsonReader");
                 GsonBuilder gsonBuilder = new GsonBuilder();
                 gsonBuilder.setDateFormat("M/d/yy hh:mm a");
                 Gson gson = gsonBuilder.create();
 
                 try {
                     spotJson = gson.fromJson(reader, SpotJson.class);
+                    Log.d("3/10_TWSpotJson", "Json 2 Gson");
                 } catch (Exception ex) {
                     Log.e(TAG, "Gson: Failed to parse JSON due to: " + ex);
                 }
@@ -92,7 +93,7 @@ public class TWSpotAPIFetcher extends AsyncTask<Void, Void, SpotJson> {
         Integer InfoLength = Infos.getInfo().length;
         Log.d("3/10_TWSpotJson", "景點個數: " + InfoLength.toString());
         for (Integer i = 0; i < InfoLength; i++) {
-            globalVariable.SpotDataRaw.add(new SpotData(i.toString(),
+            globalVariable.SpotDataRaw.add(new SpotData(
                     Infos.getInfo()[i].getName(),
                     Double.valueOf(Infos.getInfo()[i].getPy()),
                     Double.valueOf(Infos.getInfo()[i].getPx()),
@@ -106,23 +107,16 @@ public class TWSpotAPIFetcher extends AsyncTask<Void, Void, SpotJson> {
         }
         isTWAPILoaded = true;
         if (isTWAPILoaded) {
-            if (TPESpotAPIFetcher.isTPEAPILoaded) {
-                globalVariable.isAPILoaded = true;
-                Intent intent = new Intent(BROADCAST_ACTION);
-                intent.putExtra("isAPILoaded", true);
-                mcontext.sendBroadcast(intent);
-            } else {
-                Intent intent = new Intent(BROADCAST_ACTION);
-                intent.putExtra("isTWAPILoaded", true);
-                mcontext.sendBroadcast(intent);
-            }
+            Intent intent = new Intent(BROADCAST_ACTION);
+            intent.putExtra("isTWAPILoaded", true);
+            mcontext.sendBroadcast(intent);
         }
         Log.e("3/10_TWSpotJson", "Loaded to globalVariable");
 
         Log.e("3/10_", "=========TWSpotJson======Write to DB");
         DataBaseHelper helper = new DataBaseHelper(mcontext);
         SQLiteDatabase database = helper.getWritableDatabase();
-        Cursor spotDataRaw_cursor = database.query("spotDataRaw", new String[]{"spotId", "spotName", "spotAdd",
+        Cursor spotDataRaw_cursor = database.query("spotDataRaw", new String[]{"spotName", "spotAdd",
                         "spotLat", "spotLng", "picture1", "picture2","picture3",
                         "openTime", "ticketInfo", "infoDetail"},
                 null, null, null, null, null);
@@ -131,7 +125,6 @@ public class TWSpotAPIFetcher extends AsyncTask<Void, Void, SpotJson> {
             if (spotDataRaw_cursor.getCount() == 0) {
                 for (Integer i = 0; i < InfoLength; i++) {
                     ContentValues cv = new ContentValues();
-                    cv.put("spotId", i);
                     cv.put("spotName", Infos.getInfo()[i].getName());
                     cv.put("spotAdd", Infos.getInfo()[i].getAdd());
                     cv.put("spotLat", Double.valueOf(Infos.getInfo()[i].getPy()));
@@ -147,7 +140,7 @@ public class TWSpotAPIFetcher extends AsyncTask<Void, Void, SpotJson> {
                 }
             } else {
                 for (Integer i = 0; i < InfoLength; i++) {
-                    Cursor spotDataRaw_dul = database.query(true, "spotDataRaw", new String[]{"spotId", "spotName", "spotAdd",
+                    Cursor spotDataRaw_dul = database.query(true, "spotDataRaw", new String[]{"spotName", "spotAdd",
                                     "spotLat", "spotLng", "picture1", "picture2","picture3",
                                     "openTime", "ticketInfo", "infoDetail"},
                             "spotName=\"" + Infos.getInfo()[i].getName()+ "\"", null, null, null, null, null);
