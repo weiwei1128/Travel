@@ -32,6 +32,7 @@ public class BuyActivity extends AppCompatActivity {
     ImageView backImg, ListImg;
     int count = 0, pageNo = 1, pages = 0, minus = pageNo - 1;
     TextView number, lastPage, nextPage;
+    //http://www.anbon.tw/travel/good_cover.png
 
 
     @Override
