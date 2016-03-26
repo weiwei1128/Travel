@@ -333,14 +333,11 @@ public class HttpService extends Service {
                         e.printStackTrace();
                     }
                     try {
-                        //TODO 要把小數點去掉
-                        //goods_cursor.getString(4).substring(0, goods_cursor.getString(4).indexOf("."))
                         String sellprice = jsonArray.getJSONObject(i).getString("sell_price");
                         if (sellprice.contains(".")) {
                             //有小數點!!
                             sellprice = sellprice.substring(0, sellprice.indexOf("."));
                         }
-//                        Log.e("3.10","special_activity 去除小數點前: "+jsonArray.getJSONObject(i).getString("sell_price")+"後: "+sellprice);
                         jsonObjects[i][5] = sellprice;
                     } catch (JSONException | NullPointerException e) {
                         e.printStackTrace();
