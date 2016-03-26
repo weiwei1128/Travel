@@ -62,7 +62,7 @@
             android:background="@drawable/click_effect_general"
             android:text="&lt;"
             android:textColor="@color/black"
-            android:textSize="18dp" />
+            android:textSize="22dp" />
 
         <LinearLayout
             android:id="@+id/special_textLayout"
@@ -82,7 +82,7 @@
             android:background="@drawable/click_effect_general"
             android:text=">"
             android:textColor="@color/black"
-            android:textSize="18dp" />
+            android:textSize="22dp" />
     </LinearLayout>
 
 
