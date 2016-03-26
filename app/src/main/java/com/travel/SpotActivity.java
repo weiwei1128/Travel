@@ -10,6 +10,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageView;
@@ -64,6 +65,14 @@ public class SpotActivity extends FragmentActivity {
         ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
         viewPager.setAdapter(new SpotFragmentPagerAdapter(getSupportFragmentManager(), SpotActivity.this));
 
+        Bundle bundle = this.getIntent().getExtras();
+        if (bundle != null) {
+            int position = bundle.getInt("position");
+            if (position == 1) {
+                viewPager.setCurrentItem(1);
+                Log.e("3/23_", "viewPager.setCurrentItem: position" + position);
+            }
+        }
         // Give the TabLayout the ViewPager
         TabLayout tabLayout = (TabLayout) findViewById(R.id.sliding_tabs);
         tabLayout.setupWithViewPager(viewPager);
@@ -78,6 +87,11 @@ public class SpotActivity extends FragmentActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
     }
 
     // Android 系統返回鍵

@@ -2,21 +2,19 @@ package com.travel;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.travel.Adapter.SpotListAdapter;
-import com.travel.R;
+import com.travel.Utility.Functions;
 
 /**
  * Created by Tinghua on 2016/3/25.
  */
 public class SpotListViewPagerFragment extends Fragment {
-
-    private static final String KEY_POSITION="position";
 
     public static SpotListAdapter adapter;
     private ListView mlistView;
@@ -24,7 +22,7 @@ public class SpotListViewPagerFragment extends Fragment {
 
     public SpotListViewPagerFragment (int position) {
         Position = position;
-        Log.e("3/23_", "SpotListViewPagerFragment: position" + Position);
+        //Log.e("3/23_", "SpotListViewPagerFragment: position" + Position);
     }
 
     @Override
@@ -35,9 +33,18 @@ public class SpotListViewPagerFragment extends Fragment {
         adapter = new SpotListAdapter(getActivity(), Position);
         mlistView.setAdapter(adapter);
         adapter.notifyDataSetInvalidated();
-        //mlistView.setOnItemClickListener(new itemListener());
+        mlistView.setOnItemClickListener(new itemListener());
 
         return view;
     }
 
+    class itemListener implements AdapterView.OnItemClickListener {
+
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            Bundle bundle = new Bundle();
+            bundle.putInt("WhichItem", (Position - 1) * 10 + position);
+            Functions.go(false, getActivity(), getContext(), SpotDetailActivity.class, bundle);
+        }
+    }
 }

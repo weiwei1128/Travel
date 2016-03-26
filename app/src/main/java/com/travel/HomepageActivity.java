@@ -279,17 +279,6 @@ public class HomepageActivity extends FragmentActivity {
         }
     }
 
-    //3.5 Hua
-/*    @Override
-    protected void onDestroy() {
-        //stop LocationService in background
-        stopService(new Intent(HomepageActivity.this, LocationService.class));
-
-        super.onDestroy();
-    }
-*/
-
-
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
