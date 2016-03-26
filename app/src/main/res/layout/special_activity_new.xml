@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/white">
 
     <LinearLayout
         android:id="@+id/special_Layout"
@@ -40,7 +41,8 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_below="@+id/special_txtLayout"
-        android:background="@color/white">
+        android:background="@color/white"
+        android:layout_marginTop="5dp">
 
     </android.support.v4.view.ViewPager>
 
@@ -51,18 +53,21 @@
         android:layout_below="@+id/special_Layout"
         android:layout_centerHorizontal="true"
         android:gravity="center"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:background="#f7f7f7">
 
         <TextView
             android:id="@+id/lastpage_text"
-            android:layout_width="wrap_content"
+            android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:layout_marginRight="50dp"
             android:autoText="false"
             android:background="@drawable/click_effect_general"
             android:text="&lt;"
             android:textColor="@color/black"
-            android:textSize="22dp" />
+            android:textSize="22dp"
+            android:layout_gravity="center"
+            android:gravity="right" />
 
         <LinearLayout
             android:id="@+id/special_textLayout"
@@ -76,13 +81,14 @@
 
         <TextView
             android:id="@+id/nextpage_text"
-            android:layout_width="wrap_content"
+            android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="50dp"
             android:background="@drawable/click_effect_general"
             android:text=">"
             android:textColor="@color/black"
-            android:textSize="22dp" />
+            android:textSize="22dp"
+            android:gravity="left" />
     </LinearLayout>
 
 

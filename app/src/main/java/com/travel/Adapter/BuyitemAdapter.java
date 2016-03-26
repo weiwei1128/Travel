@@ -11,8 +11,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -96,14 +96,14 @@ public class BuyitemAdapter extends BaseAdapter {
         mview = layoutInflater.inflate(R.layout.buylist_item, null);
         newcell = new cell(
                 (ImageView) mview.findViewById(R.id.buyitemlist_itemImg),
-                (ImageView) mview.findViewById(R.id.buyitemlist_delImg),
+                (LinearLayout) mview.findViewById(R.id.buyitemlist_delImg),
                 (TextView) mview.findViewById(R.id.buyitemlist_nameTxt),
                 (TextView) mview.findViewById(R.id.buyitemlist_itemTxt),
                 (TextView) mview.findViewById(R.id.butitemlist_moneyTxt),
                 (TextView) mview.findViewById(R.id.buyitemlist_totalTxt),
                 (TextView) mview.findViewById(R.id.buyitemlist_numbertext),
-                (Button) mview.findViewById(R.id.buyitemlist_addbutton),
-                (Button) mview.findViewById(R.id.buyitemlist_minusbutton)
+                (LinearLayout) mview.findViewById(R.id.buyitemlist_addbutton),
+                (LinearLayout) mview.findViewById(R.id.buyitemlist_minusbutton)
         );
         newcell.cellnumberTxt.setText("0");
 
@@ -266,13 +266,13 @@ public class BuyitemAdapter extends BaseAdapter {
     }
 
     public class cell {
-        ImageView cellImg, celldelImg;
+        ImageView cellImg;
         TextView cellnameTxt, cellfromTxt, cellmoneyTxt, celltotalTxt, cellnumberTxt;
-        Button plus, minus;
+        LinearLayout plus, minus, celldelImg;
 
-        public cell(ImageView itemImg, ImageView itemdelImg, TextView itemnameTxt, TextView itemfromTxt,
+        public cell(ImageView itemImg, LinearLayout itemdelImg, TextView itemnameTxt, TextView itemfromTxt,
                     TextView itemmoneyTxt, TextView itemtotalTxt,
-                    TextView itemnumberTxt, Button mPlus, Button mMinus) {
+                    TextView itemnumberTxt, LinearLayout mPlus, LinearLayout mMinus) {
             this.cellImg = itemImg;
             this.celldelImg = itemdelImg;
             this.cellnameTxt = itemnameTxt;

@@ -29,7 +29,8 @@ public class BuyActivity extends AppCompatActivity {
     BuyFragmentViewPagerAdapter adapter;
     DataBaseHelper helper;
     SQLiteDatabase database;
-    ImageView backImg, ListImg;
+    ImageView ListImg;
+    LinearLayout backImg;
     int count = 0, pageNo = 1, pages = 0, minus = pageNo - 1;
     TextView number, lastPage, nextPage;
     //http://www.anbon.tw/travel/good_cover.png
@@ -126,7 +127,7 @@ public class BuyActivity extends AppCompatActivity {
         lastPage = (TextView) findViewById(R.id.lastpage_text);
         lastPage.setVisibility(View.INVISIBLE);
         nextPage = (TextView) findViewById(R.id.nextpage_text);
-        backImg = (ImageView) findViewById(R.id.buy_backImg);
+        backImg = (LinearLayout) findViewById(R.id.buy_backImg);
         ListImg = (ImageView) findViewById(R.id.buy_listImg);
         viewPager = (ViewPager) findViewById(R.id.buy_viewpager);
         ListImg.setVisibility(View.INVISIBLE);

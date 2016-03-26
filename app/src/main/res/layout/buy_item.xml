@@ -14,7 +14,7 @@
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
         android:layout_marginTop="1dp"
-        android:background="#DDDDDD"
+        android:background="@color/blue_background2"
         android:orientation="vertical"
         android:padding="5dp">
 

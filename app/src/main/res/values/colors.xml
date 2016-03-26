@@ -12,6 +12,7 @@
     <color name="blue">#5599FF</color>
     <color name="red">#FF0000</color>
     <color name="yellow">#FFBB00</color>
-    <color name="blue_background">#CCEEFF</color>
+    <color name="blue_background">#EAF8FF</color>
+    <color name="blue_background2">#EAF8FF</color>
     <color name="blue_click">#0044BB</color>
 </resources>

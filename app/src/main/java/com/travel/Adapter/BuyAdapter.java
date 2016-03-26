@@ -142,22 +142,25 @@ public class BuyAdapter extends BaseAdapter {
 
         if (goods_cursor != null && goods_cursor.getCount() >= (pageNO - 1) * 10 + position) {
             goods_cursor.moveToPosition((pageNO - 1) * 10 + position);
+
             if (goods_cursor.getString(2) != null)
                 mcell.buyText.setText(goods_cursor.getString(2));
             else mcell.buyText.setText("資料錯誤");
+
             if (!(mcell.clickText.getText().toString().substring(3).startsWith("0") &&
                     mcell.clickText.getText().toString().endsWith("0")))
                 if (goods_cursor.getString(6) != null) //避免出現:00
                     mcell.clickText.append(goods_cursor.getString(6));
+
             if (goods_cursor.getString(3) != null)
                 loader.displayImage("http://zhiyou.lin366.com/" + goods_cursor.getString(3)
                         , mcell.buyImg, options, listener);
         }
 
-
         if (goods_cursor != null)
             goods_cursor.close();
-
+//        if(mcell.buyImg!=null)
+//            mcell.buyImg.setScaleType(ImageView.ScaleType.MATRIX);
 
         return convertView;
     }

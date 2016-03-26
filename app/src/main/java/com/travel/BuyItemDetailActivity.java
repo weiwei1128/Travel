@@ -56,11 +56,12 @@ public class BuyItemDetailActivity extends AppCompatActivity {
 
     int ItemPosition = 0;
     TextView ItemName, ItemDetail, ItemHeader;
-    ImageView ItemImg, BackImg, AddImg;
+    ImageView ItemImg, AddImg;
     DataBaseHelper helper;
     SQLiteDatabase database;
     String itemID;
     String[][] cartItem;
+    LinearLayout addLayout, BackImg;
 
     //按下返回鍵
     @Override
@@ -88,7 +89,7 @@ public class BuyItemDetailActivity extends AppCompatActivity {
         ItemDetail = (TextView) findViewById(R.id.buyitemDetail_text);
         ItemHeader = (TextView) findViewById(R.id.buyItemHeader);
         ItemImg = (ImageView) findViewById(R.id.buyitem_Img);
-        BackImg = (ImageView) findViewById(R.id.buyitem_backImg);
+        BackImg = (LinearLayout) findViewById(R.id.buyitem_backImg);
         BackImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -97,6 +98,8 @@ public class BuyItemDetailActivity extends AppCompatActivity {
         });
         AddImg = (ImageView) findViewById(R.id.buyitemAdd_Img);
         AddImg.setVisibility(View.INVISIBLE);
+        addLayout = (LinearLayout) findViewById(R.id.buyitem_addLayout);
+        addLayout.setVisibility(View.INVISIBLE);
 
 
         //show image
@@ -189,8 +192,9 @@ public class BuyItemDetailActivity extends AppCompatActivity {
                 moneyText = new TextView[cartItem.length],
                 numberText = new TextView[cartItem.length],
                 totalText = new TextView[cartItem.length];
-        ImageView[] Img = new ImageView[cartItem.length], delImg = new ImageView[cartItem.length];
-        Button[] addButton = new Button[cartItem.length], minusButton = new Button[cartItem.length];
+        ImageView[] Img = new ImageView[cartItem.length];
+        LinearLayout[] addButton = new LinearLayout[cartItem.length], minusButton = new LinearLayout[cartItem.length],
+                delImg = new LinearLayout[cartItem.length];
         String itemName = null, itemImg = null, itemId = null;
 
         final List<String> goods_id = new ArrayList<>();
@@ -226,11 +230,11 @@ public class BuyItemDetailActivity extends AppCompatActivity {
             fromText[i] = (TextView) view.findViewById(R.id.buyitemlist_itemTxt);
             moneyText[i] = (TextView) view.findViewById(R.id.butitemlist_moneyTxt);
             Img[i] = (ImageView) view.findViewById(R.id.buyitemlist_itemImg);
-            delImg[i] = (ImageView) view.findViewById(R.id.buyitemlist_delImg);
+            delImg[i] = (LinearLayout) view.findViewById(R.id.buyitemlist_delImg);
             numberText[i] = (TextView) view.findViewById(R.id.buyitemlist_numbertext);
             totalText[i] = (TextView) view.findViewById(R.id.buyitemlist_totalTxt);
-            addButton[i] = (Button) view.findViewById(R.id.buyitemlist_addbutton);
-            minusButton[i] = (Button) view.findViewById(R.id.buyitemlist_minusbutton);
+            addButton[i] = (LinearLayout) view.findViewById(R.id.buyitemlist_addbutton);
+            minusButton[i] = (LinearLayout) view.findViewById(R.id.buyitemlist_minusbutton);
  /*
   editor.putInt("InBuyList", finalnumber);//the total count of the cart
   editor.putInt("InBuyListg" + finalItemId, smallItemCount);//這個大項目裡面有幾個小項目在購物車裡
@@ -304,7 +308,7 @@ public class BuyItemDetailActivity extends AppCompatActivity {
 
         final String finalItemId = itemId;
         final int[] finalNumber = {sharedPreferences.getInt("InBuyList", 0)};//購物車總數\
-        if(sharedPreferences.getBoolean("AfterPay",false)) {
+        if (sharedPreferences.getBoolean("AfterPay", false)) {
             SharedPreferences.Editor editor = sharedPreferences.edit();
             editor.putBoolean("AfterPay", false);
             editor.apply();
@@ -408,13 +412,20 @@ public class BuyItemDetailActivity extends AppCompatActivity {
     private void methodThatDoesSomethingWhenTaskIsDone(Boolean a) {
         if (a) {
 //            Log.e("3.24","確認項目array長度"+cartItem.length);//OK
-            AddImg.setVisibility(View.VISIBLE);
-            AddImg.setOnClickListener(new View.OnClickListener() {
+            addLayout.setVisibility(View.VISIBLE);
+            addLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     setupAddDialog();
                 }
             });
+//            AddImg.setVisibility(View.VISIBLE);
+//            AddImg.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    setupAddDialog();
+//                }
+//            });
         }
     }
 

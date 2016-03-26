@@ -47,7 +47,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="購物清單"
+            android:text="前往付款"
             android:id="@+id/buyitemlist_listText"
             android:layout_gravity="center"
             android:textColor="#FFFFFF"

@@ -8,5 +8,5 @@
         android:id="@+id/gridView2"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:verticalSpacing="3dp" />
+        android:verticalSpacing="2dp" />
 </RelativeLayout>

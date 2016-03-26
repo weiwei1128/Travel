@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -144,7 +145,7 @@ public class CheckScheduleActivity extends AppCompatActivity {
             //TODO 0326
             if (adapter.getWebviewId(position) != null) {
                 Bundle bundle = new Bundle();
-                Log.e("3.25","getWebVIewID:"+adapter.getWebviewId(position)+" id:"+itemid[position]);
+                Log.e("3.25", "getWebVIewID:" + adapter.getWebviewId(position) + " id:" + itemid[position]);
                 bundle.putString("order_id", adapter.getWebviewId(position));
                 Functions.go(false, CheckScheduleActivity.this,
                         CheckScheduleActivity.this, CheckScheduleOKActivity.class, bundle);
@@ -266,7 +267,7 @@ public class CheckScheduleActivity extends AppCompatActivity {
                                 //有小數點!!
                                 sellprice = sellprice.substring(0, sellprice.indexOf("."));
                             }
-                            itemprice[i] = "$"+sellprice;
+                            itemprice[i] = "$" + sellprice;
                         } catch (JSONException | NullPointerException e) {
                             e.printStackTrace();
                         }
@@ -360,6 +361,8 @@ public class CheckScheduleActivity extends AppCompatActivity {
             adapter = new CheckScheduleAdapter(CheckScheduleActivity.this, count, itemid, itemno,
                     itemdate, itemprice, itemcontent, itemstate); //0309
             listView.setAdapter(adapter); //0309
+            listView.setDivider(new ColorDrawable(0xFFFFFFFF));
+            listView.setDividerHeight(10);
             listView.setOnItemClickListener(new itemClickListener()); //0309
         } else setupWebview();
     }

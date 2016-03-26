@@ -54,7 +54,7 @@ public class CheckScheduleAdapter extends BaseAdapter {
         item mitem;
         if (convertView == null) {
             convertView = layoutInflater.inflate(R.layout.checkschedule_item, null);
-            mitem = new item((TextView) convertView.findViewById(R.id.scheduleitem_no),
+            mitem = new item((TextView) convertView.findViewById(R.id.shoprecorditem_no),
                     (TextView) convertView.findViewById(R.id.shoprecorditem_date),
                     (TextView) convertView.findViewById(R.id.shoprecorditem_money),
                     (TextView) convertView.findViewById(R.id.shoprecorditem_content),

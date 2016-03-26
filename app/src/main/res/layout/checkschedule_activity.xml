@@ -2,7 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/white">
 
     <LinearLayout
         android:id="@+id/shoprecord_Layout"
@@ -39,6 +40,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/checkschedule_listview"
         android:layout_below="@+id/shoprecord_Layout"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:dividerHeight="5dp" />
 
 </RelativeLayout>
