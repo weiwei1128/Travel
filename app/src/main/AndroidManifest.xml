@@ -63,10 +63,6 @@
             android:name=".BuyItemDetailActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".SpotListActivity"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="stateHidden" />
-        <activity
             android:name=".SpotDetailActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity

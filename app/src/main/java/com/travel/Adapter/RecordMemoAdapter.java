@@ -19,13 +19,6 @@ import com.daimajia.slider.library.Tricks.ViewPagerEx;
 import com.travel.R;
 import com.travel.Utility.DataBaseHelper;
 
-/*
-import com.daimajia.slider.library.Indicators.PagerIndicator;
-import com.daimajia.slider.library.SliderLayout;
-import com.daimajia.slider.library.SliderTypes.BaseSliderView;
-import com.daimajia.slider.library.SliderTypes.DefaultSliderView;
-import com.daimajia.slider.library.Tricks.ViewPagerEx;
-*/
 
 /**
  * Created by Tinghua on 2016/3/3.
@@ -102,7 +95,7 @@ public class RecordMemoAdapter extends BaseAdapter implements ViewPagerEx.OnPage
                 "track_start=\"0\"", null, null, null, null, null);
         if (trackRoute_cursor != null) {
             if (trackRoute_cursor.getCount() != 0) {
-                trackRoute_cursor.moveToPosition(trackRoute_cursor.getCount() - position - 1);
+                trackRoute_cursor.moveToPosition(trackRoute_cursor.getCount() - position-1);
                 mViewHolder.MemoTitle.setText(trackRoute_cursor.getString(5));
                 mViewHolder.MemoTotalTime.setText(trackRoute_cursor.getString(6));
                 RouteConter = trackRoute_cursor.getInt(0);

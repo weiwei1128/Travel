@@ -27,7 +27,7 @@ import java.util.ArrayList;
  * Created by Tinghua on 2016/3/23.
  */
 public class TwApi extends AsyncTask<String, Void, ArrayList<SpotData>> {
-    public static final String TAG = "TWSpotAPIFetcher";
+    public static final String TAG = "TwApi";
     public static final String SERVER_URL = "http://data.gov.tw/iisi/logaccess/2205?dataUrl=http://gis.taiwan.net.tw/XMLReleaseALL_public/scenic_spot_C_f.json&ndctype=JSON&ndcnid=7777";
 
     public Boolean isTWAPILoaded = false;
@@ -50,7 +50,7 @@ public class TwApi extends AsyncTask<String, Void, ArrayList<SpotData>> {
 
     @Override
     protected ArrayList<SpotData> doInBackground(String... params) {
-        Log.e("3/23_", "=========TWSpotAPIFetcher======doInBackground");
+        Log.e("3/23_", "=========TwApi======doInBackground");
         try {
             //Create an HTTP client
             HttpClient client = new DefaultHttpClient();

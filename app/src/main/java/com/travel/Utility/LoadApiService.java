@@ -76,7 +76,6 @@ public class LoadApiService extends Service {
                     twApi.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                 }
                 //new TPESpotAPIFetcher(context).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-                //new TWSpotAPIFetcher(context).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             } else if (spotDataRaw_cursor.getCount() > 300 && spotDataRaw_cursor.getCount() < 4600) {
                 if(!(twApi.getStatus() == AsyncTask.Status.RUNNING)) {
                     twApi.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);

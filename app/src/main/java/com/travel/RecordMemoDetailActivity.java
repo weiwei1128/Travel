@@ -117,7 +117,7 @@ public class RecordMemoDetailActivity extends AppCompatActivity implements
                 "track_start=\"0\"", null, null, null, null, null);
         if (trackRoute_cursor != null) {
             if (trackRoute_cursor.getCount() != 0) {
-                trackRoute_cursor.moveToPosition(trackRoute_cursor.getCount() - mPosition - 1);
+                trackRoute_cursor.moveToPosition(trackRoute_cursor.getCount() - mPosition-1);
 
                 MemoDetailTitleTextView.setText(trackRoute_cursor.getString(5));
                 RouteConter = trackRoute_cursor.getInt(0);

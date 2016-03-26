@@ -34,7 +34,6 @@ public class RecordMemoActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.record_memo_activity);
-        Bundle bundle = this.getIntent().getExtras();
 
         backImg = (ImageView) findViewById(R.id.recordmemo_backImg);
         backImg.setOnClickListener(new View.OnClickListener() {
