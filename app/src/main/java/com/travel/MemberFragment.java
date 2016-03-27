@@ -7,9 +7,12 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,15 +20,16 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.travel.Utility.DataBaseHelper;
-import com.travel.Utility.Functions;
 
-/**
- * A simple {@link Fragment} subclass.
- */
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
 public class MemberFragment extends Fragment {
     Context context;
     TextView NameText, PhoneText, EmailText, AddrText;
-    LinearLayout logoutLayout;
+    LinearLayout logoutLayout, shareLayout;
 
     public MemberFragment() {
         // Required empty public constructor
@@ -48,11 +52,12 @@ public class MemberFragment extends Fragment {
 
     public void memberData(View view) {
         logoutLayout = (LinearLayout) view.findViewById(R.id.member_logout_layout);
+        shareLayout = (LinearLayout) view.findViewById(R.id.member_share_layout);
         NameText = (TextView) view.findViewById(R.id.member_name_text);
         PhoneText = (TextView) view.findViewById(R.id.member_phone_text);
         EmailText = (TextView) view.findViewById(R.id.member_email_text);
         AddrText = (TextView) view.findViewById(R.id.member_addr_text);
-        Boolean login=false;
+        Boolean login = false;
         DataBaseHelper helper = new DataBaseHelper(context);
         SQLiteDatabase database = helper.getWritableDatabase();
         Cursor member_cursor = database.query("member", new String[]{"account", "password",
@@ -91,6 +96,33 @@ public class MemberFragment extends Fragment {
                     // 顯示對話框
                     isExit.show();
                 }
+            }
+        });
+        shareLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+                sharingIntent.setType("image/jpeg");
+                //drawable -> bitmap
+                Bitmap icon = BitmapFactory.decodeResource(context.getResources(), R.drawable.icon_512);
+                ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+                icon.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+                File f = new File(Environment.getExternalStorageDirectory() + File.separator + "temporary_file.jpg");
+                try {
+                    f.createNewFile();
+                    FileOutputStream fo = new FileOutputStream(f);
+                    fo.write(bytes.toByteArray());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                //setting share information
+                sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "寶島好智遊");
+                sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, "寶島好智遊");
+                sharingIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse("file:///sdcard/temporary_file.jpg"));
+
+
+//                image/jpeg
+                startActivity(Intent.createChooser(sharingIntent, "分享至"));
             }
         });
 
