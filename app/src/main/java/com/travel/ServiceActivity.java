@@ -39,7 +39,7 @@ import java.nio.charset.Charset;
  * Ontouch失效 ->>> 把裡面的textview clickable設成false就成功了 但Onclick仍然失效
  **/
 public class ServiceActivity extends AppCompatActivity {
-    ImageView backImg;
+    LinearLayout backImg;
     EditText commentEdt;
     LinearLayout sendLayout;
     String name, email, phone;
@@ -48,7 +48,7 @@ public class ServiceActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.service_activity);
-        backImg = (ImageView) findViewById(R.id.service_backImg);
+        backImg = (LinearLayout) findViewById(R.id.service_backImg);
         commentEdt = (EditText) findViewById(R.id.service_edit);
         sendLayout = (LinearLayout) findViewById(R.id.service_send_layout);
         DataBaseHelper helper = new DataBaseHelper(ServiceActivity.this);

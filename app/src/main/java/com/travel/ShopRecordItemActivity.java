@@ -11,7 +11,6 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -37,11 +36,10 @@ import java.nio.charset.Charset;
 
 public class ShopRecordItemActivity extends AppCompatActivity {
     String OrderId;
-    ImageView backImg;
     ShopRecordItemAdapter adapter;
     TextView Order_date, Order_no, Order_payment, Order_state, ship_way, ship_name, ship_tel, ship_addr,
             ship_message, money_item, money_ship, money_total;
-    LinearLayout carLayout;
+    LinearLayout carLayout, backImg;
     Context context = ShopRecordItemActivity.this;
     ;
     LayoutInflater inflater;
@@ -66,7 +64,7 @@ public class ShopRecordItemActivity extends AppCompatActivity {
 
     void setupUI() {
         carLayout = (LinearLayout) findViewById(R.id.shoprecord_itemlayout);
-        backImg = (ImageView) findViewById(R.id.shoprecorditem_backImg);
+        backImg = (LinearLayout) findViewById(R.id.shoprecorditem_backImg);
         Order_date = (TextView) findViewById(R.id.shoprecord_itemdate);
         Order_no = (TextView) findViewById(R.id.shoprecord_itemno);
         Order_payment = (TextView) findViewById(R.id.shoprecord_itempay);
@@ -94,7 +92,7 @@ public class ShopRecordItemActivity extends AppCompatActivity {
         SQLiteDatabase database = helper.getWritableDatabase();
         Cursor order_cursor = database.query("shoporder", new String[]{"order_id", "order_userid", "order_no",
                 "order_time", "order_name", "order_phone", "order_email",
-                "order_money", "order_state","order_schedule"}, "order_id=" + OrderId, null, null, null, null);
+                "order_money", "order_state", "order_schedule"}, "order_id=" + OrderId, null, null, null, null);
         if (order_cursor != null && order_cursor.getCount() > 0) {
             order_cursor.moveToFirst();
             if (order_cursor.getString(8) != null) {

@@ -9,13 +9,13 @@ import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.travel.Utility.Functions;
 
 public class BuyItemListConfirmWebview extends AppCompatActivity {
-    ImageView backImg;
+    LinearLayout backImg;
     TextView header;
     WebView webView;
 
@@ -55,7 +55,7 @@ public class BuyItemListConfirmWebview extends AppCompatActivity {
     }
 
     void UI() {
-        backImg = (ImageView) findViewById(R.id.checkschedulelist_backImg);
+        backImg = (LinearLayout) findViewById(R.id.checkschedulelist_backImg);
         header = (TextView) findViewById(R.id.checkschedulelistHeader);
         webView = (WebView) findViewById(R.id.webView);
         header.setText("付款頁面");
@@ -64,7 +64,7 @@ public class BuyItemListConfirmWebview extends AppCompatActivity {
             public void onClick(View v) {
                 SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(BuyItemListConfirmWebview.this);
                 SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.putBoolean("AfterPay",true);
+                editor.putBoolean("AfterPay", true);
                 editor.apply();
                 Functions.go(false, BuyItemListConfirmWebview.this, BuyItemListConfirmWebview.this,
                         BuyActivity.class, null);

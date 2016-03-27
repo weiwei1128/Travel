@@ -15,7 +15,6 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.AdapterView;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -40,21 +39,20 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 
 public class CheckScheduleActivity extends AppCompatActivity {
-    ImageView backImg;
     ListView listView;
     CheckScheduleAdapter adapter;
     int itemCount = 0;
     String uid = null;
     int count = 0;
     String[] itemid, itemno, itemdate, itemprice, itemcontent, itemstate;
-    LinearLayout putItemLayout;
+    LinearLayout putItemLayout, backImg;
     Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.checkschedule_basic);
-        backImg = (ImageView) findViewById(R.id.checkschedule_backImg);
+        backImg = (LinearLayout) findViewById(R.id.checkschedule_backImg);
         backImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

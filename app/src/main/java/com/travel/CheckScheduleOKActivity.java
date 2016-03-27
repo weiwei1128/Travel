@@ -8,13 +8,14 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.travel.Utility.Functions;
 
 public class CheckScheduleOKActivity extends AppCompatActivity {
     String itemid;
-    ImageView backImg;
+    LinearLayout backImg;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,7 +27,7 @@ public class CheckScheduleOKActivity extends AppCompatActivity {
             setupWebview();
         } else Toast.makeText(CheckScheduleOKActivity.this, "資料錯誤！", Toast.LENGTH_SHORT).show();
 
-        backImg = (ImageView) findViewById(R.id.checkschedule_backImg);
+        backImg = (LinearLayout) findViewById(R.id.checkschedule_backImg);
         backImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
