@@ -113,7 +113,7 @@ public class BuyActivity extends AppCompatActivity {
 
 
         adapter = new BuyFragmentViewPagerAdapter(this.getSupportFragmentManager(), viewPager,
-                fragments, BuyActivity.this, 4, 1);
+                fragments, BuyActivity.this);
 
         viewPager.setAdapter(adapter);
         viewPager.setOnPageChangeListener(new PageListener());
