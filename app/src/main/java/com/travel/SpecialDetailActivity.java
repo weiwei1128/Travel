@@ -55,8 +55,8 @@ public class SpecialDetailActivity extends AppCompatActivity {
                 .showImageOnFail(R.drawable.error)
                 .showImageForEmptyUri(R.drawable.empty)
                 .showImageOnLoading(R.drawable.loading2)
-                .cacheInMemory()
-                .cacheOnDisc().build();
+                .cacheInMemory(false)
+                .cacheOnDisk(true).build();
         listener = new ImageLoadingListener() {
             @Override
             public void onLoadingStarted(String s, View view) {

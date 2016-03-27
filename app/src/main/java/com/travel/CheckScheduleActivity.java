@@ -84,36 +84,10 @@ public class CheckScheduleActivity extends AppCompatActivity {
             setupWebview();
 
         }
-
-        //delete below???
-        /*
-        Cursor order_cursor = database.query("shoporder", new String[]{"order_id", "order_no",
-                "order_time", "order_name", "order_phone", "order_email",
-                "order_money", "order_state", "order_schedule"}, "order_schedule=" + "1", null, null, null, null);
-        if (order_cursor != null) {
-            Log.e("3.23", "count!!" + order_cursor.getCount());
-            itemCount = order_cursor.getCount();
-            order_cursor.close();
-        }
-
-        if (Functions.ifLogin(CheckScheduleActivity.this) && itemCount > 0) {
-            setContentView(R.layout.checkschedule_activity); //0309
-            listView = (ListView) findViewById(R.id.checkschedule_listview); //0309
-            adapter = new CheckScheduleAdapter(CheckScheduleActivity.this, itemCount); //0309
-            listView.setAdapter(adapter); //0309
-            listView.setOnItemClickListener(new itemClickListener()); //0309
-
-        } else {
-            setupWebview();
-        }
-        */
-        //delete upside?
-
-
     }
 
     void setupWebview() {
-        Log.i("3.25", "setWebView");
+//        Log.i("3.25", "setWebView");
         //WEBVIEW VERSION
         WebView webView = new WebView(CheckScheduleActivity.this);
         putItemLayout.addView(webView);
@@ -143,7 +117,7 @@ public class CheckScheduleActivity extends AppCompatActivity {
             //TODO 0326
             if (adapter.getWebviewId(position) != null) {
                 Bundle bundle = new Bundle();
-                Log.e("3.25", "getWebVIewID:" + adapter.getWebviewId(position) + " id:" + itemid[position]);
+//                Log.e("3.25", "getWebVIewID:" + adapter.getWebviewId(position) + " id:" + itemid[position]);
                 bundle.putString("order_id", adapter.getWebviewId(position));
                 Functions.go(false, CheckScheduleActivity.this,
                         CheckScheduleActivity.this, CheckScheduleOKActivity.class, bundle);
@@ -164,7 +138,7 @@ public class CheckScheduleActivity extends AppCompatActivity {
 
         @Override
         protected void onPreExecute() {
-            Log.e("3.25", "OnPreExecute");
+//            Log.e("3.25", "OnPreExecute");
             dialog.setMessage("抓取資料中");
             dialog.setCancelable(false);
             dialog.show();

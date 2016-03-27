@@ -48,7 +48,7 @@ public class BuyAdapter extends BaseAdapter {
                 .showImageOnLoading(R.drawable.loading2)
                 .showImageForEmptyUri(R.drawable.empty)
                 .cacheInMemory(false)
-                .cacheOnDisc(false).build();
+                .cacheOnDisk(true).build();
         listener = new ImageLoadingListener() {
             @Override
             public void onLoadingStarted(String s, View view) {
@@ -78,7 +78,6 @@ public class BuyAdapter extends BaseAdapter {
     @Override
     public int getCount() {
         int number = 0;
-        //TODO need modify!
         Cursor goods_cursor = database.query("goods", new String[]{"totalCount", "goods_id", "goods_title",
                 "goods_url", "goods_money", "goods_content", "goods_click", "goods_addtime"}, null, null, null, null, null);
         if (goods_cursor != null) {
@@ -128,17 +127,7 @@ public class BuyAdapter extends BaseAdapter {
 
         Cursor goods_cursor = database.query("goods", new String[]{"totalCount", "goods_id", "goods_title",
                 "goods_url", "goods_money", "goods_content", "goods_click", "goods_addtime"}, null, null, null, null, null);
-//        Log.e("3.8", "==========page number" + pageNO);
-        /*
-        if (goods_cursor != null && goods_cursor.getCount() >= (pageNO - 1) * 10) {
-            goods_cursor.moveToPosition((pageNO - 1) * 10);
-            int i = 1;
-            while ((goods_cursor.isLast() || !(i >= 10))) {
-                goods_cursor.moveToNext();
-                i++;
-            }
-        }
-        */
+
 
         if (goods_cursor != null && goods_cursor.getCount() >= (pageNO - 1) * 10 + position) {
             goods_cursor.moveToPosition((pageNO - 1) * 10 + position);

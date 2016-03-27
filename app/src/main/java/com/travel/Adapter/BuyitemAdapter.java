@@ -49,7 +49,7 @@ public class BuyitemAdapter extends BaseAdapter {
                 .showImageOnLoading(R.drawable.empty)
                 .showImageForEmptyUri(R.drawable.empty)
                 .cacheInMemory(false)
-                .cacheOnDisc().build();
+                .cacheOnDisk(true).build();
         listener = new ImageLoadingListener() {
             @Override
             public void onLoadingStarted(String s, View view) {
@@ -75,8 +75,7 @@ public class BuyitemAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        int number = sharedPreferences.getInt("InBuyList", 0);
-        return number;//wait to edit//
+        return sharedPreferences.getInt("InBuyList", 0);
     }
 
     @Override
@@ -252,7 +251,7 @@ public class BuyitemAdapter extends BaseAdapter {
                 howmany[0]--;
                 if (finalBiginCart[0] > 0)
                     finalBiginCart[0]--;
-                else Log.e("3.24", "~!~!~!~!ERROR!!!!!!!!");
+//                else Log.e("3.24", "~!~!~!~!ERROR!!!!!!!!");
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.putInt("InBuyList", howmany[0]);//the total count of the cart
                 editor.putInt("InBuyListg" + finalBigitemID, finalBiginCart[0]);//這個大項目裡面有幾個小項目在購物車裡

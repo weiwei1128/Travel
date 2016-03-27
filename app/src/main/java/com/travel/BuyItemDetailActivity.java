@@ -108,7 +108,7 @@ public class BuyItemDetailActivity extends AppCompatActivity {
                 .showImageOnLoading(R.drawable.loading2)
                 .showImageForEmptyUri(R.drawable.empty)
                 .cacheInMemory()
-                .cacheOnDisc().build();
+                .cacheOnDisk(true).build();
         listener = new ImageLoadingListener() {
             @Override
             public void onLoadingStarted(String s, View view) {

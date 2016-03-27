@@ -119,7 +119,6 @@ public class BuyItemListConfirmActivity extends AppCompatActivity {
 //                }
 
 
-                //TODO need modify!
 //                Toast.makeText(BuyItemListConfirmActivity.this, "建構中!", Toast.LENGTH_SHORT).show();
 //                Log.i("3.24", "要remove的東西:" + removeList.size());
             }

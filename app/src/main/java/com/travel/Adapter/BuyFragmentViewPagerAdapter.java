@@ -24,7 +24,7 @@ public class BuyFragmentViewPagerAdapter extends PagerAdapter implements ViewPag
 
     public BuyFragmentViewPagerAdapter(FragmentManager mfragmentmanager, ViewPager mviewpager,
                                        List<Fragment> mfragments,
-                                       Context mcontext, int size, int daysNum) {
+                                       Context mcontext) {
 
         this.fragmentManager = mfragmentmanager;
         this.viewPager = mviewpager;

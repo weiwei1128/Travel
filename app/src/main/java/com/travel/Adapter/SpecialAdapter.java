@@ -43,7 +43,7 @@ public class SpecialAdapter extends BaseAdapter {
                 .showImageOnLoading(R.drawable.loading2)
                 .showImageForEmptyUri(R.drawable.empty)
                 .cacheInMemory(false)
-                .cacheOnDisc().build();
+                .cacheOnDisk(true).build();
         listener = new ImageLoadingListener() {
             @Override
             public void onLoadingStarted(String s, View view) {
@@ -109,17 +109,6 @@ public class SpecialAdapter extends BaseAdapter {
             convertView.setTag(item);
         } else
             item = (thing) convertView.getTag();
-            /*
-        View view = layoutInflater.inflate(R.layout.special_item, null);
-        item = new thing(
-                (ImageView) view.findViewById(R.id.special_img),
-                (TextView) view.findViewById(R.id.special_name_text),
-                (TextView) view.findViewById(R.id.special_price_text)
-        );
-*/
-//        ImageLoaderConfiguration configuration = new ImageLoaderConfiguration.Builder(mContext).build();
-//        ImageLoader.getInstance().clearMemoryCache();
-//        ImageLoader.getInstance().init(configuration);
 
         Cursor special = database.query("special_activity", new String[]{"special_id",
                         "title", "img", "content", "price", "click"},
