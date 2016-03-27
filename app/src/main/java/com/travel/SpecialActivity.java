@@ -44,7 +44,7 @@ public class SpecialActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.special_activity_new);
+        setContentView(R.layout.special_activity);
         lastPage = (TextView) findViewById(R.id.lastpage_text);
         lastPage.setVisibility(View.INVISIBLE);
         nextPage = (TextView) findViewById(R.id.nextpage_text);

@@ -206,7 +206,7 @@ public class CheckScheduleActivity extends AppCompatActivity {
             } catch (JSONException | NullPointerException e2) {
                 e2.printStackTrace();
             }
-            Log.i("3.25", "doInBackground" + states);
+//            Log.i("3.25", "doInBackground" + states);
             if (states == null || states.equals("0"))
                 return false;
             else {
@@ -226,15 +226,6 @@ public class CheckScheduleActivity extends AppCompatActivity {
                     itemno = new String[count];
                     itemprice = new String[count];
                     itemstate = new String[count];
-//                    "id": "30",
-//                            "order_no": "B16030310063131",
-//                            "img_url": "/upload/201601/18/201601181455470401.jpg",
-//                            "add_time": "2016/3/3 10:06:31",
-//                            "accept_name": "ljd110@qq.com",
-//                            "mobile": "ljd110@qq.com",
-//                            "email": "ljd110@qq.com",
-//                            "order_amount": "1360.00",
-//                            "status": "待確認"
                     for (int i = 0; i < jsonArray.length(); i++) {
                         try {
                             itemid[i] = jsonArray.getJSONObject(i).getString("id");
@@ -279,68 +270,6 @@ public class CheckScheduleActivity extends AppCompatActivity {
                     }
                     return true;
                 }
-
-
-                /**
-                 * {
-                 "states": "1",
-                 "uid": "ljd110@qq.com",
-                 "list": [{
-                 "id": "30",
-                 "order_no": "B16030310063131",
-                 "img_url": "/upload/201601/18/201601181455470401.jpg",
-                 "add_time": "2016/3/3 10:06:31",
-                 "accept_name": "ljd110@qq.com",
-                 "mobile": "ljd110@qq.com",
-                 "email": "ljd110@qq.com",
-                 "order_amount": "1360.00",
-                 "status": "待確認"
-                 }, {
-                 "id": "23",
-                 "order_no": "B16013110100175",
-                 "img_url": "/upload/201601/18/201601181454064253.jpg",
-                 "add_time": "2016/1/31 10:10:01",
-                 "accept_name": "ljd110@qq.com",
-                 "mobile": "ljd110@qq.com",
-                 "email": "ljd110@qq.com",
-                 "order_amount": "20393.00",
-                 "status": "待確認"
-                 }, {
-                 "id": "22",
-                 "order_no": "B16012515185916",
-                 "img_url": "/upload/201601/18/201601181454064253.jpg",
-                 "add_time": "2016/1/25 15:18:59",
-                 "accept_name": "ljd110@qq.com",
-                 "mobile": "ljd110@qq.com",
-                 "email": "ljd110@qq.com",
-                 "order_amount": "988.00",
-                 "status": "待確認"
-                 }, {
-                 "id": "21",
-                 "order_no": "B16012515123863",
-                 "img_url": "/upload/201601/18/201601181454064253.jpg",
-                 "add_time": "2016/1/25 15:12:38",
-                 "accept_name": "ljd110@qq.com",
-                 "mobile": "ljd110@qq.com",
-                 "email": "ljd110@qq.com",
-                 "order_amount": "988.00",
-                 "status": "待確認"
-                 }, {
-                 "id": "20",
-                 "order_no": "B16012515063823",
-                 "img_url": "/upload/201601/18/201601181455470401.jpg",
-                 "add_time": "2016/1/25 15:06:38",
-                 "accept_name": "ljd110@qq.com",
-                 "mobile": "ljd110@qq.com",
-                 "email": "ljd110@qq.com",
-                 "order_amount": "5376.00",
-                 "status": "待確認"
-                 }]
-                 }
-                 *
-                 * */
-
-
                 return false;
             }
         }

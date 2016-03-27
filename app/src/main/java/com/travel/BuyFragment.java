@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,7 +35,7 @@ public class BuyFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.buy_fragment_new, container, false);
+        View view = inflater.inflate(R.layout.buy_fragment, container, false);
         gridView = (GridView) view.findViewById(R.id.gridView);
         adapter = new BuyAdapter(getActivity(), Position);//position 代表頁碼
         gridView.setNumColumns(2);
