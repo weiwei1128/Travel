@@ -362,7 +362,7 @@ public class CheckScheduleActivity extends AppCompatActivity {
                     itemdate, itemprice, itemcontent, itemstate); //0309
             listView.setAdapter(adapter); //0309
             listView.setDivider(new ColorDrawable(0xFFFFFFFF));
-            listView.setDividerHeight(10);
+            listView.setDividerHeight(20);
             listView.setOnItemClickListener(new itemClickListener()); //0309
         } else setupWebview();
     }

@@ -103,7 +103,8 @@
                     android:layout_height="wrap_content"
                     android:textColor="@color/black"
                     android:textSize="16dp"
-                    android:hint="請輸入電話" />
+                    android:hint="請輸入電話"
+                    android:inputType="phone" />
             </LinearLayout>
             <View
                 android:layout_width="match_parent"
@@ -133,7 +134,8 @@
                     android:layout_height="wrap_content"
                     android:textColor="@color/black"
                     android:textSize="16dp"
-                    android:hint="請輸入電子郵件" />
+                    android:hint="請輸入電子郵件"
+                    android:inputType="textEmailAddress" />
             </LinearLayout>
 
             <View
