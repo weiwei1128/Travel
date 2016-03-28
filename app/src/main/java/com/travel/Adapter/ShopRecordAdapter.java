@@ -29,14 +29,13 @@ public class ShopRecordAdapter extends BaseAdapter {
         layoutInflater = LayoutInflater.from(context);
         this.m_context = context;
         this.UserId = UserId;
-        helper = new DataBaseHelper(context);
-        database = helper.getWritableDatabase();
+        helper = DataBaseHelper.getmInstance(context);
+        database = helper.getReadableDatabase();
     }
 
     @Override
     public int getCount() {
         int number = 0;
-
         Cursor order_cursor = database.query("shoporder", new String[]{"order_id",
                         "order_userid ", "order_no",
                         "order_time", "order_name", "order_phone", "order_email",

@@ -68,7 +68,7 @@ public class SpecialActivity extends AppCompatActivity {
 
             }
         });
-        helper = new DataBaseHelper(SpecialActivity.this);
+        helper = DataBaseHelper.getmInstance(SpecialActivity.this);
         database = helper.getReadableDatabase();
         Cursor special = database.query("special_activity", new String[]{"special_id", "title", "img", "content", "price", "click"},
                 null, null, null, null, null);

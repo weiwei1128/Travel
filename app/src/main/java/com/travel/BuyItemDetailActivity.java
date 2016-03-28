@@ -132,7 +132,7 @@ public class BuyItemDetailActivity extends AppCompatActivity {
         };
 
         //===各個item的資料=02_24==//
-        helper = new DataBaseHelper(BuyItemDetailActivity.this);
+        helper = DataBaseHelper.getmInstance(BuyItemDetailActivity.this);
         database = helper.getWritableDatabase();
         Cursor goods_cursor = database.query("goods", new String[]{"totalCount", "goods_id", "goods_title",
                 "goods_url", "goods_money", "goods_content", "goods_addtime"}, null, null, null, null, null);
@@ -198,7 +198,7 @@ public class BuyItemDetailActivity extends AppCompatActivity {
         String itemName = null, itemImg = null, itemId = null;
 
         final List<String> goods_id = new ArrayList<>();
-        DataBaseHelper helper = new DataBaseHelper(BuyItemDetailActivity.this);
+        DataBaseHelper helper =DataBaseHelper.getmInstance(BuyItemDetailActivity.this);
         SQLiteDatabase database = helper.getWritableDatabase();
         final Cursor goods_cursor = database.query("goods", new String[]{"totalCount", "goods_id", "goods_title",
                 "goods_url", "goods_money", "goods_content", "goods_click", "goods_addtime"}, null, null, null, null, null);
@@ -217,8 +217,8 @@ public class BuyItemDetailActivity extends AppCompatActivity {
                 itemImg = goods_cursor.getString(3);
             goods_cursor.close();
         }
-        if (database.isOpen())
-            database.close();
+//        if (database.isOpen())
+//            database.close();
 
 
         for (int i = 0; i < cartItem.length; i++) {
@@ -560,7 +560,7 @@ public class BuyItemDetailActivity extends AppCompatActivity {
                         cv.put("goods_money", cartItem[i][2]);
                         cv.put("goods_url", cartItem[i][3]);
                         long result2 = database.insert("goodsitem", null, cv);
-                        Log.i("3.24", i + "~~~~~insertDB!" + result2);
+//                        Log.i("3.24", i + "~~~~~insertDB!" + result2);
                     }
                 }
             }

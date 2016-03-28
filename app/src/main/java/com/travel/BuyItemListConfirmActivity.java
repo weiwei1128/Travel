@@ -71,7 +71,7 @@ public class BuyItemListConfirmActivity extends AppCompatActivity {
 
 
         final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        helper = new DataBaseHelper(BuyItemListConfirmActivity.this);
+        helper =DataBaseHelper.getmInstance(BuyItemListConfirmActivity.this);
         database = helper.getWritableDatabase();
 
         UI();

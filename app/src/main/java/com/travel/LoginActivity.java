@@ -205,7 +205,7 @@ public class LoginActivity extends AppCompatActivity {
     } //onCreate
 
     void checkLogin() {
-        DataBaseHelper helper = new DataBaseHelper(LoginActivity.this);
+        DataBaseHelper helper = DataBaseHelper.getmInstance(LoginActivity.this);
         SQLiteDatabase database = helper.getWritableDatabase();
         Cursor member_cursor = database.query("member", new String[]{"account", "password",
                 "name", "phone", "email", "addr"}, null, null, null, null, null);
@@ -537,7 +537,7 @@ public class LoginActivity extends AppCompatActivity {
             mDialog.dismiss();
             /** 新增會員資料 **/
             if (OK) {
-                DataBaseHelper helper = new DataBaseHelper(LoginActivity.this);
+                DataBaseHelper helper = DataBaseHelper.getmInstance(LoginActivity.this);
                 SQLiteDatabase database = helper.getWritableDatabase();
                 Cursor member_cursor = database.query("member", new String[]{"account", "password",
                         "name", "phone", "email", "addr"}, null, null, null, null, null);

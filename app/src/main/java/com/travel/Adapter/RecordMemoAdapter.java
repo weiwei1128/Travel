@@ -40,8 +40,7 @@ public class RecordMemoAdapter extends BaseAdapter
     public RecordMemoAdapter(Context mcontext) {
         this.context = mcontext;
         inflater = LayoutInflater.from(mcontext);
-
-        helper = new DataBaseHelper(mcontext);
+        helper = DataBaseHelper.getmInstance(context);
         database = helper.getWritableDatabase();
 
 

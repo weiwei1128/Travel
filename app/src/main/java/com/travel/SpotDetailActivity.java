@@ -46,7 +46,7 @@ public class SpotDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.spot_detail_activity);
 
-        helper = new DataBaseHelper(getApplicationContext());
+        helper = DataBaseHelper.getmInstance(getApplicationContext());
         database = helper.getWritableDatabase();
 
         globalVariable = (GlobalVariable) getApplicationContext();

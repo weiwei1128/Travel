@@ -58,7 +58,7 @@ public class MemberFragment extends Fragment {
         EmailText = (TextView) view.findViewById(R.id.member_email_text);
         AddrText = (TextView) view.findViewById(R.id.member_addr_text);
         Boolean login = false;
-        DataBaseHelper helper = new DataBaseHelper(context);
+        DataBaseHelper helper = DataBaseHelper.getmInstance(context);
         SQLiteDatabase database = helper.getWritableDatabase();
         Cursor member_cursor = database.query("member", new String[]{"account", "password",
                 "name", "phone", "email", "addr"}, null, null, null, null, null);
@@ -134,7 +134,7 @@ public class MemberFragment extends Fragment {
             switch (which) {
                 case AlertDialog.BUTTON_POSITIVE:// "確認"按鈕退出程序
 
-                    DataBaseHelper helper = new DataBaseHelper(context);
+                    DataBaseHelper helper = DataBaseHelper.getmInstance(context);
                     SQLiteDatabase database = helper.getWritableDatabase();
                     database.delete("member", null, null);
                     if (database.isOpen())

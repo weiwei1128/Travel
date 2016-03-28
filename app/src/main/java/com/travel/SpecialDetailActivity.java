@@ -42,7 +42,7 @@ public class SpecialDetailActivity extends AppCompatActivity {
         backImg = (LinearLayout) findViewById(R.id.specialitem_backImg);
         itemTitle = (TextView) findViewById(R.id.specialitemName_Text);
         itemContent = (TextView) findViewById(R.id.specailitemDetail_text);
-        DataBaseHelper helper = new DataBaseHelper(SpecialDetailActivity.this);
+        DataBaseHelper helper = DataBaseHelper.getmInstance(SpecialDetailActivity.this);
         SQLiteDatabase database = helper.getWritableDatabase();
         backImg.setOnClickListener(new View.OnClickListener() {
             @Override

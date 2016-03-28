@@ -234,7 +234,7 @@ public class MainImageFragment extends Fragment {
         @Override
         protected List<Product> doInBackground(String... params) {
             //0307
-            DataBaseHelper helper = new DataBaseHelper(context);
+            DataBaseHelper helper = DataBaseHelper.getmInstance(context);
             SQLiteDatabase database = helper.getWritableDatabase();
             Cursor cursor = database.query("banner", new String[]{"img_url"}, null, null, null, null, null);
             if (cursor != null) {

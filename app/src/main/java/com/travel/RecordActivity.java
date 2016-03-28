@@ -271,7 +271,7 @@ public class RecordActivity extends FragmentActivity implements
                     @Override
                     public void onClick(View v) {
                         // save content to DB
-                        DataBaseHelper helper = new DataBaseHelper(RecordActivity.this);
+                        DataBaseHelper helper = DataBaseHelper.getmInstance(RecordActivity.this);
                         SQLiteDatabase db = helper.getReadableDatabase();
                         Cursor memo_cursor = db.query("travelmemo", new String[]{"memo_routesCounter", "memo_trackNo",
                                         "memo_content", "memo_img", "memo_latlng", "memo_time"},
@@ -418,7 +418,7 @@ public class RecordActivity extends FragmentActivity implements
                     starttime[0] = System.currentTimeMillis();
                     //----2.4
 
-                    DataBaseHelper helper = new DataBaseHelper(getApplicationContext());
+                    DataBaseHelper helper = DataBaseHelper.getmInstance(getApplicationContext());
                     SQLiteDatabase database = helper.getWritableDatabase();
                     Cursor trackRoute_cursor = database.query("trackRoute",
                             new String[]{"routesCounter", "track_no", "track_lat", "track_lng",
@@ -470,7 +470,7 @@ public class RecordActivity extends FragmentActivity implements
         setUpMapIfNeeded();
 
         // retrieve trackRoute from DB
-        DataBaseHelper helper = new DataBaseHelper(getApplicationContext());
+        DataBaseHelper helper = DataBaseHelper.getmInstance(getApplicationContext());
         SQLiteDatabase database = helper.getWritableDatabase();
         Cursor trackRoute_cursor = database.query("trackRoute",
                 new String[]{"routesCounter","track_no", "track_lat", "track_lng",
@@ -829,7 +829,7 @@ public class RecordActivity extends FragmentActivity implements
         @Override
         public void onClick(View v) {
             /**DB**/
-            DataBaseHelper helper = new DataBaseHelper(RecordActivity.this);
+            DataBaseHelper helper = DataBaseHelper.getmInstance(RecordActivity.this);
             SQLiteDatabase db = helper.getReadableDatabase();
             Cursor memo_cursor = db.query("travelmemo", new String[]{"memo_routesCounter", "memo_trackNo",
                     "memo_content", "memo_img", "memo_latlng", "memo_time"},
@@ -933,7 +933,7 @@ public class RecordActivity extends FragmentActivity implements
                     intent_Trace.putExtra("isPause", true);
                     sendBroadcast(intent_Trace);
 
-                    DataBaseHelper helper = new DataBaseHelper(getApplicationContext());
+                    DataBaseHelper helper = DataBaseHelper.getmInstance(getApplicationContext());
                     SQLiteDatabase database = helper.getWritableDatabase();
                     Cursor trackRoute_cursor = database.query("trackRoute",
                             new String[]{"routesCounter", "track_no", "track_lat", "track_lng",
@@ -954,7 +954,7 @@ public class RecordActivity extends FragmentActivity implements
                     helper.close();
                 } else if (status == 0) {
                     String track_title = intent.getStringExtra("track_title");
-                    DataBaseHelper helper = new DataBaseHelper(getApplicationContext());
+                    DataBaseHelper helper = DataBaseHelper.getmInstance(getApplicationContext());
                     SQLiteDatabase database = helper.getWritableDatabase();
                     Cursor trackRoute_cursor = database.query("trackRoute",
                             new String[]{"routesCounter", "track_no", "track_lat", "track_lng",

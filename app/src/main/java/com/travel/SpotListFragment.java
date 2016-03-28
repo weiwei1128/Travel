@@ -1,14 +1,17 @@
 package com.travel;
 
+import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.text.Editable;
@@ -53,7 +56,7 @@ public class SpotListFragment extends Fragment implements
 
     private Location CurrentLocation;
 
-    int count = 0, pageNo = 1, pages = 0, minus = pageNo-1;
+    int count = 0, pageNo = 1, pages = 0, minus = pageNo - 1;
     private TextView number, lastPage, nextPage;
     private LinearLayout spotList_pageLayout, spotList_textLayout;
 
@@ -212,7 +215,7 @@ public class SpotListFragment extends Fragment implements
             if (pageNo == 1)
                 lastPage.setVisibility(View.INVISIBLE);
             else lastPage.setVisibility(View.VISIBLE);
-            minus = pageNo-1;
+            minus = pageNo - 1;
             String get = String.valueOf(position + 1);
             number.setText(get);
         }
@@ -257,6 +260,16 @@ public class SpotListFragment extends Fragment implements
 
         Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         if (location == null) {
+            if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                return;
+            }
             LocationServices.FusedLocationApi.requestLocationUpdates
                     (mGoogleApiClient, mLocationRequest, (LocationListener) getActivity());
         } else {
@@ -280,14 +293,14 @@ public class SpotListFragment extends Fragment implements
         }
     }
 
-/*
-    @Override
-    public void onLocationChanged(Location location) {
-        if (CurrentLocation != location) {
-            HandleNewLocation(CurrentLocation);
+    /*
+        @Override
+        public void onLocationChanged(Location location) {
+            if (CurrentLocation != location) {
+                HandleNewLocation(CurrentLocation);
+            }
         }
-    }
-*/
+    */
     private void HandleNewLocation(Location location) {
         Log.d(TAG, location.toString());
 

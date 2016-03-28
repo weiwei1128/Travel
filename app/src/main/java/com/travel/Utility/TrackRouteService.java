@@ -1,11 +1,13 @@
 package com.travel.Utility;
 
+import android.Manifest;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
@@ -14,6 +16,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 
 import com.travel.GlobalVariable;
@@ -52,7 +55,7 @@ public class TrackRouteService extends Service {
 
         registerReceiver(broadcastReceiver, new IntentFilter(RecordActivity.TRACK_TO_SERVICE));
         registerReceiver(broadcastReceiver_timer, new IntentFilter(RecordActivity.TIMER_TO_SERVICE));
-        globalVariable = (GlobalVariable)getApplicationContext();
+        globalVariable = (GlobalVariable) getApplicationContext();
 
         initializeLocationManager();
 
@@ -133,7 +136,7 @@ public class TrackRouteService extends Service {
         }
 
         @Override
-        public void onProviderDisabled (String provider) {
+        public void onProviderDisabled(String provider) {
             Log.d(TAG, "onProviderDisabled: " + provider);
         }
 
@@ -171,6 +174,16 @@ public class TrackRouteService extends Service {
         if (mLocationManager != null) {
             for (int i = 0; i < mLocationListeners.length; i++) {
                 try {
+                    if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                        // TODO: Consider calling
+                        //    ActivityCompat#requestPermissions
+                        // here to request the missing permissions, and then overriding
+                        //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                        //                                          int[] grantResults)
+                        // to handle the case where the user grants the permission. See the documentation
+                        // for ActivityCompat#requestPermissions for more details.
+                        return;
+                    }
                     mLocationManager.removeUpdates(mLocationListeners[i]);
                 } catch (Exception ex) {
                     Log.i(TAG, "fail to remove location listeners, ignore", ex);
@@ -216,7 +229,7 @@ public class TrackRouteService extends Service {
     private void TraceOfRoute(Double Latitude, Double Longitude) {
         // if status = 0 由這裡 write to DB
         if (record_status == 1) {
-            DataBaseHelper helper = new DataBaseHelper(getApplicationContext());
+            DataBaseHelper helper = DataBaseHelper.getmInstance(getApplicationContext());
             SQLiteDatabase database = helper.getWritableDatabase();
             Cursor trackRoute_cursor = database.query("trackRoute",
                     new String[]{"routesCounter", "track_no", "track_lat", "track_lng",

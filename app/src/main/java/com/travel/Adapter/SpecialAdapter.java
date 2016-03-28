@@ -24,18 +24,18 @@ import com.travel.Utility.DataBaseHelper;
 public class SpecialAdapter extends BaseAdapter {
     ImageLoader loader = ImageLoader.getInstance();
     DisplayImageOptions options;
-    private ImageLoadingListener listener;
     DataBaseHelper helper;
     SQLiteDatabase database;
     Context mContext;
     LayoutInflater layoutInflater;
     int page_no;
+    private ImageLoadingListener listener;
 
     public SpecialAdapter(Context context, Integer pageNo) {
         this.mContext = context;
         layoutInflater = LayoutInflater.from(context);
         this.page_no = pageNo;
-        helper = new DataBaseHelper(context);
+        helper = DataBaseHelper.getmInstance(context);
         database = helper.getWritableDatabase();
 
         options = new DisplayImageOptions.Builder()

@@ -76,7 +76,7 @@ public class ShopRecordFragment extends Fragment {
 
 
         gridView.setOnItemClickListener(new itemlistener());
-        DataBaseHelper helper = new DataBaseHelper(context);
+        DataBaseHelper helper = DataBaseHelper.getmInstance(context);
         SQLiteDatabase database = helper.getWritableDatabase();
         Cursor member_cursor = database.query("member", new String[]{"account", "password",
                 "name", "phone", "email", "addr"}, null, null, null, null, null);
@@ -101,9 +101,6 @@ public class ShopRecordFragment extends Fragment {
         if (member_cursor != null)
             member_cursor.close();
 
-        if (database.isOpen())
-            database.close();
-
 
     }
 
@@ -111,7 +108,7 @@ public class ShopRecordFragment extends Fragment {
 
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            DataBaseHelper helper = new DataBaseHelper(context);
+            DataBaseHelper helper = DataBaseHelper.getmInstance(context);
             SQLiteDatabase database = helper.getWritableDatabase();
             Cursor order_cursor = database.query("shoporder", new String[]{"order_id","order_userid ", "order_no",
                             "order_time", "order_name", "order_phone", "order_email",
@@ -127,8 +124,6 @@ public class ShopRecordFragment extends Fragment {
             }
             if (order_cursor != null)
                 order_cursor.close();
-            if (database.isOpen())
-                database.close();
         }
     }
 

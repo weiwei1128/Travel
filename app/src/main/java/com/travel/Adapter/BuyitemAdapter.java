@@ -40,7 +40,7 @@ public class BuyitemAdapter extends BaseAdapter {
 
     public BuyitemAdapter(Context context) {
         this.context = context;
-        helper = new DataBaseHelper(context);
+        helper = DataBaseHelper.getmInstance(context);
         database = helper.getWritableDatabase();
         layoutInflater = LayoutInflater.from(context);
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);

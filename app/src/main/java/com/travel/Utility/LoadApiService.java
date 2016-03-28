@@ -56,7 +56,7 @@ public class LoadApiService extends Service {
         Log.d("3/23_", "LoadApiService onStartCommand");
 
         //利用 executeOnExecutor 確切執行非同步作業
-        DataBaseHelper helper = new DataBaseHelper(getBaseContext());
+        DataBaseHelper helper = DataBaseHelper.getmInstance(context);
         SQLiteDatabase database = helper.getWritableDatabase();
         Cursor spotDataRaw_cursor = database.query("spotDataRaw", new String[]{"spotName", "spotAdd",
                         "spotLat", "spotLng", "picture1", "picture2", "picture3",

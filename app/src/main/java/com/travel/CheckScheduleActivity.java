@@ -61,7 +61,7 @@ public class CheckScheduleActivity extends AppCompatActivity {
             }
         });
         putItemLayout = (LinearLayout) findViewById(R.id.checkschedule_content);
-        DataBaseHelper helper = new DataBaseHelper(CheckScheduleActivity.this);
+        DataBaseHelper helper = DataBaseHelper.getmInstance(CheckScheduleActivity.this);
         SQLiteDatabase database = helper.getWritableDatabase();
         Cursor member_cursor = database.query("member", new String[]{"account", "password",
                 "name", "phone", "email", "addr"}, null, null, null, null, null);

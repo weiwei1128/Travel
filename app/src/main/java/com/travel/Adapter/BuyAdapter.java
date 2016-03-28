@@ -39,8 +39,7 @@ public class BuyAdapter extends BaseAdapter {
         inflater = LayoutInflater.from(mcontext);
 
         pageNO = index;
-
-        helper = new DataBaseHelper(context);
+        helper = DataBaseHelper.getmInstance(context);
         database = helper.getWritableDatabase();
 
         options = new DisplayImageOptions.Builder()

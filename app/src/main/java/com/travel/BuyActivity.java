@@ -67,7 +67,7 @@ public class BuyActivity extends AppCompatActivity {
         UI();
 
 
-        helper = new DataBaseHelper(BuyActivity.this);
+        helper = DataBaseHelper.getmInstance(BuyActivity.this);
         database = helper.getWritableDatabase();
         Cursor goods_cursor = database.query("goods", new String[]{"totalCount", "goods_id", "goods_title",
                 "goods_url", "goods_money", "goods_content", "goods_addtime"}, null, null, null, null, null);

@@ -252,7 +252,7 @@ public class SpotMapFragment extends Fragment implements
             CurrentMarker.setPosition(latLng);
         }
 
-        DataBaseHelper helper = new DataBaseHelper(getActivity());
+        DataBaseHelper helper = DataBaseHelper.getmInstance(getActivity());
         SQLiteDatabase database = helper.getWritableDatabase();
         Cursor location_cursor = database.query("location",
                 new String[]{"CurrentLat", "CurrentLng"}, null, null, null, null, null);
@@ -366,7 +366,7 @@ public class SpotMapFragment extends Fragment implements
                     MarkerOptionsArray.add(markerOpt);
                 }
             } else {
-                DataBaseHelper helper = new DataBaseHelper(getActivity());
+                DataBaseHelper helper = DataBaseHelper.getmInstance(getActivity());
                 SQLiteDatabase database = helper.getWritableDatabase();
                 Cursor spotDataRaw_cursor = database.query("spotDataRaw", new String[]{"spotName", "spotAdd",
                                 "spotLat", "spotLng", "picture1", "picture2","picture3",

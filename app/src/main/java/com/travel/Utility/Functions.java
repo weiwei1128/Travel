@@ -147,19 +147,29 @@ public class Functions {
     }
 
     public static Boolean ifLogin(Context context) {
-        DataBaseHelper helper = new DataBaseHelper(context);
+        DataBaseHelper helper = DataBaseHelper.getmInstance(context);
         SQLiteDatabase database = helper.getWritableDatabase();
 
         Cursor member_cursor = database.query("member", new String[]{"account", "password",
                 "name", "phone", "email", "addr"}, null, null, null, null, null);
-        if (member_cursor == null || member_cursor.getCount() == 0)
+        if (member_cursor == null || member_cursor.getCount() == 0) {
+            if (member_cursor != null)
+                member_cursor.close();
             return false;
-        else return true;
+        } else {
+            if (member_cursor != null)
+                member_cursor.close();
+            return true;
+        }
 
     }
+
     public interface TaskCallBack {
-        /** method That Does Something When Task Is Done
-         * @param OrderNeedUpdate if Order record updated*/
+        /**
+         * method That Does Something When Task Is Done
+         *
+         * @param OrderNeedUpdate if Order record updated
+         */
         public void TaskDone(Boolean OrderNeedUpdate);
     }
 }

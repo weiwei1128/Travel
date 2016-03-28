@@ -15,7 +15,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.travel.Adapter.ShopRecordItemAdapter;
 import com.travel.Utility.DataBaseHelper;
 import com.travel.Utility.Functions;
 
@@ -36,12 +35,11 @@ import java.nio.charset.Charset;
 
 public class ShopRecordItemActivity extends AppCompatActivity {
     String OrderId;
-    ShopRecordItemAdapter adapter;
     TextView Order_date, Order_no, Order_payment, Order_state, ship_way, ship_name, ship_tel, ship_addr,
             ship_message, money_item, money_ship, money_total;
     LinearLayout carLayout, backImg;
     Context context = ShopRecordItemActivity.this;
-    ;
+
     LayoutInflater inflater;
 
     @Override
@@ -88,7 +86,7 @@ public class ShopRecordItemActivity extends AppCompatActivity {
     }
 
     void getDB() {
-        DataBaseHelper helper = new DataBaseHelper(context);
+        DataBaseHelper helper = DataBaseHelper.getmInstance(context);
         SQLiteDatabase database = helper.getWritableDatabase();
         Cursor order_cursor = database.query("shoporder", new String[]{"order_id", "order_userid", "order_no",
                 "order_time", "order_name", "order_phone", "order_email",
@@ -101,8 +99,6 @@ public class ShopRecordItemActivity extends AppCompatActivity {
         }
         if (order_cursor != null)
             order_cursor.close();
-        if (database.isOpen())
-            database.close();
     }
 
 
@@ -131,7 +127,7 @@ public class ShopRecordItemActivity extends AppCompatActivity {
 
         @Override
         protected String[][] doInBackground(String... params) {
-            Log.i("3.11", "*************ShopRecordITEM DO IN BACKGROUND" + OrderId);
+//            Log.i("3.11", "*************ShopRecordITEM DO IN BACKGROUND" + OrderId);
             if (OrderId != null) {
                 String returnMessage[][] = null;
                 /*
@@ -180,11 +176,14 @@ public class ShopRecordItemActivity extends AppCompatActivity {
                 } catch (JSONException | NullPointerException e) {
                     e.printStackTrace();
                 }
+                if (state == null || state.equals("0"))
+                    return null;
+
                 int itemCount = 0;
                 JSONArray jsonArray = null;
                 try {
                     jsonArray = new JSONObject(getString).getJSONArray("goodslist");
-                } catch (JSONException e) {
+                } catch (JSONException | NullPointerException e) {
                     e.printStackTrace();
                 }
                 if (jsonArray == null || jsonArray.length() == 0) {
@@ -305,8 +304,7 @@ public class ShopRecordItemActivity extends AppCompatActivity {
 
 
                 //如果讀取資料錯誤 不進行之後的動作
-                if (state == null || state.equals("0"))
-                    return null;
+
                 return returnMessage;
             } else return null;
         }
