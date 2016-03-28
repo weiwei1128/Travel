@@ -1,8 +1,10 @@
 package com.travel.Adapter;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -10,6 +12,9 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.travel.SpotListViewFragment;
+
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -19,24 +24,29 @@ public class SpotListFragmentViewPagerAdapter extends PagerAdapter implements Vi
     Context context;
     List<Fragment> fragments;
     FragmentManager fragmentManager;
-    ViewPager viewPager;
+    //ViewPager viewPager;
 
+    int pageNo = 0;
     int currentPageIndex = 0;
 
-    public SpotListFragmentViewPagerAdapter(FragmentManager mfragmentmanager, ViewPager mviewpager,
-                                            List<Fragment> mfragments, Context mcontext) {
+    public SpotListFragmentViewPagerAdapter(FragmentManager mfragmentmanager, int pages) {
+        fragmentManager = mfragmentmanager;
+        pageNo = pages;
+        fragments = new ArrayList<Fragment>();
+
+        for (int i = 0; i < pageNo; i++)
+            fragments.add(SpotListViewFragment.newInstance(SpotListViewFragment.TAG, i+1));
+        /*
         this.fragmentManager = mfragmentmanager;
         this.viewPager = mviewpager;
         this.fragments = mfragments;
-        this.context = mcontext;
+        this.context = mcontext;*/
     }
 
     @Override
     public int getCount() {
-        //Log.e("3/23_", "SpotListFragmentViewPagerAdapter: pages " + mPages);
-        if (fragments != null)
-            return fragments.size();
-        else return 0;
+        //Log.e("3/23_", "SpotListFragmentViewPagerAdapter: pages " + pageNo);
+        return fragments.size();
     }
 
     @Override
@@ -63,7 +73,6 @@ public class SpotListFragmentViewPagerAdapter extends PagerAdapter implements Vi
     public void destroyItem(ViewGroup container, int position, Object object) {
         container.removeView(fragments.get(position).getView());
     }
-
 
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
