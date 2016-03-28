@@ -46,8 +46,11 @@ public class SpotMapFragment extends Fragment implements
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener {
 
-    public static final String TAG = "SpotMapFragment";
-    //private int mPage;
+    public static final String TAG = SpotMapFragment.class.getSimpleName();
+    private static final String FRAGMENT_NAME = "FRAGMENT_NAME";
+    //private static final String ARG_PARAM2 = "param2";
+    private String mFragmentName;
+    //private String mParam2;
 
     private MapView mapView;
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
@@ -71,8 +74,12 @@ public class SpotMapFragment extends Fragment implements
         // Required empty public constructor
     }
 
-    public static SpotMapFragment newInstance() {
+    public static SpotMapFragment newInstance(String fragementName) {
         SpotMapFragment fragment = new SpotMapFragment();
+        Bundle args = new Bundle();
+        args.putString(FRAGMENT_NAME, fragementName);
+        //args.putString(ARG_PARAM2, param2);
+        fragment.setArguments(args);
         return fragment;
     }
 
@@ -80,13 +87,14 @@ public class SpotMapFragment extends Fragment implements
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            //mPage = getArguments().getInt(ARG_PAGE);
+            mFragmentName = getArguments().getString(FRAGMENT_NAME);
+            //mParam2 = getArguments().getString(ARG_PARAM2);
         }
         globalVariable = (GlobalVariable) getActivity().getApplicationContext();
         getActivity().registerReceiver(broadcastReceiver, new IntentFilter(LoadApiService.BROADCAST_ACTION));
 
         mProgressDialog = new ProgressDialog(getActivity());
-        MarkerIcon = decodeBitmapFromResource(getResources(), R.drawable.location, 10, 18);
+        MarkerIcon = decodeBitmapFromResource(getResources(), R.drawable.location3, 10, 18);
 
         mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
                 .addConnectionCallbacks(this)
@@ -178,12 +186,17 @@ public class SpotMapFragment extends Fragment implements
     }
 
     @Override
-    public void onDestroy() {
+    public void onDestroyView() {
         mapView.onDestroy();
         if (broadcastReceiver != null)
             getActivity().unregisterReceiver(broadcastReceiver);
         MarkerIcon.recycle();
         System.gc();
+        super.onDestroyView();
+    }
+
+    @Override
+    public void onDestroy() {
         super.onDestroy();
     }
 
@@ -247,7 +260,7 @@ public class SpotMapFragment extends Fragment implements
         // 設定目前位置的標記
         if (CurrentMarker == null) {
             // 移動地圖到目前的位置
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 16));
             CurrentMarker = mMap.addMarker(new MarkerOptions().position(latLng).title("I am here!")
                     .icon(BitmapDescriptorFactory.fromBitmap(MarkerIcon)));
         } else {
@@ -304,6 +317,7 @@ public class SpotMapFragment extends Fragment implements
     public static Bitmap decodeBitmapFromResource(Resources res, int resId, int reqWidth, int reqHeight) {
         // First decode with inJustDecodeBounds=true to check dimensions
         final BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inPreferredConfig = Bitmap.Config.RGB_565;
         options.inJustDecodeBounds = true;
         BitmapFactory.decodeResource(res, resId, options);
 

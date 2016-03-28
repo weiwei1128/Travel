@@ -10,14 +10,13 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.location.LocationManager;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
 
 import com.travel.GlobalVariable;
-import com.travel.RecordActivity;
+import com.travel.RecordTrackFragment;
 
 public class TrackRouteService extends Service {
     public TrackRouteService() {
@@ -50,8 +49,8 @@ public class TrackRouteService extends Service {
         Log.d("3/10_", "TrackRouteService: onCreate");
         Log.i(TAG, "onCreate");
 
-        registerReceiver(broadcastReceiver, new IntentFilter(RecordActivity.TRACK_TO_SERVICE));
-        registerReceiver(broadcastReceiver_timer, new IntentFilter(RecordActivity.TIMER_TO_SERVICE));
+        registerReceiver(broadcastReceiver, new IntentFilter(RecordTrackFragment.TRACK_TO_SERVICE));
+        registerReceiver(broadcastReceiver_timer, new IntentFilter(RecordTrackFragment.TIMER_TO_SERVICE));
         globalVariable = (GlobalVariable)getApplicationContext();
 
         initializeLocationManager();
@@ -85,7 +84,7 @@ public class TrackRouteService extends Service {
             record_status = intent.getIntExtra("record_status", 0);
             RoutesCounter = intent.getIntExtra("routesCounter", 1);
             Track_no = intent.getIntExtra("track_no", 1);
-            handler.postDelayed(count, 1000);
+            handler.postDelayed(count, 500);
         }
         super.onStartCommand(intent, flags, startId);
         return START_STICKY;
