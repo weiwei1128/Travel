@@ -163,9 +163,11 @@ public class BuyActivity extends AppCompatActivity {
             if (pageNo == pages)
                 nextPage.setVisibility(View.INVISIBLE);
             else nextPage.setVisibility(View.VISIBLE);
+
             if (pageNo == 1)
                 lastPage.setVisibility(View.INVISIBLE);
             else lastPage.setVisibility(View.VISIBLE);
+
             minus = pageNo - 1;
             String get = String.valueOf(position + 1);
             number.setText(get);

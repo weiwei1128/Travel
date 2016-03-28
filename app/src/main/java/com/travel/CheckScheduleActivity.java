@@ -89,15 +89,26 @@ public class CheckScheduleActivity extends AppCompatActivity {
     void setupWebview() {
 //        Log.i("3.25", "setWebView");
         //WEBVIEW VERSION
+        final ProgressDialog dialog = new ProgressDialog(CheckScheduleActivity.this);
+        dialog.setMessage("載入中");
+        dialog.show();
+
         WebView webView = new WebView(CheckScheduleActivity.this);
         putItemLayout.addView(webView);
-        String myURL = "http://zhiyou.lin366.com/diy/";
+
         WebSettings websettings = webView.getSettings();
         websettings.setSupportZoom(true);
         websettings.setBuiltInZoomControls(true);
         websettings.setJavaScriptEnabled(true);
 
-        webView.setWebViewClient(new WebViewClient());
+        webView.setWebViewClient(new WebViewClient(){
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+                dialog.dismiss();
+            }
+        });
+        String myURL = "http://zhiyou.lin366.com/diy/";
         webView.loadUrl(myURL);
     }
 
@@ -114,7 +125,6 @@ public class CheckScheduleActivity extends AppCompatActivity {
 
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            //TODO 0326
             if (adapter.getWebviewId(position) != null) {
                 Bundle bundle = new Bundle();
 //                Log.e("3.25", "getWebVIewID:" + adapter.getWebviewId(position) + " id:" + itemid[position]);
@@ -149,7 +159,7 @@ public class CheckScheduleActivity extends AppCompatActivity {
         @Override
         protected Boolean doInBackground(String... params) {
             //{"act":"line","uid":"ljd110@qq.com"}
-            Log.e("3.25", "doInBackground");
+//            Log.e("3.25", "doInBackground");
             HttpClient client = new DefaultHttpClient();
             HttpPost post = new HttpPost("http://zhiyou.lin366.com/api/order/line.aspx");
             MultipartEntity entity = new MultipartEntity();
@@ -248,7 +258,7 @@ public class CheckScheduleActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(Boolean s) {
-            Log.e("3.25", "onPostExecute" + s + " -" + count);
+//            Log.e("3.25", "onPostExecute" + s + " -" + count);
             dialog.dismiss();
             taskCallBack.TaskDone(s);
             super.onPostExecute(s);

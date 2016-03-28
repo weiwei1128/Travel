@@ -1,5 +1,6 @@
 package com.travel;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
@@ -7,7 +8,6 @@ import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
@@ -39,6 +39,10 @@ public class CheckScheduleOKActivity extends AppCompatActivity {
 
     void setupWebview() {
         //WEBVIEW VERSION
+        final ProgressDialog dialog = new ProgressDialog(CheckScheduleOKActivity.this);
+        dialog.setMessage("載入中");
+        dialog.show();
+
         WebView webView = (WebView) findViewById(R.id.checkschedule_webview);
         String myURL = "http://zhiyou.lin366.com/guihua.aspx?id=" + itemid;
 
@@ -47,7 +51,13 @@ public class CheckScheduleOKActivity extends AppCompatActivity {
         websettings.setBuiltInZoomControls(true);
         websettings.setJavaScriptEnabled(true);
 
-        webView.setWebViewClient(new WebViewClient());
+        webView.setWebViewClient(new WebViewClient() {
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+                dialog.dismiss();
+            }
+        });
         webView.loadUrl(myURL);
     }
 
