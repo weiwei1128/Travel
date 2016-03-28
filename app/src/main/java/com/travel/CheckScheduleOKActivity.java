@@ -41,6 +41,7 @@ public class CheckScheduleOKActivity extends AppCompatActivity {
         //WEBVIEW VERSION
         final ProgressDialog dialog = new ProgressDialog(CheckScheduleOKActivity.this);
         dialog.setMessage("載入中");
+        dialog.setCancelable(false);
         dialog.show();
 
         WebView webView = (WebView) findViewById(R.id.checkschedule_webview);

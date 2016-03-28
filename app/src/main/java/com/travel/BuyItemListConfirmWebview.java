@@ -1,5 +1,6 @@
 package com.travel;
 
+import android.app.ProgressDialog;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -42,15 +43,25 @@ public class BuyItemListConfirmWebview extends AppCompatActivity {
     }
 
     void setWebView(String id) {
+        final ProgressDialog dialog = new ProgressDialog(BuyItemListConfirmWebview.this);
+        dialog.setMessage("載入中");
+        dialog.setCancelable(false);
+        dialog.show();
 
-        String myURL = "http://zhiyou.lin366.com/pay.aspx?id=" + id;
 
         WebSettings websettings = webView.getSettings();
         websettings.setSupportZoom(true);
         websettings.setBuiltInZoomControls(true);
         websettings.setJavaScriptEnabled(true);
 
-        webView.setWebViewClient(new WebViewClient());
+        webView.setWebViewClient(new WebViewClient() {
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+                dialog.dismiss();
+            }
+        });
+        String myURL = "http://zhiyou.lin366.com/pay.aspx?id=" + id;
         webView.loadUrl(myURL);
     }
 

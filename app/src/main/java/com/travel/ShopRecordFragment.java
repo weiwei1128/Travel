@@ -1,13 +1,13 @@
 package com.travel;
 
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,6 +36,7 @@ public class ShopRecordFragment extends Fragment {
     int OldCount = 0;
     GridView gridView;
     public ShopRecordAdapter adapter;
+    ProgressDialog dialog;
 
 
     public ShopRecordFragment() {
@@ -44,6 +45,8 @@ public class ShopRecordFragment extends Fragment {
 
     @Override
     public void onResume() {
+        dialog.setMessage("載入中...");
+        dialog.show();
 //        Log.e("3.22", "!!!!!!shop record on resume!!!!!!");
         new OrderUpdate(userId, OldCount, context, new Functions.TaskCallBack() {
             @Override
@@ -57,6 +60,7 @@ public class ShopRecordFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        dialog = new ProgressDialog(getActivity());
         this.context = getActivity();
 
 
@@ -87,10 +91,10 @@ public class ShopRecordFragment extends Fragment {
             if (userId != null) {
                 adapter = new ShopRecordAdapter(context, userId);
                 gridView.setAdapter(adapter);
-                Cursor order_cursor = database.query("shoporder", new String[]{"order_id","order_userid ", "order_no",
+                Cursor order_cursor = database.query("shoporder", new String[]{"order_id", "order_userid ", "order_no",
                                 "order_time", "order_name", "order_phone", "order_email",
-                                "order_money", "order_state", "order_schedule"}, "order_userid="+ "\"" + userId+ "\"",
-                        null, null, null, null,null);
+                                "order_money", "order_state", "order_schedule"}, "order_userid=" + "\"" + userId + "\"",
+                        null, null, null, null, null);
                 if (order_cursor != null) {
                     order_cursor.moveToFirst();
                     this.OldCount = order_cursor.getCount();
@@ -110,9 +114,9 @@ public class ShopRecordFragment extends Fragment {
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             DataBaseHelper helper = DataBaseHelper.getmInstance(context);
             SQLiteDatabase database = helper.getWritableDatabase();
-            Cursor order_cursor = database.query("shoporder", new String[]{"order_id","order_userid ", "order_no",
+            Cursor order_cursor = database.query("shoporder", new String[]{"order_id", "order_userid ", "order_no",
                             "order_time", "order_name", "order_phone", "order_email",
-                            "order_money", "order_state", "order_schedule"}, "order_userid="+ "\"" + userId+ "\"",
+                            "order_money", "order_state", "order_schedule"}, "order_userid=" + "\"" + userId + "\"",
                     null, null, null, null);
             String Order_id;
             if (order_cursor != null && order_cursor.getCount() >= position) {
@@ -129,8 +133,10 @@ public class ShopRecordFragment extends Fragment {
 
 
     private void methodThatDoesSomethingWhenTaskIsDone(Boolean a) {
+        if (dialog.isShowing())
+            dialog.dismiss();
         if (a) {//need to updated
-            Log.e("3.23", "need to update shoprecord!");
+//            Log.e("3.23", "need to update shoprecord!");
             new OrderGet(context, userId, new Functions.TaskCallBack() {
                 @Override
                 public void TaskDone(Boolean OrderNeedUpdate) {
@@ -138,8 +144,8 @@ public class ShopRecordFragment extends Fragment {
                         adapter.notifyDataSetChanged();
                 }
             }).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-        }else if(OldCount==0)
-            Toast.makeText(context,"尚無資料!",Toast.LENGTH_SHORT).show();
+        } else if (OldCount == 0)
+            Toast.makeText(context, "尚無資料!", Toast.LENGTH_SHORT).show();
     }
 
 

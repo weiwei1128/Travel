@@ -120,9 +120,7 @@ public class BuyitemAdapter extends BaseAdapter {
                 } else {
                     BiginCart = sharedPreferences.getInt("InBuyListg" + goods_cursor.getString(1), 0);
                     if (BiginCart > 0) {
-//                    Log.i("3.24","我在if裡面!!!是大於零");
                         for (int k = 0; k < BiginCart; k++) {
-//                        Log.i("3.24","我在for裡面!!!k="+k);
                             String a = sharedPreferences.getString("InBuyListg" + goods_cursor.getString(1) + "id" + (k + 1), null);
                             if (a != null && getPosition == 0 &&
                                     sharedPreferences.getInt("InBuyListgC" + goods_cursor.getString(1) + "id" + (k + 1), 0) != 0) {
@@ -171,15 +169,9 @@ public class BuyitemAdapter extends BaseAdapter {
 
 
         /////TODO^^^^^^-----
-        final List<String> goods_id = new ArrayList<>();
 
         final int[] howmany = {sharedPreferences.getInt("InBuyList", 0)};
         int itemPosition = sharedPreferences.getInt("InBuyList" + (position + 1), 0);
-        if (goods_cursor != null && goods_cursor.getCount() >= itemPosition) {
-            goods_cursor.moveToPosition(itemPosition);
-            goods_id.clear();
-            goods_id.add(goods_cursor.getString(1));
-        }
 
         if (goods_cursor != null)
             goods_cursor.close();
@@ -211,7 +203,7 @@ public class BuyitemAdapter extends BaseAdapter {
         newcell.minus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if ((Integer.valueOf(newcell.cellnumberTxt.getText().toString()) > 0)) {
+                if ((Integer.valueOf(newcell.cellnumberTxt.getText().toString()) > 1)) {
                     SharedPreferences.Editor editor = sharedPreferences.edit();
                     int beforeClickCount = (Integer.valueOf(newcell.cellnumberTxt.getText().toString()));
                     newcell.cellnumberTxt.setText((Integer.valueOf(newcell.cellnumberTxt.getText().toString()) - 1) + "");

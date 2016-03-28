@@ -60,12 +60,12 @@
         "source": "/Users/wei/Documents/Travel/library/build/intermediates/exploded-aar/com.android.support/design/22.2.1/res/layout/layout_tab_text.xml"
     },
     {
-        "merged": "/Users/wei/Documents/Travel/library/build/intermediates/res/merged/release/layout/notification_template_lines.xml",
-        "source": "/Users/wei/Documents/Travel/library/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.0.1/res/layout/notification_template_lines.xml"
-    },
-    {
         "merged": "/Users/wei/Documents/Travel/library/build/intermediates/res/merged/release/layout/notification_template_big_media.xml",
         "source": "/Users/wei/Documents/Travel/library/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.0.1/res/layout/notification_template_big_media.xml"
+    },
+    {
+        "merged": "/Users/wei/Documents/Travel/library/build/intermediates/res/merged/release/layout/notification_template_lines.xml",
+        "source": "/Users/wei/Documents/Travel/library/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.0.1/res/layout/notification_template_lines.xml"
     },
     {
         "merged": "/Users/wei/Documents/Travel/library/build/intermediates/res/merged/release/layout/abc_select_dialog_material.xml",
@@ -100,12 +100,12 @@
         "source": "/Users/wei/Documents/Travel/library/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.0.1/res/layout/abc_list_menu_item_layout.xml"
     },
     {
-        "merged": "/Users/wei/Documents/Travel/library/build/intermediates/res/merged/release/layout/indicator_layout.xml",
-        "source": "/Users/wei/Documents/Travel/library/src/main/res/layout/indicator_layout.xml"
-    },
-    {
         "merged": "/Users/wei/Documents/Travel/library/build/intermediates/res/merged/release/layout/abc_dialog_title_material.xml",
         "source": "/Users/wei/Documents/Travel/library/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.0.1/res/layout/abc_dialog_title_material.xml"
+    },
+    {
+        "merged": "/Users/wei/Documents/Travel/library/build/intermediates/res/merged/release/layout/indicator_layout.xml",
+        "source": "/Users/wei/Documents/Travel/library/src/main/res/layout/indicator_layout.xml"
     },
     {
         "merged": "/Users/wei/Documents/Travel/library/build/intermediates/res/merged/release/layout/design_navigation_item_separator.xml",
