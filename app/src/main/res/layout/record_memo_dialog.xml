@@ -1,156 +1,160 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <TextView
+        android:id="@+id/dialog_header_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="是否要記錄景點心得或上傳照片？"
-        android:textColor="@color/black"
-        android:textSize="18dp"
-        android:id="@+id/dialog_header_text"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="20dp"
-        android:layout_marginTop="20dp" />
+        android:layout_marginTop="20dp"
+        android:text="是否要記錄景點心得或上傳照片？"
+        android:textColor="@color/black"
+        android:textSize="18dp" />
 
     <LinearLayout
+        android:id="@+id/title_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/title_layout"
         android:layout_below="@+id/dialog_header_text"
-        android:orientation="vertical"
-        android:layout_centerHorizontal="true">
+        android:layout_centerHorizontal="true"
+        android:orientation="vertical">
 
         <TextView
+            android:id="@+id/title_TextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:layout_margin="10dp"
             android:text="旅程標題"
-            android:id="@+id/title_TextView"
-            android:layout_margin="10dp" />
+            android:textAppearance="?android:attr/textAppearanceSmall" />
+
         <EditText
+            android:id="@+id/title_editText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/title_editText"
             android:layout_centerHorizontal="true"
             android:layout_margin="10dp" />
+
         <TextView
+            android:id="@+id/title_confirmTextView"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:id="@+id/title_confirmTextView"
-            android:text="確  定"
             android:layout_gravity="center"
-            android:gravity="center"
             android:layout_weight="1"
-            android:textSize="20dp"
-            android:textColor="@color/black" />
+            android:gravity="center"
+            android:text="確  定"
+            android:textColor="@color/black"
+            android:textSize="20dp" />
 
     </LinearLayout>
 
     <ScrollView
+        android:id="@+id/dialog_scrollview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/dialog_scrollview"
         android:layout_below="@+id/dialog_header_text"
         android:layout_centerHorizontal="true"
         android:padding="10dp">
 
         <RelativeLayout
+            android:id="@+id/dialog_relativeLayout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/dialog_relativeLayout">
+            android:layout_height="wrap_content">
 
             <ImageView
+                android:id="@+id/dialog_img"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/dialog_img"
-                android:layout_gravity="center"
-                android:layout_centerHorizontal="true" />
+                android:layout_centerHorizontal="true"
+                android:layout_gravity="center" />
 
             <LinearLayout
+                android:id="@+id/content_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/content_layout"
                 android:layout_below="@+id/dialog_img"
-                android:orientation="vertical"
-                android:layout_centerHorizontal="true">
+                android:layout_centerHorizontal="true"
+                android:orientation="vertical">
 
                 <TextView
+                    android:id="@+id/content_TextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:layout_centerHorizontal="true"
                     android:text="景點心得"
-                    android:id="@+id/content_TextView"
-                    android:layout_centerHorizontal="true" />
+                    android:textAppearance="?android:attr/textAppearanceSmall" />
+
                 <EditText
+                    android:id="@+id/content_editText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="textMultiLine"
-                    android:id="@+id/content_editText"
-                    android:layout_centerHorizontal="true" />
+                    android:layout_centerHorizontal="true"
+                    android:inputType="textMultiLine" />
             </LinearLayout>
         </RelativeLayout>
     </ScrollView>
 
     <LinearLayout
-        android:orientation="horizontal"
+        android:id="@+id/dialog_choose_layout"
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:layout_below="@+id/dialog_scrollview"
         android:layout_centerHorizontal="true"
-        android:id="@+id/dialog_choose_layout"
-        android:gravity="center_vertical"
+        android:layout_marginBottom="15dp"
         android:layout_marginTop="15dp"
-        android:layout_marginBottom="15dp">
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
         <ImageView
-            android:layout_width="30dp"
-            android:layout_height="30dp"
             android:id="@+id/dialog_write_img"
-            android:src="@drawable/memo_note"
-            android:layout_weight="1"
-            android:background="@drawable/click_effect_general"
-            android:clickable="true" />
-
-        <ImageView
             android:layout_width="30dp"
             android:layout_height="30dp"
+            android:layout_weight="1"
+            android:background="@drawable/click_effect_general"
+            android:clickable="true"
+            android:src="@drawable/memo_note" />
+
+        <ImageView
             android:id="@+id/dialog_camera_img"
-            android:src="@drawable/memo_camera"
-            android:layout_weight="1"
-            android:background="@drawable/click_effect_general"
-            android:clickable="true" />
-
-        <ImageView
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:id="@+id/dialog_leave_img"
-            android:src="@drawable/memo_cancel"
             android:layout_weight="1"
-            android:background="@drawable/click_effect_general" />
+            android:background="@drawable/click_effect_general"
+            android:clickable="true"
+            android:src="@drawable/memo_camera" />
+
+        <ImageView
+            android:id="@+id/dialog_leave_img"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_weight="1"
+            android:background="@drawable/click_effect_general"
+            android:src="@drawable/memo_cancel" />
     </LinearLayout>
 
     <LinearLayout
-        android:orientation="horizontal"
+        android:id="@+id/dialog_confirm_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/dialog_scrollview"
         android:layout_centerHorizontal="true"
-        android:id="@+id/dialog_confirm_layout"
+        android:layout_marginTop="10dp"
         android:background="@drawable/click_effect_general"
-        android:layout_marginTop="10dp">
+        android:orientation="horizontal">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="50dp"
-            android:text="確  定"
             android:layout_gravity="center"
-            android:gravity="center"
             android:layout_weight="1"
-            android:textSize="20dp"
-            android:textColor="@color/black" />
+            android:gravity="center"
+            android:text="確  定"
+            android:textColor="@color/black"
+            android:textSize="20dp" />
     </LinearLayout>
 
 </RelativeLayout>

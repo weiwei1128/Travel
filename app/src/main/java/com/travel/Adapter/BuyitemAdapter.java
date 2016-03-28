@@ -11,8 +11,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -40,7 +40,7 @@ public class BuyitemAdapter extends BaseAdapter {
 
     public BuyitemAdapter(Context context) {
         this.context = context;
-        helper = new DataBaseHelper(context);
+        helper = DataBaseHelper.getmInstance(context);
         database = helper.getWritableDatabase();
         layoutInflater = LayoutInflater.from(context);
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
@@ -49,7 +49,7 @@ public class BuyitemAdapter extends BaseAdapter {
                 .showImageOnLoading(R.drawable.empty)
                 .showImageForEmptyUri(R.drawable.empty)
                 .cacheInMemory(false)
-                .cacheOnDisc().build();
+                .cacheOnDisk(true).build();
         listener = new ImageLoadingListener() {
             @Override
             public void onLoadingStarted(String s, View view) {
@@ -75,8 +75,7 @@ public class BuyitemAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        int number = sharedPreferences.getInt("InBuyList", 0);
-        return number;//wait to edit//
+        return sharedPreferences.getInt("InBuyList", 0);
     }
 
     @Override
@@ -96,14 +95,14 @@ public class BuyitemAdapter extends BaseAdapter {
         mview = layoutInflater.inflate(R.layout.buylist_item, null);
         newcell = new cell(
                 (ImageView) mview.findViewById(R.id.buyitemlist_itemImg),
-                (ImageView) mview.findViewById(R.id.buyitemlist_delImg),
+                (LinearLayout) mview.findViewById(R.id.buyitemlist_delImg),
                 (TextView) mview.findViewById(R.id.buyitemlist_nameTxt),
                 (TextView) mview.findViewById(R.id.buyitemlist_itemTxt),
                 (TextView) mview.findViewById(R.id.butitemlist_moneyTxt),
                 (TextView) mview.findViewById(R.id.buyitemlist_totalTxt),
                 (TextView) mview.findViewById(R.id.buyitemlist_numbertext),
-                (Button) mview.findViewById(R.id.buyitemlist_addbutton),
-                (Button) mview.findViewById(R.id.buyitemlist_minusbutton)
+                (LinearLayout) mview.findViewById(R.id.buyitemlist_addbutton),
+                (LinearLayout) mview.findViewById(R.id.buyitemlist_minusbutton)
         );
         newcell.cellnumberTxt.setText("0");
 
@@ -121,9 +120,7 @@ public class BuyitemAdapter extends BaseAdapter {
                 } else {
                     BiginCart = sharedPreferences.getInt("InBuyListg" + goods_cursor.getString(1), 0);
                     if (BiginCart > 0) {
-//                    Log.i("3.24","我在if裡面!!!是大於零");
                         for (int k = 0; k < BiginCart; k++) {
-//                        Log.i("3.24","我在for裡面!!!k="+k);
                             String a = sharedPreferences.getString("InBuyListg" + goods_cursor.getString(1) + "id" + (k + 1), null);
                             if (a != null && getPosition == 0 &&
                                     sharedPreferences.getInt("InBuyListgC" + goods_cursor.getString(1) + "id" + (k + 1), 0) != 0) {
@@ -172,15 +169,9 @@ public class BuyitemAdapter extends BaseAdapter {
 
 
         /////TODO^^^^^^-----
-        final List<String> goods_id = new ArrayList<>();
 
         final int[] howmany = {sharedPreferences.getInt("InBuyList", 0)};
         int itemPosition = sharedPreferences.getInt("InBuyList" + (position + 1), 0);
-        if (goods_cursor != null && goods_cursor.getCount() >= itemPosition) {
-            goods_cursor.moveToPosition(itemPosition);
-            goods_id.clear();
-            goods_id.add(goods_cursor.getString(1));
-        }
 
         if (goods_cursor != null)
             goods_cursor.close();
@@ -212,7 +203,7 @@ public class BuyitemAdapter extends BaseAdapter {
         newcell.minus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if ((Integer.valueOf(newcell.cellnumberTxt.getText().toString()) > 0)) {
+                if ((Integer.valueOf(newcell.cellnumberTxt.getText().toString()) > 1)) {
                     SharedPreferences.Editor editor = sharedPreferences.edit();
                     int beforeClickCount = (Integer.valueOf(newcell.cellnumberTxt.getText().toString()));
                     newcell.cellnumberTxt.setText((Integer.valueOf(newcell.cellnumberTxt.getText().toString()) - 1) + "");
@@ -252,7 +243,7 @@ public class BuyitemAdapter extends BaseAdapter {
                 howmany[0]--;
                 if (finalBiginCart[0] > 0)
                     finalBiginCart[0]--;
-                else Log.e("3.24", "~!~!~!~!ERROR!!!!!!!!");
+//                else Log.e("3.24", "~!~!~!~!ERROR!!!!!!!!");
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.putInt("InBuyList", howmany[0]);//the total count of the cart
                 editor.putInt("InBuyListg" + finalBigitemID, finalBiginCart[0]);//這個大項目裡面有幾個小項目在購物車裡
@@ -266,13 +257,13 @@ public class BuyitemAdapter extends BaseAdapter {
     }
 
     public class cell {
-        ImageView cellImg, celldelImg;
+        ImageView cellImg;
         TextView cellnameTxt, cellfromTxt, cellmoneyTxt, celltotalTxt, cellnumberTxt;
-        Button plus, minus;
+        LinearLayout plus, minus, celldelImg;
 
-        public cell(ImageView itemImg, ImageView itemdelImg, TextView itemnameTxt, TextView itemfromTxt,
+        public cell(ImageView itemImg, LinearLayout itemdelImg, TextView itemnameTxt, TextView itemfromTxt,
                     TextView itemmoneyTxt, TextView itemtotalTxt,
-                    TextView itemnumberTxt, Button mPlus, Button mMinus) {
+                    TextView itemnumberTxt, LinearLayout mPlus, LinearLayout mMinus) {
             this.cellImg = itemImg;
             this.celldelImg = itemdelImg;
             this.cellnameTxt = itemnameTxt;

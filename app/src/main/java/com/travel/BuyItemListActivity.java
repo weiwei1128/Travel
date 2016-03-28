@@ -9,7 +9,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 
@@ -20,15 +19,14 @@ public class BuyItemListActivity extends AppCompatActivity {
 
     ListView listView;
     BuyitemAdapter adapter;
-    ImageView backImg, moreImg;
-    LinearLayout confirmLayout;
+    LinearLayout confirmLayout, backImg;
     int lastItem = 0;
 
     @Override
     protected void onResume() {
         super.onResume();
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        if(sharedPreferences.getBoolean("AfterPay",false))
+        if (sharedPreferences.getBoolean("AfterPay", false))
             finish();
 
     }
@@ -37,12 +35,12 @@ public class BuyItemListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.buyitem_list_activity);
-        Bundle bundle=this.getIntent().getExtras();
-        if(bundle!=null&&bundle.containsKey("AfterPay")&&bundle.getBoolean("AfterPay"))
+        Bundle bundle = this.getIntent().getExtras();
+        if (bundle != null && bundle.containsKey("AfterPay") && bundle.getBoolean("AfterPay"))
             finish();
 //        }
         listView = (ListView) findViewById(R.id.listview);
-        backImg = (ImageView) findViewById(R.id.buyitemlist_backImg);
+        backImg = (LinearLayout) findViewById(R.id.buyitemlist_backImg);
         backImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

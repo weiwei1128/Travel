@@ -38,8 +38,7 @@ public class RecordMemoAdapter extends BaseAdapter implements ViewPagerEx.OnPage
     public RecordMemoAdapter(Context mcontext) {
         this.context = mcontext;
         inflater = LayoutInflater.from(mcontext);
-
-        helper = new DataBaseHelper(mcontext);
+        helper = DataBaseHelper.getmInstance(context);
         database = helper.getWritableDatabase();
 
 

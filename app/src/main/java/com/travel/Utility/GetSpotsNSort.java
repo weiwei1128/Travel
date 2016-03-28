@@ -62,7 +62,7 @@ public class GetSpotsNSort extends AsyncTask<Void, Void, ArrayList<SpotData>> {
             }
         } else {
             // retrieve Spots from DB
-            DataBaseHelper helper = new DataBaseHelper(mcontext);
+            DataBaseHelper helper = DataBaseHelper.getmInstance(mcontext);
             SQLiteDatabase database = helper.getWritableDatabase();
             Cursor spotDataRaw_cursor = database.query("spotDataRaw", new String[]{"spotName", "spotAdd",
                             "spotLat", "spotLng", "picture1", "picture2","picture3",
@@ -106,7 +106,7 @@ public class GetSpotsNSort extends AsyncTask<Void, Void, ArrayList<SpotData>> {
         }
 
         Log.e("3/23_", "=========GetSpotsNSort======Write to DB");
-        DataBaseHelper helper = new DataBaseHelper(mcontext);
+        DataBaseHelper helper = DataBaseHelper.getmInstance(mcontext);
         SQLiteDatabase database = helper.getWritableDatabase();
         Cursor spotDataSorted_cursor = database.query("spotDataSorted", new String[]{"spotName", "spotAdd",
                         "spotLat", "spotLng", "picture1", "picture2", "picture3",

@@ -43,9 +43,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 public class BuyItemDetailActivity extends AppCompatActivity {
@@ -56,11 +54,12 @@ public class BuyItemDetailActivity extends AppCompatActivity {
 
     int ItemPosition = 0;
     TextView ItemName, ItemDetail, ItemHeader;
-    ImageView ItemImg, BackImg, AddImg;
+    ImageView ItemImg, AddImg;
     DataBaseHelper helper;
     SQLiteDatabase database;
     String itemID;
     String[][] cartItem;
+    LinearLayout addLayout, BackImg;
 
     //按下返回鍵
     @Override
@@ -88,7 +87,7 @@ public class BuyItemDetailActivity extends AppCompatActivity {
         ItemDetail = (TextView) findViewById(R.id.buyitemDetail_text);
         ItemHeader = (TextView) findViewById(R.id.buyItemHeader);
         ItemImg = (ImageView) findViewById(R.id.buyitem_Img);
-        BackImg = (ImageView) findViewById(R.id.buyitem_backImg);
+        BackImg = (LinearLayout) findViewById(R.id.buyitem_backImg);
         BackImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -97,6 +96,8 @@ public class BuyItemDetailActivity extends AppCompatActivity {
         });
         AddImg = (ImageView) findViewById(R.id.buyitemAdd_Img);
         AddImg.setVisibility(View.INVISIBLE);
+        addLayout = (LinearLayout) findViewById(R.id.buyitem_addLayout);
+        addLayout.setVisibility(View.INVISIBLE);
 
 
         //show image
@@ -105,7 +106,7 @@ public class BuyItemDetailActivity extends AppCompatActivity {
                 .showImageOnLoading(R.drawable.loading2)
                 .showImageForEmptyUri(R.drawable.empty)
                 .cacheInMemory()
-                .cacheOnDisc().build();
+                .cacheOnDisk(true).build();
         listener = new ImageLoadingListener() {
             @Override
             public void onLoadingStarted(String s, View view) {
@@ -129,7 +130,7 @@ public class BuyItemDetailActivity extends AppCompatActivity {
         };
 
         //===各個item的資料=02_24==//
-        helper = new DataBaseHelper(BuyItemDetailActivity.this);
+        helper = DataBaseHelper.getmInstance(BuyItemDetailActivity.this);
         database = helper.getWritableDatabase();
         Cursor goods_cursor = database.query("goods", new String[]{"totalCount", "goods_id", "goods_title",
                 "goods_url", "goods_money", "goods_content", "goods_addtime"}, null, null, null, null, null);
@@ -146,9 +147,6 @@ public class BuyItemDetailActivity extends AppCompatActivity {
             if (goods_cursor.getString(3) != null)
                 loader.displayImage("http://zhiyou.lin366.com/" + goods_cursor.getString(3)
                         , ItemImg, options, listener);
-//            Log.e("3.10", "id:" + itemID);
-            if (goods_cursor != null)
-                goods_cursor.close();
             new checkitem(new Functions.TaskCallBack() {
                 @Override
                 public void TaskDone(Boolean OrderNeedUpdate) {
@@ -156,10 +154,8 @@ public class BuyItemDetailActivity extends AppCompatActivity {
                 }
             }).execute();
         }
-
-//        else Log.d("2.24", "not right!!!!" + ItemPosition);
-
-
+        if (goods_cursor != null)
+            goods_cursor.close();
     }
 
     void setupAddDialog() {
@@ -167,7 +163,6 @@ public class BuyItemDetailActivity extends AppCompatActivity {
 
         Bundle bundle = new Bundle();
         bundle.putInt("WhichItem", ItemPosition);
-        //=====0308 test popping Dialog
         //------------Dialog
         final Dialog BuyAdd = new Dialog(BuyItemDetailActivity.this);
         BuyAdd.setCancelable(true);
@@ -189,35 +184,30 @@ public class BuyItemDetailActivity extends AppCompatActivity {
                 moneyText = new TextView[cartItem.length],
                 numberText = new TextView[cartItem.length],
                 totalText = new TextView[cartItem.length];
-        ImageView[] Img = new ImageView[cartItem.length], delImg = new ImageView[cartItem.length];
-        Button[] addButton = new Button[cartItem.length], minusButton = new Button[cartItem.length];
+        ImageView[] Img = new ImageView[cartItem.length];
+        LinearLayout[] addButton = new LinearLayout[cartItem.length], minusButton = new LinearLayout[cartItem.length],
+                delImg = new LinearLayout[cartItem.length];
         String itemName = null, itemImg = null, itemId = null;
 
-        final List<String> goods_id = new ArrayList<>();
-        DataBaseHelper helper = new DataBaseHelper(BuyItemDetailActivity.this);
+        DataBaseHelper helper = DataBaseHelper.getmInstance(BuyItemDetailActivity.this);
         SQLiteDatabase database = helper.getWritableDatabase();
         final Cursor goods_cursor = database.query("goods", new String[]{"totalCount", "goods_id", "goods_title",
                 "goods_url", "goods_money", "goods_content", "goods_click", "goods_addtime"}, null, null, null, null, null);
         if (goods_cursor != null && goods_cursor.getCount() >= ItemPosition) {
             goods_cursor.moveToPosition(ItemPosition);
-            //name,name,money,img
-            goods_id.clear();
-            goods_id.add(goods_cursor.getString(1));
 
-            //0324
             if (goods_cursor.getString(1) != null)
                 itemId = goods_cursor.getString(1);
             if (goods_cursor.getString(2) != null)
                 itemName = goods_cursor.getString(2);
             if (goods_cursor.getString(3) != null)
                 itemImg = goods_cursor.getString(3);
-            goods_cursor.close();
         }
-        if (database.isOpen())
-            database.close();
-
+        if (goods_cursor != null)
+            goods_cursor.close();
 
         for (int i = 0; i < cartItem.length; i++) {
+
             View view = LayoutInflater.from(BuyItemDetailActivity.this)
                     .inflate(R.layout.buylist_item, null);
             linearLayout.addView(view);
@@ -226,11 +216,11 @@ public class BuyItemDetailActivity extends AppCompatActivity {
             fromText[i] = (TextView) view.findViewById(R.id.buyitemlist_itemTxt);
             moneyText[i] = (TextView) view.findViewById(R.id.butitemlist_moneyTxt);
             Img[i] = (ImageView) view.findViewById(R.id.buyitemlist_itemImg);
-            delImg[i] = (ImageView) view.findViewById(R.id.buyitemlist_delImg);
+            delImg[i] = (LinearLayout) view.findViewById(R.id.buyitemlist_delImg);
             numberText[i] = (TextView) view.findViewById(R.id.buyitemlist_numbertext);
             totalText[i] = (TextView) view.findViewById(R.id.buyitemlist_totalTxt);
-            addButton[i] = (Button) view.findViewById(R.id.buyitemlist_addbutton);
-            minusButton[i] = (Button) view.findViewById(R.id.buyitemlist_minusbutton);
+            addButton[i] = (LinearLayout) view.findViewById(R.id.buyitemlist_addbutton);
+            minusButton[i] = (LinearLayout) view.findViewById(R.id.buyitemlist_minusbutton);
  /*
   editor.putInt("InBuyList", finalnumber);//the total count of the cart
   editor.putInt("InBuyListg" + finalItemId, smallItemCount);//這個大項目裡面有幾個小項目在購物車裡
@@ -255,6 +245,8 @@ public class BuyItemDetailActivity extends AppCompatActivity {
             nameText[i].setText(itemName);
             fromText[i].setText(cartItem[i][1]);
             moneyText[i].setText(cartItem[i][2]);
+            if (Integer.parseInt(numberText[i].getText().toString()) == 0)
+                numberText[i].setText("1");
             totalText[i].setText(Integer.valueOf(moneyText[i].getText().toString())
                     * Integer.valueOf(numberText[i].getText().toString()) + "");
             totalprice[0] += Integer.valueOf(totalText[i].getText().toString());
@@ -286,7 +278,7 @@ public class BuyItemDetailActivity extends AppCompatActivity {
             minusButton[i].setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (Integer.valueOf(numberText[finalI].getText().toString()) > 0) {
+                    if (Integer.valueOf(numberText[finalI].getText().toString()) > 1) {
                         numberText[finalI].setText((Integer.valueOf(numberText[finalI].getText().toString()) - 1) + "");
                         totalText[finalI].setText(Integer.parseInt(moneyText[finalI].getText().toString())
                                 * Integer.valueOf(numberText[finalI].getText().toString()) + "");
@@ -304,7 +296,7 @@ public class BuyItemDetailActivity extends AppCompatActivity {
 
         final String finalItemId = itemId;
         final int[] finalNumber = {sharedPreferences.getInt("InBuyList", 0)};//購物車總數\
-        if(sharedPreferences.getBoolean("AfterPay",false)) {
+        if (sharedPreferences.getBoolean("AfterPay", false)) {
             SharedPreferences.Editor editor = sharedPreferences.edit();
             editor.putBoolean("AfterPay", false);
             editor.apply();
@@ -316,15 +308,7 @@ public class BuyItemDetailActivity extends AppCompatActivity {
                 int smallItemCount = 0;//大項目裡在購物車裡的小項目總數
                 //確認大項目裡的小項目有沒有在購物車裡面
                 HashSet<String> List = new HashSet<String>();
-                Set<String> test = null;
-                if (sharedPreferences.contains(finalItemId))
-                    test = sharedPreferences.getStringSet(finalItemId, null);
-                if (test == null)
-                    test = new HashSet<String>();
 
-//                hs.add("一月");
-//                hs.add("二月");
-//                editor.putStringSet("KEY_STR_SET", hs);
                 int count = sharedPreferences.getInt("InBuyListg" + finalItemId, 0);//這個大項目有幾個小項目在購物車裡
                 for (int i = 0; i < cartItem.length; i++) {
                     if (count > 0) { //這個大項目有小項目在購物車裡面
@@ -383,12 +367,12 @@ public class BuyItemDetailActivity extends AppCompatActivity {
                 }
                 if (List.size() > 0) {
                     editor.putStringSet(finalItemId, List);
-                    Log.e("3.24", "inList!!!!");
-                    Log.e("3.24", List.toString());
+//                    Log.e("3.24", "inList!!!!");
+//                    Log.e("3.24", List.toString());
                     editor.apply();
                 }
-                if (sharedPreferences.contains(finalItemId))
-                    Log.e("3.24", "contain!!!" + sharedPreferences.getStringSet(finalItemId, null));
+//                if (sharedPreferences.contains(finalItemId))
+//                    Log.e("3.24", "contain!!!" + sharedPreferences.getStringSet(finalItemId, null));
                 if (BuyAdd.isShowing())
                     BuyAdd.cancel();
             }
@@ -408,8 +392,8 @@ public class BuyItemDetailActivity extends AppCompatActivity {
     private void methodThatDoesSomethingWhenTaskIsDone(Boolean a) {
         if (a) {
 //            Log.e("3.24","確認項目array長度"+cartItem.length);//OK
-            AddImg.setVisibility(View.VISIBLE);
-            AddImg.setOnClickListener(new View.OnClickListener() {
+            addLayout.setVisibility(View.VISIBLE);
+            addLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     setupAddDialog();
@@ -444,7 +428,7 @@ public class BuyItemDetailActivity extends AppCompatActivity {
 
         @Override
         protected Boolean doInBackground(String... params) {
-            Log.e("3.9", "=========checkitem======doInBackground" + itemID);
+//            Log.e("3.9", "=========checkitem======doInBackground" + itemID);
             Boolean result = false;
             HttpClient client = new DefaultHttpClient();
             HttpPost post = new HttpPost("http://zhiyou.lin366.com/api/article/show.aspx");
@@ -469,10 +453,10 @@ public class BuyItemDetailActivity extends AppCompatActivity {
             } catch (IOException | NullPointerException e) {
                 e.printStackTrace();
             }
-            String test = Html.fromHtml(getString).toString();
+            String htmlString = Html.fromHtml(getString).toString();
             String state = null;
             try {
-                state = new JSONObject(test.substring(test.indexOf("{"), test.lastIndexOf("}") + 1)).getString("states");
+                state = new JSONObject(htmlString.substring(htmlString.indexOf("{"), htmlString.lastIndexOf("}") + 1)).getString("states");
             } catch (JSONException | NullPointerException e) {
                 e.printStackTrace();
             }
@@ -487,7 +471,7 @@ public class BuyItemDetailActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
             if (jsonArray != null && jsonArray.length() > 0) {
-                Log.e("3.10", "購物車項目?" + jsonArray + "length:" + jsonArray.length());
+//                Log.e("3.10", "購物車項目?" + jsonArray + "length:" + jsonArray.length());
                 cartItem = new String[jsonArray.length()][4];
                 for (int i = 0; i < jsonArray.length(); i++) {
                     try {
@@ -520,18 +504,17 @@ public class BuyItemDetailActivity extends AppCompatActivity {
                 Cursor goods_cursor_big = database.query("goodsitem", new String[]{"goods_bigid",
                                 "goods_itemid", "goods_title", "goods_money", "goods_url"},
                         "goods_bigid=" + "\"" + itemID + "\"", null, null, null, null);
+
                 for (int i = 0; i < jsonArray.length(); i++) {
                     if (goods_cursor_big != null) {//DB已經有這個大項目了->確認這個小項目在嗎
-                        Log.i("3.24", i + "!!!insertDB! in if");
+//                        Log.i("3.24", i + "!!!insertDB! in if");
                         Cursor goods_cursor = database.query("goodsitem", new String[]{"goods_bigid",
                                         "goods_itemid", "goods_title", "goods_money", "goods_url"},
                                 "goods_bigid=" + "\"" + itemID + "\"" + " and goods_itemid=" + "\"" + cartItem[i][0] + "\"", null,
                                 null, null, null);
 
-                        if (goods_cursor != null && goods_cursor.getCount() > 0) {//DB已經有這個大項目裡的這個小項目(i)
-                            Log.i("3.24", i + "!!!insertDB! in second if" + itemID + "  " + cartItem[i][0] + "=====" + goods_cursor.getCount());
-                            goods_cursor.close();
-                        } else {//大項目裡面沒有小項目!! ->> 新增
+                        if (goods_cursor == null || goods_cursor.getCount() <= 0) {//大項目裡面沒有小項目!! ->> 新增
+//                            Log.i("3.24", i + "!!!insertDB! in second if" + itemID + "  " + cartItem[i][0] + "=====" + goods_cursor.getCount());
                             cv.clear();
                             cv.put("goods_bigid", itemID);
                             cv.put("goods_itemid", cartItem[i][0]);
@@ -539,8 +522,11 @@ public class BuyItemDetailActivity extends AppCompatActivity {
                             cv.put("goods_money", cartItem[i][2]);
                             cv.put("goods_url", cartItem[i][3]);
                             long result2 = database.insert("goodsitem", null, cv);
-                            Log.i("3.24", i + "!!!insertDB!" + result2);
                         }
+//                        else ////DB已經有這個大項目裡的這個小項目(i)
+                        if (goods_cursor != null)
+                            goods_cursor.close();
+                        goods_cursor_big.close();
                     } else {
                         cv.clear();
                         cv.put("goods_bigid", itemID);
@@ -549,7 +535,7 @@ public class BuyItemDetailActivity extends AppCompatActivity {
                         cv.put("goods_money", cartItem[i][2]);
                         cv.put("goods_url", cartItem[i][3]);
                         long result2 = database.insert("goodsitem", null, cv);
-                        Log.i("3.24", i + "~~~~~insertDB!" + result2);
+//                        Log.i("3.24", i + "~~~~~insertDB!" + result2);
                     }
                 }
             }

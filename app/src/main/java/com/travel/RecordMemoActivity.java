@@ -56,7 +56,7 @@ public class RecordMemoActivity extends AppCompatActivity {
         });
 
         DateOfLastOne = (TextView) findViewById(R.id.LastOneDate);
-        DataBaseHelper helper = new DataBaseHelper(getApplicationContext());
+        DataBaseHelper helper = DataBaseHelper.getmInstance(getApplicationContext());
         SQLiteDatabase database = helper.getWritableDatabase();
         Cursor trackRoute_cursor = database.query("trackRoute",
                 new String[]{"routesCounter", "track_no", "track_lat", "track_lng",

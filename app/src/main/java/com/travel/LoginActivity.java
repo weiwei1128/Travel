@@ -44,16 +44,11 @@ import java.util.TimerTask;
 import io.fabric.sdk.android.Fabric;
 
 public class LoginActivity extends AppCompatActivity {
-    //11.18
     TextView accountText, passText,
             loginText, signupText,
             forgetText;
     EditText accountEdit, passEdit;
-    //11.18
-
-    //1.4
     ProgressDialog mDialog;
-    //1.4
 
     //2.29 Hua
     //GlobalVariable globalVariable;
@@ -72,7 +67,6 @@ public class LoginActivity extends AppCompatActivity {
         Intent intent = new Intent(LoginActivity.this, HttpService.class);
         startService(intent);
 
-        /////////// 檢查登入狀態
         checkLogin();
 
 
@@ -87,7 +81,6 @@ public class LoginActivity extends AppCompatActivity {
         accountEdit.setVisibility(View.INVISIBLE);
         passEdit.setVisibility(View.INVISIBLE);
 
-        //11.18 按下textview的動畫
         accountText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -209,16 +202,14 @@ public class LoginActivity extends AppCompatActivity {
                 signDialog.show();
             }
         });
-        //11.18 登入textview
     } //onCreate
 
     void checkLogin() {
-        DataBaseHelper helper = new DataBaseHelper(LoginActivity.this);
+        DataBaseHelper helper = DataBaseHelper.getmInstance(LoginActivity.this);
         SQLiteDatabase database = helper.getWritableDatabase();
         Cursor member_cursor = database.query("member", new String[]{"account", "password",
                 "name", "phone", "email", "addr"}, null, null, null, null, null);
         if (member_cursor != null && member_cursor.getCount() > 0) {
-            //表示登入過了!
 //            Toast.makeText(LoginActivity.this, "登入過了!", Toast.LENGTH_SHORT).show();
             Timer a = new Timer();
             //如果正確才會跳到下個畫面
@@ -546,7 +537,7 @@ public class LoginActivity extends AppCompatActivity {
             mDialog.dismiss();
             /** 新增會員資料 **/
             if (OK) {
-                DataBaseHelper helper = new DataBaseHelper(LoginActivity.this);
+                DataBaseHelper helper = DataBaseHelper.getmInstance(LoginActivity.this);
                 SQLiteDatabase database = helper.getWritableDatabase();
                 Cursor member_cursor = database.query("member", new String[]{"account", "password",
                         "name", "phone", "email", "addr"}, null, null, null, null, null);

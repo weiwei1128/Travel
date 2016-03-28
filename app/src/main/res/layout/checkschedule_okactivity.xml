@@ -3,44 +3,50 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".CheckScheduleOKActivity"
-    android:background="#FFFFFF">
+    android:background="#FFFFFF"
+    tools:context=".CheckScheduleOKActivity">
+
     <LinearLayout
         android:id="@+id/shoprecord_Layout"
-        android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="45dp"
         android:background="#5599FF"
-        android:gravity="center_vertical|center_horizontal">
+        android:orientation="horizontal">
 
-        <ImageView
-            android:layout_width="30dp"
-            android:layout_height="40dp"
+        <LinearLayout
             android:id="@+id/checkschedule_backImg"
-            android:src="@drawable/arrow_back_white"
-            android:background="@drawable/click_effect_general"
-            android:layout_marginLeft="10dp" />
+            android:layout_width="70dp"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="50dp"
-            android:text="寶島好智遊"
-            android:id="@+id/checkscheduleHeader"
-            android:textSize="22dp"
-            android:gravity="center_vertical|center_horizontal"
-            android:background="#5599FF"
-            android:textColor="#FFFFFF"
-            android:layout_weight="1"
-            android:layout_gravity="center"
-            android:layout_marginRight="40dp" />
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="40dp"
+                android:layout_marginLeft="10dp"
+                android:background="@drawable/click_effect_general"
+                android:src="@drawable/arrow_back_white" />
+        </LinearLayout>
 
     </LinearLayout>
 
     <WebView
+        android:id="@+id/checkschedule_webview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/checkschedule_webview"
         android:layout_below="@+id/shoprecord_Layout"
         android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:id="@+id/checkscheduleHeader"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center"
+        android:layout_weight="1"
+        android:gravity="center_vertical|center_horizontal"
+        android:text="寶島好智遊"
+        android:textColor="#FFFFFF"
+        android:textSize="22dp" />
 
 </RelativeLayout>

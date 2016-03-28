@@ -170,7 +170,7 @@ public class JsonMemoList extends AsyncTask<String, String, Map<String, String[]
     protected void onPostExecute(Map<String, String[][]> stringStringMap) {
         String[][] jsonObjects = stringStringMap.get("item");
         if (ifOK && Count != 0) {
-            DataBaseHelper helper = new DataBaseHelper(mcontext);
+            DataBaseHelper helper = DataBaseHelper.getmInstance(mcontext);
             SQLiteDatabase database = helper.getWritableDatabase();
 //            database.beginTransaction();
             Cursor travelMemo_cursor = database.query("travelMemo", new String[]{"totalCount", "id",

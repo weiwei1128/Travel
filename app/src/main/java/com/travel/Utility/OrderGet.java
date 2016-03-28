@@ -187,7 +187,7 @@ public class OrderGet extends AsyncTask<String, Void, String> {
                     e.printStackTrace();
                 }
             }
-            DataBaseHelper helper = new DataBaseHelper(context);
+            DataBaseHelper helper = DataBaseHelper.getmInstance(context);
             SQLiteDatabase database = helper.getWritableDatabase();
             Cursor order_cursor = database.query("shoporder", new String[]{"order_id","order_userid ", "order_no",
                     "order_time", "order_name", "order_phone", "order_email",
@@ -248,7 +248,7 @@ public class OrderGet extends AsyncTask<String, Void, String> {
                 }
                 order_cursor.close();
             }
-            database.close();
+//            database.close();
         }
         return returnMessage;
     }

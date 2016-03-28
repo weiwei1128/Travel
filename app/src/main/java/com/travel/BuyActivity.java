@@ -29,7 +29,8 @@ public class BuyActivity extends AppCompatActivity {
     BuyFragmentViewPagerAdapter adapter;
     DataBaseHelper helper;
     SQLiteDatabase database;
-    ImageView backImg, ListImg;
+    ImageView ListImg;
+    LinearLayout backImg;
     int count = 0, pageNo = 1, pages = 0, minus = pageNo - 1;
     TextView number, lastPage, nextPage;
     //http://www.anbon.tw/travel/good_cover.png
@@ -60,13 +61,13 @@ public class BuyActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.buy_activity_new);
+        setContentView(R.layout.buy_activity);
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         UI();
 
 
-        helper = new DataBaseHelper(BuyActivity.this);
+        helper = DataBaseHelper.getmInstance(BuyActivity.this);
         database = helper.getWritableDatabase();
         Cursor goods_cursor = database.query("goods", new String[]{"totalCount", "goods_id", "goods_title",
                 "goods_url", "goods_money", "goods_content", "goods_addtime"}, null, null, null, null, null);
@@ -112,7 +113,7 @@ public class BuyActivity extends AppCompatActivity {
 
 
         adapter = new BuyFragmentViewPagerAdapter(this.getSupportFragmentManager(), viewPager,
-                fragments, BuyActivity.this, 4, 1);
+                fragments, BuyActivity.this);
 
         viewPager.setAdapter(adapter);
         viewPager.setOnPageChangeListener(new PageListener());
@@ -126,7 +127,7 @@ public class BuyActivity extends AppCompatActivity {
         lastPage = (TextView) findViewById(R.id.lastpage_text);
         lastPage.setVisibility(View.INVISIBLE);
         nextPage = (TextView) findViewById(R.id.nextpage_text);
-        backImg = (ImageView) findViewById(R.id.buy_backImg);
+        backImg = (LinearLayout) findViewById(R.id.buy_backImg);
         ListImg = (ImageView) findViewById(R.id.buy_listImg);
         viewPager = (ViewPager) findViewById(R.id.buy_viewpager);
         ListImg.setVisibility(View.INVISIBLE);
@@ -162,9 +163,11 @@ public class BuyActivity extends AppCompatActivity {
             if (pageNo == pages)
                 nextPage.setVisibility(View.INVISIBLE);
             else nextPage.setVisibility(View.VISIBLE);
+
             if (pageNo == 1)
                 lastPage.setVisibility(View.INVISIBLE);
             else lastPage.setVisibility(View.VISIBLE);
+
             minus = pageNo - 1;
             String get = String.valueOf(position + 1);
             number.setText(get);

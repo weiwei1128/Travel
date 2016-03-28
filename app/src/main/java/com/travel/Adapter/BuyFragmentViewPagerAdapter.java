@@ -6,7 +6,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -14,6 +13,7 @@ import java.util.List;
 
 /**
  * Created by wei on 2016/3/7.
+ * 左滑右邊滑
  */
 public class BuyFragmentViewPagerAdapter extends PagerAdapter implements ViewPager.OnPageChangeListener {
     List<Fragment> fragments;
@@ -24,7 +24,7 @@ public class BuyFragmentViewPagerAdapter extends PagerAdapter implements ViewPag
 
     public BuyFragmentViewPagerAdapter(FragmentManager mfragmentmanager, ViewPager mviewpager,
                                        List<Fragment> mfragments,
-                                       Context mcontext, int size, int daysNum) {
+                                       Context mcontext) {
 
         this.fragmentManager = mfragmentmanager;
         this.viewPager = mviewpager;
@@ -53,12 +53,12 @@ public class BuyFragmentViewPagerAdapter extends PagerAdapter implements ViewPag
 
     @Override
     public void onPageSelected(int position) {
-        Log.e("3.8","onPageSelected"+position);
+//        Log.e("3.8", "onPageSelected" + position);
     }
 
     @Override
     public void onPageScrollStateChanged(int state) {
-        Log.e("3.8","onPageScrollStateChanged"+state);
+//        Log.e("3.8", "onPageScrollStateChanged" + state);
     }
 
     @Override
@@ -88,7 +88,7 @@ public class BuyFragmentViewPagerAdapter extends PagerAdapter implements ViewPag
     @Override
     public void setPrimaryItem(ViewGroup container, int position, Object object) {
 //        Log.e("3.8","fragments!!"+fragments.size());
-        if(fragments.size()>0) {
+        if (fragments.size() > 0) {
             fragments.get(currentPageIndex).onStop();
             if (fragments.get(position).isAdded())
                 fragments.get(position).onResume();

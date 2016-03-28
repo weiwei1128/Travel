@@ -39,8 +39,7 @@ public class BuyAdapter extends BaseAdapter {
         inflater = LayoutInflater.from(mcontext);
 
         pageNO = index;
-
-        helper = new DataBaseHelper(context);
+        helper = DataBaseHelper.getmInstance(context);
         database = helper.getWritableDatabase();
 
         options = new DisplayImageOptions.Builder()
@@ -48,7 +47,7 @@ public class BuyAdapter extends BaseAdapter {
                 .showImageOnLoading(R.drawable.loading2)
                 .showImageForEmptyUri(R.drawable.empty)
                 .cacheInMemory(false)
-                .cacheOnDisc(false).build();
+                .cacheOnDisk(true).build();
         listener = new ImageLoadingListener() {
             @Override
             public void onLoadingStarted(String s, View view) {
@@ -78,7 +77,6 @@ public class BuyAdapter extends BaseAdapter {
     @Override
     public int getCount() {
         int number = 0;
-        //TODO need modify!
         Cursor goods_cursor = database.query("goods", new String[]{"totalCount", "goods_id", "goods_title",
                 "goods_url", "goods_money", "goods_content", "goods_click", "goods_addtime"}, null, null, null, null, null);
         if (goods_cursor != null) {
@@ -128,36 +126,29 @@ public class BuyAdapter extends BaseAdapter {
 
         Cursor goods_cursor = database.query("goods", new String[]{"totalCount", "goods_id", "goods_title",
                 "goods_url", "goods_money", "goods_content", "goods_click", "goods_addtime"}, null, null, null, null, null);
-//        Log.e("3.8", "==========page number" + pageNO);
-        /*
-        if (goods_cursor != null && goods_cursor.getCount() >= (pageNO - 1) * 10) {
-            goods_cursor.moveToPosition((pageNO - 1) * 10);
-            int i = 1;
-            while ((goods_cursor.isLast() || !(i >= 10))) {
-                goods_cursor.moveToNext();
-                i++;
-            }
-        }
-        */
+
 
         if (goods_cursor != null && goods_cursor.getCount() >= (pageNO - 1) * 10 + position) {
             goods_cursor.moveToPosition((pageNO - 1) * 10 + position);
+
             if (goods_cursor.getString(2) != null)
                 mcell.buyText.setText(goods_cursor.getString(2));
             else mcell.buyText.setText("資料錯誤");
+
             if (!(mcell.clickText.getText().toString().substring(3).startsWith("0") &&
                     mcell.clickText.getText().toString().endsWith("0")))
                 if (goods_cursor.getString(6) != null) //避免出現:00
                     mcell.clickText.append(goods_cursor.getString(6));
+
             if (goods_cursor.getString(3) != null)
                 loader.displayImage("http://zhiyou.lin366.com/" + goods_cursor.getString(3)
                         , mcell.buyImg, options, listener);
         }
 
-
         if (goods_cursor != null)
             goods_cursor.close();
-
+//        if(mcell.buyImg!=null)
+//            mcell.buyImg.setScaleType(ImageView.ScaleType.MATRIX);
 
         return convertView;
     }

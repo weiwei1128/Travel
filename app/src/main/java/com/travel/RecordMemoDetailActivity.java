@@ -82,7 +82,7 @@ public class RecordMemoDetailActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_record_memo_detail);
 
-        helper = new DataBaseHelper(getApplicationContext());
+        helper = DataBaseHelper.getmInstance(getApplicationContext());
         database = helper.getWritableDatabase();
 
         backImg = (ImageView) findViewById(R.id.MemoDetail_backImg);

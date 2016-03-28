@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -14,7 +15,6 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.AdapterView;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -39,21 +39,20 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 
 public class CheckScheduleActivity extends AppCompatActivity {
-    ImageView backImg;
     ListView listView;
     CheckScheduleAdapter adapter;
     int itemCount = 0;
     String uid = null;
     int count = 0;
     String[] itemid, itemno, itemdate, itemprice, itemcontent, itemstate;
-    LinearLayout putItemLayout;
+    LinearLayout putItemLayout, backImg;
     Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.checkschedule_basic);
-        backImg = (ImageView) findViewById(R.id.checkschedule_backImg);
+        backImg = (LinearLayout) findViewById(R.id.checkschedule_backImg);
         backImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -62,7 +61,7 @@ public class CheckScheduleActivity extends AppCompatActivity {
             }
         });
         putItemLayout = (LinearLayout) findViewById(R.id.checkschedule_content);
-        DataBaseHelper helper = new DataBaseHelper(CheckScheduleActivity.this);
+        DataBaseHelper helper = DataBaseHelper.getmInstance(CheckScheduleActivity.this);
         SQLiteDatabase database = helper.getWritableDatabase();
         Cursor member_cursor = database.query("member", new String[]{"account", "password",
                 "name", "phone", "email", "addr"}, null, null, null, null, null);
@@ -85,46 +84,31 @@ public class CheckScheduleActivity extends AppCompatActivity {
             setupWebview();
 
         }
-
-        //delete below???
-        /*
-        Cursor order_cursor = database.query("shoporder", new String[]{"order_id", "order_no",
-                "order_time", "order_name", "order_phone", "order_email",
-                "order_money", "order_state", "order_schedule"}, "order_schedule=" + "1", null, null, null, null);
-        if (order_cursor != null) {
-            Log.e("3.23", "count!!" + order_cursor.getCount());
-            itemCount = order_cursor.getCount();
-            order_cursor.close();
-        }
-
-        if (Functions.ifLogin(CheckScheduleActivity.this) && itemCount > 0) {
-            setContentView(R.layout.checkschedule_activity); //0309
-            listView = (ListView) findViewById(R.id.checkschedule_listview); //0309
-            adapter = new CheckScheduleAdapter(CheckScheduleActivity.this, itemCount); //0309
-            listView.setAdapter(adapter); //0309
-            listView.setOnItemClickListener(new itemClickListener()); //0309
-
-        } else {
-            setupWebview();
-        }
-        */
-        //delete upside?
-
-
     }
 
     void setupWebview() {
-        Log.i("3.25", "setWebView");
+//        Log.i("3.25", "setWebView");
         //WEBVIEW VERSION
+        final ProgressDialog dialog = new ProgressDialog(CheckScheduleActivity.this);
+        dialog.setMessage("載入中");
+        dialog.show();
+
         WebView webView = new WebView(CheckScheduleActivity.this);
         putItemLayout.addView(webView);
-        String myURL = "http://zhiyou.lin366.com/diy/";
+
         WebSettings websettings = webView.getSettings();
         websettings.setSupportZoom(true);
         websettings.setBuiltInZoomControls(true);
         websettings.setJavaScriptEnabled(true);
 
-        webView.setWebViewClient(new WebViewClient());
+        webView.setWebViewClient(new WebViewClient(){
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+                dialog.dismiss();
+            }
+        });
+        String myURL = "http://zhiyou.lin366.com/diy/";
         webView.loadUrl(myURL);
     }
 
@@ -141,10 +125,9 @@ public class CheckScheduleActivity extends AppCompatActivity {
 
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            //TODO 0326
             if (adapter.getWebviewId(position) != null) {
                 Bundle bundle = new Bundle();
-                Log.e("3.25","getWebVIewID:"+adapter.getWebviewId(position)+" id:"+itemid[position]);
+//                Log.e("3.25", "getWebVIewID:" + adapter.getWebviewId(position) + " id:" + itemid[position]);
                 bundle.putString("order_id", adapter.getWebviewId(position));
                 Functions.go(false, CheckScheduleActivity.this,
                         CheckScheduleActivity.this, CheckScheduleOKActivity.class, bundle);
@@ -165,7 +148,7 @@ public class CheckScheduleActivity extends AppCompatActivity {
 
         @Override
         protected void onPreExecute() {
-            Log.e("3.25", "OnPreExecute");
+//            Log.e("3.25", "OnPreExecute");
             dialog.setMessage("抓取資料中");
             dialog.setCancelable(false);
             dialog.show();
@@ -176,7 +159,7 @@ public class CheckScheduleActivity extends AppCompatActivity {
         @Override
         protected Boolean doInBackground(String... params) {
             //{"act":"line","uid":"ljd110@qq.com"}
-            Log.e("3.25", "doInBackground");
+//            Log.e("3.25", "doInBackground");
             HttpClient client = new DefaultHttpClient();
             HttpPost post = new HttpPost("http://zhiyou.lin366.com/api/order/line.aspx");
             MultipartEntity entity = new MultipartEntity();
@@ -205,7 +188,7 @@ public class CheckScheduleActivity extends AppCompatActivity {
             } catch (JSONException | NullPointerException e2) {
                 e2.printStackTrace();
             }
-            Log.i("3.25", "doInBackground" + states);
+//            Log.i("3.25", "doInBackground" + states);
             if (states == null || states.equals("0"))
                 return false;
             else {
@@ -225,15 +208,6 @@ public class CheckScheduleActivity extends AppCompatActivity {
                     itemno = new String[count];
                     itemprice = new String[count];
                     itemstate = new String[count];
-//                    "id": "30",
-//                            "order_no": "B16030310063131",
-//                            "img_url": "/upload/201601/18/201601181455470401.jpg",
-//                            "add_time": "2016/3/3 10:06:31",
-//                            "accept_name": "ljd110@qq.com",
-//                            "mobile": "ljd110@qq.com",
-//                            "email": "ljd110@qq.com",
-//                            "order_amount": "1360.00",
-//                            "status": "待確認"
                     for (int i = 0; i < jsonArray.length(); i++) {
                         try {
                             itemid[i] = jsonArray.getJSONObject(i).getString("id");
@@ -266,7 +240,7 @@ public class CheckScheduleActivity extends AppCompatActivity {
                                 //有小數點!!
                                 sellprice = sellprice.substring(0, sellprice.indexOf("."));
                             }
-                            itemprice[i] = "$"+sellprice;
+                            itemprice[i] = "$" + sellprice;
                         } catch (JSONException | NullPointerException e) {
                             e.printStackTrace();
                         }
@@ -278,75 +252,13 @@ public class CheckScheduleActivity extends AppCompatActivity {
                     }
                     return true;
                 }
-
-
-                /**
-                 * {
-                 "states": "1",
-                 "uid": "ljd110@qq.com",
-                 "list": [{
-                 "id": "30",
-                 "order_no": "B16030310063131",
-                 "img_url": "/upload/201601/18/201601181455470401.jpg",
-                 "add_time": "2016/3/3 10:06:31",
-                 "accept_name": "ljd110@qq.com",
-                 "mobile": "ljd110@qq.com",
-                 "email": "ljd110@qq.com",
-                 "order_amount": "1360.00",
-                 "status": "待確認"
-                 }, {
-                 "id": "23",
-                 "order_no": "B16013110100175",
-                 "img_url": "/upload/201601/18/201601181454064253.jpg",
-                 "add_time": "2016/1/31 10:10:01",
-                 "accept_name": "ljd110@qq.com",
-                 "mobile": "ljd110@qq.com",
-                 "email": "ljd110@qq.com",
-                 "order_amount": "20393.00",
-                 "status": "待確認"
-                 }, {
-                 "id": "22",
-                 "order_no": "B16012515185916",
-                 "img_url": "/upload/201601/18/201601181454064253.jpg",
-                 "add_time": "2016/1/25 15:18:59",
-                 "accept_name": "ljd110@qq.com",
-                 "mobile": "ljd110@qq.com",
-                 "email": "ljd110@qq.com",
-                 "order_amount": "988.00",
-                 "status": "待確認"
-                 }, {
-                 "id": "21",
-                 "order_no": "B16012515123863",
-                 "img_url": "/upload/201601/18/201601181454064253.jpg",
-                 "add_time": "2016/1/25 15:12:38",
-                 "accept_name": "ljd110@qq.com",
-                 "mobile": "ljd110@qq.com",
-                 "email": "ljd110@qq.com",
-                 "order_amount": "988.00",
-                 "status": "待確認"
-                 }, {
-                 "id": "20",
-                 "order_no": "B16012515063823",
-                 "img_url": "/upload/201601/18/201601181455470401.jpg",
-                 "add_time": "2016/1/25 15:06:38",
-                 "accept_name": "ljd110@qq.com",
-                 "mobile": "ljd110@qq.com",
-                 "email": "ljd110@qq.com",
-                 "order_amount": "5376.00",
-                 "status": "待確認"
-                 }]
-                 }
-                 *
-                 * */
-
-
                 return false;
             }
         }
 
         @Override
         protected void onPostExecute(Boolean s) {
-            Log.e("3.25", "onPostExecute" + s + " -" + count);
+//            Log.e("3.25", "onPostExecute" + s + " -" + count);
             dialog.dismiss();
             taskCallBack.TaskDone(s);
             super.onPostExecute(s);
@@ -360,6 +272,8 @@ public class CheckScheduleActivity extends AppCompatActivity {
             adapter = new CheckScheduleAdapter(CheckScheduleActivity.this, count, itemid, itemno,
                     itemdate, itemprice, itemcontent, itemstate); //0309
             listView.setAdapter(adapter); //0309
+            listView.setDivider(new ColorDrawable(0xFFFFFFFF));
+            listView.setDividerHeight(20);
             listView.setOnItemClickListener(new itemClickListener()); //0309
         } else setupWebview();
     }

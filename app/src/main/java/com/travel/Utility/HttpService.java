@@ -119,7 +119,7 @@ public class HttpService extends Service {
 //            Log.d("3.7", "BannerService result:" + result);
             if (jsonArray != null) {
 //                Log.d("3.7", "BannerService result:" + jsonArray.length());
-                DataBaseHelper helper = new DataBaseHelper(context);
+                DataBaseHelper helper = DataBaseHelper.getmInstance(context);
                 SQLiteDatabase database = helper.getWritableDatabase();
                 Cursor cursor = database.query("banner", new String[]{"img_url"}, null, null, null, null, null);
                 if (cursor != null && cursor.getCount() > 0)
@@ -228,7 +228,7 @@ public class HttpService extends Service {
 
         @Override
         protected void onPostExecute(String s) {
-            DataBaseHelper helper = new DataBaseHelper(context);
+            DataBaseHelper helper = DataBaseHelper.getmInstance(context);
             SQLiteDatabase database = helper.getWritableDatabase();
             Cursor news_cursor = database.query("news", new String[]{"title"}, null, null, null, null, null);
             if (news_cursor != null && s != null && !s.equals("")) {
@@ -361,7 +361,7 @@ public class HttpService extends Service {
 
                 String[][] jsonObjects = s.get("item");
 //                Log.e("3.10","special_activity item size:"+jsonObjects.length);
-                DataBaseHelper helper = new DataBaseHelper(context);
+                DataBaseHelper helper = DataBaseHelper.getmInstance(context);
                 SQLiteDatabase database = helper.getWritableDatabase();
 //                database.beginTransaction();
                 Cursor special = database.query("special_activity", new String[]{"special_id", "title", "img", "content", "price", "click"},
@@ -429,7 +429,7 @@ public class HttpService extends Service {
                     special.close();
                 }
 //                database.endTransaction();
-                database.close();
+//                database.close();
             }
 
             super.onPostExecute(s);
@@ -596,7 +596,7 @@ public class HttpService extends Service {
         protected void onPostExecute(Map<String, String[][]> stringStringMap) {
             String[][] jsonObjects = stringStringMap.get("item");
             if (ifOK && Count != 0) {
-                DataBaseHelper helper = new DataBaseHelper(mcontext);
+                DataBaseHelper helper = DataBaseHelper.getmInstance(context);
                 SQLiteDatabase database = helper.getWritableDatabase();
 //            database.beginTransaction();
                 Cursor goods_cursor = database.query("goods", new String[]{"totalCount", "goods_id",

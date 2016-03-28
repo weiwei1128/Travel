@@ -93,7 +93,7 @@ public class OrderList extends AsyncTask<String,Void,Boolean> {
                 e.printStackTrace();
             }
             if((foodlist==null||foodlist.length()==0)&&(jindianlist==null||jindianlist.length()==0)){
-                DataBaseHelper helper = new DataBaseHelper(context);
+                DataBaseHelper helper = DataBaseHelper.getmInstance(context);
                 SQLiteDatabase database = helper.getWritableDatabase();
                 Cursor order_cursor = database.query("shoporder", new String[]{"order_id","order_userid ", "order_no",
                         "order_time", "order_name", "order_phone", "order_email",
@@ -103,13 +103,14 @@ public class OrderList extends AsyncTask<String,Void,Boolean> {
                     ContentValues cv = new ContentValues();
                     cv.put("order_schedule", 1);
                     long result = database.update("shoporder", cv, "order_id=?", new String[]{OrderId});
-                    Log.i("3.23","><><><><><> OrderList count should be 1"+order_cursor.getCount()+"||||result:"+result);
-                }else Log.e("3.23","!!!!OrderList should not happened!!!!");
+//                    Log.i("3.23","><><><><><> OrderList count should be 1"+order_cursor.getCount()+"||||result:"+result);
+                }
+//                else Log.e("3.23","!!!!OrderList should not happened!!!!");
 
                 if(order_cursor!=null)
                     order_cursor.close();
-                if(database.isOpen())
-                    database.close();
+//                if(database.isOpen())
+//                    database.close();
             }
 
         }

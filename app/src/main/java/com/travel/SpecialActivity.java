@@ -10,7 +10,6 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -23,18 +22,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SpecialActivity extends AppCompatActivity {
-    ImageView backImg;
-    LinearLayout layout;
+    LinearLayout layout, backImg;
     int FragmentNumber = 0;
-    int PageNo = 0,pageNo = 1, pages = 0;
+    int PageNo = 0, pageNo = 1, pages = 0;
     ViewPager viewPager;
     List<Fragment> fragments = new ArrayList<>();
-    List<TextView> NoText = new ArrayList<>();
     SpecialFragmentViewPagerAdapter specialFragmentViewPagerAdapter;
     DataBaseHelper helper;
     SQLiteDatabase database;
     FragmentManager fragmentManager;
-    TextView number, lastPage, nextPage;;
+    TextView number, lastPage, nextPage;
+    ;
 
     @Override
     protected void onStart() {
@@ -44,11 +42,11 @@ public class SpecialActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.special_activity_new);
+        setContentView(R.layout.special_activity);
         lastPage = (TextView) findViewById(R.id.lastpage_text);
         lastPage.setVisibility(View.INVISIBLE);
         nextPage = (TextView) findViewById(R.id.nextpage_text);
-        backImg = (ImageView) findViewById(R.id.special_backImg);
+        backImg = (LinearLayout) findViewById(R.id.special_backImg);
         layout = (LinearLayout) findViewById(R.id.special_textLayout);
         viewPager = (ViewPager) findViewById(R.id.special_viewpager);
         backImg.setOnClickListener(new View.OnClickListener() {
@@ -60,7 +58,7 @@ public class SpecialActivity extends AppCompatActivity {
         lastPage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                viewPager.setCurrentItem(pageNo-2);
+                viewPager.setCurrentItem(pageNo - 2);
             }
         });
         nextPage.setOnClickListener(new View.OnClickListener() {
@@ -70,7 +68,7 @@ public class SpecialActivity extends AppCompatActivity {
 
             }
         });
-        helper = new DataBaseHelper(SpecialActivity.this);
+        helper = DataBaseHelper.getmInstance(SpecialActivity.this);
         database = helper.getReadableDatabase();
         Cursor special = database.query("special_activity", new String[]{"special_id", "title", "img", "content", "price", "click"},
                 null, null, null, null, null);

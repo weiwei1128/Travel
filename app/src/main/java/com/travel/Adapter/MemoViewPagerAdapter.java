@@ -40,8 +40,7 @@ public class MemoViewPagerAdapter extends PagerAdapter {
         }
         listOfBitmapArray = bitmaps;
         mCount = listOfBitmapArray.get(mLocation).size();
-
-        helper = new DataBaseHelper(mcontext);
+        helper = DataBaseHelper.getmInstance(context);
         database = helper.getWritableDatabase();
     }
 

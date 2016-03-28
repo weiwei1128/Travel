@@ -8,11 +8,9 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -39,13 +37,12 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class BuyItemListConfirmActivity extends AppCompatActivity {
-    ImageView backImg;
     TextView buylistText, totalText;
     EditText nameEdit, telEdit, emailEdit, addrEdit, messageEdit;
     String idS, nameS = null, phoneS = null, emailS = null, addrS = null, messageS = null;
     DataBaseHelper helper;
     SQLiteDatabase database;
-    LinearLayout confrimLayout;
+    LinearLayout confrimLayout, backImg;
     //get shop list item
     final HashMap<String, Integer> cartList = new HashMap<>();
     //get remove list
@@ -69,12 +66,12 @@ public class BuyItemListConfirmActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.buyitem_list_confirm_activity);
         Bundle bundle = this.getIntent().getExtras();
-        if(bundle!=null&&bundle.containsKey("AfterPay")&&bundle.getBoolean("AfterPay"))
+        if (bundle != null && bundle.containsKey("AfterPay") && bundle.getBoolean("AfterPay"))
             finish();
 
 
         final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        helper = new DataBaseHelper(BuyItemListConfirmActivity.this);
+        helper =DataBaseHelper.getmInstance(BuyItemListConfirmActivity.this);
         database = helper.getWritableDatabase();
 
         UI();
@@ -122,7 +119,6 @@ public class BuyItemListConfirmActivity extends AppCompatActivity {
 //                }
 
 
-                //TODO need modify!
 //                Toast.makeText(BuyItemListConfirmActivity.this, "建構中!", Toast.LENGTH_SHORT).show();
 //                Log.i("3.24", "要remove的東西:" + removeList.size());
             }
@@ -186,7 +182,7 @@ public class BuyItemListConfirmActivity extends AppCompatActivity {
 
     void UI() {
         buylistText = (TextView) findViewById(R.id.buyitemlistconfirm_listText);
-        backImg = (ImageView) findViewById(R.id.buyitemlistconfirm_backImg);
+        backImg = (LinearLayout) findViewById(R.id.buyitemlistconfirm_backImg);
         confrimLayout = (LinearLayout) findViewById(R.id.buyitemlistconfirm_confirmLay);
         nameEdit = (EditText) findViewById(R.id.buyitemlistconfirm_nameEdit);
         telEdit = (EditText) findViewById(R.id.buyitemlistconfirm_telEdit);

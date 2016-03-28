@@ -51,7 +51,7 @@ public class MainFragment extends Fragment {
             context.registerReceiver(getNewsBroadcast, new IntentFilter("banner"));
         }
         String message = "讀取資料中";
-        DataBaseHelper helper = new DataBaseHelper(context);
+        DataBaseHelper helper = DataBaseHelper.getmInstance(context);
         SQLiteDatabase database = helper.getWritableDatabase();
         Cursor news_cursor = database.query("news", new String[]{"title"}, null, null, null, null, null);
         if (news_cursor != null && news_cursor.getCount() > 0) {
@@ -216,7 +216,7 @@ public class MainFragment extends Fragment {
         public void onReceive(Context context, Intent intent) {
             if (intent != null) {
                 if (intent.getBooleanExtra("news", false)) {
-                    DataBaseHelper helper = new DataBaseHelper(context);
+                    DataBaseHelper helper = DataBaseHelper.getmInstance(context);
                     SQLiteDatabase database = helper.getWritableDatabase();
                     String message = "讀取資料中";
                     Cursor news_cursor = database.query("news", new String[]{"title"}, null, null, null, null, null);

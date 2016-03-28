@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -18,7 +19,7 @@ import com.travel.Utility.DataBaseHelper;
 import com.travel.Utility.Functions;
 
 public class SpecialDetailActivity extends AppCompatActivity {
-    ImageView itemImg, backImg;
+    ImageView itemImg;
     TextView itemTitle, itemContent;
     DataBaseHelper helper;
     SQLiteDatabase database;
@@ -26,6 +27,7 @@ public class SpecialDetailActivity extends AppCompatActivity {
     ImageLoader loader = ImageLoader.getInstance();
     DisplayImageOptions options;
     private ImageLoadingListener listener;
+    LinearLayout backImg;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,10 +39,10 @@ public class SpecialDetailActivity extends AppCompatActivity {
                 itemPosition = bundle.getInt("WhichItem");
             }
         itemImg = (ImageView) findViewById(R.id.specailitem_Img);
-        backImg = (ImageView) findViewById(R.id.specialitem_backImg);
+        backImg = (LinearLayout) findViewById(R.id.specialitem_backImg);
         itemTitle = (TextView) findViewById(R.id.specialitemName_Text);
         itemContent = (TextView) findViewById(R.id.specailitemDetail_text);
-        DataBaseHelper helper = new DataBaseHelper(SpecialDetailActivity.this);
+        DataBaseHelper helper = DataBaseHelper.getmInstance(SpecialDetailActivity.this);
         SQLiteDatabase database = helper.getWritableDatabase();
         backImg.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -53,8 +55,8 @@ public class SpecialDetailActivity extends AppCompatActivity {
                 .showImageOnFail(R.drawable.error)
                 .showImageForEmptyUri(R.drawable.empty)
                 .showImageOnLoading(R.drawable.loading2)
-                .cacheInMemory()
-                .cacheOnDisc().build();
+                .cacheInMemory(false)
+                .cacheOnDisk(true).build();
         listener = new ImageLoadingListener() {
             @Override
             public void onLoadingStarted(String s, View view) {

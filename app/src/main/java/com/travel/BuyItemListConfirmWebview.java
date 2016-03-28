@@ -1,5 +1,6 @@
 package com.travel;
 
+import android.app.ProgressDialog;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -9,13 +10,13 @@ import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.travel.Utility.Functions;
 
 public class BuyItemListConfirmWebview extends AppCompatActivity {
-    ImageView backImg;
+    LinearLayout backImg;
     TextView header;
     WebView webView;
 
@@ -42,20 +43,30 @@ public class BuyItemListConfirmWebview extends AppCompatActivity {
     }
 
     void setWebView(String id) {
+        final ProgressDialog dialog = new ProgressDialog(BuyItemListConfirmWebview.this);
+        dialog.setMessage("載入中");
+        dialog.setCancelable(false);
+        dialog.show();
 
-        String myURL = "http://zhiyou.lin366.com/pay.aspx?id=" + id;
 
         WebSettings websettings = webView.getSettings();
         websettings.setSupportZoom(true);
         websettings.setBuiltInZoomControls(true);
         websettings.setJavaScriptEnabled(true);
 
-        webView.setWebViewClient(new WebViewClient());
+        webView.setWebViewClient(new WebViewClient() {
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+                dialog.dismiss();
+            }
+        });
+        String myURL = "http://zhiyou.lin366.com/pay.aspx?id=" + id;
         webView.loadUrl(myURL);
     }
 
     void UI() {
-        backImg = (ImageView) findViewById(R.id.checkschedulelist_backImg);
+        backImg = (LinearLayout) findViewById(R.id.checkschedulelist_backImg);
         header = (TextView) findViewById(R.id.checkschedulelistHeader);
         webView = (WebView) findViewById(R.id.webView);
         header.setText("付款頁面");
@@ -64,7 +75,7 @@ public class BuyItemListConfirmWebview extends AppCompatActivity {
             public void onClick(View v) {
                 SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(BuyItemListConfirmWebview.this);
                 SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.putBoolean("AfterPay",true);
+                editor.putBoolean("AfterPay", true);
                 editor.apply();
                 Functions.go(false, BuyItemListConfirmWebview.this, BuyItemListConfirmWebview.this,
                         BuyActivity.class, null);

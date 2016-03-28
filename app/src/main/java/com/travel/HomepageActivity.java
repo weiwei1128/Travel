@@ -1,31 +1,32 @@
 package com.travel;
 
 /****
-//
-//                       _oo0oo_
-//                      o8888888o
-//                      88" . "88
-//                      (| -_- |)
-//                      0\  =  /0
-//                    ___/`---'\___
-//                  .' \\|     |// '.
-//                 / \\|||  :  |||// \
-//                / _||||| -:- |||||- \
-//               |   | \\\  -  /// |   |
-//               | \_|  ''\---/''  |_/ |
-//               \  .-\__  '-'  ___/-. /
-//             ___'. .'  /--.--\  `. .'___
-//          ."" '<  `.___\_<|>_/___.' >' "".
-//         | | :  `- \`.;`\ _ /`;.`/ - ` : | |
-//         \  \ `_.   \_ __\ /__ _/   .-` /  /
-//     =====`-.____`.___ \_____/___.-`___.-'=====
-//                       `=---='
-//
-//
-//     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//
-//               佛祖保佑         永無BUG
-/****/
+ * //
+ * //                       _oo0oo_
+ * //                      o8888888o
+ * //                      88" . "88
+ * //                      (| -_- |)
+ * //                      0\  =  /0
+ * //                    ___/`---'\___
+ * //                  .' \\|     |// '.
+ * //                 / \\|||  :  |||// \
+ * //                / _||||| -:- |||||- \
+ * //               |   | \\\  -  /// |   |
+ * //               | \_|  ''\---/''  |_/ |
+ * //               \  .-\__  '-'  ___/-. /
+ * //             ___'. .'  /--.--\  `. .'___
+ * //          ."" '<  `.___\_<|>_/___.' >' "".
+ * //         | | :  `- \`.;`\ _ /`;.`/ - ` : | |
+ * //         \  \ `_.   \_ __\ /__ _/   .-` /  /
+ * //     =====`-.____`.___ \_____/___.-`___.-'=====
+ * //                       `=---='
+ * //
+ * //
+ * //     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ * //
+ * //               佛祖保佑         永無BUG
+ * /
+ ****/
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -60,6 +61,7 @@ public class HomepageActivity extends FragmentActivity {
     MemberFragment memberFragment = new MemberFragment();
     MainFragment mainFragment = new MainFragment();
     ShopRecordFragment shopRecordFragment = new ShopRecordFragment();
+    MoreFragment moreFragment = new MoreFragment();
 
 
     //3.10 Hua
@@ -70,11 +72,11 @@ public class HomepageActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fragment_test);
         UI();
+
         changeFragment(mainFragment);
         homeImg.setClickable(false);
         homeImg.setImageResource(R.drawable.tab_selected_home);
         homeText.setTextColor(getResources().getColor(R.color.blue_click));
-
 
         ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(HomepageActivity.this)
                 .build();
@@ -215,7 +217,11 @@ public class HomepageActivity extends FragmentActivity {
         moreLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                Functions.ClickTouchEvent(moreImg, moreText, "more", true, 356735);
+                changeFragment(moreFragment);
+                memberClick(false);
+                homeClick(false);
+                moreClick(true);
+                orderClick(false);
             }
         });
         moreLayout.setOnTouchListener(new View.OnTouchListener() {

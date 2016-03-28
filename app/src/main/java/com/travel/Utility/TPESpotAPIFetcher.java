@@ -126,7 +126,7 @@ public class TPESpotAPIFetcher extends AsyncTask<Void, Void, TPESpotJson> {
         Log.e("3/23_TPESpotJson", "Loaded to globalVariable");
 
         Log.e("3/23_", "=========TPESpotJson======Write to DB");
-        DataBaseHelper helper = new DataBaseHelper(mcontext);
+        DataBaseHelper helper = DataBaseHelper.getmInstance(mcontext);
         SQLiteDatabase database = helper.getWritableDatabase();
         Cursor spotDataRaw_cursor = database.query("spotDataRaw", new String[]{"spotName", "spotAdd",
                         "spotLat", "spotLng", "picture1", "picture2", "picture3",
