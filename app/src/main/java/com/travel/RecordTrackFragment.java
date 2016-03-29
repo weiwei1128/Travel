@@ -315,7 +315,7 @@ public class RecordTrackFragment extends Fragment implements
                     starttime[0] = System.currentTimeMillis();
                     //----2.4
 
-                    DataBaseHelper helper = new DataBaseHelper(getActivity());
+                    DataBaseHelper helper = DataBaseHelper.getmInstance(getActivity());
                     SQLiteDatabase database = helper.getWritableDatabase();
                     Cursor trackRoute_cursor = database.query("trackRoute",
                             new String[]{"routesCounter", "track_no", "track_lat", "track_lng",
@@ -331,8 +331,6 @@ public class RecordTrackFragment extends Fragment implements
                         }
                         trackRoute_cursor.close();
                     }
-                    database.close();
-                    helper.close();
 
                     if (!Functions.isMyServiceRunning(getActivity(), TrackRouteService.class)) {
                         Intent intent_Trace = new Intent(getActivity(), TrackRouteService.class);
@@ -412,7 +410,7 @@ public class RecordTrackFragment extends Fragment implements
                     @Override
                     public void onClick(View v) {
                         // save content to DB
-                        DataBaseHelper helper = new DataBaseHelper(getActivity());
+                        DataBaseHelper helper = DataBaseHelper.getmInstance(getActivity());
                         SQLiteDatabase db = helper.getReadableDatabase();
                         Cursor memo_cursor = db.query("travelmemo", new String[]{"memo_routesCounter", "memo_trackNo",
                                         "memo_content", "memo_img", "memo_latlng", "memo_time"},
@@ -444,8 +442,6 @@ public class RecordTrackFragment extends Fragment implements
                                 Toast.makeText(getActivity(), "心得已上傳！", Toast.LENGTH_SHORT).show();
                             }
                             memo_cursor.close();
-                            db.close();
-                            helper.close();
                             if (spotDialog.isShowing()) {
                                 spotDialog.dismiss();
                             }
@@ -624,7 +620,7 @@ public class RecordTrackFragment extends Fragment implements
 
     // retrieve trackRoute from DB
     private void RetrieveRouteFromDB() {
-        DataBaseHelper helper = new DataBaseHelper(getActivity());
+        DataBaseHelper helper = DataBaseHelper.getmInstance(getActivity());
         SQLiteDatabase database = helper.getWritableDatabase();
         Cursor trackRoute_cursor = database.query("trackRoute",
                 new String[]{"routesCounter","track_no", "track_lat", "track_lng",
@@ -663,8 +659,6 @@ public class RecordTrackFragment extends Fragment implements
             }
             trackRoute_cursor.close();
         }
-        database.close();
-        helper.close();
     }
 
     @Override
@@ -731,7 +725,7 @@ public class RecordTrackFragment extends Fragment implements
         @Override
         public void onClick(View v) {
             /**DB**/
-            DataBaseHelper helper = new DataBaseHelper(getActivity());
+            DataBaseHelper helper = DataBaseHelper.getmInstance(getActivity());
             SQLiteDatabase db = helper.getReadableDatabase();
             Cursor memo_cursor = db.query("travelmemo", new String[]{"memo_routesCounter", "memo_trackNo",
                             "memo_content", "memo_img", "memo_latlng", "memo_time"},
@@ -784,9 +778,7 @@ public class RecordTrackFragment extends Fragment implements
                 Toast.makeText(getActivity(), "圖片已上傳！", Toast.LENGTH_SHORT).show();
             }
             memo_cursor.close();
-            db.close();
 
-            helper.close();
             if (spotDialog.isShowing()) {
                 spotDialog.dismiss();
             }
@@ -836,7 +828,7 @@ public class RecordTrackFragment extends Fragment implements
                     intent_Trace.putExtra("isPause", true);
                     getActivity().sendBroadcast(intent_Trace);
 
-                    DataBaseHelper helper = new DataBaseHelper(getContext());
+                    DataBaseHelper helper = DataBaseHelper.getmInstance(getActivity());
                     SQLiteDatabase database = helper.getWritableDatabase();
                     Cursor trackRoute_cursor = database.query("trackRoute",
                             new String[]{"routesCounter", "track_no", "track_lat", "track_lng",
@@ -854,11 +846,9 @@ public class RecordTrackFragment extends Fragment implements
                                 + " no:" + track_no + " 座標 " + track_lat + "," + track_lng + " status " + status);
                         trackRoute_cursor.close();
                     }
-                    database.close();
-                    helper.close();
                 } else if (status == 0) {
                     String track_title = intent.getStringExtra("track_title");
-                    DataBaseHelper helper = new DataBaseHelper(getContext());
+                    DataBaseHelper helper = DataBaseHelper.getmInstance(getActivity());
                     SQLiteDatabase database = helper.getWritableDatabase();
                     Cursor trackRoute_cursor = database.query("trackRoute",
                             new String[]{"routesCounter", "track_no", "track_lat", "track_lng",
@@ -885,8 +875,6 @@ public class RecordTrackFragment extends Fragment implements
                         Log.e("3/27_", "RecordTrackFragment. notifyDataSetChanged");
                         trackRoute_cursor.close();
                     }
-                    database.close();
-                    helper.close();
                 }
             }
         }
@@ -911,6 +899,7 @@ public class RecordTrackFragment extends Fragment implements
         // Raw height and width of image
         final int height = options.outHeight;
         final int width = options.outWidth;
+        Log.e("3/27_", "Marker size. "+height+","+width);
         int inSampleSize = 1;
 
         if (height > reqHeight || width > reqWidth) {

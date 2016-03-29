@@ -1,53 +1,6 @@
 [
     {
-<<<<<<< HEAD
-        "outputFile": "/Users/wei/Documents/Travel/library/build/intermediates/res/merged/release/values-w600dp-v13/values-w600dp-v13.xml",
-=======
-        "outputFile": "D:\\home\\udaysingh\\android-studio-projects\\ImageSlider\\library\\build\\intermediates\\res\\merged\\release\\values-w600dp-v13\\values-w600dp-v13.xml",
-        "map": [
-            {
-                "to": {
-                    "startLine": 2,
-                    "startColumn": 4,
-                    "startOffset": 55,
-                    "endColumn": 63,
-                    "endOffset": 114
-                },
-                "from": {
-                    "file": "D:\\home\\udaysingh\\android-studio-projects\\ImageSlider\\library\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.0.1\\res\\values-w600dp\\values-w600dp.xml",
-                    "position": {
-                        "startLine": 4,
-                        "startColumn": 4,
-                        "startOffset": 283,
-                        "endColumn": 63,
-                        "endOffset": 342
-                    }
-                }
-            },
-            {
-                "to": {
-                    "startLine": 3,
-                    "startColumn": 4,
-                    "startOffset": 119,
-                    "endColumn": 54,
-                    "endOffset": 169
-                },
-                "from": {
-                    "file": "D:\\home\\udaysingh\\android-studio-projects\\ImageSlider\\library\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.0.1\\res\\values-w600dp\\values-w600dp.xml",
-                    "position": {
-                        "startLine": 5,
-                        "startColumn": 4,
-                        "startOffset": 347,
-                        "endColumn": 54,
-                        "endOffset": 397
-                    }
-                }
-            }
-        ]
-    },
-    {
         "outputFile": "D:\\Dropbox\\GitHub\\Travel\\library\\build\\intermediates\\res\\merged\\release\\values-w600dp-v13\\values-w600dp-v13.xml",
->>>>>>> refs/remotes/origin/0310-HuaTest
         "map": [
             {
                 "to": {
@@ -58,7 +11,7 @@
                     "endOffset": 114
                 },
                 "from": {
-                    "file": "/Users/wei/Documents/Travel/library/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.0.1/res/values-w600dp/values-w600dp.xml",
+                    "file": "D:\\Dropbox\\GitHub\\Travel\\library\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.0.1\\res\\values-w600dp\\values-w600dp.xml",
                     "position": {
                         "startLine": 4,
                         "startColumn": 4,
@@ -77,7 +30,7 @@
                     "endOffset": 169
                 },
                 "from": {
-                    "file": "/Users/wei/Documents/Travel/library/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.0.1/res/values-w600dp/values-w600dp.xml",
+                    "file": "D:\\Dropbox\\GitHub\\Travel\\library\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.0.1\\res\\values-w600dp\\values-w600dp.xml",
                     "position": {
                         "startLine": 5,
                         "startColumn": 4,

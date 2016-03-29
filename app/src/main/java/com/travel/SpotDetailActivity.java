@@ -184,6 +184,12 @@ public class SpotDetailActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onDestroy() {
+        System.gc();
+        super.onDestroy();
+    }
+
+    @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if(keyCode==KeyEvent.KEYCODE_BACK) {
             Bundle bundle = new Bundle();

@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -18,6 +20,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
@@ -62,19 +65,17 @@ public class RecordMemoDetailActivity extends AppCompatActivity implements
     private DisplayImageOptions options;
     private ImageLoadingListener listener;
 
-    private TextView MemoDetailTitleTextView, MemoDetailTextView;
+    private TextView MemoDetailTitleTextView;
     private ImageView backImg, EnlargeImg;
     private ExpandableHeightGridView gridView;
 
-    private Integer mPosition;
+    private Integer mPosition = 0;
     private Integer RouteConter = 1;
 
     private DataBaseHelper helper;
     private SQLiteDatabase database;
 
     private ListView mlistView;
-
-    private String[] image_url;
 
 
     @Override
@@ -90,7 +91,7 @@ public class RecordMemoDetailActivity extends AppCompatActivity implements
             @Override
             public void onClick(View v) {
                 Functions.go(true, RecordMemoDetailActivity.this, RecordMemoDetailActivity.this,
-                        RecordMemoActivity.class, null);
+                        RecordActivity.class, null);
             }
         });
 
@@ -102,7 +103,6 @@ public class RecordMemoDetailActivity extends AppCompatActivity implements
             }
         });
 
-        MemoDetailTextView = (TextView) findViewById(R.id.MemoDetailString);
         MemoDetailTitleTextView = (TextView) findViewById(R.id.MemoDetailTitle);
 
 
@@ -122,33 +122,18 @@ public class RecordMemoDetailActivity extends AppCompatActivity implements
                 MemoDetailTitleTextView.setText(trackRoute_cursor.getString(5));
                 RouteConter = trackRoute_cursor.getInt(0);
 
-                mlistView = (ListView) findViewById(R.id.MemoContent_listView);
-                MemoDetailAdapter mAdapter = new MemoDetailAdapter(getApplicationContext(), RouteConter);
-                mlistView.setAdapter(mAdapter);
-            }
-        }
-
-
-        Cursor img_cursor = database.query("travelmemo", new String[]{"memo_routesCounter", "memo_trackNo",
-                        "memo_content", "memo_img", "memo_latlng", "memo_time"},
-                "memo_routesCounter=\"" + RouteConter + "\" AND memo_img!=\"null\"", null, null, null, null, null);
-        if (img_cursor != null) {
-            if (img_cursor.getCount() != 0) {
-                List<Map<String, Object>> items = new ArrayList<Map<String,Object>>();
-                while (img_cursor.moveToNext()) {
-                    Map<String, Object> item = new HashMap<String, Object>();
-                    item.put("image", img_cursor.getBlob(3));
-                    items.add(item);
-                }
-                SimpleAdapter adapter = new SimpleAdapter(this,
-                        items, R.layout.memo_detail_grid, new String[]{"image"},
-                        new int[]{R.id.memoDetailGrid_image});
+                DiaryImgAdapter adapter = new DiaryImgAdapter(getApplicationContext(), RouteConter);
                 gridView = (ExpandableHeightGridView)findViewById(R.id.MemoDetail_gridView);
                 gridView.setNumColumns(3);
                 gridView.setAdapter(adapter);
                 gridView.setExpanded(true);
+
+                mlistView = (ListView) findViewById(R.id.MemoContent_listView);
+                DiaryContentAdapter mAdapter = new DiaryContentAdapter(getApplicationContext(), RouteConter);
+                mlistView.setAdapter(mAdapter);
+                setListViewHeightBasedOnChildren(mlistView);
             }
-            img_cursor.close();
+            trackRoute_cursor.close();
         }
 
         setUpMapIfNeeded();
@@ -184,6 +169,12 @@ public class RecordMemoDetailActivity extends AppCompatActivity implements
         if (mGoogleApiClient.isConnected()) {
             mGoogleApiClient.disconnect();
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        System.gc();
+        super.onDestroy();
     }
 
     /**
@@ -329,14 +320,91 @@ public class RecordMemoDetailActivity extends AppCompatActivity implements
 
     }
 
-    private class MemoDetailAdapter extends BaseAdapter {
+    private class DiaryImgAdapter extends BaseAdapter {
 
         private Context context;
         private LayoutInflater inflater;
         private ViewHolder mViewHolder;
         private Integer routeCounter = 1;
 
-        public MemoDetailAdapter(Context mcontext, Integer rs) {
+        public DiaryImgAdapter(Context mcontext, Integer rs) {
+            this.context = mcontext;
+            inflater = LayoutInflater.from(mcontext);
+            routeCounter = rs;
+        }
+
+        @Override
+        public int getCount() {
+            int number = 0;
+            Cursor img_cursor = database.query("travelmemo", new String[]{"memo_routesCounter", "memo_trackNo",
+                            "memo_content", "memo_img", "memo_latlng", "memo_time"},
+                    "memo_routesCounter=\"" + RouteConter + "\" AND memo_img!=\"null\"", null, null, null, null, null);
+            if (img_cursor != null) {
+                if (img_cursor.getCount() != 0) {
+                    number = img_cursor.getCount();
+                }
+                img_cursor.close();
+            }
+            return number;
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return position;
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            if (convertView == null) {
+                convertView = inflater.inflate(R.layout.memo_detail_grid, parent, false);
+                mViewHolder = new ViewHolder();
+                mViewHolder.MemoImg = (ImageView) convertView.findViewById(R.id.memoDetailGrid_image);
+
+                convertView.setTag(mViewHolder);
+
+            } else {
+                mViewHolder = (ViewHolder) convertView.getTag();
+            }
+
+            Cursor img_cursor = database.query("travelmemo", new String[]{"memo_routesCounter", "memo_trackNo",
+                            "memo_content", "memo_img", "memo_latlng", "memo_time"},
+                    "memo_routesCounter=\"" + RouteConter + "\" AND memo_img!=\"null\"", null, null, null, null, null);
+            if (img_cursor != null) {
+                if (img_cursor.getCount() != 0) {
+                    List<Map<String, Bitmap>> items = new ArrayList<Map<String, Bitmap>>();
+                    while (img_cursor.moveToNext()) {
+                        byte[] d = img_cursor.getBlob(3);
+                        Bitmap bmp = BitmapFactory.decodeByteArray(d, 0, d.length);
+                        Map<String, Bitmap> item = new HashMap<String, Bitmap>();
+                        item.put("image", bmp);
+                        Log.e("3/27_image: ", bmp.toString());
+                        items.add(item);
+                    }
+                    mViewHolder.MemoImg.setImageBitmap(items.get(position).get("image"));
+                }
+                img_cursor.close();
+            }
+            return convertView;
+        }
+
+        private class ViewHolder {
+            ImageView MemoImg;
+        }
+    }
+
+    private class DiaryContentAdapter extends BaseAdapter {
+
+        private Context context;
+        private LayoutInflater inflater;
+        private ViewHolder mViewHolder;
+        private Integer routeCounter = 1;
+
+        public DiaryContentAdapter(Context mcontext, Integer rs) {
             this.context = mcontext;
             inflater = LayoutInflater.from(mcontext);
             routeCounter = rs;
@@ -370,9 +438,9 @@ public class RecordMemoDetailActivity extends AppCompatActivity implements
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             if (convertView == null) {
-                convertView = inflater.inflate(R.layout.record_memo_list, parent, false);
+                convertView = inflater.inflate(R.layout.memo_detail_content, parent, false);
                 mViewHolder = new ViewHolder();
-                mViewHolder.MemoString = (TextView) convertView.findViewById(R.id.MemoString);
+                mViewHolder.MemoString = (TextView) convertView.findViewById(R.id.MemoDetailString);
 
                 convertView.setTag(mViewHolder);
 
@@ -386,6 +454,7 @@ public class RecordMemoDetailActivity extends AppCompatActivity implements
                 if (memo_cursor.getCount() != 0) {
                     memo_cursor.moveToPosition(position);
                     mViewHolder.MemoString.setText(memo_cursor.getString(2));
+                    Log.e("3/27_memo content: ", memo_cursor.getString(2));
                 } else {
                     mViewHolder.MemoString.setText("未上傳景點心得。");
                 }
@@ -399,5 +468,24 @@ public class RecordMemoDetailActivity extends AppCompatActivity implements
         }
     }
 
+    public static void setListViewHeightBasedOnChildren(ListView listView) {
+        ListAdapter listAdapter = listView.getAdapter();
+        if (listAdapter == null)
+            return;
 
+        int desiredWidth = View.MeasureSpec.makeMeasureSpec(listView.getWidth(), View.MeasureSpec.UNSPECIFIED);
+        int totalHeight = 0;
+        View view = null;
+        for (int i = 0; i < listAdapter.getCount(); i++) {
+            view = listAdapter.getView(i, view, listView);
+            if (i == 0)
+                view.setLayoutParams(new ViewGroup.LayoutParams(desiredWidth, ViewGroup.LayoutParams.WRAP_CONTENT));
+
+            view.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
+            totalHeight += view.getMeasuredHeight();
+        }
+        ViewGroup.LayoutParams params = listView.getLayoutParams();
+        params.height = totalHeight + (listView.getDividerHeight() * (listAdapter.getCount() - 1));
+        listView.setLayoutParams(params);
+    }
 }

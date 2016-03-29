@@ -21,6 +21,7 @@ import android.util.Log;
 
 import com.travel.GlobalVariable;
 import com.travel.RecordActivity;
+import com.travel.RecordTrackFragment;
 
 public class TrackRouteService extends Service {
     public TrackRouteService() {
@@ -53,8 +54,8 @@ public class TrackRouteService extends Service {
         Log.d("3/10_", "TrackRouteService: onCreate");
         Log.i(TAG, "onCreate");
 
-        registerReceiver(broadcastReceiver, new IntentFilter(RecordActivity.TRACK_TO_SERVICE));
-        registerReceiver(broadcastReceiver_timer, new IntentFilter(RecordActivity.TIMER_TO_SERVICE));
+        registerReceiver(broadcastReceiver, new IntentFilter(RecordTrackFragment.TRACK_TO_SERVICE));
+        registerReceiver(broadcastReceiver_timer, new IntentFilter(RecordTrackFragment.TIMER_TO_SERVICE));
         globalVariable = (GlobalVariable) getApplicationContext();
 
         initializeLocationManager();

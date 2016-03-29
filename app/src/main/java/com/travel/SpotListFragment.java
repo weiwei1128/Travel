@@ -1,17 +1,14 @@
 package com.travel;
 
-import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.text.Editable;
@@ -45,7 +42,11 @@ public class SpotListFragment extends Fragment implements
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener {
 
-    public static final String TAG = "SpotListFragment";
+    public static final String TAG = SpotListFragment.class.getSimpleName();
+    private static final String FRAGMENT_NAME = "FRAGMENT_NAME";
+    //private static final String ARG_PARAM2 = "param2";
+    private String mFragmentName;
+    //private String mParam2;
 
     private GoogleApiClient mGoogleApiClient;
     private LocationRequest mLocationRequest;
@@ -56,7 +57,7 @@ public class SpotListFragment extends Fragment implements
 
     private Location CurrentLocation;
 
-    int count = 0, pageNo = 1, pages = 0, minus = pageNo - 1;
+    int count = 0, pageNo = 1, pages = 0, minus = pageNo-1;
     private TextView number, lastPage, nextPage;
     private LinearLayout spotList_pageLayout, spotList_textLayout;
 
@@ -78,8 +79,12 @@ public class SpotListFragment extends Fragment implements
     public SpotListFragment() {
     }
 
-    public static SpotListFragment newInstance() {
+    public static SpotListFragment newInstance(String fragementName) {
         SpotListFragment fragment = new SpotListFragment();
+        Bundle args = new Bundle();
+        args.putString(FRAGMENT_NAME, fragementName);
+        //args.putString(ARG_PARAM2, param2);
+        fragment.setArguments(args);
         return fragment;
     }
 
@@ -87,7 +92,8 @@ public class SpotListFragment extends Fragment implements
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            //mPage = getArguments().getInt(ARG_PAGE);
+            mFragmentName = getArguments().getString(FRAGMENT_NAME);
+            //mParam2 = getArguments().getString(ARG_PARAM2);
         }
         globalVariable = (GlobalVariable) getActivity().getApplicationContext();
         getActivity().registerReceiver(broadcastReceiver, new IntentFilter(GetSpotsNSort.BROADCAST_ACTION));
@@ -122,7 +128,7 @@ public class SpotListFragment extends Fragment implements
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 Log.d("3.9_景點搜尋", s.toString());
-                SpotListViewPagerFragment.adapter.getFilter().filter(s.toString());
+                SpotListViewFragment.adapter.getFilter().filter(s.toString());
             }
 
             @Override
@@ -189,12 +195,11 @@ public class SpotListFragment extends Fragment implements
             number.setTextColor((Color.parseColor("#FF0088")));
             spotList_textLayout.addView(number);
             spotList_textLayout.addView(textView);
-
+/*
             for (int i = 0; i < pages; i++) {
-                fragments.add(new SpotListViewPagerFragment(i + 1));
+                fragments.add(SpotListViewFragment.newInstance("SpotListView", i+1));
             }
-            viewPager.setAdapter(new SpotListFragmentViewPagerAdapter(getChildFragmentManager(), viewPager,
-                    fragments, getActivity()));
+*/            viewPager.setAdapter(new SpotListFragmentViewPagerAdapter(getChildFragmentManager(), pages));
             viewPager.setOnPageChangeListener(new PageListener());
         }
 
@@ -215,7 +220,7 @@ public class SpotListFragment extends Fragment implements
             if (pageNo == 1)
                 lastPage.setVisibility(View.INVISIBLE);
             else lastPage.setVisibility(View.VISIBLE);
-            minus = pageNo - 1;
+            minus = pageNo-1;
             String get = String.valueOf(position + 1);
             number.setText(get);
         }
@@ -244,11 +249,11 @@ public class SpotListFragment extends Fragment implements
     }
 
     @Override
-    public void onDestroy() {
+    public void onDestroyView() {
         if (broadcastReceiver != null)
             getActivity().unregisterReceiver(broadcastReceiver);
         System.gc();
-        super.onDestroy();
+        super.onDestroyView();
     }
 
     @Override
@@ -260,16 +265,6 @@ public class SpotListFragment extends Fragment implements
 
         Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         if (location == null) {
-            if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                // TODO: Consider calling
-                //    ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
-                return;
-            }
             LocationServices.FusedLocationApi.requestLocationUpdates
                     (mGoogleApiClient, mLocationRequest, (LocationListener) getActivity());
         } else {
@@ -293,14 +288,14 @@ public class SpotListFragment extends Fragment implements
         }
     }
 
-    /*
-        @Override
-        public void onLocationChanged(Location location) {
-            if (CurrentLocation != location) {
-                HandleNewLocation(CurrentLocation);
-            }
+/*
+    @Override
+    public void onLocationChanged(Location location) {
+        if (CurrentLocation != location) {
+            HandleNewLocation(CurrentLocation);
         }
-    */
+    }
+*/
     private void HandleNewLocation(Location location) {
         Log.d(TAG, location.toString());
 
@@ -368,11 +363,12 @@ public class SpotListFragment extends Fragment implements
                     spotList_textLayout.addView(number);
                     spotList_textLayout.addView(textView);
 
+/*
                     for (int i = 0; i < pages; i++) {
-                        fragments.add(new SpotListViewPagerFragment(i + 1));
-                    }
-                    adapter = new SpotListFragmentViewPagerAdapter(getChildFragmentManager(), viewPager,
-                            fragments, getActivity());
+                     fragments.add(SpotListViewFragment.newInstance("SpotListView", i+1));
+                   }*/
+
+                    adapter = new SpotListFragmentViewPagerAdapter(getChildFragmentManager(), pages);
                     viewPager.setAdapter(adapter);
                     viewPager.setOnPageChangeListener(new PageListener());
                     adapter.notifyDataSetChanged();

@@ -37,23 +37,23 @@ public class RecordDiaryFragmentAdapter extends BaseAdapter implements ViewPager
         this.context = mcontext;
         inflater = LayoutInflater.from(mcontext);
 
-        helper = new DataBaseHelper(mcontext);
+        helper = DataBaseHelper.getmInstance(context);
         database = helper.getWritableDatabase();
     }
 
     @Override
     public int getCount() {
         int number = 0;
-        Cursor trackRoute_cursor = database.query("trackRoute",
+        Cursor RouteCount_cursor = database.query("trackRoute",
                 new String[]{"routesCounter", "track_no", "track_lat", "track_lng",
                         "track_start", "track_title", "track_totaltime", "track_completetime"},
                 "track_start=\"0\"", null, null, null, null, null);
-        if (trackRoute_cursor != null) {
-            if (trackRoute_cursor.getCount() != 0) {
-                trackRoute_cursor.moveToLast();
-                number = trackRoute_cursor.getInt(0);
+        if (RouteCount_cursor != null) {
+            if (RouteCount_cursor.getCount() != 0) {
+                RouteCount_cursor.moveToLast();
+                number = RouteCount_cursor.getInt(0);
             }
-            trackRoute_cursor.close();
+            RouteCount_cursor.close();
         }
         return number;
     }
@@ -140,6 +140,7 @@ public class RecordDiaryFragmentAdapter extends BaseAdapter implements ViewPager
                         Log.e("3/28_", "img_cursor = 0 ");
                     }
                     mViewHolder.ImageSlider.stopAutoCycle();
+                    img_cursor.close();
                 }
             }
             trackRoute_cursor.close();
