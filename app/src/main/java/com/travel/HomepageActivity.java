@@ -44,11 +44,17 @@ import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.travel.Activity.LoginActivity;
+import com.travel.Fragment.MainFragment;
+import com.travel.Fragment.MemberFragment;
+import com.travel.Fragment.MoreFragment;
+import com.travel.Fragment.ShopRecordFragment;
 import com.travel.ImageSlide.MainImageFragment;
 import com.travel.Utility.Functions;
+import com.travel.Utility.GlobalVariable;
 import com.travel.Utility.HttpService;
 import com.travel.Utility.LoadApiService;
-import com.travel.Utility.MyTextview;
+import com.travel.Utility.View.MyTextview;
 
 public class HomepageActivity extends FragmentActivity {
     private Fragment contentFragment;

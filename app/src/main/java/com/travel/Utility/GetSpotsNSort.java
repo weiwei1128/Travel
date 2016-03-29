@@ -8,8 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.travel.GlobalVariable;
-import com.travel.SpotData;
+import com.travel.Activity.Spot.SpotData;
 
 import java.util.ArrayList;
 import java.util.Collections;

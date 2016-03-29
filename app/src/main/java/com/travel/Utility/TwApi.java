@@ -1,6 +1,5 @@
 package com.travel.Utility;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -10,8 +9,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.google.gson.stream.JsonReader;
-import com.travel.GlobalVariable;
-import com.travel.SpotData;
+import com.travel.Activity.Spot.SpotData;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;

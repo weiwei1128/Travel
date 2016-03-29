@@ -17,7 +17,7 @@
     <uses-permission-sdk-23 android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
-        android:name=".GlobalVariable"
+        android:name=".Utility.GlobalVariable"
         android:allowBackup="true"
         android:icon="@drawable/icon_512"
         android:label="@string/app_name">
@@ -54,62 +54,62 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".SpotActivity"
+            android:name=".Activity.Spot.SpotActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".BuyActivity"
+            android:name=".Activity.Buy.BuyActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".BuyItemDetailActivity"
+            android:name=".Activity.Buy.BuyItemDetailActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".SpotDetailActivity"
+            android:name=".Activity.Spot.SpotDetailActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".RecordActivity"
+            android:name=".Activity.RecordActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".LoginActivity"
+            android:name=".Activity.LoginActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".BuyItemListActivity"
+            android:name=".Activity.Buy.BuyItemListActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".BuyItemListConfirmActivity"
+            android:name=".Activity.Buy.BuyItemListConfirmActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".CheckScheduleOKActivity"
+            android:name=".Activity.CheckScheduleOKActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".MemberActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".ServiceActivity"
+            android:name=".Activity.ServiceActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".SpecialActivity"
+            android:name=".Activity.Special.SpecialActivity"
             android:hardwareAccelerated="true"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".RecordMemoActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".RecordMemoDetailActivity"
+            android:name=".Activity.RecordMemoDetailActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ShopRecordActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".CheckScheduleActivity"
+            android:name=".Activity.CheckScheduleActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".SpecialDetailActivity"
+            android:name=".Activity.Special.SpecialDetailActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".ShopRecordItemActivity"
+            android:name=".Activity.ShopRecordItemActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".BuyItemListConfirmWebview"
+            android:name=".Activity.Buy.BuyItemListConfirmWebview"
             android:theme="@style/AppTheme.NoActionBar" />
     </application>
 

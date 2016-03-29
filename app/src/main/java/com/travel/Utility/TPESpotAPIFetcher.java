@@ -11,9 +11,8 @@ import android.util.Log;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.stream.JsonReader;
-import com.travel.GlobalVariable;
-import com.travel.SpotData;
-import com.travel.TPESpotJson;
+import com.travel.Activity.Spot.SpotData;
+import com.travel.Activity.Spot.TPESpotJson;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;

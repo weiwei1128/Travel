@@ -3,8 +3,7 @@ package com.travel.Utility;
 import android.content.Context;
 import android.os.AsyncTask;
 
-import com.travel.GlobalVariable;
-import com.travel.SpotData;
+import com.travel.Activity.Spot.SpotData;
 
 import java.util.ArrayList;
 

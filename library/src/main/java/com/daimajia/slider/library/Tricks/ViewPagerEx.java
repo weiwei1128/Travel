@@ -419,7 +419,7 @@ public class ViewPagerEx extends ViewGroup{
     /**
      * Set a PagerAdapter that will supply views for this pager as needed.
      *
-     * @param adapter Adapter to use
+     * @param adapter com.travel.Adapter to use
      */
     public void setAdapter(PagerAdapter adapter) {
         if (mAdapter != null) {
@@ -2872,7 +2872,7 @@ public class ViewPagerEx extends ViewGroup{
         boolean needsMeasure;
 
         /**
-         * Adapter position this view is for if !isDecor
+         * com.travel.Adapter position this view is for if !isDecor
          */
         int position;
 

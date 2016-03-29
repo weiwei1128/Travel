@@ -22,9 +22,6 @@ import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 import com.travel.R;
 import com.travel.Utility.DataBaseHelper;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Created by wei on 2015/12/30.
  */

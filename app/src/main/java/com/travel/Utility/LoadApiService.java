@@ -11,8 +11,7 @@ import android.os.AsyncTask;
 import android.os.IBinder;
 import android.util.Log;
 
-import com.travel.GlobalVariable;
-import com.travel.SpotData;
+import com.travel.Activity.Spot.SpotData;
 
 /**
  * Created by Hua on 2016/3/11.

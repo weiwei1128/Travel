@@ -12,16 +12,13 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.location.LocationManager;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 
-import com.travel.GlobalVariable;
-import com.travel.RecordActivity;
-import com.travel.RecordTrackFragment;
+import com.travel.Fragment.RecordTrackFragment;
 
 public class TrackRouteService extends Service {
     public TrackRouteService() {

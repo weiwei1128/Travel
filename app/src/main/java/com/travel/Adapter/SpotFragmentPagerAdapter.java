@@ -1,12 +1,8 @@
 package com.travel.Adapter;
 
-import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-
-import com.travel.SpotListFragment;
-import com.travel.SpotMapFragment;
 
 import java.util.List;
 

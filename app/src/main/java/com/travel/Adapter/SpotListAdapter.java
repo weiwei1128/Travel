@@ -17,9 +17,9 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
-import com.travel.GlobalVariable;
+import com.travel.Utility.GlobalVariable;
 import com.travel.R;
-import com.travel.SpotData;
+import com.travel.Activity.Spot.SpotData;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
