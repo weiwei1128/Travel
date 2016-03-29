@@ -10,3 +10,23 @@
 *.json
 
 *.iml
+
+library/build/outputs/aar/library-release.aar
+
+library/build/intermediates/incremental/packageReleaseResources/merger.xml
+
+library/build/intermediates/incremental/mergeReleaseResources/merger.xml
+
+library/build/intermediates/incremental/mergeReleaseJniLibFolders/merger.xml
+
+library/build/intermediates/incremental/mergeReleaseAssets/merger.xml
+
+library/build/intermediates/classes/release/com/daimajia/slider/library/SliderTypes/BaseSliderView$3.class
+
+library/build/intermediates/classes/release/com/daimajia/slider/library/SliderTypes/BaseSliderView.class
+
+library/build/intermediates/classes/release/com/daimajia/slider/library/SliderLayout$5.class
+
+library/build/intermediates/classes/release/com/daimajia/slider/library/SliderLayout.class
+
+library/build/intermediates/bundles/release/classes.jar
