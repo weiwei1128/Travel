@@ -93,7 +93,12 @@ public class SpecialActivity extends AppCompatActivity {
         layout.addView(textView);
 
         for (int i = 0; i < PageNo; i++) {
-            fragments.add(new SpecialFragment((i + 1)));
+            SpecialFragment fragment = new SpecialFragment();
+            Bundle bundle = new Bundle();
+            bundle.putInt("pagenumber", (i+1));
+            fragment.setArguments(bundle);
+                    //pagenumber
+            fragments.add(fragment);
         }
         specialFragmentViewPagerAdapter = new SpecialFragmentViewPagerAdapter(this.getSupportFragmentManager(),
                 viewPager, fragments, this);

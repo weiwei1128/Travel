@@ -22,13 +22,15 @@ public class BuyFragment extends Fragment {
     Context context;
     Activity activity;
 
-    public BuyFragment(Integer position) {
-        Position = position;
+
+    public BuyFragment() {
+
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Position = getArguments().getInt("position");
         context = this.getActivity().getBaseContext();
         activity = this.getActivity();
     }

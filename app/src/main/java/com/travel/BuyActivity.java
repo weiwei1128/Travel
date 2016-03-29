@@ -108,7 +108,11 @@ public class BuyActivity extends AppCompatActivity {
         layout.addView(textView);
 
         for (int i = 0; i < pages; i++) {
-            fragments.add(new BuyFragment(i + 1));
+            BuyFragment fragment = new BuyFragment();
+            Bundle bundle = new Bundle();
+            bundle.putInt("position", (i+1));
+            fragment.setArguments(bundle);
+            fragments.add(fragment);
         }
 
 
