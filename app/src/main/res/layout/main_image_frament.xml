@@ -17,7 +17,7 @@
             android:layout_height="250dp" />
 
 
-        <com.travel.ImageSlide.CirclePageIndicator
+        <com.flyingtravel.ImageSlide.CirclePageIndicator
             android:id="@+id/indicator"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"

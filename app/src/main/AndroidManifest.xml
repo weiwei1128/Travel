@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.travel">
+    package="com.flyingtravel">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -17,7 +17,7 @@
     <uses-permission-sdk-23 android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
-        android:name=".Utility.GlobalVariable"
+        android:name="com.flyingtravel.Utility.GlobalVariable"
         android:allowBackup="true"
         android:icon="@drawable/icon_512"
         android:label="@string/app_name">
@@ -40,12 +40,12 @@
             android:name="io.fabric.ApiKey"
             android:value="cb492bd27bfb9a5607cb9e98fc7653b763470863" />
 
-        <service android:name=".Utility.HttpService" />
-        <service android:name=".Utility.TrackRouteService" />
-        <service android:name=".Utility.LoadApiService" />
+        <service android:name="com.flyingtravel.Utility.HttpService" />
+        <service android:name="com.flyingtravel.Utility.TrackRouteService" />
+        <service android:name="com.flyingtravel.Utility.LoadApiService" />
 
         <activity
-            android:name=".HomepageActivity"
+            android:name="com.flyingtravel.HomepageActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -54,62 +54,62 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Activity.Spot.SpotActivity"
+            android:name="com.flyingtravel.Activity.Spot.SpotActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".Activity.Buy.BuyActivity"
+            android:name="com.flyingtravel.Activity.Buy.BuyActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".Activity.Buy.BuyItemDetailActivity"
+            android:name="com.flyingtravel.Activity.Buy.BuyItemDetailActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".Activity.Spot.SpotDetailActivity"
+            android:name="com.flyingtravel.Activity.Spot.SpotDetailActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".Activity.RecordActivity"
+            android:name="com.flyingtravel.Activity.RecordActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".Activity.LoginActivity"
+            android:name="com.flyingtravel.Activity.LoginActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".Activity.Buy.BuyItemListActivity"
+            android:name="com.flyingtravel.Activity.Buy.BuyItemListActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".Activity.Buy.BuyItemListConfirmActivity"
+            android:name="com.flyingtravel.Activity.Buy.BuyItemListConfirmActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".Activity.CheckScheduleOKActivity"
+            android:name="com.flyingtravel.Activity.CheckScheduleOKActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".MemberActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".Activity.ServiceActivity"
+            android:name="com.flyingtravel.Activity.ServiceActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".Activity.Special.SpecialActivity"
+            android:name="com.flyingtravel.Activity.Special.SpecialActivity"
             android:hardwareAccelerated="true"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".RecordMemoActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".Activity.RecordMemoDetailActivity"
+            android:name="com.flyingtravel.Activity.RecordMemoDetailActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ShopRecordActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".Activity.CheckScheduleActivity"
+            android:name="com.flyingtravel.Activity.CheckScheduleActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".Activity.Special.SpecialDetailActivity"
+            android:name="com.flyingtravel.Activity.Special.SpecialDetailActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".Activity.ShopRecordItemActivity"
+            android:name="com.flyingtravel.Activity.ShopRecordItemActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".Activity.Buy.BuyItemListConfirmWebview"
+            android:name="com.flyingtravel.Activity.Buy.BuyItemListConfirmWebview"
             android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
