@@ -8,30 +8,22 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.travel.Adapter.RecordFragmentPagerAdapter;
 import com.travel.Adapter.SpotFragmentPagerAdapter;
 import com.travel.Utility.Functions;
 
-import java.util.ArrayList;
-import java.util.List;
 
 public class SpotActivity extends FragmentActivity {
 
-    public static final String TAG = SpotActivity.class.getSimpleName();
-
     private ImageView BackImg;
 
-    List<android.support.v4.app.Fragment> fragments = new ArrayList<>();
-
+    //3.10
     final int REQUEST_LOCATION = 2;
 
     @Override
@@ -68,18 +60,13 @@ public class SpotActivity extends FragmentActivity {
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION);
         }
 
-        initViewPager();
-/*
-        Bundle bundle = this.getIntent().getExtras();
-        if (bundle != null) {
-            int position = bundle.getInt("position");
-            if (position == 1) {
-                page = position;
-                Log.e("3/23_", "viewPager.setCurrentItem: position" + page);
-            }
-        }
-*/
+        // Get the ViewPager and set it's PagerAdapter so that it can display items
+        ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
+        viewPager.setAdapter(new SpotFragmentPagerAdapter(getSupportFragmentManager(), SpotActivity.this));
 
+        // Give the TabLayout the ViewPager
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.sliding_tabs);
+        tabLayout.setupWithViewPager(viewPager);
     }
 
     @Override
@@ -90,31 +77,7 @@ public class SpotActivity extends FragmentActivity {
 
     @Override
     protected void onDestroy() {
-        System.gc();
         super.onDestroy();
-    }
-
-    private void initViewPager(){
-        List<Fragment> fragments = getFragments();
-        SpotFragmentPagerAdapter adapter = new SpotFragmentPagerAdapter(getSupportFragmentManager(), fragments);
-
-        ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
-        viewPager.setAdapter(adapter);
-
-        // Give the TabLayout the ViewPager
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.sliding_tabs);
-        tabLayout.setupWithViewPager(viewPager);
-    }
-
-    private List<android.support.v4.app.Fragment> getFragments() {
-        fragments.add(SpotMapFragment.newInstance("SpotMap"));
-        fragments.add(SpotListFragment.newInstance("SpotList"));
-        return fragments;
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
     }
 
     // Android 系統返回鍵

@@ -28,11 +28,9 @@ package com.travel;
 /****/
 
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.multidex.MultiDex;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
@@ -281,11 +279,16 @@ public class HomepageActivity extends FragmentActivity {
         }
     }
 
-    @Override
-    protected void attachBaseContext(Context base) {
-        super.attachBaseContext(base);
-        MultiDex.install(this);
+    //3.5 Hua
+/*    @Override
+    protected void onDestroy() {
+        //stop LocationService in background
+        stopService(new Intent(HomepageActivity.this, LocationService.class));
+
+        super.onDestroy();
     }
+*/
+
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {

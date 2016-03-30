@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteStatement;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -28,7 +27,7 @@ import java.util.ArrayList;
  * Created by Tinghua on 2016/3/23.
  */
 public class TwApi extends AsyncTask<String, Void, ArrayList<SpotData>> {
-    public static final String TAG = "TwApi";
+    public static final String TAG = "TWSpotAPIFetcher";
     public static final String SERVER_URL = "http://data.gov.tw/iisi/logaccess/2205?dataUrl=http://gis.taiwan.net.tw/XMLReleaseALL_public/scenic_spot_C_f.json&ndctype=JSON&ndcnid=7777";
 
     public Boolean isTWAPILoaded = false;
@@ -51,7 +50,7 @@ public class TwApi extends AsyncTask<String, Void, ArrayList<SpotData>> {
 
     @Override
     protected ArrayList<SpotData> doInBackground(String... params) {
-        Log.e("3/23_", "=========TwApi======doInBackground");
+        Log.e("3/23_", "=========TWSpotAPIFetcher======doInBackground");
         try {
             //Create an HTTP client
             HttpClient client = new DefaultHttpClient();
@@ -174,34 +173,10 @@ public class TwApi extends AsyncTask<String, Void, ArrayList<SpotData>> {
                         "openTime", "ticketInfo", "infoDetail"},
                 null, null, null, null, null);
         Integer InfoLength = globalVariable.SpotDataTW.size();
-        Log.e("3/23_TwApi", InfoLength.toString());
+        Log.e("3/23_TWSpotAPIFetcher", InfoLength.toString());
         if (spotDataRaw_cursor != null && InfoLength > 0) {
             if (spotDataRaw_cursor.getCount() == 0) {
-
-                String sql = "INSERT INTO spotDataRaw (spotName, spotAdd, spotLat, spotLng, " +
-                        "picture1, picture2, picture3, openTime, ticketInfo, infoDetail) VALUES (?,?,?,?,?,?,?,?,?,?)";
-                database.beginTransactionNonExclusive();
-                // db.beginTransaction();
-                SQLiteStatement stmt = database.compileStatement(sql);
-
                 for (Integer i = 0; i < InfoLength; i++) {
-                    stmt.bindString(1, globalVariable.SpotDataTW.get(i).getName());
-                    stmt.bindString(2, globalVariable.SpotDataTW.get(i).getAdd());
-                    stmt.bindDouble(3, globalVariable.SpotDataTW.get(i).getLatitude());
-                    stmt.bindDouble(4, globalVariable.SpotDataTW.get(i).getLongitude());
-                    stmt.bindString(5, globalVariable.SpotDataTW.get(i).getPicture1());
-                    stmt.bindString(6, globalVariable.SpotDataTW.get(i).getPicture2());
-                    stmt.bindString(7, globalVariable.SpotDataTW.get(i).getPicture3());
-                    stmt.bindString(8, globalVariable.SpotDataTW.get(i).getOpenTime());
-                    stmt.bindString(9, globalVariable.SpotDataTW.get(i).getTicketInfo());
-                    stmt.bindString(10, globalVariable.SpotDataTW.get(i).getInfoDetail());
-                    stmt.execute();
-                    stmt.clearBindings();
-                }
-                database.setTransactionSuccessful();
-                database.endTransaction();
-
-               /* for (Integer i = 0; i < InfoLength; i++) {
                     ContentValues cv = new ContentValues();
                     cv.put("spotName", globalVariable.SpotDataTW.get(i).getName());
                     cv.put("spotAdd", globalVariable.SpotDataTW.get(i).getAdd());
@@ -216,14 +191,8 @@ public class TwApi extends AsyncTask<String, Void, ArrayList<SpotData>> {
                     long result = database.insert("spotDataRaw", null, cv);
                     //Log.d("3/23_沒有重複資料 ", result + " = DB INSERT " + i + " spotName: "
                             //+ globalVariable.SpotDataTW.get(i).getName());
-                }*/
+                }
             } else {
-                String sql = "INSERT INTO spotDataRaw (spotName, spotAdd, spotLat, spotLng, " +
-                        "picture1, picture2, picture3, openTime, ticketInfo, infoDetail) VALUES (?,?,?,?,?,?,?,?,?,?)";
-                database.beginTransactionNonExclusive();
-                // db.beginTransaction();
-                SQLiteStatement stmt = database.compileStatement(sql);
-
                 for (Integer i = 0; i < InfoLength; i++) {
                     Cursor spotDataRaw_dul = database.query(true, "spotDataRaw", new String[]{"spotName", "spotAdd",
                                     "spotLat", "spotLng", "picture1", "picture2","picture3",
@@ -233,20 +202,7 @@ public class TwApi extends AsyncTask<String, Void, ArrayList<SpotData>> {
                         spotDataRaw_dul.moveToFirst();
                         //Log.e("3/23", "有重複的資料! " + i + " spotName: " + spotDataRaw_dul.getString(0));
                     } else {
-                        stmt.bindString(1, globalVariable.SpotDataTW.get(i).getName());
-                        stmt.bindString(2, globalVariable.SpotDataTW.get(i).getAdd());
-                        stmt.bindDouble(3, globalVariable.SpotDataTW.get(i).getLatitude());
-                        stmt.bindDouble(4, globalVariable.SpotDataTW.get(i).getLongitude());
-                        stmt.bindString(5, globalVariable.SpotDataTW.get(i).getPicture1());
-                        stmt.bindString(6, globalVariable.SpotDataTW.get(i).getPicture2());
-                        stmt.bindString(7, globalVariable.SpotDataTW.get(i).getPicture3());
-                        stmt.bindString(8, globalVariable.SpotDataTW.get(i).getOpenTime());
-                        stmt.bindString(9, globalVariable.SpotDataTW.get(i).getTicketInfo());
-                        stmt.bindString(10, globalVariable.SpotDataTW.get(i).getInfoDetail());
-                        stmt.execute();
-                        stmt.clearBindings();
-
-                        /*ContentValues cv = new ContentValues();
+                        ContentValues cv = new ContentValues();
                         cv.put("spotName", globalVariable.SpotDataTW.get(i).getName());
                         cv.put("spotAdd", globalVariable.SpotDataTW.get(i).getAdd());
                         cv.put("spotLat", globalVariable.SpotDataTW.get(i).getLatitude());
@@ -257,27 +213,23 @@ public class TwApi extends AsyncTask<String, Void, ArrayList<SpotData>> {
                         cv.put("openTime", globalVariable.SpotDataTW.get(i).getOpenTime());
                         cv.put("ticketInfo", globalVariable.SpotDataTW.get(i).getTicketInfo());
                         cv.put("infoDetail", globalVariable.SpotDataTW.get(i).getInfoDetail());
-                        long result = database.insert("spotDataRaw", null, cv);*/
+                        long result = database.insert("spotDataRaw", null, cv);
                         //Log.d("3/23_新增過資料 ", result + " = DB INSERT " + i + " spotName: "
                                 //+ globalVariable.SpotDataTW.get(i).getName());
                     }
                     if(spotDataRaw_dul!=null)
                         spotDataRaw_dul.close();
                 }
-                database.setTransactionSuccessful();
-                database.endTransaction();
             }
         }
         if (spotDataRaw_cursor != null) {
             spotDataRaw_cursor.close();
         }
-        database.close();
-        helper.close();
         return globalVariable.SpotDataTW;
     }
 
     protected void onPostExecute(ArrayList<SpotData> s) {
-        Log.e("3/23_TwApi", "DONE");
+        Log.e("3/23_TWSpotAPIFetcher", "DONE");
         super.onPostExecute(s);
     }
 

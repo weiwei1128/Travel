@@ -38,7 +38,7 @@ public class SpotListAdapter extends BaseAdapter implements Filterable {
     private ViewHolder mViewHolder;
 
     private Context context;
-    private int index = 0;
+    private int pageNO = 0;
 
     private GlobalVariable globalVariable;
     private ArrayList<SpotData> mSpotsData;
@@ -46,9 +46,9 @@ public class SpotListAdapter extends BaseAdapter implements Filterable {
 
     private SpotFilter mFilter = new SpotFilter();
 
-    public SpotListAdapter(Context mcontext, Integer pageNO) {
+    public SpotListAdapter(Context mcontext, Integer index) {
         this.context = mcontext;
-        this.index = pageNO-1;
+        this.pageNO = index-1;
         inflater = LayoutInflater.from(mcontext);
 
         globalVariable = (GlobalVariable) context.getApplicationContext();
@@ -59,14 +59,13 @@ public class SpotListAdapter extends BaseAdapter implements Filterable {
             mSpotsData.clear();
             if (globalVariable.SpotDataSorted.size() / 10 == pageNO) {
                 mSpotsData.addAll(globalVariable.SpotDataSorted
-                        .subList(0 + index * 10, globalVariable.SpotDataSorted.size() % 10 + 1 + index * 10));
+                        .subList(0 + pageNO * 10, globalVariable.SpotDataSorted.size() % 10 + 1 + pageNO * 10));
             } else {
-                mSpotsData.addAll(globalVariable.SpotDataSorted.subList(0+index * 10, 10+index*10));
+                mSpotsData.addAll(globalVariable.SpotDataSorted.subList(0+pageNO * 10, 10+pageNO*10));
             }
             mFilteredSpots.clear();
             mFilteredSpots = mSpotsData;
-            Log.e("3/23_", "SpotListAdapter: mFilteredSpots.size " + mFilteredSpots.size());
-            Log.e("3/23_", "SpotListAdapter: mPosition " + index);
+            Log.e("3/23_", "SpotListAdapter: mPosition " + pageNO);
         }
 
         options = new DisplayImageOptions.Builder()
@@ -105,7 +104,7 @@ public class SpotListAdapter extends BaseAdapter implements Filterable {
         if (!mFilteredSpots.isEmpty()) {
             count = mFilteredSpots.size();
         } else if (!globalVariable.SpotDataSorted.isEmpty()) {
-            if (globalVariable.SpotDataSorted.size() / 10 == index) {
+            if (globalVariable.SpotDataSorted.size() / 10 == pageNO) {
                 count = globalVariable.SpotDataSorted.size() % 10;
             } else {
                 count = 10;
@@ -122,7 +121,7 @@ public class SpotListAdapter extends BaseAdapter implements Filterable {
 
     @Override
     public long getItemId(int position) {
-        return position;
+        return 0;
     }
 
     @Override

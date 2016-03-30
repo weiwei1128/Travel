@@ -8,28 +8,34 @@ import android.support.v4.app.FragmentPagerAdapter;
 import com.travel.SpotListFragment;
 import com.travel.SpotMapFragment;
 
-import java.util.List;
-
 /**
  * Created by Tinghua on 2016/3/24.
  */
 public class SpotFragmentPagerAdapter extends FragmentPagerAdapter {
-    private List<Fragment> fragments;
+    private static final int PAGE_COUNT = 2;
     private String tabTitles[] = new String[] {"景點地圖", "景點列表"};
+    private Context context;
 
-    public SpotFragmentPagerAdapter(FragmentManager fm,List<Fragment> fragments) {
+    public SpotFragmentPagerAdapter(FragmentManager fm, Context context) {
         super(fm);
-        this.fragments = fragments;
+        this.context = context;
     }
 
     @Override
     public int getCount() {
-        return fragments.size();
+        return PAGE_COUNT;
     }
 
     @Override
     public Fragment getItem(int position) {
-        return fragments.get(position);
+        Fragment fm = null;
+        if (position == 0) {
+            fm = SpotMapFragment.newInstance();
+        }
+        else if (position == 1) {
+            fm = SpotListFragment.newInstance();
+        }
+        return fm;
     }
 
     @Override

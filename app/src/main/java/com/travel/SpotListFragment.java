@@ -33,6 +33,7 @@ import com.google.android.gms.location.LocationServices;
 import com.travel.Adapter.SpotListFragmentViewPagerAdapter;
 import com.travel.Utility.DataBaseHelper;
 import com.travel.Utility.GetSpotsNSort;
+import com.travel.Utility.SpotListViewPagerFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,11 +43,7 @@ public class SpotListFragment extends Fragment implements
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener {
 
-    public static final String TAG = SpotListFragment.class.getSimpleName();
-    private static final String FRAGMENT_NAME = "FRAGMENT_NAME";
-    //private static final String ARG_PARAM2 = "param2";
-    private String mFragmentName;
-    //private String mParam2;
+    public static final String TAG = "SpotListFragment";
 
     private GoogleApiClient mGoogleApiClient;
     private LocationRequest mLocationRequest;
@@ -79,12 +76,8 @@ public class SpotListFragment extends Fragment implements
     public SpotListFragment() {
     }
 
-    public static SpotListFragment newInstance(String fragementName) {
+    public static SpotListFragment newInstance() {
         SpotListFragment fragment = new SpotListFragment();
-        Bundle args = new Bundle();
-        args.putString(FRAGMENT_NAME, fragementName);
-        //args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
         return fragment;
     }
 
@@ -92,8 +85,7 @@ public class SpotListFragment extends Fragment implements
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mFragmentName = getArguments().getString(FRAGMENT_NAME);
-            //mParam2 = getArguments().getString(ARG_PARAM2);
+            //mPage = getArguments().getInt(ARG_PAGE);
         }
         globalVariable = (GlobalVariable) getActivity().getApplicationContext();
         getActivity().registerReceiver(broadcastReceiver, new IntentFilter(GetSpotsNSort.BROADCAST_ACTION));
@@ -128,7 +120,7 @@ public class SpotListFragment extends Fragment implements
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 Log.d("3.9_景點搜尋", s.toString());
-                SpotListViewFragment.adapter.getFilter().filter(s.toString());
+                SpotListViewPagerFragment.adapter.getFilter().filter(s.toString());
             }
 
             @Override
@@ -195,11 +187,12 @@ public class SpotListFragment extends Fragment implements
             number.setTextColor((Color.parseColor("#FF0088")));
             spotList_textLayout.addView(number);
             spotList_textLayout.addView(textView);
-/*
+
             for (int i = 0; i < pages; i++) {
-                fragments.add(SpotListViewFragment.newInstance("SpotListView", i+1));
+                fragments.add(new SpotListViewPagerFragment(i + 1));
             }
-*/            viewPager.setAdapter(new SpotListFragmentViewPagerAdapter(getChildFragmentManager(), pages));
+            viewPager.setAdapter(new SpotListFragmentViewPagerAdapter(getChildFragmentManager(), viewPager,
+                    fragments, getActivity()));
             viewPager.setOnPageChangeListener(new PageListener());
         }
 
@@ -249,11 +242,11 @@ public class SpotListFragment extends Fragment implements
     }
 
     @Override
-    public void onDestroyView() {
+    public void onDestroy() {
         if (broadcastReceiver != null)
             getActivity().unregisterReceiver(broadcastReceiver);
         System.gc();
-        super.onDestroyView();
+        super.onDestroy();
     }
 
     @Override
@@ -363,12 +356,11 @@ public class SpotListFragment extends Fragment implements
                     spotList_textLayout.addView(number);
                     spotList_textLayout.addView(textView);
 
-/*
                     for (int i = 0; i < pages; i++) {
-                     fragments.add(SpotListViewFragment.newInstance("SpotListView", i+1));
-                   }*/
-
-                    adapter = new SpotListFragmentViewPagerAdapter(getChildFragmentManager(), pages);
+                        fragments.add(new SpotListViewPagerFragment(i + 1));
+                    }
+                    adapter = new SpotListFragmentViewPagerAdapter(getChildFragmentManager(), viewPager,
+                            fragments, getActivity());
                     viewPager.setAdapter(adapter);
                     viewPager.setOnPageChangeListener(new PageListener());
                     adapter.notifyDataSetChanged();

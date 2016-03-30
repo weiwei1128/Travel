@@ -42,7 +42,7 @@ public class GetSpotsNSort extends AsyncTask<Void, Void, ArrayList<SpotData>> {
 
     @Override
     protected ArrayList<SpotData> doInBackground(Void... param) {
-        Log.e("3/23_", "=========GetSpotsNSort======doInBackground");
+        Log.e("3/10_", "=========GetSpotsNSort======doInBackground");
         ArrayList<SpotData> mSpotData = new ArrayList<SpotData>();
         if (globalVariable.isAPILoaded) {
             Integer SpotCount = globalVariable.SpotDataRaw.size();
@@ -87,7 +87,7 @@ public class GetSpotsNSort extends AsyncTask<Void, Void, ArrayList<SpotData>> {
             }
         }
 
-        Log.e("3/23_排序", "景點開始排序");
+        Log.e("3/10_排序", "景點開始排序");
         for (SpotData mSpot : mSpotData) {
             //for迴圈將距離帶入，判斷距離為Distance function
             //需帶入使用者取得定位後的緯度、經度、景點店家緯度、經度。
@@ -105,7 +105,7 @@ public class GetSpotsNSort extends AsyncTask<Void, Void, ArrayList<SpotData>> {
             mcontext.sendBroadcast(intent);
         }
 
-        Log.e("3/23_", "=========GetSpotsNSort======Write to DB");
+        Log.e("3/10_", "=========GetSpotsNSort======Write to DB");
         DataBaseHelper helper = new DataBaseHelper(mcontext);
         SQLiteDatabase database = helper.getWritableDatabase();
         Cursor spotDataSorted_cursor = database.query("spotDataSorted", new String[]{"spotName", "spotAdd",
@@ -155,7 +155,7 @@ public class GetSpotsNSort extends AsyncTask<Void, Void, ArrayList<SpotData>> {
 
     protected void onPostExecute(ArrayList<SpotData> SpotData) {
         if (!SpotData.isEmpty()) {
-            Log.e("3/23_GetSpotsNSort", "DONE");
+            Log.e("3/10_GetSpotsNSort", "DONE");
         }
         super.onPostExecute(SpotData);
     }
