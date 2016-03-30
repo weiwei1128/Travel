@@ -8,12 +8,12 @@
         "source": "D:\\home\\udaysingh\\android-studio-projects\\ImageSlider\\library\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.0.1\\res\\drawable\\abc_btn_default_mtrl_shape.xml"
     },
     {
-        "merged": "D:\\Dropbox\\GitHub\\Travel\\library\\build\\intermediates\\res\\merged\\release\\drawable\\abc_text_cursor_material.xml",
-        "source": "D:\\Dropbox\\GitHub\\Travel\\library\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.0.1\\res\\drawable\\abc_text_cursor_material.xml"
-    },
-    {
         "merged": "D:\\home\\udaysingh\\android-studio-projects\\ImageSlider\\library\\build\\intermediates\\res\\merged\\release\\drawable\\abc_dialog_material_background_dark.xml",
         "source": "D:\\home\\udaysingh\\android-studio-projects\\ImageSlider\\library\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.0.1\\res\\drawable\\abc_dialog_material_background_dark.xml"
+    },
+    {
+        "merged": "D:\\Dropbox\\GitHub\\Travel\\library\\build\\intermediates\\res\\merged\\release\\drawable\\abc_text_cursor_material.xml",
+        "source": "D:\\Dropbox\\GitHub\\Travel\\library\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.0.1\\res\\drawable\\abc_text_cursor_material.xml"
     },
     {
         "merged": "D:\\home\\udaysingh\\android-studio-projects\\ImageSlider\\library\\build\\intermediates\\res\\merged\\release\\drawable\\abc_btn_colored_material.xml",
@@ -24,12 +24,12 @@
         "source": "D:\\Dropbox\\GitHub\\Travel\\library\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.0.1\\res\\drawable\\abc_item_background_holo_dark.xml"
     },
     {
-        "merged": "D:\\Dropbox\\GitHub\\Travel\\library\\build\\intermediates\\res\\merged\\release\\drawable\\abc_cab_background_internal_bg.xml",
-        "source": "D:\\Dropbox\\GitHub\\Travel\\library\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.0.1\\res\\drawable\\abc_cab_background_internal_bg.xml"
-    },
-    {
         "merged": "D:\\home\\udaysingh\\android-studio-projects\\ImageSlider\\library\\build\\intermediates\\res\\merged\\release\\drawable\\abc_edit_text_material.xml",
         "source": "D:\\home\\udaysingh\\android-studio-projects\\ImageSlider\\library\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.0.1\\res\\drawable\\abc_edit_text_material.xml"
+    },
+    {
+        "merged": "D:\\Dropbox\\GitHub\\Travel\\library\\build\\intermediates\\res\\merged\\release\\drawable\\abc_cab_background_internal_bg.xml",
+        "source": "D:\\Dropbox\\GitHub\\Travel\\library\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.0.1\\res\\drawable\\abc_cab_background_internal_bg.xml"
     },
     {
         "merged": "D:\\Dropbox\\GitHub\\Travel\\library\\build\\intermediates\\res\\merged\\release\\drawable\\abc_list_selector_background_transition_holo_light.xml",

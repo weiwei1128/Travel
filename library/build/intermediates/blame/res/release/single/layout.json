@@ -28,12 +28,12 @@
         "source": "D:\\home\\udaysingh\\android-studio-projects\\ImageSlider\\library\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.0.1\\res\\layout\\notification_template_big_media.xml"
     },
     {
-        "merged": "D:\\home\\udaysingh\\android-studio-projects\\ImageSlider\\library\\build\\intermediates\\res\\merged\\release\\layout\\abc_action_bar_up_container.xml",
-        "source": "D:\\home\\udaysingh\\android-studio-projects\\ImageSlider\\library\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.0.1\\res\\layout\\abc_action_bar_up_container.xml"
-    },
-    {
         "merged": "D:\\home\\udaysingh\\android-studio-projects\\ImageSlider\\library\\build\\intermediates\\res\\merged\\release\\layout\\layout_tab_text.xml",
         "source": "D:\\home\\udaysingh\\android-studio-projects\\ImageSlider\\library\\build\\intermediates\\exploded-aar\\com.android.support\\design\\22.2.1\\res\\layout\\layout_tab_text.xml"
+    },
+    {
+        "merged": "D:\\home\\udaysingh\\android-studio-projects\\ImageSlider\\library\\build\\intermediates\\res\\merged\\release\\layout\\abc_action_bar_up_container.xml",
+        "source": "D:\\home\\udaysingh\\android-studio-projects\\ImageSlider\\library\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.0.1\\res\\layout\\abc_action_bar_up_container.xml"
     },
     {
         "merged": "D:\\home\\udaysingh\\android-studio-projects\\ImageSlider\\library\\build\\intermediates\\res\\merged\\release\\layout\\abc_search_dropdown_item_icons_2line.xml",
@@ -168,12 +168,12 @@
         "source": "D:\\Dropbox\\GitHub\\Travel\\library\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.0.1\\res\\layout\\abc_action_bar_view_list_nav_layout.xml"
     },
     {
-        "merged": "D:\\Dropbox\\GitHub\\Travel\\library\\build\\intermediates\\res\\merged\\release\\layout\\select_dialog_singlechoice_material.xml",
-        "source": "D:\\Dropbox\\GitHub\\Travel\\library\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.0.1\\res\\layout\\select_dialog_singlechoice_material.xml"
-    },
-    {
         "merged": "D:\\Dropbox\\GitHub\\Travel\\library\\build\\intermediates\\res\\merged\\release\\layout\\abc_action_bar_title_item.xml",
         "source": "D:\\Dropbox\\GitHub\\Travel\\library\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.0.1\\res\\layout\\abc_action_bar_title_item.xml"
+    },
+    {
+        "merged": "D:\\Dropbox\\GitHub\\Travel\\library\\build\\intermediates\\res\\merged\\release\\layout\\select_dialog_singlechoice_material.xml",
+        "source": "D:\\Dropbox\\GitHub\\Travel\\library\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.0.1\\res\\layout\\select_dialog_singlechoice_material.xml"
     },
     {
         "merged": "D:\\home\\udaysingh\\android-studio-projects\\ImageSlider\\library\\build\\intermediates\\res\\merged\\release\\layout\\abc_activity_chooser_view_list_item.xml",
