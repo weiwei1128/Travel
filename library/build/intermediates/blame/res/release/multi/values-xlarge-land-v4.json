@@ -1,29 +1,5 @@
 [
     {
-        "outputFile": "D:\\Users\\wei\\Documents\\Travel\\library\\build\\intermediates\\res\\merged\\release\\values-xlarge-land-v4\\values-xlarge-land-v4.xml",
-        "map": [
-            {
-                "to": {
-                    "startLine": 2,
-                    "startColumn": 4,
-                    "startOffset": 55,
-                    "endColumn": 63,
-                    "endOffset": 114
-                },
-                "from": {
-                    "file": "D:\\Users\\wei\\Documents\\Travel\\library\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.0.1\\res\\values-xlarge-land\\values-xlarge-land.xml",
-                    "position": {
-                        "startLine": 4,
-                        "startColumn": 4,
-                        "startOffset": 288,
-                        "endColumn": 63,
-                        "endOffset": 347
-                    }
-                }
-            }
-        ]
-    },
-    {
         "outputFile": "D:\\Dropbox\\GitHub\\Travel\\library\\build\\intermediates\\res\\merged\\release\\values-xlarge-land-v4\\values-xlarge-land-v4.xml",
         "map": [
             {
@@ -36,54 +12,6 @@
                 },
                 "from": {
                     "file": "D:\\Dropbox\\GitHub\\Travel\\library\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.0.1\\res\\values-xlarge-land\\values-xlarge-land.xml",
-                    "position": {
-                        "startLine": 4,
-                        "startColumn": 4,
-                        "startOffset": 288,
-                        "endColumn": 63,
-                        "endOffset": 347
-                    }
-                }
-            }
-        ]
-    },
-    {
-        "outputFile": "D:\\home\\udaysingh\\android-studio-projects\\ImageSlider\\library\\build\\intermediates\\res\\merged\\release\\values-xlarge-land-v4\\values-xlarge-land-v4.xml",
-        "map": [
-            {
-                "to": {
-                    "startLine": 2,
-                    "startColumn": 4,
-                    "startOffset": 55,
-                    "endColumn": 63,
-                    "endOffset": 114
-                },
-                "from": {
-                    "file": "D:\\home\\udaysingh\\android-studio-projects\\ImageSlider\\library\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.0.1\\res\\values-xlarge-land\\values-xlarge-land.xml",
-                    "position": {
-                        "startLine": 4,
-                        "startColumn": 4,
-                        "startOffset": 288,
-                        "endColumn": 63,
-                        "endOffset": 347
-                    }
-                }
-            }
-        ]
-    },
-    {
-        "outputFile": "D:\\Users\\wei\\Documents\\Travel\\D:\\Dropbox\\GitHub\\Travel\\library\\build\\intermediates\\res\\merged\\release\\values-xlarge-land-v4\\values-xlarge-land-v4.xml",
-        "map": [
-            {
-                "to": {
-                    "startLine": 2,
-                    "startColumn": 4,
-                    "startOffset": 55,
-                    "endColumn": 63,
-                    "endOffset": 114
-                },
-                "from": {
-                    "file": "D:\\Users\\wei\\Documents\\Travel\\D:\\Dropbox\\GitHub\\Travel\\library\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.0.1\\res\\values-xlarge-land\\values-xlarge-land.xml",
                     "position": {
                         "startLine": 4,
                         "startColumn": 4,
