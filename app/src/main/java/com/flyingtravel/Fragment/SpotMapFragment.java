@@ -11,6 +11,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -19,8 +20,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.flyingtravel.Adapter.SpotListFragmentViewPagerAdapter;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
@@ -93,6 +96,7 @@ public class SpotMapFragment extends Fragment implements
         }
         globalVariable = (GlobalVariable) getActivity().getApplicationContext();
         getActivity().registerReceiver(broadcastReceiver, new IntentFilter(LoadApiService.BROADCAST_ACTION));
+        getActivity().registerReceiver(broadcastReceiver_SpotSort, new IntentFilter(GetSpotsNSort.BROADCAST_ACTION));
 
         mProgressDialog = new ProgressDialog(getActivity());
         MarkerIcon = decodeBitmapFromResource(getResources(), R.drawable.location3, 10, 18);
@@ -106,27 +110,6 @@ public class SpotMapFragment extends Fragment implements
                 .setInterval(UPDATE_INTERVAL)        // 5 seconds, in milliseconds
                 .setFastestInterval(FATEST_INTERVAL) // 1 second, in milliseconds
                 .setSmallestDisplacement(DISPLACEMENT);
-
-        if (!globalVariable.isAPILoaded) {
-            Log.e("3/23_", "API is not ready");
-            mProgressDialog.setMessage("景點資料龐大，載入中...");
-            mProgressDialog.show();
-        } else {
-            if (globalVariable.MarkerOptionsArray.isEmpty()) {
-                Log.e("3/23_", "Marker is not ready");
-                mProgressDialog.setMessage("景點Marker載入中...");
-                mProgressDialog.show();
-                // Get Marker Info
-                new GetMarkerInfo(getActivity()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-                if (CurrentLocation != null) {
-                    Log.e("3/23_讀到位置", "事先Sort");
-                    if (globalVariable.isAPILoaded && globalVariable.SpotDataSorted.isEmpty()) {
-                        new GetSpotsNSort(getActivity(), CurrentLocation.getLatitude(),
-                                CurrentLocation.getLongitude()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-                    }
-                }
-            }
-        }
     }
 
     @Override
@@ -143,12 +126,37 @@ public class SpotMapFragment extends Fragment implements
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         mMap.setMyLocationEnabled(true);
         mMap.getUiSettings().setCompassEnabled(true);
-        mMap.getUiSettings().setZoomControlsEnabled(true);
 
         // Needs to call MapsInitializer before doing any CameraUpdateFactory calls
         MapsInitializer.initialize(this.getActivity());
 
         return rootView;
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        if (!globalVariable.isAPILoaded) {
+            Log.e("3/23_", "API is not ready");
+            mProgressDialog.setMessage("景點資料龐大，載入中...");
+            mProgressDialog.show();
+        } else {
+            if (CurrentLocation != null) {
+                Log.e("3/23_onActivityCreated", "事先Sort");
+                if (globalVariable.isAPILoaded && globalVariable.SpotDataSorted.isEmpty()) {
+                    new GetSpotsNSort(getActivity(), CurrentLocation.getLatitude(),
+                            CurrentLocation.getLongitude()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                }
+            }
+            if (globalVariable.MarkerOptionsArray.isEmpty()) {
+                Log.e("3/23_", "Marker is not ready");
+                mProgressDialog.setMessage("景點Marker載入中...");
+                mProgressDialog.show();
+                // Get Marker Info
+                //new GetMarkerInfo(getActivity()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            }
+        }
     }
 
     @Override
@@ -158,11 +166,9 @@ public class SpotMapFragment extends Fragment implements
             mGoogleApiClient.connect();
         }
         if (!globalVariable.MarkerOptionsArray.isEmpty()) {
-            if(MarkerIcon == null)
-                MarkerIcon = decodeBitmapFromResource(getResources(), R.drawable.location, 10, 18);
-            for (MarkerOptions markerOptions : globalVariable.MarkerOptionsArray) {
-                markerOptions.icon(BitmapDescriptorFactory.fromBitmap(MarkerIcon));
-                mMap.addMarker(markerOptions);
+            int MarkerCount = globalVariable.MarkerOptionsArray.size();
+            for (int i = 0; i < MarkerCount/12; i++) {
+                mMap.addMarker(globalVariable.MarkerOptionsArray.get(i));
             }
         }
         super.onResume();
@@ -191,6 +197,8 @@ public class SpotMapFragment extends Fragment implements
         mapView.onDestroy();
         if (broadcastReceiver != null)
             getActivity().unregisterReceiver(broadcastReceiver);
+        if (broadcastReceiver_SpotSort != null)
+            getActivity().unregisterReceiver(broadcastReceiver_SpotSort);
         MarkerIcon.recycle();
         System.gc();
         super.onDestroyView();
@@ -221,7 +229,7 @@ public class SpotMapFragment extends Fragment implements
         } else {
             HandleNewLocation(location);
             if (globalVariable.isAPILoaded && globalVariable.SpotDataSorted.isEmpty()) {
-                Log.e("3/23_MapsActivity", "事先Sort");
+                Log.e("3/23_Connected", "事先Sort");
                 new GetSpotsNSort(getActivity(), CurrentLocation.getLatitude(),
                         CurrentLocation.getLongitude()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             }
@@ -289,8 +297,6 @@ public class SpotMapFragment extends Fragment implements
             }
             location_cursor.close();
         }
-        database.close();
-        helper.close();
     }
 
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
@@ -301,15 +307,36 @@ public class SpotMapFragment extends Fragment implements
                 globalVariable.isAPILoaded = intent.getBooleanExtra("isAPILoaded", false);
                 if (globalVariable.isAPILoaded) {
                     Log.e("3/23_", "Receive Broadcast: APILoaded");
+                    if (CurrentLocation != null) {
+                        Log.e("3/23_broadcast", "事先Sort");
+                        if (globalVariable.isAPILoaded && globalVariable.SpotDataSorted.isEmpty()) {
+                            new GetSpotsNSort(getActivity(), CurrentLocation.getLatitude(),
+                                    CurrentLocation.getLongitude()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                        }
+                    }
                     if (globalVariable.MarkerOptionsArray.isEmpty()) {
                         // Get Marker Info
                         mProgressDialog.setMessage("景點Marker載入中...");
-                        new GetMarkerInfo(getActivity()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                        //new GetMarkerInfo(getActivity()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                     } else {
                         if (mProgressDialog.isShowing()) {
                             mProgressDialog.dismiss();
                         }
                     }
+                }
+            }
+        }
+    };
+
+    private BroadcastReceiver broadcastReceiver_SpotSort = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            //Update Your UI here..
+            if (intent != null) {
+                Boolean isSpotSorted = intent.getBooleanExtra("isSpoted", false);
+                if (isSpotSorted) {
+                    Log.e("3/23_景點排序完畢", "Receive Broadcast");
+                    new GetMarkerInfo(getActivity()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                 }
             }
         }
@@ -369,16 +396,17 @@ public class SpotMapFragment extends Fragment implements
         protected ArrayList<MarkerOptions> doInBackground(Void... params) {
             ArrayList<MarkerOptions> MarkerOptionsArray = new ArrayList<MarkerOptions>();
             //get Marker Info
-            if (globalVariable.isAPILoaded) {
-                Integer SpotCount = globalVariable.SpotDataRaw.size();
+            if (!globalVariable.SpotDataSorted.isEmpty()) {
+                Integer SpotCount = globalVariable.SpotDataSorted.size();
                 for (int i = 0; i < SpotCount; i++) {
-                    String Name = globalVariable.SpotDataRaw.get(i).getName();
-                    Double Latitude = globalVariable.SpotDataRaw.get(i).getLatitude();
-                    Double Longitude = globalVariable.SpotDataRaw.get(i).getLongitude();
+                    String Name = globalVariable.SpotDataSorted.get(i).getName();
+                    Double Latitude = globalVariable.SpotDataSorted.get(i).getLatitude();
+                    Double Longitude = globalVariable.SpotDataSorted.get(i).getLongitude();
                     LatLng latLng = new LatLng(Latitude,Longitude);
-                    String OpenTime = globalVariable.SpotDataRaw.get(i).getOpenTime();
+                    String OpenTime = globalVariable.SpotDataSorted.get(i).getOpenTime();
                     MarkerOptions markerOpt = new MarkerOptions();
-                    markerOpt.position(latLng).title(Name).snippet(OpenTime);
+                    markerOpt.position(latLng).title(Name).snippet(OpenTime)
+                            .icon(BitmapDescriptorFactory.fromBitmap(MarkerIcon));
 
                     MarkerOptionsArray.add(markerOpt);
                 }
@@ -397,14 +425,13 @@ public class SpotMapFragment extends Fragment implements
                         LatLng latLng = new LatLng(Latitude,Longitude);
                         String OpenTime = spotDataRaw_cursor.getString(8);
                         MarkerOptions markerOpt = new MarkerOptions();
-                        markerOpt.position(latLng).title(Name).snippet(OpenTime);
+                        markerOpt.position(latLng).title(Name).snippet(OpenTime)
+                                .icon(BitmapDescriptorFactory.fromBitmap(MarkerIcon));
 
                         MarkerOptionsArray.add(markerOpt);
                     }
                     spotDataRaw_cursor.close();
                 }
-                database.close();
-                helper.close();
             }
             return MarkerOptionsArray;
         }
@@ -413,18 +440,16 @@ public class SpotMapFragment extends Fragment implements
             if (globalVariable.MarkerOptionsArray.isEmpty()) {
                 globalVariable.MarkerOptionsArray = markerOptionsArray;
             }
-            for (MarkerOptions markerOptions : globalVariable.MarkerOptionsArray) {
-                markerOptions.icon(BitmapDescriptorFactory.fromBitmap(MarkerIcon));
-                mMap.addMarker(markerOptions);
+            int MarkerCount = globalVariable.MarkerOptionsArray.size();
+            for (int i = 0; i < MarkerCount/12; i++) {
+                mMap.addMarker(globalVariable.MarkerOptionsArray.get(i));
             }
+            Log.d("3/23_MarkerCount", MarkerCount+" MarkerCount/12: "+MarkerCount/12);
             mProgressDialog.dismiss();
-            if (CurrentLocation != null) {
-                Log.e("3/23_讀到位置", "事先Sort");
-                if (globalVariable.isAPILoaded && globalVariable.SpotDataSorted.isEmpty()) {
-                    new GetSpotsNSort(getActivity(), CurrentLocation.getLatitude(),
-                            CurrentLocation.getLongitude()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-                }
-            }
+            /*
+            for (MarkerOptions markerOptions : globalVariable.MarkerOptionsArray) {
+                mMap.addMarker(markerOptions);
+            }*/
             super.onPostExecute(markerOptionsArray);
         }
     }

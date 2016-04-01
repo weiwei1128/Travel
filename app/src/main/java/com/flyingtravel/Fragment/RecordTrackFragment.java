@@ -189,7 +189,6 @@ public class RecordTrackFragment extends Fragment implements
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         mMap.setMyLocationEnabled(true);
         mMap.getUiSettings().setCompassEnabled(true);
-        mMap.getUiSettings().setZoomControlsEnabled(true);
 
         // Needs to call MapsInitializer before doing any CameraUpdateFactory calls
         MapsInitializer.initialize(this.getActivity());
@@ -397,7 +396,7 @@ public class RecordTrackFragment extends Fragment implements
                 }
                 dialog_scrollview.setVisibility(View.VISIBLE);
                 RelativeLayout.LayoutParams otelParams = new RelativeLayout.LayoutParams(
-                        ViewGroup.LayoutParams.MATCH_PARENT, 500);
+                        ViewGroup.LayoutParams.MATCH_PARENT, getPx(150));
                 otelParams.addRule(RelativeLayout.BELOW, R.id.dialog_header_text);
                 dialog_scrollview.setLayoutParams(otelParams);
 
@@ -707,7 +706,7 @@ public class RecordTrackFragment extends Fragment implements
             }
             dialog_scrollview.setVisibility(View.VISIBLE);
             RelativeLayout.LayoutParams otelParams = new RelativeLayout.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT, 500);
+                    ViewGroup.LayoutParams.MATCH_PARENT, getPx(150));
             otelParams.addRule(RelativeLayout.BELOW, R.id.dialog_header_text);
             dialog_scrollview.setLayoutParams(otelParams);
 
@@ -882,6 +881,11 @@ public class RecordTrackFragment extends Fragment implements
             }
         }
     };
+
+    public int getPx(int dimensionDp) {
+        float density = getResources().getDisplayMetrics().density;
+        return (int) (dimensionDp * density + 0.5f);
+    }
 
     public static Bitmap decodeBitmapFromResource(Resources res, int resId, int reqWidth, int reqHeight) {
         // First decode with inJustDecodeBounds=true to check dimensions

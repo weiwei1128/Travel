@@ -74,7 +74,7 @@ public class SpotListAdapter extends BaseAdapter implements Filterable {
                 .showImageOnLoading(R.drawable.loading2)
                 .showImageForEmptyUri(R.drawable.empty)
                 .cacheInMemory(false)
-                .cacheOnDisc(false).build();
+                .cacheOnDisk(true).build();
         listener = new ImageLoadingListener() {
             @Override
             public void onLoadingStarted(String s, View view) {
@@ -142,16 +142,17 @@ public class SpotListAdapter extends BaseAdapter implements Filterable {
             mViewHolder = (ViewHolder) convertView.getTag();
         }
 
-        ImageLoaderConfiguration configuration =
-                new ImageLoaderConfiguration.Builder(context).build();
-        ImageLoader.getInstance().init(configuration);
-
         String ImgString = mFilteredSpots.get(position).getPicture1();
         loader.displayImage(ImgString, mViewHolder.SpotImg, options, listener);
         mViewHolder.SpotName.setText(mFilteredSpots.get(position).getName());
         mViewHolder.SpotAddress.setText(mFilteredSpots.get(position).getAdd());
         mViewHolder.SpotDistance.setText(DistanceText(mFilteredSpots.get(position).getDistance()));
-        mViewHolder.SpotOpenTime.setText("開放時間：" + mFilteredSpots.get(position).getOpenTime());
+        if (mFilteredSpots.get(position).getOpenTime() == null) {
+            mViewHolder.SpotOpenTime.setText("開放時間：無");
+        } else {
+            mViewHolder.SpotOpenTime.setText("開放時間：" + mFilteredSpots.get(position).getOpenTime());
+        }
+
         //Log.e("3/23_", "SpotListAdapter: show list");
 
         return convertView;

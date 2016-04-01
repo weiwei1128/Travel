@@ -16,9 +16,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,6 +41,7 @@ import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
@@ -74,18 +78,20 @@ public class RecordDiaryDetailActivity extends AppCompatActivity implements
     private Bitmap MarkerIcon;
     private ArrayList<LatLng> TraceRoute;
 
+    private FrameLayout HeaderLayout, MapLayout;
+    private LinearLayout ContentLayout;
+    private ImageView backImg, EnlargeImg, ReduceImg;
     private TextView DiaryDetailTitleTextView;
-    private ImageView backImg, EnlargeImg;
     private ExpandableHeightGridView gridView;
+    private ListView mlistView;
 
     private Integer mPosition = 0;
     private Integer RoutesCounter = 1;
-    private Integer Track_no = 1;
+    //private Integer Track_no = 1;
 
     private DataBaseHelper helper;
     private SQLiteDatabase database;
 
-    private ListView mlistView;
 
 
     @Override
@@ -104,6 +110,10 @@ public class RecordDiaryDetailActivity extends AppCompatActivity implements
                         RecordActivity.class, null);
             }
         });
+
+        HeaderLayout = (FrameLayout) findViewById(R.id.DiaryDetailHeader_Layout);
+        MapLayout = (FrameLayout) findViewById(R.id.DiaryDetailMap_Layout);
+        ContentLayout = (LinearLayout) findViewById(R.id.DiaryDetailContent_Layout);
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
@@ -138,6 +148,44 @@ public class RecordDiaryDetailActivity extends AppCompatActivity implements
             @Override
             public void onClick(View v) {
                 // TODO 放大地圖
+                MapLayout.setLayoutParams(new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.MATCH_PARENT));
+
+                ContentLayout.setLayoutParams(new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT, 0));
+
+
+                EnlargeImg.setVisibility(View.INVISIBLE);
+                ReduceImg.setVisibility(View.VISIBLE);
+
+                mMap.setMyLocationEnabled(true);
+                mMap.getUiSettings().setCompassEnabled(true);
+                mMap.getUiSettings().setAllGesturesEnabled(true);
+                SetMapBounds();
+            }
+        });
+
+        ReduceImg = (ImageView) findViewById(R.id.DiaryMapReduce_img);
+        ReduceImg.setVisibility(View.INVISIBLE);
+        ReduceImg.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // TODO 放大地圖
+                MapLayout.setLayoutParams(new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT, getPx(300)));
+
+                ContentLayout.setLayoutParams(new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT));
+
+                ReduceImg.setVisibility(View.INVISIBLE);
+                EnlargeImg.setVisibility(View.VISIBLE);
+
+                mMap.setMyLocationEnabled(false);
+                mMap.getUiSettings().setCompassEnabled(false);
+                mMap.getUiSettings().setAllGesturesEnabled(false);
+                SetMapBounds();
             }
         });
 
@@ -154,7 +202,7 @@ public class RecordDiaryDetailActivity extends AppCompatActivity implements
                 "track_start=\"0\"", null, null, null, null, null);
         if (trackRoute_cursor != null) {
             if (trackRoute_cursor.getCount() != 0) {
-                trackRoute_cursor.moveToPosition(trackRoute_cursor.getCount() - mPosition-1);
+                trackRoute_cursor.moveToPosition(trackRoute_cursor.getCount() - mPosition - 1);
 
                 DiaryDetailTitleTextView.setText(trackRoute_cursor.getString(5));
                 RoutesCounter = trackRoute_cursor.getInt(0);
@@ -162,13 +210,13 @@ public class RecordDiaryDetailActivity extends AppCompatActivity implements
                 RetrieveRouteFromDB();
 
                 DiaryImgAdapter adapter = new DiaryImgAdapter(getApplicationContext(), RoutesCounter);
-                gridView = (ExpandableHeightGridView)findViewById(R.id.DiaryDetail_gridView);
+                gridView = (ExpandableHeightGridView)findViewById(R.id.DiaryDetailImg_gridView);
                 gridView.setNumColumns(3);
                 gridView.setAdapter(adapter);
                 gridView.setExpanded(true);
 
-                DiaryContentAdapter mAdapter = new DiaryContentAdapter(getApplicationContext(), RoutesCounter);
-                mlistView = (ListView) findViewById(R.id.DiaryContent_listView);
+                DiaryTxtAdapter mAdapter = new DiaryTxtAdapter(getApplicationContext(), RoutesCounter);
+                mlistView = (ListView) findViewById(R.id.DiaryDetailTxt_listView);
                 mlistView.setAdapter(mAdapter);
                 setListViewHeightBasedOnChildren(mlistView);
             }
@@ -334,11 +382,56 @@ public class RecordDiaryDetailActivity extends AppCompatActivity implements
                 LatLng end_latLng = new LatLng(end_lat, end_lng);
                 mMap.addMarker(new MarkerOptions().position(end_latLng).title("end")
                         .icon(BitmapDescriptorFactory.fromBitmap(MarkerIcon)));
-                LatLng mid_latLng = new LatLng((start_lat+end_lat)/2, (start_lng+end_lng)/2);
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mid_latLng, 15));
+
             }
             trackRoute_cursor.close();
         }
+        SetMapBounds();
+    }
+
+    private void SetMapBounds() {
+        Double north_lat = 0.0;
+        Double south_lat = 0.0;
+        Double east_lng = 0.0;
+        Double west_lng = 0.0;
+        Cursor lat_cursor = database.query("trackRoute",
+                new String[]{"routesCounter", "track_no", "track_lat", "track_lng",
+                        "track_start", "track_title", "track_totaltime", "track_completetime"},
+                "routesCounter=\"" + RoutesCounter + "\"", null, null, null, "track_lat DESC", null);
+        if (lat_cursor != null) {
+            if (lat_cursor.getCount() != 0) {
+                lat_cursor.moveToFirst();
+                north_lat = lat_cursor.getDouble(2);
+                lat_cursor.moveToLast();
+                south_lat = lat_cursor.getDouble(2);
+            }
+            lat_cursor.close();
+        }
+
+        Cursor lng_cursor = database.query("trackRoute",
+                new String[]{"routesCounter", "track_no", "track_lat", "track_lng",
+                        "track_start", "track_title", "track_totaltime", "track_completetime"},
+                "routesCounter=\"" + RoutesCounter + "\"", null, null, null, "track_lng DESC", null);
+        if (lng_cursor != null) {
+            if (lng_cursor.getCount() != 0) {
+                lng_cursor.moveToFirst();
+                east_lng = lng_cursor.getDouble(3);
+                lat_cursor.moveToLast();
+                west_lng = lng_cursor.getDouble(3);
+            }
+            lng_cursor.close();
+        }
+        LatLng Northeast_latLng = new LatLng(north_lat, east_lng);
+        LatLng Southwest_latLng = new LatLng(south_lat, west_lng);
+        LatLngBounds bounds = new LatLngBounds(Southwest_latLng, Northeast_latLng);
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(bounds.getCenter(), 15));
+        //LatLng mid_latLng = new LatLng((start_lat+end_lat)/2, (start_lng+end_lng)/2);
+        //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mid_latLng, 15));
+    }
+
+    public int getPx(int dimensionDp) {
+        float density = getResources().getDisplayMetrics().density;
+        return (int) (dimensionDp * density + 0.5f);
     }
 
     public static Bitmap decodeBitmapFromResource(Resources res, int resId, int reqWidth, int reqHeight) {
@@ -464,14 +557,14 @@ public class RecordDiaryDetailActivity extends AppCompatActivity implements
         }
     }
 
-    private class DiaryContentAdapter extends BaseAdapter {
+    private class DiaryTxtAdapter extends BaseAdapter {
 
         private Context context;
         private LayoutInflater inflater;
         private ViewHolder mViewHolder;
         private Integer routeCounter = 1;
 
-        public DiaryContentAdapter(Context mcontext, Integer rs) {
+        public DiaryTxtAdapter(Context mcontext, Integer rs) {
             this.context = mcontext;
             inflater = LayoutInflater.from(mcontext);
             routeCounter = rs;
@@ -507,7 +600,7 @@ public class RecordDiaryDetailActivity extends AppCompatActivity implements
             if (convertView == null) {
                 convertView = inflater.inflate(R.layout.diary_detail_content, parent, false);
                 mViewHolder = new ViewHolder();
-                mViewHolder.MemoString = (TextView) convertView.findViewById(R.id.MemoDetailString);
+                mViewHolder.DiaryString = (TextView) convertView.findViewById(R.id.DiaryDetailString);
 
                 convertView.setTag(mViewHolder);
 
@@ -520,10 +613,10 @@ public class RecordDiaryDetailActivity extends AppCompatActivity implements
             if (memo_cursor != null) {
                 if (memo_cursor.getCount() != 0) {
                     memo_cursor.moveToPosition(position);
-                    mViewHolder.MemoString.setText(memo_cursor.getString(2));
+                    mViewHolder.DiaryString.setText(memo_cursor.getString(2));
                     Log.e("3/27_memo content: ", memo_cursor.getString(2));
                 } else {
-                    mViewHolder.MemoString.setText("未上傳景點心得。");
+                    mViewHolder.DiaryString.setText("未上傳景點心得。");
                 }
                 memo_cursor.close();
             }
@@ -531,7 +624,7 @@ public class RecordDiaryDetailActivity extends AppCompatActivity implements
         }
 
         private class ViewHolder {
-            TextView MemoString;
+            TextView DiaryString;
         }
     }
 

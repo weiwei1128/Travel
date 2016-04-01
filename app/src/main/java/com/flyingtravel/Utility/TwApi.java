@@ -269,8 +269,6 @@ public class TwApi extends AsyncTask<String, Void, ArrayList<SpotData>> {
         if (spotDataRaw_cursor != null) {
             spotDataRaw_cursor.close();
         }
-        //database.close();
-        //helper.close();
         return globalVariable.SpotDataTW;
     }
 
