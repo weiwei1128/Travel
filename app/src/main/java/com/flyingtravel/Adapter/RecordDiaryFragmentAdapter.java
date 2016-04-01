@@ -31,7 +31,7 @@ public class RecordDiaryFragmentAdapter extends BaseAdapter implements ViewPager
     private DataBaseHelper helper;
     private SQLiteDatabase database;
 
-    private Integer RouteConter = 1;
+    private Integer RoutesCounter = 1;
 
     public RecordDiaryFragmentAdapter(Context mcontext) {
         this.context = mcontext;
@@ -94,11 +94,11 @@ public class RecordDiaryFragmentAdapter extends BaseAdapter implements ViewPager
                 trackRoute_cursor.moveToPosition(trackRoute_cursor.getCount() - position-1);
                 mViewHolder.MemoTitle.setText(trackRoute_cursor.getString(5));
                 mViewHolder.MemoTotalTime.setText(trackRoute_cursor.getString(6));
-                RouteConter = trackRoute_cursor.getInt(0);
+                RoutesCounter = trackRoute_cursor.getInt(0);
 
                 Cursor memo_cursor = database.query("travelmemo", new String[]{"memo_routesCounter", "memo_trackNo",
                                 "memo_content", "memo_img", "memo_latlng", "memo_time"},
-                        "memo_routesCounter=\"" + RouteConter + "\" AND memo_content!=\"null\"", null, null, null, null, null);
+                        "memo_routesCounter=\"" + RoutesCounter + "\" AND memo_content!=\"null\"", null, null, null, null, null);
                 if (memo_cursor != null) {
                     if (memo_cursor.getCount() != 0) {
                         memo_cursor.moveToFirst();
@@ -111,7 +111,7 @@ public class RecordDiaryFragmentAdapter extends BaseAdapter implements ViewPager
 
                 Cursor img_cursor = database.query("travelmemo", new String[]{"memo_routesCounter", "memo_trackNo",
                                 "memo_content", "memo_img", "memo_latlng", "memo_time"},
-                        "memo_routesCounter=\"" + RouteConter + "\" AND memo_img!=\"null\"", null, null, null, null, null);
+                        "memo_routesCounter=\"" + RoutesCounter + "\" AND memo_img!=\"null\"", null, null, null, null, null);
                 if (img_cursor != null) {
                     int number;
                     mViewHolder.ImageSlider.removeAllSliders();

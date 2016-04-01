@@ -85,7 +85,12 @@ public class TPESpotAPIFetcher extends AsyncTask<Void, Void, TPESpotJson> {
             Log.e(TAG, "Failed to send HTTP POST request due to: " + ex);
         }
 
-        Result = spotJson.getResult();
+        if (spotJson != null) {
+            Result = spotJson.getResult();
+        } else {
+            TPESpotJson a = new TPESpotJson();
+            Result = a.new PostResult();
+        }
         Integer ResultsLength = Result.getResults().length;
         Log.d("3/23_TPESpotJson", "景點個數: " + ResultsLength.toString());
         for (Integer i = 0; i < ResultsLength; i++) {

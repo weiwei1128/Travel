@@ -89,7 +89,7 @@ public class RecordTrackFragment extends Fragment implements
     private static int FATEST_INTERVAL = 1000; // 1 sec
     private static int DISPLACEMENT = 3;       // 5 meters
 
-    private GlobalVariable globalVariable;
+    //private GlobalVariable globalVariable;
 
     private Location CurrentLocation;
 
@@ -156,7 +156,7 @@ public class RecordTrackFragment extends Fragment implements
             //mParam2 = getArguments().getString(ARG_PARAM2);
         }
 
-        globalVariable = (GlobalVariable) getActivity().getApplicationContext();
+        //globalVariable = (GlobalVariable) getActivity().getApplicationContext();
         getActivity().registerReceiver(broadcastReceiver, new IntentFilter(TrackRouteService.BROADCAST_ACTION));
         getActivity().registerReceiver(broadcastReceiver_timer, new IntentFilter(TrackRouteService.BROADCAST_ACTION_TIMER));
 
@@ -189,7 +189,6 @@ public class RecordTrackFragment extends Fragment implements
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         mMap.setMyLocationEnabled(true);
         mMap.getUiSettings().setCompassEnabled(true);
-        mMap.getUiSettings().setZoomControlsEnabled(true);
 
         // Needs to call MapsInitializer before doing any CameraUpdateFactory calls
         MapsInitializer.initialize(this.getActivity());
@@ -204,7 +203,7 @@ public class RecordTrackFragment extends Fragment implements
 
         spotDialog = new Dialog(getActivity());
         spotDialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
-        spotDialog.setContentView(R.layout.record_memo_dialog);
+        spotDialog.setContentView(R.layout.record_diary_dialog);
 
         dialog_choose_layout = (LinearLayout) spotDialog.findViewById(R.id.dialog_choose_layout);
         dialog_header_text = (TextView) spotDialog.findViewById(R.id.dialog_header_text);
@@ -397,7 +396,7 @@ public class RecordTrackFragment extends Fragment implements
                 }
                 dialog_scrollview.setVisibility(View.VISIBLE);
                 RelativeLayout.LayoutParams otelParams = new RelativeLayout.LayoutParams(
-                        ViewGroup.LayoutParams.MATCH_PARENT, 500);
+                        ViewGroup.LayoutParams.MATCH_PARENT, getPx(150));
                 otelParams.addRule(RelativeLayout.BELOW, R.id.dialog_header_text);
                 dialog_scrollview.setLayoutParams(otelParams);
 
@@ -629,25 +628,26 @@ public class RecordTrackFragment extends Fragment implements
                 null, null, null, null, null);
         if (trackRoute_cursor != null) {
             if (trackRoute_cursor.getCount() != 0) {
-                Integer routesCounter;
-                Integer track_no;
-                Double track_lat;
-                Double track_lng;
-                Integer track_start;
+                //track_start = 0:該Route最後一筆(停止)，1:記錄中(開始)，2:該Track最後一筆(暫停)
+                Boolean DontDisplay = false;
                 while (trackRoute_cursor.moveToNext()) {
-                    routesCounter = trackRoute_cursor.getInt(0);
-                    track_no = trackRoute_cursor.getInt(1);
-                    track_lat = trackRoute_cursor.getDouble(2);
-                    track_lng = trackRoute_cursor.getDouble(3);
-                    //track_start = trackRoute_cursor.getInt(4);
-                    // TODO track_start=0:最後一筆 1:還在紀錄
-                    LatLng track_latLng = new LatLng(track_lat, track_lng);
-                    if (!(routesCounter > 1 && track_no == 1)) {
+                    if (DontDisplay) {
+                        DontDisplay = false;
+                        continue;
+                    } else {
+                        Double track_lat = trackRoute_cursor.getDouble(2);
+                        Double track_lng = trackRoute_cursor.getDouble(3);
+                        Integer track_start = trackRoute_cursor.getInt(4);
+                        LatLng track_latLng = new LatLng(track_lat, track_lng);
                         DisplayRoute(track_latLng);
+
+                        if (track_start == 0 || track_start == 2) {
+                            DontDisplay = true;
+                        }
                     }
                 }
                 trackRoute_cursor.moveToLast();
-                track_start = trackRoute_cursor.getInt(4);
+                Integer track_start = trackRoute_cursor.getInt(4);
                 if (track_start == 0) {
                     RoutesCounter = trackRoute_cursor.getInt(0) + 1;
                     Track_no = 1;
@@ -706,7 +706,7 @@ public class RecordTrackFragment extends Fragment implements
             }
             dialog_scrollview.setVisibility(View.VISIBLE);
             RelativeLayout.LayoutParams otelParams = new RelativeLayout.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT, 500);
+                    ViewGroup.LayoutParams.MATCH_PARENT, getPx(150));
             otelParams.addRule(RelativeLayout.BELOW, R.id.dialog_header_text);
             dialog_scrollview.setLayoutParams(otelParams);
 
@@ -848,6 +848,7 @@ public class RecordTrackFragment extends Fragment implements
                         trackRoute_cursor.close();
                     }
                 } else if (status == 0) {
+                    // TODO 如果先按了暫停最後一筆由insert改為update track_no由2改0
                     String track_title = intent.getStringExtra("track_title");
                     DataBaseHelper helper = DataBaseHelper.getmInstance(getActivity());
                     SQLiteDatabase database = helper.getWritableDatabase();
@@ -880,6 +881,11 @@ public class RecordTrackFragment extends Fragment implements
             }
         }
     };
+
+    public int getPx(int dimensionDp) {
+        float density = getResources().getDisplayMetrics().density;
+        return (int) (dimensionDp * density + 0.5f);
+    }
 
     public static Bitmap decodeBitmapFromResource(Resources res, int resId, int reqWidth, int reqHeight) {
         // First decode with inJustDecodeBounds=true to check dimensions

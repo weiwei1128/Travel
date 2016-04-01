@@ -14,9 +14,9 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.flyingtravel.Activity.RecordDiaryDetailActivity;
 import com.flyingtravel.Adapter.RecordDiaryFragmentAdapter;
 import com.flyingtravel.R;
-import com.flyingtravel.Activity.RecordMemoDetailActivity;
 import com.flyingtravel.Utility.DataBaseHelper;
 import com.flyingtravel.Utility.Functions;
 
@@ -134,7 +134,7 @@ public class RecordDiaryFragment extends Fragment {
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             Bundle bundle = new Bundle();
             bundle.putInt("WhichItem", position);
-            Functions.go(false, getActivity(), getContext(), RecordMemoDetailActivity.class, bundle);
+            Functions.go(false, getActivity(), getContext(), RecordDiaryDetailActivity.class, bundle);
         }
     }
 

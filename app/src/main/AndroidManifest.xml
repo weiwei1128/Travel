@@ -81,9 +81,6 @@
             android:name="com.flyingtravel.Activity.CheckScheduleOKActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".MemberActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
             android:name="com.flyingtravel.Activity.ServiceActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
@@ -91,13 +88,7 @@
             android:hardwareAccelerated="true"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".RecordMemoActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name="com.flyingtravel.Activity.RecordMemoDetailActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".ShopRecordActivity"
+            android:name="com.flyingtravel.Activity.RecordDiaryDetailActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name="com.flyingtravel.Activity.CheckScheduleActivity"

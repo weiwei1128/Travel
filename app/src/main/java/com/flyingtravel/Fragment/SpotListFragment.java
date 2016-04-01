@@ -109,14 +109,6 @@ public class SpotListFragment extends Fragment implements
                 .setInterval(UPDATE_INTERVAL)        // 5 seconds, in milliseconds
                 .setFastestInterval(FATEST_INTERVAL) // 1 second, in milliseconds
                 .setSmallestDisplacement(DISPLACEMENT);
-
-        if (globalVariable.SpotDataSorted.isEmpty()) {
-            if (CurrentLocation != null) {
-                Log.e("3/23_SpotListFragment", "start sort");
-                new GetSpotsNSort(getActivity(), CurrentLocation.getLatitude(),
-                        CurrentLocation.getLongitude()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-            }
-        }
     }
 
     @Override

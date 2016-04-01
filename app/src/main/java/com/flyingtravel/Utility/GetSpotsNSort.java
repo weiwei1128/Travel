@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteStatement;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -80,7 +81,7 @@ public class GetSpotsNSort extends AsyncTask<Void, Void, ArrayList<SpotData>> {
                     String TicketInfo = spotDataRaw_cursor.getString(8);
                     String InfoDetail = spotDataRaw_cursor.getString(9);
                     mSpotData.add(new SpotData(Name, Latitude, Longitude, Add,
-                            Picture1, Picture2, Picture3, OpenTime,TicketInfo, InfoDetail));
+                            Picture1, Picture2, Picture3, OpenTime, TicketInfo, InfoDetail));
                 }
                 spotDataRaw_cursor.close();
             }
@@ -99,7 +100,8 @@ public class GetSpotsNSort extends AsyncTask<Void, Void, ArrayList<SpotData>> {
 
         globalVariable.SpotDataSorted = mSpotData;
         if (!globalVariable.SpotDataSorted.isEmpty()) {
-            Intent intent = new Intent(BROADCAST_ACTION);
+            Intent
+                    intent = new Intent(BROADCAST_ACTION);
             intent.putExtra("isSpoted", true);
             mcontext.sendBroadcast(intent);
         }
@@ -114,7 +116,27 @@ public class GetSpotsNSort extends AsyncTask<Void, Void, ArrayList<SpotData>> {
         Integer SpotDataSize = mSpotData.size();
         if (spotDataSorted_cursor != null && SpotDataSize > 0) {
             if (spotDataSorted_cursor.getCount() == 0) {
+/*
+                String sql = "INSERT INTO spotDataSorted (spotName, spotAdd, spotLat, spotLng, " +
+                        "picture1, picture2, picture3, openTime, ticketInfo, infoDetail) VALUES (?,?,?,?,?,?,?,?,?,?)";
+                database.beginTransactionNonExclusive();
+                // db.beginTransaction();
+                SQLiteStatement stmt = database.compileStatement(sql);
+*/
                 for (int i = 0; i < SpotDataSize; i++) {
+/*                    stmt.bindString(1, mSpotData.get(i).getName());
+                    stmt.bindString(2, mSpotData.get(i).getAdd());
+                    stmt.bindDouble(3, mSpotData.get(i).getLatitude());
+                    stmt.bindDouble(4, mSpotData.get(i).getLongitude());
+                    stmt.bindString(5, mSpotData.get(i).getPicture1());
+                    stmt.bindString(6, mSpotData.get(i).getPicture2());
+                    stmt.bindString(7, mSpotData.get(i).getPicture3());
+                    stmt.bindString(8, mSpotData.get(i).getOpenTime());
+                    stmt.bindString(9, mSpotData.get(i).getTicketInfo());
+                    stmt.bindString(10, mSpotData.get(i).getInfoDetail());
+                    stmt.execute();
+                    stmt.clearBindings();
+*/
                     ContentValues cv = new ContentValues();
                     cv.put("spotName", mSpotData.get(i).getName());
                     cv.put("spotAdd", mSpotData.get(i).getAdd());
@@ -127,11 +149,33 @@ public class GetSpotsNSort extends AsyncTask<Void, Void, ArrayList<SpotData>> {
                     cv.put("ticketInfo", mSpotData.get(i).getTicketInfo());
                     cv.put("infoDetail", mSpotData.get(i).getInfoDetail());
                     long result = database.insert("spotDataSorted", null, cv);
-                    //Log.d("3/8_新增排序", result + " = DB INSERT " + i + " spotName " + globalVariable.SpotData.get(i).getName());
+                    //Log.d("3/8_新增排序", result + " = DB INSERT " + i + " spotName " + globalVariable.SpotData.get(i).getName());*/
                 }
+                //database.setTransactionSuccessful();
+                //database.endTransaction();
             } else {
                 database.delete("spotDataSorted", null, null);
+/*
+                String sql = "INSERT INTO spotDataSorted (spotName, spotAdd, spotLat, spotLng, " +
+                        "picture1, picture2, picture3, openTime, ticketInfo, infoDetail) VALUES (?,?,?,?,?,?,?,?,?,?)";
+                database.beginTransactionNonExclusive();
+                // db.beginTransaction();
+                SQLiteStatement stmt = database.compileStatement(sql);
+*/
                 for (int i = 0; i < SpotDataSize; i++) {
+/*                    stmt.bindString(1, mSpotData.get(i).getName());
+                    stmt.bindString(2, mSpotData.get(i).getAdd());
+                    stmt.bindDouble(3, mSpotData.get(i).getLatitude());
+                    stmt.bindDouble(4, mSpotData.get(i).getLongitude());
+                    stmt.bindString(5, mSpotData.get(i).getPicture1());
+                    stmt.bindString(6, mSpotData.get(i).getPicture2());
+                    stmt.bindString(7, mSpotData.get(i).getPicture3());
+                    stmt.bindString(8, mSpotData.get(i).getOpenTime());
+                    stmt.bindString(9, mSpotData.get(i).getTicketInfo());
+                    stmt.bindString(10, mSpotData.get(i).getInfoDetail());
+                    stmt.execute();
+                    stmt.clearBindings();
+*/
                     ContentValues cv = new ContentValues();
                     cv.put("spotName", mSpotData.get(i).getName());
                     cv.put("spotAdd", mSpotData.get(i).getAdd());
@@ -144,8 +188,10 @@ public class GetSpotsNSort extends AsyncTask<Void, Void, ArrayList<SpotData>> {
                     cv.put("ticketInfo", mSpotData.get(i).getTicketInfo());
                     cv.put("infoDetail", mSpotData.get(i).getInfoDetail());
                     long result = database.insert("spotDataSorted", null, cv);
-                    //Log.d("3/8_更新排序", result + " = DB INSERT " + i + " spotName " + globalVariable.SpotData.get(i).getName());
+                    //Log.d("3/8_更新排序", result + " = DB INSERT " + i + " spotName " + globalVariable.SpotData.get(i).getName());*/
                 }
+                //database.setTransactionSuccessful();
+                //database.endTransaction();
             }
             spotDataSorted_cursor.close();
         }
@@ -164,7 +210,8 @@ public class GetSpotsNSort extends AsyncTask<Void, Void, ArrayList<SpotData>> {
         Collections.sort(spot, new Comparator<SpotData>() {
             @Override
             public int compare(SpotData spot1, SpotData spot2) {
-                return spot1.getDistance() < spot2.getDistance() ? -1 : 1;
+                //return spot1.getDistance() < spot2.getDistance() ? -1 : 1;
+                return spot1.getDistance() < spot2.getDistance() ? -1 : spot1.getDistance() == spot2.getDistance() ? 0 : 1;
             }
         });
     }

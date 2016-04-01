@@ -125,9 +125,10 @@ public class SpotDetailActivity extends AppCompatActivity {
 
         options = new DisplayImageOptions.Builder()
                 .showImageOnFail(R.drawable.error)
+                .showImageOnLoading(R.drawable.loading2)
                 .showImageForEmptyUri(R.drawable.empty)
-                .cacheInMemory()
-                .cacheOnDisc().build();
+                .cacheInMemory(false)
+                .cacheOnDisk(true).build();
         listener = new ImageLoadingListener() {
             @Override
             public void onLoadingStarted(String s, View view) {
@@ -136,7 +137,8 @@ public class SpotDetailActivity extends AppCompatActivity {
 
             @Override
             public void onLoadingFailed(String s, View view, FailReason failReason) {
-
+                ImageView imageView = (ImageView) view.findViewById(R.id.spotdetail_Img);
+                loader.displayImage(null, imageView, options, listener);
             }
 
             @Override
@@ -150,17 +152,14 @@ public class SpotDetailActivity extends AppCompatActivity {
             }
         };
 
-        ImageLoaderConfiguration configuration =
-                new ImageLoaderConfiguration.Builder(SpotDetailActivity.this).build();
-        ImageLoader.getInstance().destroy();
-        ImageLoader.getInstance().init(configuration);
-
         String ImgString = globalVariable.SpotDataSorted.get(mPosition).getPicture1();
         loader.displayImage(ImgString, SpotImg, options, listener);
 
         SpotName.setText(globalVariable.SpotDataSorted.get(mPosition).getName());
 
-        if (globalVariable.SpotDataSorted.get(mPosition).getOpenTime().equals("")) {
+        if (globalVariable.SpotDataSorted.get(mPosition).getOpenTime() == null) {
+            SpotOpenTime.setText("1. 開放時間：無");
+        } else if (globalVariable.SpotDataSorted.get(mPosition).getOpenTime().equals("")) {
             SpotOpenTime.setText("1. 開放時間：無");
         } else {
             SpotOpenTime.setText("1. 開放時間：" + globalVariable.SpotDataSorted.get(mPosition).getOpenTime());
