@@ -192,7 +192,7 @@ public class HomepageActivity extends FragmentActivity {
                     goLogin.setMessage("請先登入");
                     // 添加選擇按鈕並注冊監聽
                     goLogin.setButton(AlertDialog.BUTTON_NEGATIVE, "取消", listenerLogin);
-                    goLogin.setButton(AlertDialog.BUTTON_POSITIVE,"確定",listener);
+                    goLogin.setButton(AlertDialog.BUTTON_POSITIVE,"確定",listenerLogin);
                     /*
     On devices prior to Honeycomb, the button order (left to right) was POSITIVE - NEUTRAL - NEGATIVE.
     On newer devices using the Holo theme, the button order (left to right) is now NEGATIVE - NEUTRAL - POSITIVE.

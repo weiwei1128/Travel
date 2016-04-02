@@ -43,60 +43,77 @@
         <service android:name="com.flyingtravel.Utility.HttpService" />
         <service android:name="com.flyingtravel.Utility.TrackRouteService" />
         <service android:name="com.flyingtravel.Utility.LoadApiService" />
-
+        <!--screenOrientation make the app not rorate with the phone-->
         <activity
             android:name="com.flyingtravel.HomepageActivity"
+            android:screenOrientation="nosensor"
             android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name="com.flyingtravel.Activity.Spot.SpotActivity"
+            android:screenOrientation="nosensor"
             android:theme="@style/AppTheme" />
         <activity
             android:name="com.flyingtravel.Activity.Buy.BuyActivity"
+            android:screenOrientation="nosensor"
             android:theme="@style/AppTheme" />
         <activity
             android:name="com.flyingtravel.Activity.Buy.BuyItemDetailActivity"
+            android:screenOrientation="nosensor"
             android:theme="@style/AppTheme" />
         <activity
             android:name="com.flyingtravel.Activity.Spot.SpotDetailActivity"
+            android:screenOrientation="nosensor"
             android:theme="@style/AppTheme" />
         <activity
             android:name="com.flyingtravel.Activity.RecordActivity"
+            android:screenOrientation="nosensor"
             android:theme="@style/AppTheme" />
         <activity
             android:name="com.flyingtravel.Activity.LoginActivity"
+            android:screenOrientation="nosensor"
             android:theme="@style/AppTheme" />
         <activity
             android:name="com.flyingtravel.Activity.Buy.BuyItemListActivity"
+            android:screenOrientation="nosensor"
             android:theme="@style/AppTheme" />
         <activity
             android:name="com.flyingtravel.Activity.Buy.BuyItemListConfirmActivity"
+            android:screenOrientation="nosensor"
             android:theme="@style/AppTheme" />
         <activity
             android:name="com.flyingtravel.Activity.CheckScheduleOKActivity"
+            android:screenOrientation="nosensor"
             android:theme="@style/AppTheme" />
         <activity
             android:name="com.flyingtravel.Activity.ServiceActivity"
+            android:screenOrientation="nosensor"
             android:theme="@style/AppTheme" />
         <activity
             android:name="com.flyingtravel.Activity.Special.SpecialActivity"
             android:hardwareAccelerated="true"
+            android:screenOrientation="nosensor"
             android:theme="@style/AppTheme" />
         <activity
             android:name="com.flyingtravel.Activity.CheckScheduleActivity"
+            android:screenOrientation="nosensor"
             android:theme="@style/AppTheme" />
         <activity
             android:name="com.flyingtravel.Activity.Special.SpecialDetailActivity"
+            android:screenOrientation="nosensor"
             android:theme="@style/AppTheme" />
         <activity
             android:name="com.flyingtravel.Activity.ShopRecordItemActivity"
+            android:screenOrientation="nosensor"
             android:theme="@style/AppTheme" />
         <activity
             android:name="com.flyingtravel.Activity.Buy.BuyItemListConfirmWebview"
+            android:screenOrientation="nosensor"
             android:theme="@style/AppTheme" />
     </application>
 
