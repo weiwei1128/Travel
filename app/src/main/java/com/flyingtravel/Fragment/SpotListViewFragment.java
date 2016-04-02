@@ -78,6 +78,12 @@ public class SpotListViewFragment extends Fragment {
         super.onDestroyView();
     }
 
+    @Override
+    public void onLowMemory() {
+        System.gc();
+        super.onLowMemory();
+    }
+
     class itemListener implements AdapterView.OnItemClickListener {
 
         @Override

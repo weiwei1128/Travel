@@ -165,6 +165,9 @@ public class SpotMapFragment extends Fragment implements
         if (!mGoogleApiClient.isConnected()) {
             mGoogleApiClient.connect();
         }
+        if (MarkerIcon == null) {
+            MarkerIcon = decodeBitmapFromResource(getResources(), R.drawable.location3, 10, 18);
+        }
         if (!globalVariable.MarkerOptionsArray.isEmpty()) {
             int MarkerCount = globalVariable.MarkerOptionsArray.size();
             for (int i = 0; i < MarkerCount/12; i++) {
@@ -212,6 +215,8 @@ public class SpotMapFragment extends Fragment implements
     @Override
     public void onLowMemory() {
         mapView.onLowMemory();
+        MarkerIcon.recycle();
+        System.gc();
         super.onLowMemory();
     }
 
