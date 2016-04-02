@@ -527,6 +527,7 @@ public class RecordTrackFragment extends Fragment implements
 
     @Override
     public void onDestroyView() {
+        Log.e("3/23_RecordTrack", "onDestroyView");
         mapView.onDestroy();
         if (broadcastReceiver_timer != null)
             getActivity().unregisterReceiver(broadcastReceiver_timer);
@@ -539,6 +540,7 @@ public class RecordTrackFragment extends Fragment implements
 
     @Override
     public void onLowMemory() {
+        Log.e("3/23_RecordTrack", "onLowMemory");
         mapView.onLowMemory();
         MarkerIcon.recycle();
         System.gc();

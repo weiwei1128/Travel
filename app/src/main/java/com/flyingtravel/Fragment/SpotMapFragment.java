@@ -197,6 +197,7 @@ public class SpotMapFragment extends Fragment implements
 
     @Override
     public void onDestroyView() {
+        Log.e("3/23_SpotMap", "onDestroyView");
         mapView.onDestroy();
         if (broadcastReceiver != null)
             getActivity().unregisterReceiver(broadcastReceiver);
@@ -214,6 +215,7 @@ public class SpotMapFragment extends Fragment implements
 
     @Override
     public void onLowMemory() {
+        Log.e("3/23_SpotMap", "onLowMemory");
         mapView.onLowMemory();
         MarkerIcon.recycle();
         System.gc();
