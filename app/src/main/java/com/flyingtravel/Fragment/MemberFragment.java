@@ -119,7 +119,10 @@ public class MemberFragment extends Fragment {
                 //setting share information
                 sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "寶島好智遊");
                 sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, "寶島好智遊");
-                sharingIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse("file:///sdcard/temporary_file.jpg"));
+                sharingIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://+"+
+                        Environment.getExternalStorageDirectory().getPath()
+//                        "/sdcard/"
+                        +"temporary_file.jpg"));
 
 
 //                image/jpeg

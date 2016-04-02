@@ -30,3 +30,7 @@ library/build/intermediates/classes/release/com/daimajia/slider/library/SliderLa
 library/build/intermediates/classes/release/com/daimajia/slider/library/SliderLayout.class
 
 library/build/intermediates/bundles/release/classes.jar
+
+*.json
+
+library/build/intermediates/blame/res/release/multi/values-my-rMM.json

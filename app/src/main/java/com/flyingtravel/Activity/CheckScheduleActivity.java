@@ -8,7 +8,6 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.webkit.WebSettings;
@@ -74,12 +73,12 @@ public class CheckScheduleActivity extends AppCompatActivity {
         if (member_cursor != null)
             member_cursor.close();
         if (uid != null) {
-            Log.i("3.25", "uid!=null");
+//            Log.i("3.25", "uid!=null");
             new getSchedule(uid, new Functions.TaskCallBack() {
                 @Override
                 public void TaskDone(Boolean OrderNeedUpdate) {
                     methodThatDoesSomethingWhenTaskIsDone(OrderNeedUpdate);
-                    Log.i("3.25", "TaskDone" + OrderNeedUpdate);
+//                    Log.i("3.25", "TaskDone" + OrderNeedUpdate);
                 }
             }).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         } else {
@@ -103,7 +102,7 @@ public class CheckScheduleActivity extends AppCompatActivity {
         websettings.setBuiltInZoomControls(true);
         websettings.setJavaScriptEnabled(true);
 
-        webView.setWebViewClient(new WebViewClient(){
+        webView.setWebViewClient(new WebViewClient() {
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);

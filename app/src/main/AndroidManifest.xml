@@ -19,6 +19,7 @@
     <application
         android:name="com.flyingtravel.Utility.GlobalVariable"
         android:allowBackup="true"
+        android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
         android:icon="@drawable/icon_512"
         android:label="@string/app_name">
         <meta-data
@@ -86,9 +87,6 @@
         <activity
             android:name="com.flyingtravel.Activity.Special.SpecialActivity"
             android:hardwareAccelerated="true"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name="com.flyingtravel.Activity.RecordDiaryDetailActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name="com.flyingtravel.Activity.CheckScheduleActivity"
