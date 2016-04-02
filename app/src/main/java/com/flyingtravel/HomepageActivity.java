@@ -42,8 +42,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.flyingtravel.Activity.LoginActivity;
 import com.flyingtravel.Fragment.MainFragment;
 import com.flyingtravel.Fragment.MemberFragment;
@@ -55,6 +53,8 @@ import com.flyingtravel.Utility.GlobalVariable;
 import com.flyingtravel.Utility.HttpService;
 import com.flyingtravel.Utility.LoadApiService;
 import com.flyingtravel.Utility.View.MyTextview;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
 public class HomepageActivity extends FragmentActivity {
     private Fragment contentFragment;
@@ -191,8 +191,13 @@ public class HomepageActivity extends FragmentActivity {
                     // 設置對話框消息
                     goLogin.setMessage("請先登入");
                     // 添加選擇按鈕並注冊監聽
-                    goLogin.setButton("確定", listenerLogin);
-                    goLogin.setButton2("取消", listenerLogin);
+                    goLogin.setButton(AlertDialog.BUTTON_NEGATIVE, "取消", listenerLogin);
+                    goLogin.setButton(AlertDialog.BUTTON_POSITIVE,"確定",listenerLogin);
+                    /*
+    On devices prior to Honeycomb, the button order (left to right) was POSITIVE - NEUTRAL - NEGATIVE.
+    On newer devices using the Holo theme, the button order (left to right) is now NEGATIVE - NEUTRAL - POSITIVE.
+
+                    * */
                     // 顯示對話框
                     if (!goLogin.isShowing())
                         goLogin.show();
