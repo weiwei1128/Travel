@@ -244,10 +244,18 @@ public class SpotListFragment extends Fragment implements
 
     @Override
     public void onDestroyView() {
+        Log.e("3/23_SpotList", "onDestroyView");
         if (broadcastReceiver != null)
             getActivity().unregisterReceiver(broadcastReceiver);
         System.gc();
         super.onDestroyView();
+    }
+
+    @Override
+    public void onLowMemory() {
+        Log.e("3/23_SpotList", "onLowMemory");
+        System.gc();
+        super.onLowMemory();
     }
 
     @Override

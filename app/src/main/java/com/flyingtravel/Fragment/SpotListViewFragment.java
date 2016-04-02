@@ -74,12 +74,14 @@ public class SpotListViewFragment extends Fragment {
 
     @Override
     public void onDestroyView() {
+        Log.e("3/23_SpotListView", "onDestroyView");
         System.gc();
         super.onDestroyView();
     }
 
     @Override
     public void onLowMemory() {
+        Log.e("3/23_SpotListView", "onLowMemory");
         System.gc();
         super.onLowMemory();
     }
