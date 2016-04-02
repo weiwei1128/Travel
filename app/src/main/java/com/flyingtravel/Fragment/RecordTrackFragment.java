@@ -501,6 +501,9 @@ public class RecordTrackFragment extends Fragment implements
         if (!mGoogleApiClient.isConnected()) {
             mGoogleApiClient.connect();
         }
+        if (MarkerIcon == null) {
+            MarkerIcon = decodeBitmapFromResource(getResources(), R.drawable.location3, 10, 18);
+        }
         super.onResume();
     }
 
@@ -537,6 +540,8 @@ public class RecordTrackFragment extends Fragment implements
     @Override
     public void onLowMemory() {
         mapView.onLowMemory();
+        MarkerIcon.recycle();
+        System.gc();
         super.onLowMemory();
     }
 
