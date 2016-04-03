@@ -3,6 +3,8 @@ package com.flyingtravel.Adapter;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.util.Log;
+import android.view.ViewGroup;
 
 import java.util.List;
 
@@ -32,5 +34,11 @@ public class SpotFragmentPagerAdapter extends FragmentPagerAdapter {
     public CharSequence getPageTitle(int position) {
         // Generate title based on item position
         return tabTitles[position];
+    }
+
+    @Override
+    public void destroyItem(ViewGroup container, int position, Object object) {
+        Log.e("3/23_PagerAdapter", "destroyItem");
+        container.removeView(fragments.get(position).getView());
     }
 }

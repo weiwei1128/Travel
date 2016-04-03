@@ -86,6 +86,20 @@ public class SpotListViewFragment extends Fragment {
         super.onLowMemory();
     }
 
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser) {
+            //you are visible to user now - so set whatever you need
+            Log.e("3/23_SpotListView", "setUserVisibleHint: Visible");
+        }
+        else {
+            //you are no longer visible to the user so cleanup whatever you need
+            Log.e("3/23_SpotListView", "setUserVisibleHint: not Visible");
+            System.gc();
+        }
+    }
+
     class itemListener implements AdapterView.OnItemClickListener {
 
         @Override

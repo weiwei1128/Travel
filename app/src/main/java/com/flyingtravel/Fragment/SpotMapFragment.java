@@ -167,11 +167,12 @@ public class SpotMapFragment extends Fragment implements
         }
         if (MarkerIcon == null) {
             MarkerIcon = decodeBitmapFromResource(getResources(), R.drawable.location3, 10, 18);
-        }
-        if (!globalVariable.MarkerOptionsArray.isEmpty()) {
-            int MarkerCount = globalVariable.MarkerOptionsArray.size();
-            for (int i = 0; i < MarkerCount/12; i++) {
-                mMap.addMarker(globalVariable.MarkerOptionsArray.get(i));
+            if (!globalVariable.MarkerOptionsArray.isEmpty()) {
+                int MarkerCount = globalVariable.MarkerOptionsArray.size();
+                for (int i = 0; i < MarkerCount/12; i++) {
+                    mMap.addMarker(globalVariable.MarkerOptionsArray.get(i)
+                            .icon(BitmapDescriptorFactory.fromBitmap(MarkerIcon)));
+                }
             }
         }
         super.onResume();
@@ -220,6 +221,33 @@ public class SpotMapFragment extends Fragment implements
         MarkerIcon.recycle();
         System.gc();
         super.onLowMemory();
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser) {
+            //you are visible to user now - so set whatever you need
+            Log.e("3/23_SpotMap", "setUserVisibleHint: Visible");
+            if (MarkerIcon == null) {
+                MarkerIcon = decodeBitmapFromResource(getResources(), R.drawable.location3, 10, 18);
+                if (!globalVariable.MarkerOptionsArray.isEmpty()) {
+                    int MarkerCount = globalVariable.MarkerOptionsArray.size();
+                    for (int i = 0; i < MarkerCount/12; i++) {
+                        mMap.addMarker(globalVariable.MarkerOptionsArray.get(i)
+                                .icon(BitmapDescriptorFactory.fromBitmap(MarkerIcon)));
+                    }
+                }
+            }
+        }
+        else {
+            //you are no longer visible to the user so cleanup whatever you need
+            Log.e("3/23_SpotMap", "setUserVisibleHint: not Visible");
+            if (MarkerIcon != null) {
+                MarkerIcon.recycle();
+            }
+            System.gc();
+        }
     }
 
     @Override
@@ -412,8 +440,7 @@ public class SpotMapFragment extends Fragment implements
                     LatLng latLng = new LatLng(Latitude,Longitude);
                     String OpenTime = globalVariable.SpotDataSorted.get(i).getOpenTime();
                     MarkerOptions markerOpt = new MarkerOptions();
-                    markerOpt.position(latLng).title(Name).snippet(OpenTime)
-                            .icon(BitmapDescriptorFactory.fromBitmap(MarkerIcon));
+                    markerOpt.position(latLng).title(Name).snippet(OpenTime);
 
                     MarkerOptionsArray.add(markerOpt);
                 }
@@ -432,8 +459,7 @@ public class SpotMapFragment extends Fragment implements
                         LatLng latLng = new LatLng(Latitude,Longitude);
                         String OpenTime = spotDataRaw_cursor.getString(8);
                         MarkerOptions markerOpt = new MarkerOptions();
-                        markerOpt.position(latLng).title(Name).snippet(OpenTime)
-                                .icon(BitmapDescriptorFactory.fromBitmap(MarkerIcon));
+                        markerOpt.position(latLng).title(Name).snippet(OpenTime);
 
                         MarkerOptionsArray.add(markerOpt);
                     }
@@ -449,7 +475,8 @@ public class SpotMapFragment extends Fragment implements
             }
             int MarkerCount = globalVariable.MarkerOptionsArray.size();
             for (int i = 0; i < MarkerCount/12; i++) {
-                mMap.addMarker(globalVariable.MarkerOptionsArray.get(i));
+                mMap.addMarker(globalVariable.MarkerOptionsArray.get(i)
+                        .icon(BitmapDescriptorFactory.fromBitmap(MarkerIcon)));
             }
             Log.d("3/23_MarkerCount", MarkerCount+" MarkerCount/12: "+MarkerCount/12);
             mProgressDialog.dismiss();
