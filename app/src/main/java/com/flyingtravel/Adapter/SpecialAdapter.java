@@ -78,9 +78,9 @@ public class SpecialAdapter extends BaseAdapter {
             special.close();
         }
         if ((number % 10 > 0))
-            if (number / 10 + 1 == page_no) {
+            if (number / 10 + 1 == page_no)
                 number = number % 10;
-            } else number = 10;
+            else number = 10;
         return number;
     }
 
@@ -127,9 +127,7 @@ public class SpecialAdapter extends BaseAdapter {
         if (special != null)
             special.close();
 
-
         return convertView;
-//        return view;
     }
 
     public class thing {
