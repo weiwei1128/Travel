@@ -143,6 +143,9 @@ public class SpotListAdapter extends BaseAdapter implements Filterable {
         }
 
         String ImgString = mFilteredSpots.get(position).getPicture1();
+        if (!ImgString.endsWith(".jpg"))
+            ImgString = null;
+        Log.e("3/25_**** ", "ImgString: " + ImgString);
         loader.displayImage(ImgString, mViewHolder.SpotImg, options, listener);
         mViewHolder.SpotName.setText(mFilteredSpots.get(position).getName());
         mViewHolder.SpotAddress.setText(mFilteredSpots.get(position).getAdd());

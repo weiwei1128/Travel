@@ -28,10 +28,17 @@ package com.flyingtravel;
  * /
  ****/
 
+import android.Manifest;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.support.multidex.MultiDex;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
@@ -41,6 +48,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.flyingtravel.Activity.LoginActivity;
 import com.flyingtravel.Fragment.MainFragment;
@@ -71,7 +79,7 @@ public class HomepageActivity extends FragmentActivity {
 
 
     //3.10 Hua
-    GlobalVariable globalVariable;
+    final int REQUEST_LOCATION = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,8 +100,34 @@ public class HomepageActivity extends FragmentActivity {
         startService(intent_LoadApiService);
         Intent intent = new Intent(HomepageActivity.this, HttpService.class);
         startService(intent);
+
+        // Prompt the user to Enabled GPS
+        LocationManager service = (LocationManager) getSystemService(LOCATION_SERVICE);
+        boolean enabled = service.isProviderEnabled(LocationManager.GPS_PROVIDER);
+
+        // check if enabled and if not send user to the GSP settings
+        // Better solution would be to display a dialog and suggesting to
+        // go to the settings
+        if (!enabled) {
+            Intent intent_GPS = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+            startActivity(intent_GPS);
+        }
+
+        // API 23 Needs to Check Permission
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                || ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+            // Check Permissions Now
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION);
+        }
     }
 
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+        MultiDex.install(this);
+    }
 
     private void changeFragment(Fragment f) {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -349,4 +383,19 @@ public class HomepageActivity extends FragmentActivity {
             }
         }
     };
+
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        if (requestCode == REQUEST_LOCATION) {
+            if(grantResults.length == 1
+                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // We can now safely use the API we requested access to
+
+            } else {
+                // Permission was denied or request was cancelled
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION);
+                Toast.makeText(HomepageActivity.this, "請允許寶島好智遊存取您的位置!", Toast.LENGTH_LONG).show();
+            }
+        }
+    }
 }

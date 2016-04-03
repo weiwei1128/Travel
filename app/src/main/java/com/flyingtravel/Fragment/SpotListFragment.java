@@ -35,6 +35,7 @@ import com.flyingtravel.Utility.GlobalVariable;
 import com.flyingtravel.R;
 import com.flyingtravel.Utility.DataBaseHelper;
 import com.flyingtravel.Utility.GetSpotsNSort;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -117,22 +118,6 @@ public class SpotListFragment extends Fragment implements
         View view = inflater.inflate(R.layout.fragment_spot_list, container, false);
 
         SearchEditText = (EditText) view.findViewById(R.id.spotlist_searchEditText);
-        SearchEditText.addTextChangedListener(new TextWatcher() {
-            //TODO 2.2 在list還沒跑出來之前打字會發生error
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                Log.d("3.9_景點搜尋", s.toString());
-                SpotListViewFragment.adapter.getFilter().filter(s.toString());
-            }
-
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-            }
-        });
 
         SearchImg = (ImageView) view.findViewById(R.id.spotlist_searchImg);
         SearchImg.setOnClickListener(new View.OnClickListener() {
@@ -174,11 +159,14 @@ public class SpotListFragment extends Fragment implements
 
         } else {
             count = globalVariable.SpotDataSorted.size();
+            count = count / 20;
             if (count % 10 > 0) {
                 pages = (count / 10) + 1;
             } else {
                 pages = (count / 10);
             }
+
+
 
             //fragment(i) -> i代表第幾頁
             TextView textView = new TextView(getContext());
@@ -193,8 +181,26 @@ public class SpotListFragment extends Fragment implements
             for (int i = 0; i < pages; i++) {
                 fragments.add(SpotListViewFragment.newInstance("SpotListView", i+1));
             }
-*/            viewPager.setAdapter(new SpotListFragmentViewPagerAdapter(getChildFragmentManager(), pages));
-            viewPager.setOnPageChangeListener(new PageListener());
+*/            //viewPager.setAdapter(new SpotListFragmentViewPagerAdapter(getChildFragmentManager(), pages));
+            //viewPager.setOnPageChangeListener(new PageListener());
+            //viewPager.setOffscreenPageLimit(1);
+
+            SearchEditText.addTextChangedListener(new TextWatcher() {
+                //TODO 2.2 在list還沒跑出來之前打字會發生error
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    Log.d("3.9_景點搜尋", s.toString());
+                    SpotListViewFragment.adapter.getFilter().filter(s.toString());
+                }
+
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+                }
+            });
         }
 
         return view;
@@ -259,6 +265,47 @@ public class SpotListFragment extends Fragment implements
     }
 
     @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser) {
+            //you are visible to user now - so set whatever you need
+            Log.e("3/23_SpotList", "setUserVisibleHint: Visible");
+            if (viewPager != null && viewPager.getAdapter() == null && pages != 0) {
+                adapter = new SpotListFragmentViewPagerAdapter(getChildFragmentManager(), pages);
+                viewPager.setOffscreenPageLimit(1);
+                viewPager.setAdapter(adapter);
+                viewPager.setOnPageChangeListener(new PageListener());
+                adapter.notifyDataSetChanged();
+                SearchEditText.addTextChangedListener(new TextWatcher() {
+                    //TODO 2.2 在list還沒跑出來之前打字會發生error
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+                        Log.d("3.9_景點搜尋", s.toString());
+                        SpotListViewFragment.adapter.getFilter().filter(s.toString());
+                    }
+
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable s) {
+                    }
+                });
+            }
+        }
+        else {
+            //you are no longer visible to the user so cleanup whatever you need
+            Log.e("3/23_SpotList", "setUserVisibleHint: not Visible");
+            /*if (viewPager != null) {
+                viewPager.removeAllViews();
+                viewPager.removeOnPageChangeListener(new PageListener());
+            }*/
+            System.gc();
+        }
+    }
+
+    @Override
     public void onConnected(Bundle bundle) {
         // 已經連線到Google Services
         // 啟動位置更新服務
@@ -270,7 +317,7 @@ public class SpotListFragment extends Fragment implements
             LocationServices.FusedLocationApi.requestLocationUpdates
                     (mGoogleApiClient, mLocationRequest, (LocationListener) getActivity());
         } else {
-            HandleNewLocation(location);
+            //HandleNewLocation(location);
         }
     }
 
@@ -300,9 +347,9 @@ public class SpotListFragment extends Fragment implements
 */
     private void HandleNewLocation(Location location) {
         Log.d(TAG, location.toString());
-
+/*
         CurrentLocation = location;
-/*        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
 
         // 設定目前位置的標記
         if (CurrentMarker == null) {
@@ -349,6 +396,7 @@ public class SpotListFragment extends Fragment implements
                     Log.e("3/23_景點排序完畢", "Receive Broadcast");
 
                     count = globalVariable.SpotDataSorted.size();
+                    count = count / 20;
                     if (count % 10 > 0) {
                         pages = (count / 10) + 1;
                     } else {
@@ -370,14 +418,31 @@ public class SpotListFragment extends Fragment implements
                      fragments.add(SpotListViewFragment.newInstance("SpotListView", i+1));
                    }*/
 
-                    adapter = new SpotListFragmentViewPagerAdapter(getChildFragmentManager(), pages);
-                    viewPager.setAdapter(adapter);
-                    viewPager.setOnPageChangeListener(new PageListener());
-                    adapter.notifyDataSetChanged();
+                    //adapter = new SpotListFragmentViewPagerAdapter(getChildFragmentManager(), pages);
+                    //viewPager.setAdapter(adapter);
+                    //viewPager.setOnPageChangeListener(new PageListener());
+                    //viewPager.setOffscreenPageLimit(1);
+                    //adapter.notifyDataSetChanged();
 
                     spotList_pageLayout.setVisibility(View.VISIBLE);
                     spotList_searchLayout.setVisibility(View.VISIBLE);
+                    /*SearchEditText.addTextChangedListener(new TextWatcher() {
+                        //TODO 2.2 在list還沒跑出來之前打字會發生error
+                        @Override
+                        public void onTextChanged(CharSequence s, int start, int before, int count) {
+                            Log.d("3.9_景點搜尋", s.toString());
+                            SpotListViewFragment.adapter.getFilter().filter(s.toString());
+                        }
 
+                        @Override
+                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                        }
+
+                        @Override
+                        public void afterTextChanged(Editable s) {
+                        }
+                    });
+*/
                     progressBar.setVisibility(View.INVISIBLE);
                 }
             }

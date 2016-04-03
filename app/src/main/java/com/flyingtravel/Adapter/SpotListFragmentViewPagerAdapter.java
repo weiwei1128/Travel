@@ -69,6 +69,7 @@ public class SpotListFragmentViewPagerAdapter extends PagerAdapter implements Vi
 
     @Override
     public void destroyItem(ViewGroup container, int position, Object object) {
+        Log.e("3/23_ListPagerAdapter", "destroyItem");
         container.removeView(fragments.get(position).getView());
     }
 
@@ -92,7 +93,7 @@ public class SpotListFragmentViewPagerAdapter extends PagerAdapter implements Vi
 
     @Override
     public void setPrimaryItem(ViewGroup container, int position, Object object) {
-        Log.e("3/23","fragments!!"+fragments.size());
+        //Log.e("3/23","fragments!!"+fragments.size());
         if(fragments.size() > 0) {
             fragments.get(currentPageIndex).onStop();
             if (fragments.get(position).isAdded())
