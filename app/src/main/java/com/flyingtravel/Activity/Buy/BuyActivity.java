@@ -123,6 +123,7 @@ public class BuyActivity extends AppCompatActivity {
                 fragments, BuyActivity.this);
 
         viewPager.setAdapter(adapter);
+        viewPager.setOffscreenPageLimit(1);
         viewPager.setOnPageChangeListener(new PageListener());
         if (adapter.getCount() == 0)
             Toast.makeText(BuyActivity.this, "尚無資料!", Toast.LENGTH_SHORT).show();

@@ -98,15 +98,16 @@ public class SpecialActivity extends AppCompatActivity {
         for (int i = 0; i < PageNo; i++) {
             SpecialFragment fragment = new SpecialFragment();
             Bundle bundle = new Bundle();
-            bundle.putInt("pagenumber", (i+1));
+            bundle.putInt("pagenumber", (i + 1));
             fragment.setArguments(bundle);
-                    //pagenumber
+            //pagenumber
             fragments.add(fragment);
         }
         specialFragmentViewPagerAdapter = new SpecialFragmentViewPagerAdapter(this.getSupportFragmentManager(),
                 viewPager, fragments, this);
         viewPager.setAdapter(specialFragmentViewPagerAdapter);
         viewPager.setOnPageChangeListener(new PageListener());
+        viewPager.setOffscreenPageLimit(1);
         if (specialFragmentViewPagerAdapter.getCount() == 0)
             Toast.makeText(this, "尚無資料！", Toast.LENGTH_SHORT).show();
 //*/
