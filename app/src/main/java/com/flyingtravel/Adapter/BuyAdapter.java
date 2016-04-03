@@ -12,12 +12,12 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.flyingtravel.R;
+import com.flyingtravel.Utility.DataBaseHelper;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
-import com.flyingtravel.R;
-import com.flyingtravel.Utility.DataBaseHelper;
 
 /**
  * Created by wei on 2015/11/11.
@@ -57,8 +57,8 @@ public class BuyAdapter extends BaseAdapter {
 
             @Override
             public void onLoadingFailed(String s, View view, FailReason failReason) {
-                ImageView imageView = (ImageView) view.findViewById(R.id.buy_thingImg);
-                loader.displayImage(null, imageView, options, listener);
+//                ImageView imageView = (ImageView) view.findViewById(R.id.buy_thingImg);
+//                loader.displayImage(null, imageView, options, listener);
 
             }
 
@@ -80,18 +80,15 @@ public class BuyAdapter extends BaseAdapter {
         Cursor goods_cursor = database.query("goods", new String[]{"totalCount", "goods_id", "goods_title",
                 "goods_url", "goods_money", "goods_content", "goods_click", "goods_addtime"}, null, null, null, null, null);
         if (goods_cursor != null) {
-//            Log.d("2.24", pageNO + "getCount:" + goods_cursor.getCount());
             number = goods_cursor.getCount();
             goods_cursor.close();
         }
         if ((number % 10 > 0)) {
             if (number / 10 + 1 == pageNO) {
-//                Log.e("3.10", "LastPage");
                 number = number % 10;
             } else number = 10;
         } else
             number = 10;
-//        Log.e("3.10", "buyAdapter: " + number);
         return number;
     }
 
@@ -102,13 +99,12 @@ public class BuyAdapter extends BaseAdapter {
 
     @Override
     public long getItemId(int position) {
-        return 0;
+        return position;
     }
 
     @SuppressLint("InflateParams")
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-//        Log.d("3.7", "goods:" + pageNO);
         cell mcell;
 
         if (convertView == null) {
@@ -119,14 +115,12 @@ public class BuyAdapter extends BaseAdapter {
                     (TextView) convertView.findViewById(R.id.buything_clickText)
             );
             convertView.setTag(mcell);
-        } else {
+        } else
             mcell = (cell) convertView.getTag();
-        }
 
 
         Cursor goods_cursor = database.query("goods", new String[]{"totalCount", "goods_id", "goods_title",
                 "goods_url", "goods_money", "goods_content", "goods_click", "goods_addtime"}, null, null, null, null, null);
-
 
         if (goods_cursor != null && goods_cursor.getCount() >= (pageNO - 1) * 10 + position) {
             goods_cursor.moveToPosition((pageNO - 1) * 10 + position);
@@ -147,8 +141,6 @@ public class BuyAdapter extends BaseAdapter {
 
         if (goods_cursor != null)
             goods_cursor.close();
-//        if(mcell.buyImg!=null)
-//            mcell.buyImg.setScaleType(ImageView.ScaleType.MATRIX);
 
         return convertView;
     }

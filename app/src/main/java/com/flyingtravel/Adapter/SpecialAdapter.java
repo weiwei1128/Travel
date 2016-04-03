@@ -11,12 +11,12 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.flyingtravel.R;
+import com.flyingtravel.Utility.DataBaseHelper;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
-import com.flyingtravel.R;
-import com.flyingtravel.Utility.DataBaseHelper;
 
 /**
  * Created by wei on 2016/1/30.
@@ -52,8 +52,8 @@ public class SpecialAdapter extends BaseAdapter {
 
             @Override
             public void onLoadingFailed(String s, View view, FailReason failReason) {
-                ImageView imageView = (ImageView) view.findViewById(R.id.special_img);
-                loader.displayImage(null, imageView, options, listener);
+//                ImageView imageView = (ImageView) view.findViewById(R.id.special_img);
+//                loader.displayImage(null, imageView, options, listener);
             }
 
             @Override
@@ -81,7 +81,6 @@ public class SpecialAdapter extends BaseAdapter {
             if (number / 10 + 1 == page_no) {
                 number = number % 10;
             } else number = 10;
-//        Log.e("3.10", "special:" + number);
         return number;
     }
 
