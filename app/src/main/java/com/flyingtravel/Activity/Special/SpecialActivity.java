@@ -105,9 +105,9 @@ public class SpecialActivity extends AppCompatActivity {
         }
         specialFragmentViewPagerAdapter = new SpecialFragmentViewPagerAdapter(this.getSupportFragmentManager(),
                 viewPager, fragments, this);
+        viewPager.setOffscreenPageLimit(1);
         viewPager.setAdapter(specialFragmentViewPagerAdapter);
         viewPager.setOnPageChangeListener(new PageListener());
-        viewPager.setOffscreenPageLimit(1);
         if (specialFragmentViewPagerAdapter.getCount() == 0)
             Toast.makeText(this, "尚無資料！", Toast.LENGTH_SHORT).show();
 //*/

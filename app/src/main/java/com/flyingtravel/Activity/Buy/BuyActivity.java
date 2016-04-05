@@ -122,8 +122,8 @@ public class BuyActivity extends AppCompatActivity {
         adapter = new BuyFragmentViewPagerAdapter(this.getSupportFragmentManager(), viewPager,
                 fragments, BuyActivity.this);
 
-        viewPager.setAdapter(adapter);
         viewPager.setOffscreenPageLimit(1);
+        viewPager.setAdapter(adapter);
         viewPager.setOnPageChangeListener(new PageListener());
         if (adapter.getCount() == 0)
             Toast.makeText(BuyActivity.this, "尚無資料!", Toast.LENGTH_SHORT).show();
