@@ -19,6 +19,7 @@ import com.flyingtravel.Adapter.RecordDiaryFragmentAdapter;
 import com.flyingtravel.R;
 import com.flyingtravel.Utility.DataBaseHelper;
 import com.flyingtravel.Utility.Functions;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -117,8 +118,6 @@ public class RecordDiaryFragment extends Fragment {
         }
 
         mAdapter = new RecordDiaryFragmentAdapter(getActivity());
-        mlistView.setAdapter(mAdapter);
-        mlistView.setOnItemClickListener(new itemListener());
         Log.e("3/27_", "RecordDiaryFragment. onActivityCreated");
     }
 
@@ -126,6 +125,31 @@ public class RecordDiaryFragment extends Fragment {
     public void onDestroyView() {
         System.gc();
         super.onDestroyView();
+    }
+
+    @Override
+    public void onLowMemory() {
+        Log.e("3/23_SpotMap", "onLowMemory");
+        System.gc();
+        super.onLowMemory();
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser) {
+            //you are visible to user now - so set whatever you need
+            Log.e("3/23_SpotMap", "setUserVisibleHint: Visible");
+            if (mlistView != null) {
+                mlistView.setAdapter(mAdapter);
+                mlistView.setOnItemClickListener(new itemListener());
+            }
+        }
+        else {
+            //you are no longer visible to the user so cleanup whatever you need
+            Log.e("3/23_SpotMap", "setUserVisibleHint: not Visible");
+            System.gc();
+        }
     }
 
     private class itemListener implements AdapterView.OnItemClickListener {

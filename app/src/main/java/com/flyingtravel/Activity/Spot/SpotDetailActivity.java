@@ -153,6 +153,8 @@ public class SpotDetailActivity extends AppCompatActivity {
         };
 
         String ImgString = globalVariable.SpotDataSorted.get(mPosition).getPicture1();
+        if (!ImgString.endsWith(".jpg"))
+            ImgString = null;
         loader.displayImage(ImgString, SpotImg, options, listener);
 
         SpotName.setText(globalVariable.SpotDataSorted.get(mPosition).getName());

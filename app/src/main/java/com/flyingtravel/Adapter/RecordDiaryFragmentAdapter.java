@@ -117,27 +117,27 @@ public class RecordDiaryFragmentAdapter extends BaseAdapter implements ViewPager
                     mViewHolder.ImageSlider.removeAllSliders();
                     if (img_cursor.getCount() != 0) {
                         number = img_cursor.getCount();
-                        Log.e("3/28_", "img count:" + number);
+                        //Log.e("3/28_", "img count:" + number);
                         while (img_cursor.moveToNext()) {
-                            Log.e("3/28_", "img: " + img_cursor.getBlob(3));
+                            //Log.e("3/28_", "img: " + img_cursor.getBlob(3));
                             byte[] d = img_cursor.getBlob(3);
                             DefaultSliderView sliderView = new DefaultSliderView(context);
                             sliderView.image(BitmapFactory.decodeByteArray(d, 0, d.length))
                                     .setScaleType(BaseSliderView.ScaleType.Fit);
                             mViewHolder.ImageSlider.addSlider(sliderView);
                         }
-                        Log.e("3/29_", "position: " + position);
+                        //Log.e("3/29_", "position: " + position);
                         if (img_cursor.getCount() > 1) {
                             mViewHolder.ImageSlider.setCustomIndicator(mViewHolder.pagerIndicator);
                             mViewHolder.ImageSlider.addOnPageChangeListener(this);
-                            Log.e("3/29_", "set pagerIndicator ");
+                            //Log.e("3/29_", "set pagerIndicator ");
                         }
                     } else {
                         DefaultSliderView sliderView = new DefaultSliderView(context);
                         sliderView.image(R.drawable.empty)
                                 .setScaleType(BaseSliderView.ScaleType.Fit);
                         mViewHolder.ImageSlider.addSlider(sliderView);
-                        Log.e("3/28_", "img_cursor = 0 ");
+                        //Log.e("3/28_", "img_cursor = 0 ");
                     }
                     mViewHolder.ImageSlider.stopAutoCycle();
                     img_cursor.close();

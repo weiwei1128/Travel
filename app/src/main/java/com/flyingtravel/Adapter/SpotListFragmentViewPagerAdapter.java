@@ -34,11 +34,6 @@ public class SpotListFragmentViewPagerAdapter extends PagerAdapter implements Vi
 
         for (int i = 0; i < pageNo; i++)
             fragments.add(SpotListViewFragment.newInstance(SpotListViewFragment.TAG, i+1));
-        /*
-        this.fragmentManager = mfragmentmanager;
-        this.viewPager = mviewpager;
-        this.fragments = mfragments;
-        this.context = mcontext;*/
     }
 
     @Override
@@ -54,17 +49,17 @@ public class SpotListFragmentViewPagerAdapter extends PagerAdapter implements Vi
 
     @Override
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-        Log.e("3/23","onPageScrolled"+position);
+        //Log.e("3/23","onPageScrolled"+position);
     }
 
     @Override
     public void onPageSelected(int position) {
-        Log.e("3/23","onPageSelected"+position);
+        //Log.e("3/23","onPageSelected"+position);
     }
 
     @Override
     public void onPageScrollStateChanged(int state) {
-        Log.e("3/23","onPageScrollStateChanged"+state);
+        //Log.e("3/23","onPageScrollStateChanged"+state);
     }
 
     @Override

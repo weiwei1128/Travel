@@ -4,31 +4,6 @@
     android:layout_height="fill_parent"
     android:orientation="vertical" >
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/spotList_searchLayout"
-        android:background="#e1e1e1">
-
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/spotlist_searchEditText"
-            android:layout_margin="6dp"
-            android:background="#ffffff" />
-
-        <ImageView
-            android:layout_width="25dp"
-            android:layout_height="20dp"
-            android:id="@+id/spotlist_searchImg"
-            android:src="@drawable/icon_search"
-            android:layout_gravity="center_vertical|right"
-            android:background="@drawable/click_effect_general"
-            android:clickable="true"
-            android:layout_marginRight="5dp" />
-
-    </FrameLayout>
-
     <LinearLayout
         android:id="@+id/spotList_pageLayout"
         android:orientation="horizontal"

@@ -16,6 +16,10 @@
     <uses-permission-sdk-23 android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission-sdk-23 android:name="android.permission.ACCESS_FINE_LOCATION" />
 
+    <!-- Accessing camera hardware -->
+    <uses-feature android:name="android.hardware.camera"
+                  android:required="true" />
+
     <application
         android:name="com.flyingtravel.Utility.GlobalVariable"
         android:allowBackup="true"

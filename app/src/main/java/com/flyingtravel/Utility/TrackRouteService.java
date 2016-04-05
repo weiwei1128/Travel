@@ -18,20 +18,26 @@ import android.os.IBinder;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 
+import com.flyingtravel.Activity.RecordActivity;
+import com.flyingtravel.Fragment.RecordDiaryFragment;
 import com.flyingtravel.Fragment.RecordTrackFragment;
 
-public class TrackRouteService extends Service {
-    public TrackRouteService() {
-    }
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
+public class TrackRouteService extends Service {
+
+    public TrackRouteService() {
+
+    }
 
     public static final String BROADCAST_ACTION_TIMER = "com.example.tracking.updateprogress";
     public static final String BROADCAST_ACTION = "com.example.trackroute.status";
 
     private static final String TAG = "TrackRouteService";
     private LocationManager mLocationManager = null;
-    private static final int LOCATION_INTERVAL = 1000;
-    private static final float LOCATION_DISTANCE = 0;
+    private static final int LOCATION_INTERVAL = 3000;
+    private static final float LOCATION_DISTANCE = 2;
 
     private Handler handler = new Handler();
     Long start_time = (long) 0;
@@ -110,27 +116,54 @@ public class TrackRouteService extends Service {
             Log.d("3/10_", "Latitude " + Latitude);
             Log.d("3/10_", "Longitude " + Longitude);
 
-            // 先廣播告知 if status = 0 由receiver寫
             if (!isPause) {
+                // 廣播畫軌跡
                 Intent intent = new Intent(BROADCAST_ACTION);
-                intent.putExtra("record_status", record_status);
                 intent.putExtra("routesCounter", RoutesCounter);
                 intent.putExtra("track_no", Track_no);
                 intent.putExtra("track_lat", Latitude);
                 intent.putExtra("track_lng", Longitude);
-                intent.putExtra("track_start", record_status);
-                intent.putExtra("track_title", track_title);
                 sendBroadcast(intent);
-            }
-
-            if (record_status == 1) {
+                // 存軌跡到DB
                 TraceOfRoute(Latitude, Longitude);
-                Log.d("3/10_", "TraceOfRoute");
-            } else if (record_status == 0) {
-                Log.e("3/10_", "Call stop TrackRouteService");
-                stopSelf();
-            }
+            } else {
+                if (record_status == 0) {
+                    // 暫停後完成:最後一筆改為update
+                    DataBaseHelper helper = DataBaseHelper.getmInstance(getApplicationContext());
+                    SQLiteDatabase database = helper.getWritableDatabase();
+                    Cursor trackRoute_cursor = database.query("trackRoute",
+                            new String[]{"_ID", "routesCounter", "track_no", "track_lat", "track_lng",
+                                    "track_start", "track_title", "track_totaltime", "track_completetime"},
+                            null, null, null, null, null);
+                    if (trackRoute_cursor != null && trackRoute_cursor.getCount() != 0) {
+                        trackRoute_cursor.moveToLast();
+                        Integer _ID = trackRoute_cursor.getInt(0);
+                        Integer track_start = trackRoute_cursor.getInt(5);
+                        if (track_start == 2) {
+                            ContentValues cv = new ContentValues();
+                            cv.put("track_start", 0);
+                            cv.put("track_title", track_title);
+                            cv.put("track_totaltime", RecordActivity.time_text.getText().toString());
+                            SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd");
+                            Date date = new Date();
+                            String dateString = fmt.format(date);
+                            cv.put("track_completetime", dateString);
 
+                            long result = database.update("trackRoute", cv, "_ID=" + _ID, null);
+                            Log.d("3/20_軌跡紀錄_END_update", result + " = DB INSERT RC:" + RoutesCounter
+                                    + " no:" + Track_no + track_title + " TotalTime:"
+                                    + RecordActivity.time_text.getText().toString()
+                                    + " status " + record_status);
+                            RecordActivity.time_text.setText("");
+                            RecordDiaryFragment.mAdapter.notifyDataSetChanged();
+                            Log.e("3/27_", "TrackService. notifyDataSetChanged");
+                            Log.e("3/10_", "Call stop TrackRouteService");
+                            stopSelf();
+                        }
+                        trackRoute_cursor.close();
+                    }
+                }
+            }
         }
 
         @Override
@@ -172,16 +205,6 @@ public class TrackRouteService extends Service {
         if (mLocationManager != null) {
             for (int i = 0; i < mLocationListeners.length; i++) {
                 try {
-                    if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                        // TODO: Consider calling
-                        //    ActivityCompat#requestPermissions
-                        // here to request the missing permissions, and then overriding
-                        //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                        //                                          int[] grantResults)
-                        // to handle the case where the user grants the permission. See the documentation
-                        // for ActivityCompat#requestPermissions for more details.
-                        return;
-                    }
                     mLocationManager.removeUpdates(mLocationListeners[i]);
                 } catch (Exception ex) {
                     Log.i(TAG, "fail to remove location listeners, ignore", ex);
@@ -225,26 +248,52 @@ public class TrackRouteService extends Service {
 
     // 紀錄軌跡到DB
     private void TraceOfRoute(Double Latitude, Double Longitude) {
-        // if status = 0 由這裡 write to DB
-        if (record_status == 1) {
-            DataBaseHelper helper = DataBaseHelper.getmInstance(getApplicationContext());
-            SQLiteDatabase database = helper.getWritableDatabase();
-            Cursor trackRoute_cursor = database.query("trackRoute",
-                    new String[]{"routesCounter", "track_no", "track_lat", "track_lng",
-                            "track_start", "track_title", "track_totaltime", "track_completetime"},
-                    null, null, null, null, null);
-            if (trackRoute_cursor != null) {
+        DataBaseHelper helper = DataBaseHelper.getmInstance(getApplicationContext());
+        SQLiteDatabase database = helper.getWritableDatabase();
+        Cursor trackRoute_cursor = database.query("trackRoute",
+                new String[]{"routesCounter", "track_no", "track_lat", "track_lng",
+                        "track_start", "track_title", "track_totaltime", "track_completetime"},
+                null, null, null, null, null);
+        if (trackRoute_cursor != null) {
+            ContentValues cv = new ContentValues();
+            cv.put("routesCounter", RoutesCounter);
+            cv.put("track_no", Track_no);
+            cv.put("track_lat", Latitude);
+            cv.put("track_lng", Longitude);
 
-                ContentValues cv = new ContentValues();
-                cv.put("routesCounter", RoutesCounter);
-                cv.put("track_no", Track_no);
-                cv.put("track_lat", Latitude);
-                cv.put("track_lng", Longitude);
+            if (record_status == 1) {
                 cv.put("track_start", 1);
+                cv.put("track_totaltime", RecordActivity.time_text.getText().toString());
                 long result = database.insert("trackRoute", null, cv);
                 Log.d("3/10_軌跡紀錄", result + " = DB INSERT RC:" + RoutesCounter
                         + " no:" + Track_no + " 座標 " + Latitude + "," + Longitude
                         + " status " + record_status);
+            } else if (record_status == 2) {
+                cv.put("track_start", 2);
+                cv.put("track_totaltime", RecordActivity.time_text.getText().toString());
+                long result = database.insert("trackRoute", null, cv);
+                Log.d("3/20_軌跡紀錄_Pause", result + " = DB INSERT RC:" + RoutesCounter
+                        + " no:" + Track_no + " 座標 " + Latitude + "," + Longitude
+                        + " status " + record_status);
+                isPause = true;
+            } else if (record_status == 0) {
+                cv.put("track_start", 0);
+                cv.put("track_title", track_title);
+                cv.put("track_totaltime", RecordActivity.time_text.getText().toString());
+                SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd");
+                Date date = new Date();
+                String dateString = fmt.format(date);
+                cv.put("track_completetime", dateString);
+                long result = database.insert("trackRoute", null, cv);
+                Log.d("3/20_軌跡紀錄_END", result + " = DB INSERT RC:" + RoutesCounter
+                        + " no:" + Track_no + " 座標 " + Latitude + "," + Longitude + ". "
+                        + track_title + " TotalTime:" + RecordActivity.time_text.getText().toString()
+                        + " status " + record_status);
+                RecordActivity.time_text.setText("");
+                RecordDiaryFragment.mAdapter.notifyDataSetChanged();
+                Log.e("3/27_", "RecordTrackFragment. notifyDataSetChanged");
+                Log.e("3/10_", "Call stop TrackRouteService");
+                stopSelf();
             }
             trackRoute_cursor.close();
         }
@@ -257,11 +306,9 @@ public class TrackRouteService extends Service {
             if (intent != null) {
                 record_status = intent.getIntExtra("record_status", 1);
                 if (record_status == 1) {
-                    RoutesCounter = intent.getIntExtra("routesCounter", RoutesCounter);
-                    Track_no = intent.getIntExtra("track_no", Track_no);
                     start_time = intent.getLongExtra("start", 0);
                     tempSpent = intent.getLongExtra("spent", 0);
-                    isPause = intent.getBooleanExtra("isPause", false);
+                    isPause = false;
                     handler.postDelayed(count, 1000);
                     Log.d("3/18_Service", "BroadcastReceiver: start_time "
                             + start_time + " tempSpent " + tempSpent);
@@ -279,10 +326,8 @@ public class TrackRouteService extends Service {
                 if (record_status == 1) {
                     RoutesCounter = intent.getIntExtra("routesCounter", RoutesCounter);
                     Track_no = intent.getIntExtra("track_no", Track_no);
-                } else if (record_status == 2) {
-                    isPause = intent.getBooleanExtra("isPause", false);
-                } else {
-                    isPause = intent.getBooleanExtra("isPause", false);
+                    isPause = false;
+                } else if (record_status == 0) {
                     track_title = intent.getStringExtra("track_title");
                 }
             }

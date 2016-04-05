@@ -107,7 +107,7 @@
         android:layout_marginBottom="15dp">
         <ImageView
             android:layout_width="30dp"
-            android:layout_height="30dp"
+            android:layout_height="match_parent"
             android:id="@+id/dialog_write_img"
             android:src="@drawable/memo_note"
             android:layout_weight="1"
@@ -116,7 +116,7 @@
 
         <ImageView
             android:layout_width="30dp"
-            android:layout_height="30dp"
+            android:layout_height="match_parent"
             android:id="@+id/dialog_camera_img"
             android:src="@drawable/memo_camera"
             android:layout_weight="1"
@@ -125,7 +125,7 @@
 
         <ImageView
             android:layout_width="30dp"
-            android:layout_height="30dp"
+            android:layout_height="match_parent"
             android:id="@+id/dialog_leave_img"
             android:src="@drawable/memo_cancel"
             android:layout_weight="1"

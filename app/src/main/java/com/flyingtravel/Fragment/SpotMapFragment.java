@@ -126,6 +126,8 @@ public class SpotMapFragment extends Fragment implements
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         mMap.setMyLocationEnabled(true);
         mMap.getUiSettings().setCompassEnabled(true);
+        mMap.getUiSettings().setAllGesturesEnabled(true);
+        mMap.getUiSettings().setMapToolbarEnabled(false);
 
         // Needs to call MapsInitializer before doing any CameraUpdateFactory calls
         MapsInitializer.initialize(this.getActivity());
