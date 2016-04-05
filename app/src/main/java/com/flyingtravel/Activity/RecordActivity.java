@@ -3,6 +3,8 @@ package com.flyingtravel.Activity;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -21,6 +23,7 @@ import com.flyingtravel.Fragment.RecordDiaryFragment;
 import com.flyingtravel.Fragment.RecordTrackFragment;
 import com.flyingtravel.HomepageActivity;
 import com.flyingtravel.R;
+import com.flyingtravel.Utility.DataBaseHelper;
 import com.flyingtravel.Utility.Functions;
 
 import java.util.ArrayList;
@@ -54,9 +57,27 @@ public class RecordActivity extends FragmentActivity  {
 
         time_text = (TextView) findViewById(R.id.record_time_text);
         time_text.setVisibility(View.INVISIBLE);
-
         record_completeImg = (ImageView) findViewById(R.id.record_completeImg);
         record_completeImg.setVisibility(View.INVISIBLE);
+
+        DataBaseHelper helper = DataBaseHelper.getmInstance(getApplicationContext());
+        SQLiteDatabase database = helper.getWritableDatabase();
+        Cursor trackRoute_cursor = database.query("trackRoute",
+                new String[]{"routesCounter","track_no", "track_lat", "track_lng",
+                        "track_start", "track_title", "track_totaltime", "track_completetime"},
+                null, null, null, null, null);
+        if (trackRoute_cursor != null) {
+            if (trackRoute_cursor.getCount() != 0) {
+                trackRoute_cursor.moveToLast();
+                Integer track_start = trackRoute_cursor.getInt(4);
+                if (track_start != 0) {
+                    time_text.setText(trackRoute_cursor.getString(6));
+                    time_text.setVisibility(View.VISIBLE);
+                    record_completeImg.setVisibility(View.VISIBLE);
+                }
+            }
+            trackRoute_cursor.close();
+        }
 
         // Prompt the user to Enabled GPS
         LocationManager service = (LocationManager) getSystemService(LOCATION_SERVICE);

@@ -1,6 +1,7 @@
 package com.flyingtravel.Adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,9 +13,9 @@ import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.flyingtravel.Fragment.SpotListViewFragment;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 import com.flyingtravel.Utility.GlobalVariable;
@@ -53,20 +54,18 @@ public class SpotListAdapter extends BaseAdapter implements Filterable {
 
         globalVariable = (GlobalVariable) context.getApplicationContext();
         mSpotsData = new ArrayList<SpotData>();
-        mFilteredSpots = new ArrayList<SpotData>();
 
         if (!globalVariable.SpotDataSorted.isEmpty()) {
-            mSpotsData.clear();
             if (globalVariable.SpotDataSorted.size() / 10 == pageNO) {
                 mSpotsData.addAll(globalVariable.SpotDataSorted
                         .subList(0 + index * 10, globalVariable.SpotDataSorted.size() % 10 + 1 + index * 10));
             } else {
                 mSpotsData.addAll(globalVariable.SpotDataSorted.subList(0+index * 10, 10+index*10));
             }
-            mFilteredSpots.clear();
+            mFilteredSpots = new ArrayList<SpotData>();
             mFilteredSpots = mSpotsData;
-            Log.e("3/23_", "SpotListAdapter: mFilteredSpots.size " + mFilteredSpots.size());
-            Log.e("3/23_", "SpotListAdapter: mPosition " + index);
+            //Log.e("3/23_", "SpotListAdapter: mFilteredSpots.size " + mFilteredSpots.size());
+            Log.e("4/1_", "SpotListAdapter: mPosition " + index);
         }
 
         options = new DisplayImageOptions.Builder()
@@ -128,7 +127,7 @@ public class SpotListAdapter extends BaseAdapter implements Filterable {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         if (convertView == null) {
-            convertView = inflater.inflate(R.layout.spot_list, parent, false);
+            convertView = inflater.inflate(R.layout.spot_item, parent, false);
             mViewHolder = new ViewHolder();
             mViewHolder.SpotImg = (ImageView) convertView.findViewById(R.id.SpotImg);
             mViewHolder.SpotName = (TextView) convertView.findViewById(R.id.SpotName);
@@ -145,7 +144,7 @@ public class SpotListAdapter extends BaseAdapter implements Filterable {
         String ImgString = mFilteredSpots.get(position).getPicture1();
         if (!ImgString.endsWith(".jpg"))
             ImgString = null;
-        Log.e("3/25_**** ", "ImgString: " + ImgString);
+        //Log.e("3/25_**** ", "ImgString: " + ImgString);
         loader.displayImage(ImgString, mViewHolder.SpotImg, options, listener);
         mViewHolder.SpotName.setText(mFilteredSpots.get(position).getName());
         mViewHolder.SpotAddress.setText(mFilteredSpots.get(position).getAdd());
@@ -182,28 +181,31 @@ public class SpotListAdapter extends BaseAdapter implements Filterable {
                 // No filter implemented we return all the list
                 results.values = mSpotsData;
                 results.count = mSpotsData.size();
+                Log.e("4/1_", "沒打字時 results.count: " + results.count);
             } else {
                 ArrayList<SpotData> FilteredSpots = new ArrayList<SpotData>();
 
                 for (SpotData spotData : mSpotsData) {
-                    if (spotData.getName().toUpperCase().startsWith(constraint.toString().toUpperCase()))
+                    if (spotData.getName().toUpperCase().contains(constraint.toString().toUpperCase()))//.startsWith(constraint.toString().toUpperCase()))
                         FilteredSpots.add(spotData);
                 }
                 results.values = FilteredSpots;
                 results.count = FilteredSpots.size();
+                Log.e("4/1_", "有打字時 results.count: " + results.count);
             }
             return results;
         }
 
-        @SuppressWarnings("unchecked")
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
             // Now we have to inform the adapter about the new list filtered
-            if (results.count == 0)
+            if (results.count == 0) {
                 notifyDataSetInvalidated();
-            else {
+                Log.e("4/1_", "沒東西時 results.count: " + results.count);
+            } else {
                 mFilteredSpots = (ArrayList<SpotData>) results.values;
                 notifyDataSetChanged();
+                Log.e("4/1_", "有東西時 results.count: " + results.count);
             }
         }
     }

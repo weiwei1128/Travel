@@ -18,6 +18,7 @@ import android.graphics.Color;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -56,6 +57,7 @@ import com.flyingtravel.Utility.Functions;
 import com.flyingtravel.Utility.TrackRouteService;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -120,12 +122,13 @@ public class RecordTrackFragment extends Fragment implements
     final Long[] starttime = new Long[1];
     //----for upload image//
     Bitmap memo_img;
+    Uri imageUri = null;
     long inDB = 0;
 
     public static final String TIMER_TO_SERVICE = "com.example.tracking.restartcount";
     public static final String TRACK_TO_SERVICE = "com.example.tracking.restarttrack";
 
-    private OnFragmentInteractionListener mListener;
+    //private OnFragmentInteractionListener mListener;
 
     public RecordTrackFragment() {
         // Required empty public constructor
@@ -189,6 +192,8 @@ public class RecordTrackFragment extends Fragment implements
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         mMap.setMyLocationEnabled(true);
         mMap.getUiSettings().setCompassEnabled(true);
+        mMap.getUiSettings().setAllGesturesEnabled(true);
+        mMap.getUiSettings().setMapToolbarEnabled(false);
 
         // Needs to call MapsInitializer before doing any CameraUpdateFactory calls
         MapsInitializer.initialize(this.getActivity());
@@ -230,8 +235,6 @@ public class RecordTrackFragment extends Fragment implements
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        RetrieveRouteFromDB();
 
         RecordActivity.record_completeImg.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -346,7 +349,6 @@ public class RecordTrackFragment extends Fragment implements
                         intent_Trace.putExtra("spent", tempSpent);
                         intent_Trace.putExtra("routesCounter", RoutesCounter);
                         intent_Trace.putExtra("track_no", Track_no);
-                        intent_Trace.putExtra("isPause", false);
                         getActivity().sendBroadcast(intent_Trace);
                         tempSpent = 0L;
                     }
@@ -386,7 +388,6 @@ public class RecordTrackFragment extends Fragment implements
         });
         record_spot_layout.setClickable(false);
 
-        //TODO 上傳照片或文字檔
         write.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -396,7 +397,7 @@ public class RecordTrackFragment extends Fragment implements
                 }
                 dialog_scrollview.setVisibility(View.VISIBLE);
                 RelativeLayout.LayoutParams otelParams = new RelativeLayout.LayoutParams(
-                        ViewGroup.LayoutParams.MATCH_PARENT, getPx(150));
+                        ViewGroup.LayoutParams.MATCH_PARENT, getPx(120));
                 otelParams.addRule(RelativeLayout.BELOW, R.id.dialog_header_text);
                 dialog_scrollview.setLayoutParams(otelParams);
 
@@ -410,42 +411,47 @@ public class RecordTrackFragment extends Fragment implements
                     @Override
                     public void onClick(View v) {
                         // save content to DB
-                        DataBaseHelper helper = DataBaseHelper.getmInstance(getActivity());
-                        SQLiteDatabase db = helper.getReadableDatabase();
-                        Cursor memo_cursor = db.query("travelmemo", new String[]{"memo_routesCounter", "memo_trackNo",
-                                        "memo_content", "memo_img", "memo_latlng", "memo_time"},
-                                null, null, null, null, null);
-                        if (memo_cursor != null) {
-                            ContentValues cv = new ContentValues();
-                            cv.put("memo_routesCounter", RoutesCounter);
-                            cv.put("memo_trackNo", Track_no);
-                            cv.put("memo_content", content_editText.getText().toString());
-                            if (CurrentLatlng != null) {
-                                cv.put("memo_latlng", CurrentLatlng.toString());
-                            }
-                            SimpleDateFormat fmt = new SimpleDateFormat("HH:mm");
-                            Date date = new Date();
-                            String dateString = fmt.format(date);
-                            cv.put("memo_time", dateString);
-                            inDB = db.insert("travelmemo", null, cv);
-                            Log.e("3/23_", "DB insert content" + inDB + " content:"
-                                    + content_editText.getText().toString() + " Addtime " + dateString);
+                        if (content_editText.getText().equals("")) {
+                            Toast.makeText(getActivity(), "未輸入任何文字！", Toast.LENGTH_SHORT).show();
+                        } else {
+                            DataBaseHelper helper = DataBaseHelper.getmInstance(getActivity());
+                            SQLiteDatabase db = helper.getReadableDatabase();
+                            Cursor memo_cursor = db.query("travelmemo", new String[]{"memo_routesCounter", "memo_trackNo",
+                                            "memo_content", "memo_img", "memo_latlng", "memo_time"},
+                                    null, null, null, null, null);
+                            if (memo_cursor != null) {
+                                ContentValues cv = new ContentValues();
+                                cv.put("memo_routesCounter", RoutesCounter);
+                                cv.put("memo_trackNo", Track_no);
+                                cv.put("memo_content", content_editText.getText().toString());
+                                if (CurrentLatlng != null) {
+                                    cv.put("memo_latlng", CurrentLatlng.toString());
+                                }
+                                SimpleDateFormat fmt = new SimpleDateFormat("HH:mm");
+                                Date date = new Date();
+                                String dateString = fmt.format(date);
+                                cv.put("memo_time", dateString);
+                                inDB = db.insert("travelmemo", null, cv);
+                                Log.e("3/23_", "DB insert content" + inDB + " content:"
+                                        + content_editText.getText().toString() + " Addtime " + dateString);
 
-                            if (inDB != -1) {
-                                if (spotDialog.isShowing()) {
-                                    if (content_layout.getVisibility() == content_layout.VISIBLE) {
-                                        content_layout.setVisibility(View.INVISIBLE);
-                                        content_editText.setText("");
+                                if (inDB != -1) {
+                                    if (spotDialog.isShowing()) {
+                                        if (content_layout.getVisibility() == content_layout.VISIBLE) {
+                                            content_layout.setVisibility(View.INVISIBLE);
+                                            content_editText.setText("");
+                                        }
+                                        spotDialog.dismiss();
                                     }
+                                    Toast.makeText(getActivity(), "心得已上傳！", Toast.LENGTH_SHORT).show();
+                                }
+                                memo_cursor.close();
+                                if (spotDialog.isShowing()) {
                                     spotDialog.dismiss();
                                 }
-                                Toast.makeText(getActivity(), "心得已上傳！", Toast.LENGTH_SHORT).show();
-                            }
-                            memo_cursor.close();
-                            if (spotDialog.isShowing()) {
-                                spotDialog.dismiss();
                             }
                         }
+
                     }
                 });
             }
@@ -462,17 +468,26 @@ public class RecordTrackFragment extends Fragment implements
                     @Override
                     public void onClick(DialogInterface dialog, int item) {
                         if (items[item].equals("相機")) {
+                            // Create parameters for Intent with filename
+                            ContentValues values = new ContentValues();
+                            values.put(MediaStore.Images.Media.TITLE, "New Picture");
+                            values.put(MediaStore.Images.Media.DESCRIPTION, "From your Camera");
+                            // imageUri is the current activity attribute, define and save it for later usage
+                            imageUri = getActivity().getContentResolver().insert(
+                                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+
                             Intent intent_camera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                            intent_camera.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
                             startActivityForResult(intent_camera, REQUEST_CAMERA);
-                        } else if (items[item].equals("相簿")) {
-                            Intent intent_photo = new Intent(Intent.ACTION_GET_CONTENT);
-                            intent_photo.setType("image/*");
-                            startActivityForResult(Intent.createChooser(intent_photo, "選擇檔案"),
-                                    SELECT_FILE);
-                        } else if (items[item].equals("取消")) {
-                            dialog.dismiss();
+                            } else if (items[item].equals("相簿")) {
+                                Intent intent_photo = new Intent(Intent.ACTION_GET_CONTENT);
+                                intent_photo.setType("image/*");
+                                startActivityForResult(Intent.createChooser(intent_photo, "選擇檔案"),
+                                        SELECT_FILE);
+                            } else if (items[item].equals("取消")) {
+                                dialog.dismiss();
                         }
-                    }
+                        }
                 });
                 builder.show();
             }
@@ -493,6 +508,8 @@ public class RecordTrackFragment extends Fragment implements
                 }
             }
         });
+
+        RetrieveRouteFromDB();
     }
 
     @Override
@@ -554,12 +571,12 @@ public class RecordTrackFragment extends Fragment implements
         // 位置資訊更新的時候，應用程式會自動呼叫LocationListener.onLocationChanged
         Log.i(TAG, "Location services connected.");
 
-        Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-        if (location == null) {
+        Location last_location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+        if (last_location == null) {
             LocationServices.FusedLocationApi.requestLocationUpdates
                     (mGoogleApiClient, mLocationRequest, (LocationListener) getActivity());
         } else {
-            HandleNewLocation(location);
+            HandleNewLocation(last_location);
         }
     }
 
@@ -604,13 +621,35 @@ public class RecordTrackFragment extends Fragment implements
 
     }
 
-    // 顯示軌跡紀錄
-    private void DisplayRoute(LatLng track_latlng) {
-        //database.delete("trackRoute", null, null);
-        if (TraceRoute == null) {
-            TraceRoute = new ArrayList<LatLng>();
+    // 顯示軌跡紀錄 TODO Need to modify
+    private void DisplayRoute(LatLng track_latlng, int rC, int tN) {
+        int routesCounter = rC;
+        int track_no = tN;
+        DataBaseHelper helper = DataBaseHelper.getmInstance(getActivity());
+        SQLiteDatabase database = helper.getWritableDatabase();
+        Cursor trackRoute_cursor = database.query("trackRoute",
+                new String[]{"routesCounter","track_no", "track_lat", "track_lng",
+                        "track_start", "track_title", "track_totaltime", "track_completetime"},
+                null, null, null, null, null);
+        if (trackRoute_cursor != null) {
+            if (TraceRoute == null) {
+                TraceRoute = new ArrayList<LatLng>();
+            }
+            if (trackRoute_cursor.getCount() == 0) {
+                TraceRoute.add(track_latlng);
+            } else {
+                trackRoute_cursor.moveToLast();
+                Integer rCounterInDB = trackRoute_cursor.getInt(0);
+                Integer tNoInDB = trackRoute_cursor.getInt(1);
+                if (routesCounter != rCounterInDB || track_no != tNoInDB) {
+                    TraceRoute.clear();
+                    TraceRoute.add(track_latlng);
+                } else {
+                    TraceRoute.add(track_latlng);
+                }
+            }
+            trackRoute_cursor.close();
         }
-        TraceRoute.add(track_latlng);
 
         PolylineOptions polylineOpt = new PolylineOptions();
         for (LatLng latlng : TraceRoute) {
@@ -637,33 +676,80 @@ public class RecordTrackFragment extends Fragment implements
             if (trackRoute_cursor.getCount() != 0) {
                 //track_start = 0:該Route最後一筆(停止)，1:記錄中(開始)，2:該Track最後一筆(暫停)
                 Boolean DontDisplay = false;
+                if (TraceRoute == null) {
+                    TraceRoute = new ArrayList<LatLng>();
+                }
                 while (trackRoute_cursor.moveToNext()) {
+                    Double track_lat = trackRoute_cursor.getDouble(2);
+                    Double track_lng = trackRoute_cursor.getDouble(3);
+                    Integer track_start = trackRoute_cursor.getInt(4);
+                    LatLng track_latLng = new LatLng(track_lat, track_lng);
+
                     if (DontDisplay) {
+                        TraceRoute.clear();
+                        TraceRoute.add(track_latLng);
                         DontDisplay = false;
                         continue;
                     } else {
-                        Double track_lat = trackRoute_cursor.getDouble(2);
-                        Double track_lng = trackRoute_cursor.getDouble(3);
-                        Integer track_start = trackRoute_cursor.getInt(4);
-                        LatLng track_latLng = new LatLng(track_lat, track_lng);
-                        DisplayRoute(track_latLng);
+                        TraceRoute.add(track_latLng);
 
                         if (track_start == 0 || track_start == 2) {
                             DontDisplay = true;
                         }
                     }
+                    PolylineOptions polylineOpt = new PolylineOptions();
+                    for (LatLng latlng : TraceRoute) {
+                        polylineOpt.add(latlng);
+                    }
+
+                    polylineOpt.color(Color.parseColor("#2BB7EC"));
+
+                    Polyline line = mMap.addPolyline(polylineOpt);
+                    line.setWidth(10);
+
+                    Log.d("3/20_還原軌跡", "RetrieveRouteFromDB" + track_latLng.toString());
+
                 }
+                //TraceRoute.clear();
+
+                // 還原紀錄狀態
                 trackRoute_cursor.moveToLast();
                 Integer track_start = trackRoute_cursor.getInt(4);
+                String temp_totaltime = trackRoute_cursor.getString(6);
+                // 停止
                 if (track_start == 0) {
                     RoutesCounter = trackRoute_cursor.getInt(0) + 1;
                     Track_no = 1;
+                    TraceRoute.clear();
                 } else {
                     RoutesCounter = trackRoute_cursor.getInt(0);
                     Track_no = trackRoute_cursor.getInt(1);
+                    // 還在紀錄
+                    if (track_start == 1) {
+                        // 正在紀錄
+                        record_status = 1;
+                        record_start_layout.setBackgroundColor(Color.parseColor("#5599FF"));
+                        record_start_text.setTextColor(Color.parseColor("#FFFFFF"));
+                        record_start_text.setText("停止紀錄");
+                        record_start_img.performClick();
+                        record_start_img.setImageResource(R.drawable.record_selected_pause);
+                    } else if (track_start == 2) {
+                        // 暫停紀錄
+                        record_status = 2;
+                        Integer min = Integer.valueOf(temp_totaltime.substring(0, temp_totaltime.indexOf(":", 0)));
+                        Integer sec = Integer.valueOf(temp_totaltime.substring(temp_totaltime.indexOf(":", 0)+1, temp_totaltime.length()));
+                        //Log.d("4/1_", "min:" + temp_totaltime.substring(0, temp_totaltime.indexOf(":", 0)));
+                        //Log.d("4/1_", "sec:" + temp_totaltime.substring(temp_totaltime.indexOf(":", 0)+1, temp_totaltime.length()));
+                        tempSpent = Long.valueOf((min*60+sec)*1000);
+                        record_start_layout.setBackgroundColor(Color.parseColor("#FFFFFF"));
+                        record_start_text.setTextColor(Color.parseColor("#555555"));
+                        record_start_text.setText("開始紀錄");
+                        record_start_img.setImageResource(R.drawable.ic_play_light);
+                        TraceRoute.clear();
+                    }
+
+                    record_spot_layout.setClickable(true);
                 }
-
-
             }
             trackRoute_cursor.close();
         }
@@ -671,13 +757,17 @@ public class RecordTrackFragment extends Fragment implements
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (data != null) {
-            if (resultCode == getActivity().RESULT_OK) {
-                if (requestCode == REQUEST_CAMERA) {
-                    memo_img = (Bitmap) data.getExtras().get("data");
-                    //ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-                    //memo_img.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
-                    dialog_img.setImageBitmap(memo_img);
+        if (resultCode == getActivity().RESULT_OK) {
+            // TODO 旋轉問題
+            if (requestCode == REQUEST_CAMERA) {
+                ContentResolver cr = getActivity().getContentResolver();
+                try {
+                    //memo_img = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), imageUri);
+                    memo_img = Functions.ScalePic(BitmapFactory.decodeStream(cr.openInputStream(imageUri)));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                dialog_img.setImageBitmap(memo_img);
 
                     /* 將暫存檔儲存在外部儲存空間
                     File destination = new File(Environment.getExternalStorageDirectory(),
@@ -694,7 +784,8 @@ public class RecordTrackFragment extends Fragment implements
                         e.printStackTrace();
                     }
                     */
-                }
+            }
+            if (data != null) {
                 if (requestCode == SELECT_FILE) {
                     Uri uri = data.getData();
                     ContentResolver cr = getActivity().getContentResolver();
@@ -713,7 +804,7 @@ public class RecordTrackFragment extends Fragment implements
             }
             dialog_scrollview.setVisibility(View.VISIBLE);
             RelativeLayout.LayoutParams otelParams = new RelativeLayout.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT, getPx(150));
+                    ViewGroup.LayoutParams.MATCH_PARENT, getPx(120));
             otelParams.addRule(RelativeLayout.BELOW, R.id.dialog_header_text);
             dialog_scrollview.setLayoutParams(otelParams);
 
@@ -726,6 +817,7 @@ public class RecordTrackFragment extends Fragment implements
             dialog_confirm_layout.setVisibility(View.VISIBLE);
             dialog_confirm_layout.setOnClickListener(ok);
         }
+
         super.onActivityResult(requestCode, resultCode, data);
     }
 
@@ -801,13 +893,17 @@ public class RecordTrackFragment extends Fragment implements
                 Integer status = intent.getIntExtra("record_status", 0);
                 Long spent = intent.getLongExtra("spent", 99);
                 if (spent != 99) {
-                    if (((spent / 1000) / 60) > 0)
-                        RecordActivity.time_text.setText(((spent / 1000) / 60) + ":" + ((spent / 1000) % 60));
-                    else
-                        RecordActivity.time_text.setText("00:" + ((spent / 1000) % 60));
-
                     if (status == 2) {
                         tempSpent = spent;
+                    } else {
+                        if (((spent / 1000) / 60) > 0) {
+                            if (((spent / 1000) / 60) < 10)
+                                RecordActivity.time_text.setText("0" + ((spent / 1000) / 60) + ":" + ((spent / 1000) % 60));
+                            else
+                                RecordActivity.time_text.setText(((spent / 1000) / 60) + ":" + ((spent / 1000) % 60));
+                        } else {
+                            RecordActivity.time_text.setText("00:" + ((spent / 1000) % 60));
+                        }
                     }
                 }
                 Log.d("3/26", "BroadcastReceiver: " + intent.getLongExtra("spent", 99));
@@ -820,71 +916,13 @@ public class RecordTrackFragment extends Fragment implements
         public void onReceive(Context context, Intent intent) {
             //Update Your UI here..
             if (intent != null) {
-                Integer status = intent.getIntExtra("record_status", 0);
                 Integer routesCounter = intent.getIntExtra("routesCounter", 1);
                 Integer track_no = intent.getIntExtra("track_no", 1);
                 Double track_lat = intent.getDoubleExtra("track_lat", 0);
                 Double track_lng = intent.getDoubleExtra("track_lng", 0);
                 LatLng track_latLng = new LatLng(track_lat, track_lng);
-                if (!(routesCounter > 1 && track_no == 1)) {
-                    DisplayRoute(track_latLng);
-                }
 
-                if (status == 2) {
-                    Intent intent_Trace = new Intent(TRACK_TO_SERVICE);
-                    intent_Trace.putExtra("record_status", 2);
-                    intent_Trace.putExtra("isPause", true);
-                    getActivity().sendBroadcast(intent_Trace);
-
-                    DataBaseHelper helper = DataBaseHelper.getmInstance(getActivity());
-                    SQLiteDatabase database = helper.getWritableDatabase();
-                    Cursor trackRoute_cursor = database.query("trackRoute",
-                            new String[]{"routesCounter", "track_no", "track_lat", "track_lng",
-                                    "track_start", "track_title", "track_totaltime", "track_completetime"},
-                            null, null, null, null, null);
-                    if (trackRoute_cursor != null) {
-                        ContentValues cv = new ContentValues();
-                        cv.put("routesCounter", routesCounter);
-                        cv.put("track_no", track_no);
-                        cv.put("track_lat", track_lat);
-                        cv.put("track_lng", track_lng);
-                        cv.put("track_start", 2);
-                        long result = database.insert("trackRoute", null, cv);
-                        Log.d("3/20_軌跡紀錄_Pause", result + " = DB INSERT RC:" + routesCounter
-                                + " no:" + track_no + " 座標 " + track_lat + "," + track_lng + " status " + status);
-                        trackRoute_cursor.close();
-                    }
-                } else if (status == 0) {
-                    // TODO 如果先按了暫停最後一筆由insert改為update track_no由2改0
-                    String track_title = intent.getStringExtra("track_title");
-                    DataBaseHelper helper = DataBaseHelper.getmInstance(getActivity());
-                    SQLiteDatabase database = helper.getWritableDatabase();
-                    Cursor trackRoute_cursor = database.query("trackRoute",
-                            new String[]{"routesCounter", "track_no", "track_lat", "track_lng",
-                                    "track_start", "track_title", "track_totaltime", "track_completetime"},
-                            null, null, null, null, null);
-                    if (trackRoute_cursor != null) {
-                        ContentValues cv = new ContentValues();
-                        cv.put("routesCounter", routesCounter);
-                        cv.put("track_no", track_no);
-                        cv.put("track_lat", track_lat);
-                        cv.put("track_lng", track_lng);
-                        cv.put("track_start", 0);
-                        cv.put("track_title", track_title);
-                        cv.put("track_totaltime", RecordActivity.time_text.getText().toString());
-                        SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd");
-                        Date date = new Date();
-                        String dateString = fmt.format(date);
-                        cv.put("track_completetime", dateString);
-                        long result = database.insert("trackRoute", null, cv);
-                        Log.d("3/20_軌跡紀錄_END", result + " = DB INSERT RC:" + routesCounter
-                                + " no:" + track_no + " 座標 " + track_lat + "," + track_lng + ". "
-                                + track_title + " TotalTime:" + RecordActivity.time_text.getText().toString() + " status " + status);
-                        RecordDiaryFragment.mAdapter.notifyDataSetChanged();
-                        Log.e("3/27_", "RecordTrackFragment. notifyDataSetChanged");
-                        trackRoute_cursor.close();
-                    }
-                }
+                DisplayRoute(track_latLng, routesCounter, track_no);
             }
         }
     };
@@ -892,6 +930,15 @@ public class RecordTrackFragment extends Fragment implements
     public int getPx(int dimensionDp) {
         float density = getResources().getDisplayMetrics().density;
         return (int) (dimensionDp * density + 0.5f);
+    }
+
+    public String getRealPathFromURI(Uri contentUri) {
+        String[] proj = { MediaStore.Images.Media.DATA };
+        Cursor cursor = getActivity().managedQuery(contentUri, proj, null, null, null);
+        int column_index = cursor
+                .getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+        cursor.moveToFirst();
+        return cursor.getString(column_index);
     }
 
     public static Bitmap decodeBitmapFromResource(Resources res, int resId, int reqWidth, int reqHeight) {

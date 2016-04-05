@@ -322,27 +322,6 @@ public class RecordDiaryDetailActivity extends AppCompatActivity implements
 
     }
 
-    // 顯示軌跡紀錄
-    private void DisplayRoute(LatLng track_latlng) {
-        //database.delete("trackRoute", null, null);
-        if (TraceRoute == null) {
-            TraceRoute = new ArrayList<LatLng>();
-        }
-        TraceRoute.add(track_latlng);
-
-        PolylineOptions polylineOpt = new PolylineOptions();
-        for (LatLng latlng : TraceRoute) {
-            polylineOpt.add(latlng);
-        }
-
-        polylineOpt.color(Color.parseColor("#2BB7EC"));
-
-        Polyline line = mMap.addPolyline(polylineOpt);
-        line.setWidth(10);
-
-        Log.d("3/20_畫出軌跡", "DisplayRoute" + track_latlng.toString());
-    }
-
     // retrieve trackRoute from DB
     private void RetrieveRouteFromDB() {
         Cursor trackRoute_cursor = database.query("trackRoute",
@@ -353,21 +332,39 @@ public class RecordDiaryDetailActivity extends AppCompatActivity implements
             if (trackRoute_cursor.getCount() != 0) {
                 //track_start = 0:該Route最後一筆(停止)，1:記錄中(開始)，2:該Track最後一筆(暫停)
                 Boolean DontDisplay = false;
+                if (TraceRoute == null) {
+                    TraceRoute = new ArrayList<LatLng>();
+                }
                 while (trackRoute_cursor.moveToNext()) {
+                    Double track_lat = trackRoute_cursor.getDouble(2);
+                    Double track_lng = trackRoute_cursor.getDouble(3);
+                    Integer track_start = trackRoute_cursor.getInt(4);
+                    LatLng track_latLng = new LatLng(track_lat, track_lng);
+
                     if (DontDisplay) {
+                        TraceRoute.clear();
+                        TraceRoute.add(track_latLng);
                         DontDisplay = false;
                         continue;
                     } else {
-                        Double track_lat = trackRoute_cursor.getDouble(2);
-                        Double track_lng = trackRoute_cursor.getDouble(3);
-                        Integer track_start = trackRoute_cursor.getInt(4);
-                        LatLng track_latLng = new LatLng(track_lat, track_lng);
-                        DisplayRoute(track_latLng);
+                        TraceRoute.add(track_latLng);
 
                         if (track_start == 0 || track_start == 2) {
                             DontDisplay = true;
                         }
                     }
+                    PolylineOptions polylineOpt = new PolylineOptions();
+                    for (LatLng latlng : TraceRoute) {
+                        polylineOpt.add(latlng);
+                    }
+
+                    polylineOpt.color(Color.parseColor("#2BB7EC"));
+
+                    Polyline line = mMap.addPolyline(polylineOpt);
+                    line.setWidth(10);
+
+                    Log.d("3/20_還原軌跡", "RetrieveRouteFromDB" + track_latLng.toString());
+
                 }
 
                 trackRoute_cursor.moveToFirst();

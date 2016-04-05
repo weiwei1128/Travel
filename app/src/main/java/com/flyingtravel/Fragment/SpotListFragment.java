@@ -64,10 +64,6 @@ public class SpotListFragment extends Fragment implements
     private TextView number, lastPage, nextPage;
     private LinearLayout spotList_pageLayout, spotList_textLayout;
 
-    private EditText SearchEditText;
-    private ImageView SearchImg;
-    private FrameLayout spotList_searchLayout;
-
     private ViewPager viewPager;
     private ProgressBar progressBar;
     private SpotListFragmentViewPagerAdapter adapter;
@@ -117,16 +113,6 @@ public class SpotListFragment extends Fragment implements
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_spot_list, container, false);
 
-        SearchEditText = (EditText) view.findViewById(R.id.spotlist_searchEditText);
-
-        SearchImg = (ImageView) view.findViewById(R.id.spotlist_searchImg);
-        SearchImg.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-            }
-        });
-
-        spotList_searchLayout = (FrameLayout) view.findViewById(R.id.spotList_searchLayout);
         spotList_pageLayout = (LinearLayout) view.findViewById(R.id.spotList_pageLayout);
         spotList_textLayout = (LinearLayout) view.findViewById(R.id.spotList_textLayout);
 
@@ -153,7 +139,6 @@ public class SpotListFragment extends Fragment implements
         if (globalVariable.SpotDataSorted.isEmpty()) {
             Log.e("3/23_SpotListFragment", "no sort");
             progressBar.setVisibility(View.VISIBLE);
-            spotList_searchLayout.setVisibility(View.INVISIBLE);
             spotList_pageLayout.setVisibility(View.INVISIBLE);
             //viewPager.setAdapter(null);
 
@@ -177,30 +162,10 @@ public class SpotListFragment extends Fragment implements
             number.setTextColor((Color.parseColor("#FF0088")));
             spotList_textLayout.addView(number);
             spotList_textLayout.addView(textView);
-/*
-            for (int i = 0; i < pages; i++) {
-                fragments.add(SpotListViewFragment.newInstance("SpotListView", i+1));
-            }
-*/            //viewPager.setAdapter(new SpotListFragmentViewPagerAdapter(getChildFragmentManager(), pages));
+
+            //viewPager.setAdapter(new SpotListFragmentViewPagerAdapter(getChildFragmentManager(), pages));
             //viewPager.setOnPageChangeListener(new PageListener());
             //viewPager.setOffscreenPageLimit(1);
-
-            SearchEditText.addTextChangedListener(new TextWatcher() {
-                //TODO 2.2 在list還沒跑出來之前打字會發生error
-                @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count) {
-                    Log.d("3.9_景點搜尋", s.toString());
-                    SpotListViewFragment.adapter.getFilter().filter(s.toString());
-                }
-
-                @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                }
-
-                @Override
-                public void afterTextChanged(Editable s) {
-                }
-            });
         }
 
         return view;
@@ -271,27 +236,12 @@ public class SpotListFragment extends Fragment implements
             //you are visible to user now - so set whatever you need
             Log.e("3/23_SpotList", "setUserVisibleHint: Visible");
             if (viewPager != null && viewPager.getAdapter() == null && pages != 0) {
-                adapter = new SpotListFragmentViewPagerAdapter(getChildFragmentManager(), pages);
+                if (adapter == null)
+                    adapter = new SpotListFragmentViewPagerAdapter(getChildFragmentManager(), pages);
                 viewPager.setOffscreenPageLimit(1);
                 viewPager.setAdapter(adapter);
                 viewPager.setOnPageChangeListener(new PageListener());
                 adapter.notifyDataSetChanged();
-                SearchEditText.addTextChangedListener(new TextWatcher() {
-                    //TODO 2.2 在list還沒跑出來之前打字會發生error
-                    @Override
-                    public void onTextChanged(CharSequence s, int start, int before, int count) {
-                        Log.d("3.9_景點搜尋", s.toString());
-                        SpotListViewFragment.adapter.getFilter().filter(s.toString());
-                    }
-
-                    @Override
-                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                    }
-
-                    @Override
-                    public void afterTextChanged(Editable s) {
-                    }
-                });
             }
         }
         else {
@@ -413,11 +363,6 @@ public class SpotListFragment extends Fragment implements
                     spotList_textLayout.addView(number);
                     spotList_textLayout.addView(textView);
 
-/*
-                    for (int i = 0; i < pages; i++) {
-                     fragments.add(SpotListViewFragment.newInstance("SpotListView", i+1));
-                   }*/
-
                     //adapter = new SpotListFragmentViewPagerAdapter(getChildFragmentManager(), pages);
                     //viewPager.setAdapter(adapter);
                     //viewPager.setOnPageChangeListener(new PageListener());
@@ -425,24 +370,7 @@ public class SpotListFragment extends Fragment implements
                     //adapter.notifyDataSetChanged();
 
                     spotList_pageLayout.setVisibility(View.VISIBLE);
-                    spotList_searchLayout.setVisibility(View.VISIBLE);
-                    /*SearchEditText.addTextChangedListener(new TextWatcher() {
-                        //TODO 2.2 在list還沒跑出來之前打字會發生error
-                        @Override
-                        public void onTextChanged(CharSequence s, int start, int before, int count) {
-                            Log.d("3.9_景點搜尋", s.toString());
-                            SpotListViewFragment.adapter.getFilter().filter(s.toString());
-                        }
 
-                        @Override
-                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                        }
-
-                        @Override
-                        public void afterTextChanged(Editable s) {
-                        }
-                    });
-*/
                     progressBar.setVisibility(View.INVISIBLE);
                 }
             }
