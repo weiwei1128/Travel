@@ -42,6 +42,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -129,8 +130,9 @@ public class HomepageActivity extends FragmentActivity {
         MultiDex.install(this);
     }
 
-    private void changeFragment(Fragment f) {
+    public void changeFragment(Fragment f) {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        Log.d("4.7","HA:"+getSupportFragmentManager()+"=manager"+getSupportFragmentManager().getFragments());
         transaction.replace(R.id.fragment_test, f);
         transaction.commit();
     }

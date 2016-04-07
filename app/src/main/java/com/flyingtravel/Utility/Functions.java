@@ -21,10 +21,14 @@ import com.flyingtravel.R;
 
 import java.io.ByteArrayOutputStream;
 
-/**
- * Created by wei on 2016/1/30.
- */
 public class Functions {
+    /**
+     * go to another Activity or go back.
+     *
+     * @param isBack if true then only call activity.finish()
+     *
+     *  
+     */
     public static void go(Boolean isBack, Activity activity, Context context, Class goclass, Bundle bundle) {
 
         if (isBack)
