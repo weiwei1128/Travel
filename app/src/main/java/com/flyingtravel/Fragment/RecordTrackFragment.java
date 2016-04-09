@@ -898,11 +898,20 @@ public class RecordTrackFragment extends Fragment implements
                     } else {
                         if (((spent / 1000) / 60) > 0) {
                             if (((spent / 1000) / 60) < 10)
-                                RecordActivity.time_text.setText("0" + ((spent / 1000) / 60) + ":" + ((spent / 1000) % 60));
+                                if (((spent / 1000) % 60) < 10)
+                                    RecordActivity.time_text.setText("0" + ((spent / 1000) / 60) + ":0" + ((spent / 1000) % 60));
+                                else
+                                    RecordActivity.time_text.setText("0" + ((spent / 1000) / 60) + ":" + ((spent / 1000) % 60));
                             else
-                                RecordActivity.time_text.setText(((spent / 1000) / 60) + ":" + ((spent / 1000) % 60));
+                                if (((spent / 1000) % 60) < 10)
+                                    RecordActivity.time_text.setText(((spent / 1000) / 60) + ":0" + ((spent / 1000) % 60));
+                                else
+                                    RecordActivity.time_text.setText(((spent / 1000) / 60) + ":" + ((spent / 1000) % 60));
                         } else {
-                            RecordActivity.time_text.setText("00:" + ((spent / 1000) % 60));
+                            if (((spent / 1000) % 60) < 10)
+                                RecordActivity.time_text.setText("00:0" + ((spent / 1000) % 60));
+                            else
+                                RecordActivity.time_text.setText("00:" + ((spent / 1000) % 60));
                         }
                     }
                 }

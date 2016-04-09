@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.daimajia.slider.library.Indicators.PagerIndicator;
@@ -75,9 +76,10 @@ public class RecordDiaryFragmentAdapter extends BaseAdapter implements ViewPager
             mViewHolder = new ViewHolder();
             mViewHolder.ImageSlider = (SliderLayout) convertView.findViewById(R.id.slider);
             mViewHolder.pagerIndicator = (PagerIndicator) convertView.findViewById(R.id.custom_indicator);
-            mViewHolder.MemoTitle = (TextView) convertView.findViewById(R.id.Title);
-            mViewHolder.MemoTotalTime = (TextView) convertView.findViewById(R.id.TimeStamp);
-            mViewHolder.MemoString = (TextView) convertView.findViewById(R.id.MemoString);
+            mViewHolder.DiaryImage = (ImageView) convertView.findViewById(R.id.DiaryImage);
+            mViewHolder.DiaryTitle = (TextView) convertView.findViewById(R.id.Title);
+            mViewHolder.DiaryTotalTime = (TextView) convertView.findViewById(R.id.TimeStamp);
+            mViewHolder.DiaryString = (TextView) convertView.findViewById(R.id.DiaryString);
 
             convertView.setTag(mViewHolder);
 
@@ -92,8 +94,8 @@ public class RecordDiaryFragmentAdapter extends BaseAdapter implements ViewPager
         if (trackRoute_cursor != null) {
             if (trackRoute_cursor.getCount() != 0) {
                 trackRoute_cursor.moveToPosition(trackRoute_cursor.getCount() - position-1);
-                mViewHolder.MemoTitle.setText(trackRoute_cursor.getString(5));
-                mViewHolder.MemoTotalTime.setText(trackRoute_cursor.getString(6));
+                mViewHolder.DiaryTitle.setText(trackRoute_cursor.getString(5));
+                mViewHolder.DiaryTotalTime.setText(trackRoute_cursor.getString(6));
                 RoutesCounter = trackRoute_cursor.getInt(0);
 
                 Cursor memo_cursor = database.query("travelmemo", new String[]{"memo_routesCounter", "memo_trackNo",
@@ -102,9 +104,9 @@ public class RecordDiaryFragmentAdapter extends BaseAdapter implements ViewPager
                 if (memo_cursor != null) {
                     if (memo_cursor.getCount() != 0) {
                         memo_cursor.moveToFirst();
-                        mViewHolder.MemoString.setText(memo_cursor.getString(2));
+                        mViewHolder.DiaryString.setText(memo_cursor.getString(2));
                     } else {
-                        mViewHolder.MemoString.setText("");
+                        mViewHolder.DiaryString.setText("");
                     }
                     memo_cursor.close();
                 }
@@ -113,10 +115,8 @@ public class RecordDiaryFragmentAdapter extends BaseAdapter implements ViewPager
                                 "memo_content", "memo_img", "memo_latlng", "memo_time"},
                         "memo_routesCounter=\"" + RoutesCounter + "\" AND memo_img!=\"null\"", null, null, null, null, null);
                 if (img_cursor != null) {
-                    int number;
                     mViewHolder.ImageSlider.removeAllSliders();
-                    if (img_cursor.getCount() != 0) {
-                        number = img_cursor.getCount();
+                    if (img_cursor.getCount() > 1) {
                         //Log.e("3/28_", "img count:" + number);
                         while (img_cursor.moveToNext()) {
                             //Log.e("3/28_", "img: " + img_cursor.getBlob(3));
@@ -126,17 +126,17 @@ public class RecordDiaryFragmentAdapter extends BaseAdapter implements ViewPager
                                     .setScaleType(BaseSliderView.ScaleType.Fit);
                             mViewHolder.ImageSlider.addSlider(sliderView);
                         }
+                        mViewHolder.ImageSlider.setCustomIndicator(mViewHolder.pagerIndicator);
+                        mViewHolder.ImageSlider.addOnPageChangeListener(this);
                         //Log.e("3/29_", "position: " + position);
-                        if (img_cursor.getCount() > 1) {
-                            mViewHolder.ImageSlider.setCustomIndicator(mViewHolder.pagerIndicator);
-                            mViewHolder.ImageSlider.addOnPageChangeListener(this);
-                            //Log.e("3/29_", "set pagerIndicator ");
-                        }
-                    } else {
-                        DefaultSliderView sliderView = new DefaultSliderView(context);
-                        sliderView.image(R.drawable.empty)
-                                .setScaleType(BaseSliderView.ScaleType.Fit);
-                        mViewHolder.ImageSlider.addSlider(sliderView);
+                    } else if (img_cursor.getCount() == 1) {
+                        img_cursor.moveToFirst();
+                        byte[] d = img_cursor.getBlob(3);
+                        mViewHolder.DiaryImage.setImageBitmap(BitmapFactory.decodeByteArray(d, 0, d.length));
+                        mViewHolder.DiaryImage.setScaleType(ImageView.ScaleType.FIT_CENTER);
+                    } else if (img_cursor.getCount() == 0) {
+                        mViewHolder.DiaryImage.setImageResource(R.drawable.empty);
+                        mViewHolder.DiaryImage.setScaleType(ImageView.ScaleType.FIT_CENTER);
                         //Log.e("3/28_", "img_cursor = 0 ");
                     }
                     mViewHolder.ImageSlider.stopAutoCycle();
@@ -167,6 +167,7 @@ public class RecordDiaryFragmentAdapter extends BaseAdapter implements ViewPager
     private static class ViewHolder {
         SliderLayout ImageSlider;
         PagerIndicator pagerIndicator;
-        TextView MemoTitle, MemoTotalTime, MemoString;
+        ImageView DiaryImage;
+        TextView DiaryTitle, DiaryTotalTime, DiaryString;
     }
 }

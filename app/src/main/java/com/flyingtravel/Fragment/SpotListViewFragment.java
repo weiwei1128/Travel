@@ -1,9 +1,5 @@
 package com.flyingtravel.Fragment;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
@@ -12,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -22,8 +19,6 @@ import com.flyingtravel.Activity.Spot.SpotDetailActivity;
 import com.flyingtravel.Adapter.SpotListAdapter;
 import com.flyingtravel.R;
 import com.flyingtravel.Utility.Functions;
-import com.flyingtravel.Utility.TrackRouteService;
-import com.google.android.gms.maps.model.LatLng;
 
 /**
  * Created by Tinghua on 2016/3/25.
@@ -81,6 +76,8 @@ public class SpotListViewFragment extends Fragment {
 
         mlistView = (ListView) view.findViewById(R.id.spotlist_listView);
         adapter = new SpotListAdapter(getActivity(), mPageNo);
+        mlistView.setAdapter(adapter);
+        mlistView.setOnItemClickListener(new itemListener());
 
         spotList_searchLayout = (FrameLayout) view.findViewById(R.id.spotList_searchLayout);
         SearchImg = (ImageView) view.findViewById(R.id.spotlist_searchImg);
@@ -89,6 +86,8 @@ public class SpotListViewFragment extends Fragment {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 Log.d("4/1_景點搜尋", s.toString());
+                SpotListAdapter Adapter = (SpotListAdapter) mlistView.getAdapter();
+                Adapter.getFilter().filter(s.toString());
                 //adapter.getFilter().filter(s.toString());
             }
 
@@ -101,8 +100,6 @@ public class SpotListViewFragment extends Fragment {
             }
         });
 
-        mlistView.setAdapter(adapter);
-        mlistView.setOnItemClickListener(new itemListener());
         return view;
     }
 
