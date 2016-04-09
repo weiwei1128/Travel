@@ -46,7 +46,7 @@ public class CheckScheduleActivity extends AppCompatActivity {
     String uid = null;
     int count = 0;
     String[] itemid, itemno, itemdate, itemprice, itemcontent, itemstate;
-    LinearLayout putItemLayout, backImg;
+    LinearLayout putItemLayout, backImg,moreLayout;
     Context context;
 
     @Override
@@ -59,6 +59,16 @@ public class CheckScheduleActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Functions.go(true, CheckScheduleActivity.this, CheckScheduleActivity.this,
                         HomepageActivity.class, null);
+            }
+        });
+        moreLayout = (LinearLayout)findViewById(R.id.checkschedule_more);
+        moreLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Bundle bundle = new Bundle();
+                bundle.putInt("position", 1);
+                Functions.go(false, CheckScheduleActivity.this, CheckScheduleActivity.this,
+                        MoreItemActivity.class, bundle);
             }
         });
         putItemLayout = (LinearLayout) findViewById(R.id.checkschedule_content);

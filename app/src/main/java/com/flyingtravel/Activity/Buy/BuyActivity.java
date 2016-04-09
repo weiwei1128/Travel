@@ -122,6 +122,7 @@ public class BuyActivity extends AppCompatActivity {
         adapter = new BuyFragmentViewPagerAdapter(this.getSupportFragmentManager(), viewPager,
                 fragments, BuyActivity.this);
 
+        viewPager.setOffscreenPageLimit(1);
         viewPager.setAdapter(adapter);
         viewPager.setOnPageChangeListener(new PageListener());
         if (adapter.getCount() == 0)

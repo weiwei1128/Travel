@@ -413,7 +413,7 @@ public class BuyItemDetailActivity extends AppCompatActivity {
         protected void onPreExecute() {
             mDialog = new ProgressDialog(BuyItemDetailActivity.this);
             mDialog.setMessage("讀取資料中......");
-            mDialog.setCancelable(false);
+//            mDialog.setCancelable(false);
             if (!mDialog.isShowing()) {
                 mDialog.show();
             }

@@ -1,15 +1,18 @@
 package com.flyingtravel.Fragment;
 
 
-import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebSettings;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
+import android.widget.AdapterView;
+import android.widget.ListView;
+
+import com.flyingtravel.Activity.MoreItemActivity;
+import com.flyingtravel.Adapter.MoreAdapter;
+import com.flyingtravel.Utility.Functions;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -25,6 +28,26 @@ public class MoreFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Log.i("4.7", "activity0:" + getActivity().getSupportFragmentManager()+"list"+getActivity().getSupportFragmentManager().getFragments());
+        ListView listView = new ListView(getActivity());
+        MoreAdapter adapter = new MoreAdapter(getActivity());
+        listView.setAdapter(adapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Bundle bundle = new Bundle();
+                switch (position) {
+                    case 0:
+                        bundle.putInt("position", 0);
+                        break;
+                    case 1:
+                        bundle.putInt("position", 1);
+                        break;
+                }
+                Functions.go(false,getActivity(),getActivity(),MoreItemActivity.class,bundle);
+            }
+        });
+        /*
         final ProgressDialog dialog = new ProgressDialog(getActivity());
         dialog.setMessage("載入中");
         dialog.show();
@@ -44,7 +67,8 @@ public class MoreFragment extends Fragment {
             }
         });
         webView.loadUrl(myURL);
-        return webView;
+        */
+        return listView;
     }
 
 

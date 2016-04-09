@@ -34,3 +34,16 @@ library/build/intermediates/bundles/release/classes.jar
 *.json
 
 library/build/intermediates/blame/res/release/multi/values-my-rMM.json
+*.json
+library/build/intermediates/blame/res/release/single/anim.json
+*.json
+library/build/intermediates/blame/res/release/single/drawable-xhdpi-v4.json
+*.json
+library/build/intermediates/blame/res/release/single/drawable-xxhdpi-v4.json
+*.json
+library/build/intermediates/bundles/release/classes.jar
+*.aar
+*.json
+*.json
+library/build/intermediates/blame/res/release/single/drawable-mdpi-v4.json
+*.json
