@@ -22,6 +22,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -73,7 +74,6 @@ public class SpotListFragment extends Fragment implements
     private DataBaseHelper helper;
     private SQLiteDatabase database;
     private GlobalVariable globalVariable;
-
 
     public SpotListFragment() {
     }
@@ -162,7 +162,6 @@ public class SpotListFragment extends Fragment implements
             number.setTextColor((Color.parseColor("#FF0088")));
             spotList_textLayout.addView(number);
             spotList_textLayout.addView(textView);
-
             //viewPager.setAdapter(new SpotListFragmentViewPagerAdapter(getChildFragmentManager(), pages));
             //viewPager.setOnPageChangeListener(new PageListener());
             //viewPager.setOffscreenPageLimit(1);

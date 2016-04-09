@@ -5,6 +5,10 @@
     android:layout_height="match_parent"
     android:descendantFocusability="blocksDescendants">
 
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:id="@+id/DiaryImage" />
 
     <com.daimajia.slider.library.SliderLayout
         android:id="@+id/slider"
@@ -56,7 +60,7 @@
     <ImageView
         android:layout_width="20dp"
         android:layout_height="20dp"
-        android:id="@+id/MemoImageView"
+        android:id="@+id/TimeImageView"
         android:src="@drawable/icon_time"
         android:layout_below="@+id/slider"
         android:layout_toLeftOf="@+id/TimeStamp"
@@ -68,7 +72,7 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="MemoString"
-        android:id="@+id/MemoString"
+        android:id="@+id/DiaryString"
         android:layout_below="@+id/Title"
         android:layout_alignParentLeft="true"
         android:layout_marginLeft="25dp"

@@ -34,12 +34,14 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
@@ -92,7 +94,8 @@ public class RecordDiaryDetailActivity extends AppCompatActivity implements
     private DataBaseHelper helper;
     private SQLiteDatabase database;
 
-
+    LatLngBounds.Builder builder;
+    CameraUpdate cu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -162,7 +165,6 @@ public class RecordDiaryDetailActivity extends AppCompatActivity implements
                 mMap.setMyLocationEnabled(true);
                 mMap.getUiSettings().setCompassEnabled(true);
                 mMap.getUiSettings().setAllGesturesEnabled(true);
-                SetMapBounds();
             }
         });
 
@@ -185,7 +187,6 @@ public class RecordDiaryDetailActivity extends AppCompatActivity implements
                 mMap.setMyLocationEnabled(false);
                 mMap.getUiSettings().setCompassEnabled(false);
                 mMap.getUiSettings().setAllGesturesEnabled(false);
-                SetMapBounds();
             }
         });
 
@@ -324,6 +325,7 @@ public class RecordDiaryDetailActivity extends AppCompatActivity implements
 
     // retrieve trackRoute from DB
     private void RetrieveRouteFromDB() {
+        //LatLngBounds.Builder bounds = new LatLngBounds.Builder();
         Cursor trackRoute_cursor = database.query("trackRoute",
                 new String[]{"routesCounter", "track_no", "track_lat", "track_lng",
                         "track_start", "track_title", "track_totaltime", "track_completetime"},
@@ -335,11 +337,13 @@ public class RecordDiaryDetailActivity extends AppCompatActivity implements
                 if (TraceRoute == null) {
                     TraceRoute = new ArrayList<LatLng>();
                 }
+                builder = new LatLngBounds.Builder();
                 while (trackRoute_cursor.moveToNext()) {
                     Double track_lat = trackRoute_cursor.getDouble(2);
                     Double track_lng = trackRoute_cursor.getDouble(3);
                     Integer track_start = trackRoute_cursor.getInt(4);
                     LatLng track_latLng = new LatLng(track_lat, track_lng);
+                    builder.include(track_latLng);
 
                     if (DontDisplay) {
                         TraceRoute.clear();
@@ -367,6 +371,21 @@ public class RecordDiaryDetailActivity extends AppCompatActivity implements
 
                 }
 
+                /**initialize the padding for map boundary*/
+                int padding = 80;
+                /**create the bounds from latlngBuilder to set into map camera*/
+                LatLngBounds bounds = builder.build();
+                /**create the camera with bounds and padding to set into map*/
+                cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
+                /**call the map call back to know map is loaded or not*/
+                mMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
+                    @Override
+                    public void onMapLoaded() {
+                        /**set animated zoom camera into map*/
+                        mMap.moveCamera(cu);
+                    }
+                });
+
                 trackRoute_cursor.moveToFirst();
                 Double start_lat = trackRoute_cursor.getDouble(2);
                 Double start_lng = trackRoute_cursor.getDouble(3);
@@ -383,47 +402,6 @@ public class RecordDiaryDetailActivity extends AppCompatActivity implements
             }
             trackRoute_cursor.close();
         }
-        SetMapBounds();
-    }
-
-    private void SetMapBounds() {
-        Double north_lat = 0.0;
-        Double south_lat = 0.0;
-        Double east_lng = 0.0;
-        Double west_lng = 0.0;
-        Cursor lat_cursor = database.query("trackRoute",
-                new String[]{"routesCounter", "track_no", "track_lat", "track_lng",
-                        "track_start", "track_title", "track_totaltime", "track_completetime"},
-                "routesCounter=\"" + RoutesCounter + "\"", null, null, null, "track_lat DESC", null);
-        if (lat_cursor != null) {
-            if (lat_cursor.getCount() != 0) {
-                lat_cursor.moveToFirst();
-                north_lat = lat_cursor.getDouble(2);
-                lat_cursor.moveToLast();
-                south_lat = lat_cursor.getDouble(2);
-            }
-            lat_cursor.close();
-        }
-
-        Cursor lng_cursor = database.query("trackRoute",
-                new String[]{"routesCounter", "track_no", "track_lat", "track_lng",
-                        "track_start", "track_title", "track_totaltime", "track_completetime"},
-                "routesCounter=\"" + RoutesCounter + "\"", null, null, null, "track_lng DESC", null);
-        if (lng_cursor != null) {
-            if (lng_cursor.getCount() != 0) {
-                lng_cursor.moveToFirst();
-                east_lng = lng_cursor.getDouble(3);
-                lat_cursor.moveToLast();
-                west_lng = lng_cursor.getDouble(3);
-            }
-            lng_cursor.close();
-        }
-        LatLng Northeast_latLng = new LatLng(north_lat, east_lng);
-        LatLng Southwest_latLng = new LatLng(south_lat, west_lng);
-        LatLngBounds bounds = new LatLngBounds(Southwest_latLng, Northeast_latLng);
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(bounds.getCenter(), 15));
-        //LatLng mid_latLng = new LatLng((start_lat+end_lat)/2, (start_lng+end_lng)/2);
-        //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mid_latLng, 15));
     }
 
     public int getPx(int dimensionDp) {

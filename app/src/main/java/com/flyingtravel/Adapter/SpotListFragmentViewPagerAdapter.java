@@ -33,7 +33,7 @@ public class SpotListFragmentViewPagerAdapter extends PagerAdapter implements Vi
         fragments = new ArrayList<Fragment>();
 
         for (int i = 0; i < pageNo; i++)
-            fragments.add(SpotListViewFragment.newInstance(SpotListViewFragment.TAG, i+1));
+            fragments.add(SpotListViewFragment.newInstance("SpotListViewFragment"+i+1, i+1));
     }
 
     @Override
