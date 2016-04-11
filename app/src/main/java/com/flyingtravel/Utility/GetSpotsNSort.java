@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteStatement;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -100,8 +99,7 @@ public class GetSpotsNSort extends AsyncTask<Void, Void, ArrayList<SpotData>> {
 
         globalVariable.SpotDataSorted = mSpotData;
         if (!globalVariable.SpotDataSorted.isEmpty()) {
-            Intent
-                    intent = new Intent(BROADCAST_ACTION);
+            Intent intent = new Intent(BROADCAST_ACTION);
             intent.putExtra("isSpoted", true);
             mcontext.sendBroadcast(intent);
         }

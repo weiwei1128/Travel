@@ -1,42 +1,38 @@
 package com.flyingtravel.Fragment;
 
+import android.app.SearchManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.database.MatrixCursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.location.Location;
-import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.flyingtravel.Adapter.SpotListFragmentViewPagerAdapter;
+import com.flyingtravel.R;
+import com.flyingtravel.Utility.DataBaseHelper;
+import com.flyingtravel.Utility.GetSpotsNSort;
+import com.flyingtravel.Utility.GlobalVariable;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
-import com.flyingtravel.Adapter.SpotListFragmentViewPagerAdapter;
-import com.flyingtravel.Utility.GlobalVariable;
-import com.flyingtravel.R;
-import com.flyingtravel.Utility.DataBaseHelper;
-import com.flyingtravel.Utility.GetSpotsNSort;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,7 +61,7 @@ public class SpotListFragment extends Fragment implements
     private TextView number, lastPage, nextPage;
     private LinearLayout spotList_pageLayout, spotList_textLayout;
 
-    private ViewPager viewPager;
+    public static ViewPager viewPager;
     private ProgressBar progressBar;
     private SpotListFragmentViewPagerAdapter adapter;
 
@@ -112,6 +108,7 @@ public class SpotListFragment extends Fragment implements
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_spot_list, container, false);
+
 
         spotList_pageLayout = (LinearLayout) view.findViewById(R.id.spotList_pageLayout);
         spotList_textLayout = (LinearLayout) view.findViewById(R.id.spotList_textLayout);
@@ -214,7 +211,7 @@ public class SpotListFragment extends Fragment implements
 
     @Override
     public void onDestroyView() {
-        Log.e("3/23_SpotList", "onDestroyView");
+        //Log.e("3/23_SpotList", "onDestroyView");
         if (broadcastReceiver != null)
             getActivity().unregisterReceiver(broadcastReceiver);
         System.gc();
@@ -223,14 +220,13 @@ public class SpotListFragment extends Fragment implements
 
     @Override
     public void onLowMemory() {
-        Log.e("3/23_SpotList", "onLowMemory");
+        //Log.e("3/23_SpotList", "onLowMemory");
         System.gc();
         super.onLowMemory();
     }
 
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
             //you are visible to user now - so set whatever you need
             Log.e("3/23_SpotList", "setUserVisibleHint: Visible");
@@ -241,6 +237,7 @@ public class SpotListFragment extends Fragment implements
                 viewPager.setAdapter(adapter);
                 viewPager.setOnPageChangeListener(new PageListener());
                 adapter.notifyDataSetChanged();
+
             }
         }
         else {
@@ -252,6 +249,7 @@ public class SpotListFragment extends Fragment implements
             }*/
             System.gc();
         }
+        super.setUserVisibleHint(isVisibleToUser);
     }
 
     @Override

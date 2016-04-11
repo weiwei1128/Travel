@@ -2,18 +2,12 @@ package com.flyingtravel.Fragment;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Adapter;
 import android.widget.AdapterView;
-import android.widget.EditText;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.SearchView;
 
 import com.flyingtravel.Activity.Spot.SpotDetailActivity;
 import com.flyingtravel.Adapter.SpotListAdapter;
@@ -31,11 +25,14 @@ public class SpotListViewFragment extends Fragment {
     private String mFragmentName;
     private int mPageNo;
 
+    private SearchView search;
+
+/*
     public static FrameLayout spotList_searchLayout;
     private EditText SearchEditText;
     private ImageView SearchImg;
-
-    public static SpotListAdapter adapter;
+*/
+    private SpotListAdapter adapter;
     private ListView mlistView;
 
     public SpotListViewFragment () {
@@ -67,7 +64,7 @@ public class SpotListViewFragment extends Fragment {
             mFragmentName = getArguments().getString(FRAGMENT_NAME);
             mPageNo = getArguments().getInt(PAGE_NO);
         }
-        Log.e("3/27_", "SpotListViewFragment. onCreate pageNo" + mPageNo);
+        //Log.e("3/27_", "SpotListViewFragment. onCreate pageNo" + mPageNo);
     }
 
     @Override
@@ -75,60 +72,42 @@ public class SpotListViewFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_spot_listview, container, false);
 
         mlistView = (ListView) view.findViewById(R.id.spotlist_listView);
-        adapter = new SpotListAdapter(getActivity(), mPageNo);
+
+        int index = SpotListFragment.viewPager.getCurrentItem();
+        adapter = new SpotListAdapter(getActivity(), (index+1));
         mlistView.setAdapter(adapter);
         mlistView.setOnItemClickListener(new itemListener());
 
-        spotList_searchLayout = (FrameLayout) view.findViewById(R.id.spotList_searchLayout);
-        SearchImg = (ImageView) view.findViewById(R.id.spotlist_searchImg);
-        SearchEditText = (EditText) view.findViewById(R.id.spotlist_searchEditText);
-        SearchEditText.addTextChangedListener(new TextWatcher() {
+        search = (SearchView) view.findViewById(R.id.searchView);
+        search.setQueryHint("請輸入景點名稱");
+        search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                Log.d("4/1_景點搜尋", s.toString());
-                SpotListAdapter Adapter = (SpotListAdapter) mlistView.getAdapter();
-                Adapter.getFilter().filter(s.toString());
-                //adapter.getFilter().filter(s.toString());
+            public boolean onQueryTextSubmit(String query) {
+                return false;
             }
 
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
+            public boolean onQueryTextChange(String newText) {
+                adapter.getFilter().filter(newText.toString());
+                //Log.e("4/1_", "搜尋: " + newText.toString());
+                return true;
             }
         });
-
         return view;
     }
 
     @Override
     public void onDestroyView() {
-        Log.e("3/23_SpotListView", "onDestroyView");
+        //Log.e("4/1_SpotListView", "onDestroyView");
         System.gc();
         super.onDestroyView();
     }
 
     @Override
     public void onLowMemory() {
-        Log.e("3/23_SpotListView", "onLowMemory");
+        //Log.e("4/1_SpotListView", "onLowMemory");
         System.gc();
         super.onLowMemory();
-    }
-
-    @Override
-    public void setUserVisibleHint(boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
-        if (isVisibleToUser) {
-            //you are visible to user now - so set whatever you need
-            Log.e("3/23_SpotListView", "setUserVisibleHint: Visible");
-        }
-        else {
-            //you are no longer visible to the user so cleanup whatever you need
-            Log.e("3/23_SpotListView", "setUserVisibleHint: not Visible");
-            System.gc();
-        }
     }
 
     class itemListener implements AdapterView.OnItemClickListener {

@@ -33,7 +33,7 @@ public class SpotListFragmentViewPagerAdapter extends PagerAdapter implements Vi
         fragments = new ArrayList<Fragment>();
 
         for (int i = 0; i < pageNo; i++)
-            fragments.add(SpotListViewFragment.newInstance("SpotListViewFragment"+i+1, i+1));
+            fragments.add(SpotListViewFragment.newInstance("SpotListViewFragment"+(i+1), i+1));
     }
 
     @Override
@@ -64,7 +64,7 @@ public class SpotListFragmentViewPagerAdapter extends PagerAdapter implements Vi
 
     @Override
     public void destroyItem(ViewGroup container, int position, Object object) {
-        Log.e("3/23_ListPagerAdapter", "destroyItem");
+        Log.e("4/1_ListPagerAdapter", "destroyItem");
         container.removeView(fragments.get(position).getView());
     }
 
@@ -95,7 +95,7 @@ public class SpotListFragmentViewPagerAdapter extends PagerAdapter implements Vi
                 fragments.get(position).onResume();
             currentPageIndex = position;
         }
-        Log.d("3/23", "currrentPage:" + position);
+        Log.d("4/1", "currrentPage:" + position);
         super.setPrimaryItem(container, position, object);
     }
 }
