@@ -1,9 +1,7 @@
 package com.flyingtravel.Adapter;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,15 +10,15 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.flyingtravel.Fragment.SpotListViewFragment;
+import com.flyingtravel.Activity.Spot.SpotData;
+import com.flyingtravel.R;
+import com.flyingtravel.Utility.GlobalVariable;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
-import com.flyingtravel.Utility.GlobalVariable;
-import com.flyingtravel.R;
-import com.flyingtravel.Activity.Spot.SpotData;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -65,7 +63,7 @@ public class SpotListAdapter extends BaseAdapter implements Filterable {
             mFilteredSpots = new ArrayList<SpotData>();
             mFilteredSpots = mSpotsData;
             //Log.e("3/23_", "SpotListAdapter: mFilteredSpots.size " + mFilteredSpots.size());
-            Log.e("4/1_", "SpotListAdapter: mPosition " + index);
+            //Log.e("4/1_", "SpotListAdapter: mPosition " + index);
         }
 
         options = new DisplayImageOptions.Builder()
@@ -181,7 +179,7 @@ public class SpotListAdapter extends BaseAdapter implements Filterable {
                 // No filter implemented we return all the list
                 results.values = mSpotsData;
                 results.count = mSpotsData.size();
-                Log.e("4/1_", "沒打字時 results.count: " + results.count);
+                //Log.e("4/1_", "沒打字時 results.count: " + results.count);
             } else {
                 ArrayList<SpotData> FilteredSpots = new ArrayList<SpotData>();
 
@@ -191,7 +189,7 @@ public class SpotListAdapter extends BaseAdapter implements Filterable {
                 }
                 results.values = FilteredSpots;
                 results.count = FilteredSpots.size();
-                Log.e("4/1_", "有打字時 results.count: " + results.count);
+                //Log.e("4/1_", "有打字時 results.count: " + results.count);
             }
             return results;
         }
@@ -200,12 +198,13 @@ public class SpotListAdapter extends BaseAdapter implements Filterable {
         protected void publishResults(CharSequence constraint, FilterResults results) {
             // Now we have to inform the adapter about the new list filtered
             if (results.count == 0) {
+                Toast.makeText(context, "無此景點！", Toast.LENGTH_LONG).show();
                 notifyDataSetInvalidated();
-                Log.e("4/1_", "沒東西時 results.count: " + results.count);
+                //Log.e("4/1_", "沒東西時 results.count: " + results.count);
             } else {
                 mFilteredSpots = (ArrayList<SpotData>) results.values;
                 notifyDataSetChanged();
-                Log.e("4/1_", "有東西時 results.count: " + results.count);
+                //Log.e("4/1_", "有東西時 results.count: " + results.count);
             }
         }
     }

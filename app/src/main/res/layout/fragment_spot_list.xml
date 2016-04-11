@@ -4,12 +4,6 @@
     android:layout_height="fill_parent"
     android:orientation="vertical" >
 
-    <SearchView
-        android:layout_width="match_parent"
-        android:layout_height="35dp"
-        android:id="@+id/searchView"
-        android:layout_gravity="center_horizontal" />
-
     <LinearLayout
         android:id="@+id/spotList_pageLayout"
         android:orientation="horizontal"
