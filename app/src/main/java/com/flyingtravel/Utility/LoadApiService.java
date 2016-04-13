@@ -62,7 +62,8 @@ public class LoadApiService extends Service {
                         "openTime", "ticketInfo", "infoDetail"},
                 null, null, null, null, null);
         if (spotDataRaw_cursor != null) {
-            TPESpotAPIFetcher tpeApi = new TPESpotAPIFetcher(context);
+            //TPESpotAPIFetcher tpeApi = new TPESpotAPIFetcher(context);
+            TpeApi tpeApi = new TpeApi(context);
             TwApi twApi = new TwApi(context);
 
             if (spotDataRaw_cursor.getCount() == 0) {
@@ -101,6 +102,7 @@ public class LoadApiService extends Service {
                         globalVariable.SpotDataRaw.add(new SpotData(Name, Latitude, Longitude, Add,
                                 Picture1, Picture2, Picture3, OpenTime,TicketInfo, InfoDetail));
                     }
+                    Log.e("3/23_", "API count: " + globalVariable.SpotDataRaw.size());
                     globalVariable.isAPILoaded = true;
                     if (globalVariable.isAPILoaded) {
                         Log.e("3/23_", "API is Loaded Broadcast");

@@ -1,3 +1,4 @@
+
 package com.flyingtravel;
 
 import android.app.AlertDialog;
@@ -793,6 +794,8 @@ public class RecordTrackFragment extends Fragment implements
                     }
                 }
             }
+
+
 
             if (content_layout.getVisibility() == content_layout.VISIBLE) {
                 content_layout.setVisibility(View.INVISIBLE);

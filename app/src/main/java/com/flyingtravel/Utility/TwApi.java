@@ -80,53 +80,58 @@ public class TwApi extends AsyncTask<String, Void, ArrayList<SpotData>> {
                                 while (reader.hasNext()) {
 
                                     reader.beginObject();
-                                    String Name = null;
+                                    String Name = "";
                                     double Latitude = 0.0;
                                     double Longitude = 0.0;
-                                    String Add = null;
-                                    String Picture1 = null;
-                                    String Picture2 = null;
-                                    String Picture3 = null;
-                                    String OpenTime = null;
-                                    String TicketInfo = null;
-                                    String InfoDetail = null;
+                                    String Add = "";
+                                    String Picture1 = "";
+                                    String Picture2 = "";
+                                    String Picture3 = "";
+                                    String OpenTime = "";
+                                    String TicketInfo = "";
+                                    String InfoDetail = "";
                                     while (reader.hasNext()) {
                                         String key = reader.nextName();
-                                        switch (key) {
-                                            case "Name":
-                                                Name = reader.nextString();
-                                                break;
-                                            case "Py":
-                                                Latitude = reader.nextDouble();
-                                                break;
-                                            case "Px":
-                                                Longitude = reader.nextDouble();
-                                                break;
-                                            case "Add":
-                                                Add = reader.nextString();
-                                                break;
-                                            case "Picture1":
-                                                Picture1 = reader.nextString();
-                                                break;
-                                            case "Picture2":
-                                                Picture2 = reader.nextString();
-                                                break;
-                                            case "Picture3":
-                                                Picture3 = reader.nextString();
-                                                break;
-                                            case "Opentime":
-                                                OpenTime = reader.nextString();
-                                                break;
-                                            case "Ticketinfo":
-                                                TicketInfo = reader.nextString();
-                                                break;
-                                            case "Toldescribe":
-                                                InfoDetail = reader.nextString();
-                                                break;
-                                            default:
-                                                //Log.e("3/23_TWSpotJson", "in SpotData");
-                                                reader.skipValue();
-                                                break;
+                                        boolean isNull = reader.peek() == com.google.gson.stream.JsonToken.NULL;
+                                        if (isNull) {
+                                            reader.skipValue();
+                                        } else {
+                                            switch (key) {
+                                                case "Name":
+                                                    Name = reader.nextString();
+                                                    break;
+                                                case "Py":
+                                                    Latitude = reader.nextDouble();
+                                                    break;
+                                                case "Px":
+                                                    Longitude = reader.nextDouble();
+                                                    break;
+                                                case "Add":
+                                                    Add = reader.nextString();
+                                                    break;
+                                                case "Picture1":
+                                                    Picture1 = reader.nextString();
+                                                    break;
+                                                case "Picture2":
+                                                    Picture2 = reader.nextString();
+                                                    break;
+                                                case "Picture3":
+                                                    Picture3 = reader.nextString();
+                                                    break;
+                                                case "Opentime":
+                                                    OpenTime = reader.nextString();
+                                                    break;
+                                                case "Ticketinfo":
+                                                    TicketInfo = reader.nextString();
+                                                    break;
+                                                case "Toldescribe":
+                                                    InfoDetail = reader.nextString();
+                                                    break;
+                                                default:
+                                                    //Log.e("3/23_TWSpotJson", "in SpotData");
+                                                    reader.skipValue();
+                                                    break;
+                                            }
                                         }
                                     }
                                     globalVariable.SpotDataTW.add(new SpotData(Name, Latitude, Longitude,
@@ -135,13 +140,13 @@ public class TwApi extends AsyncTask<String, Void, ArrayList<SpotData>> {
                                 }
                                 reader.endArray();
                             } else {
-                                Log.e("3/23_TWSpotJson", "in Info");
+                                //Log.e("3/23_TWSpotJson", "in Info");
                                 reader.skipValue();
                             }
                         }
                         reader.endObject();
                     } else {
-                        Log.e("3/23_TWSpotJson", "in Infos");
+                        //Log.e("3/23_TWSpotJson", "in Infos");
                         reader.skipValue();
                     }
                 }
@@ -179,7 +184,6 @@ public class TwApi extends AsyncTask<String, Void, ArrayList<SpotData>> {
                 String sql = "INSERT INTO spotDataRaw (spotName, spotAdd, spotLat, spotLng, " +
                         "picture1, picture2, picture3, openTime, ticketInfo, infoDetail) VALUES (?,?,?,?,?,?,?,?,?,?)";
                 database.beginTransactionNonExclusive();
-                // db.beginTransaction();
                 SQLiteStatement stmt = database.compileStatement(sql);
 
                 for (Integer i = 0; i < InfoLength; i++) {
@@ -198,28 +202,10 @@ public class TwApi extends AsyncTask<String, Void, ArrayList<SpotData>> {
                 }
                 database.setTransactionSuccessful();
                 database.endTransaction();
-
-               /* for (Integer i = 0; i < InfoLength; i++) {
-                    ContentValues cv = new ContentValues();
-                    cv.put("spotName", globalVariable.SpotDataTW.get(i).getName());
-                    cv.put("spotAdd", globalVariable.SpotDataTW.get(i).getAdd());
-                    cv.put("spotLat", globalVariable.SpotDataTW.get(i).getLatitude());
-                    cv.put("spotLng", globalVariable.SpotDataTW.get(i).getLongitude());
-                    cv.put("picture1", globalVariable.SpotDataTW.get(i).getPicture1());
-                    cv.put("picture2", globalVariable.SpotDataTW.get(i).getPicture2());
-                    cv.put("picture3", globalVariable.SpotDataTW.get(i).getPicture3());
-                    cv.put("openTime", globalVariable.SpotDataTW.get(i).getOpenTime());
-                    cv.put("ticketInfo", globalVariable.SpotDataTW.get(i).getTicketInfo());
-                    cv.put("infoDetail", globalVariable.SpotDataTW.get(i).getInfoDetail());
-                    long result = database.insert("spotDataRaw", null, cv);
-                    //Log.d("3/23_沒有重複資料 ", result + " = DB INSERT " + i + " spotName: "
-                            //+ globalVariable.SpotDataTW.get(i).getName());
-                }*/
             } else {
                 String sql = "INSERT INTO spotDataRaw (spotName, spotAdd, spotLat, spotLng, " +
                         "picture1, picture2, picture3, openTime, ticketInfo, infoDetail) VALUES (?,?,?,?,?,?,?,?,?,?)";
                 database.beginTransactionNonExclusive();
-                // db.beginTransaction();
                 SQLiteStatement stmt = database.compileStatement(sql);
 
                 for (Integer i = 0; i < InfoLength; i++) {
@@ -243,21 +229,6 @@ public class TwApi extends AsyncTask<String, Void, ArrayList<SpotData>> {
                         stmt.bindString(10, globalVariable.SpotDataTW.get(i).getInfoDetail());
                         stmt.execute();
                         stmt.clearBindings();
-
-                        /*ContentValues cv = new ContentValues();
-                        cv.put("spotName", globalVariable.SpotDataTW.get(i).getName());
-                        cv.put("spotAdd", globalVariable.SpotDataTW.get(i).getAdd());
-                        cv.put("spotLat", globalVariable.SpotDataTW.get(i).getLatitude());
-                        cv.put("spotLng", globalVariable.SpotDataTW.get(i).getLongitude());
-                        cv.put("picture1", globalVariable.SpotDataTW.get(i).getPicture1());
-                        cv.put("picture2", globalVariable.SpotDataTW.get(i).getPicture2());
-                        cv.put("picture3", globalVariable.SpotDataTW.get(i).getPicture3());
-                        cv.put("openTime", globalVariable.SpotDataTW.get(i).getOpenTime());
-                        cv.put("ticketInfo", globalVariable.SpotDataTW.get(i).getTicketInfo());
-                        cv.put("infoDetail", globalVariable.SpotDataTW.get(i).getInfoDetail());
-                        long result = database.insert("spotDataRaw", null, cv);*/
-                        //Log.d("3/23_新增過資料 ", result + " = DB INSERT " + i + " spotName: "
-                                //+ globalVariable.SpotDataTW.get(i).getName());
                     }
                     if(spotDataRaw_dul!=null)
                         spotDataRaw_dul.close();
