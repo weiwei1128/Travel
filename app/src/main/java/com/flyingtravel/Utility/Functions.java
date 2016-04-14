@@ -27,7 +27,7 @@ public class Functions {
      *
      * @param isBack if true then only call activity.finish()
      *
-     *  
+     *
      */
     public static void go(Boolean isBack, Activity activity, Context context, Class goclass, Bundle bundle) {
 

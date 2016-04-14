@@ -1,13 +1,11 @@
 package com.flyingtravel.Utility;
 
-import android.Manifest;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
@@ -15,12 +13,11 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
-import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 
-import com.flyingtravel.Activity.RecordActivity;
-import com.flyingtravel.Fragment.RecordDiaryFragment;
-import com.flyingtravel.Fragment.RecordTrackFragment;
+import com.flyingtravel.RecordActivity;
+import com.flyingtravel.RecordDiaryFragment;
+import com.flyingtravel.RecordTrackFragment;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

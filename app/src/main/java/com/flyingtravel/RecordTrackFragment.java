@@ -1,4 +1,4 @@
-package com.flyingtravel.Fragment;
+package com.flyingtravel;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -18,7 +18,6 @@ import android.graphics.Color;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -49,15 +48,11 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
-import com.flyingtravel.Utility.GlobalVariable;
-import com.flyingtravel.R;
-import com.flyingtravel.Activity.RecordActivity;
 import com.flyingtravel.Utility.DataBaseHelper;
 import com.flyingtravel.Utility.Functions;
 import com.flyingtravel.Utility.TrackRouteService;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;

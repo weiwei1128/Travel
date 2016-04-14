@@ -18,7 +18,7 @@ import android.widget.Toast;
 
 import com.flyingtravel.Adapter.SpotFragmentPagerAdapter;
 import com.flyingtravel.Fragment.SpotListFragment;
-import com.flyingtravel.Fragment.SpotMapFragment;
+import com.flyingtravel.SpotMapFragment;
 import com.flyingtravel.HomepageActivity;
 import com.flyingtravel.R;
 import com.flyingtravel.Utility.Functions;

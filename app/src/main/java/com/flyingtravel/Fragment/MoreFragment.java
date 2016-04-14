@@ -28,7 +28,7 @@ public class MoreFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Log.i("4.7", "activity0:" + getActivity().getSupportFragmentManager()+"list"+getActivity().getSupportFragmentManager().getFragments());
+//        Log.i("4.7", "activity0:" + getActivity().getSupportFragmentManager()+"list"+getActivity().getSupportFragmentManager().getFragments());
         ListView listView = new ListView(getActivity());
         MoreAdapter adapter = new MoreAdapter(getActivity());
         listView.setAdapter(adapter);

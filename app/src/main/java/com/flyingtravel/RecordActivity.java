@@ -1,4 +1,4 @@
-package com.flyingtravel.Activity;
+package com.flyingtravel;
 
 import android.Manifest;
 import android.content.Intent;
@@ -19,10 +19,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.flyingtravel.Adapter.RecordFragmentPagerAdapter;
-import com.flyingtravel.Fragment.RecordDiaryFragment;
-import com.flyingtravel.Fragment.RecordTrackFragment;
-import com.flyingtravel.HomepageActivity;
-import com.flyingtravel.R;
 import com.flyingtravel.Utility.DataBaseHelper;
 import com.flyingtravel.Utility.Functions;
 

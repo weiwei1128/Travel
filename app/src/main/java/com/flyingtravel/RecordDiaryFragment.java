@@ -1,4 +1,4 @@
-package com.flyingtravel.Fragment;
+package com.flyingtravel;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -14,12 +14,9 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.flyingtravel.Activity.RecordDiaryDetailActivity;
 import com.flyingtravel.Adapter.RecordDiaryFragmentAdapter;
-import com.flyingtravel.R;
 import com.flyingtravel.Utility.DataBaseHelper;
 import com.flyingtravel.Utility.Functions;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

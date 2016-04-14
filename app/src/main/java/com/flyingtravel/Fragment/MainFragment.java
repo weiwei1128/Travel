@@ -23,7 +23,7 @@ import com.flyingtravel.Activity.Buy.BuyActivity;
 import com.flyingtravel.Activity.CheckScheduleActivity;
 import com.flyingtravel.ImageSlide.MainImageFragment;
 import com.flyingtravel.R;
-import com.flyingtravel.Activity.RecordActivity;
+import com.flyingtravel.RecordActivity;
 import com.flyingtravel.Activity.ServiceActivity;
 import com.flyingtravel.Activity.Special.SpecialActivity;
 import com.flyingtravel.Activity.Spot.SpotActivity;

@@ -76,11 +76,11 @@
             android:screenOrientation="nosensor"
             android:theme="@style/AppTheme" />
         <activity
-            android:name="com.flyingtravel.Activity.RecordActivity"
+            android:name=".RecordActivity"
             android:screenOrientation="nosensor"
             android:theme="@style/AppTheme" />
         <activity
-            android:name="com.flyingtravel.Activity.RecordDiaryDetailActivity"
+            android:name=".RecordDiaryDetailActivity"
             android:screenOrientation="nosensor"
             android:theme="@style/AppTheme" />
         <activity

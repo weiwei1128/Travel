@@ -96,8 +96,9 @@
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1">
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:layout_gravity="center">
 
             <LinearLayout
                 android:orientation="horizontal"
@@ -112,8 +113,8 @@
                     android:layout_margin="10dp"
                     android:id="@+id/main_schedule_layout"
                     android:layout_gravity="center"
-                    android:layout_weight="1"
-                    android:background="@drawable/click_effect_general">
+                    android:background="@drawable/click_effect_general"
+                    android:layout_weight="1">
 
                     <ImageView
                         android:layout_width="wrap_content"
@@ -128,8 +129,7 @@
                         android:layout_gravity="center"
                         android:textSize="16dp"
                         android:textColor="@color/black"
-                        android:gravity="center_vertical|center_horizontal"
-                        android:layout_weight="1"/>
+                        android:gravity="center_vertical|center_horizontal" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -155,8 +155,7 @@
                         android:layout_gravity="center"
                         android:textColor="@color/black"
                         android:textSize="16dp"
-                        android:gravity="center_vertical|center_horizontal"
-                        android:layout_weight="1" />
+                        android:gravity="center_vertical|center_horizontal" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -215,8 +214,7 @@
                         android:textSize="16dp"
                         android:textColor="@color/black"
                         android:gravity="center_vertical|center_horizontal"
-                        android:layout_gravity="center"
-                        android:layout_weight="1" />
+                        android:layout_gravity="center" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -243,8 +241,7 @@
                         android:textSize="16dp"
                         android:textColor="@color/black"
                         android:gravity="center_vertical|center_horizontal"
-                        android:layout_gravity="center"
-                        android:layout_weight="1" />
+                        android:layout_gravity="center" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -272,7 +269,6 @@
                         android:textColor="@color/black"
                         android:gravity="center_vertical|center_horizontal"
                         android:layout_gravity="center"
-                        android:layout_weight="1"
                         android:background="@drawable/click_effect_general"
                         android:clickable="false" />
                 </LinearLayout>
@@ -280,11 +276,6 @@
 
         </LinearLayout>
 
-        <View
-            android:layout_height="1dp"
-            android:layout_width="match_parent"
-            android:background="#000000"
-            android:layout_gravity="center_vertical" />
 
     </LinearLayout>
 
