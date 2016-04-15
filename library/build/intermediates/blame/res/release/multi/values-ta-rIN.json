@@ -345,7 +345,6 @@
                 }
             }
         ]
-<<<<<<< HEAD
     },
     {
         "outputFile": "/Users/wei/Documents/Travel/library/build/intermediates/res/merged/release/values-ta-rIN/values-ta-rIN.xml",
@@ -1040,7 +1039,5 @@
                 }
             }
         ]
-=======
->>>>>>> origin/master
     }
 ]

@@ -345,7 +345,6 @@
                 }
             }
         ]
-<<<<<<< HEAD
     },
     {
         "outputFile": "/Users/wei/Documents/Travel/D:\\Dropbox\\GitHub\\Travel\\library\\build\\intermediates\\res\\merged\\release\\values-sl\\values-sl.xml",
@@ -1040,7 +1039,5 @@
                 }
             }
         ]
-=======
->>>>>>> origin/master
     }
 ]

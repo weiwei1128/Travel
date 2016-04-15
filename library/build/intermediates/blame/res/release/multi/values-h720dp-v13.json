@@ -22,7 +22,6 @@
                 }
             }
         ]
-<<<<<<< HEAD
     },
     {
         "outputFile": "/Users/wei/Documents/Travel/library/build/intermediates/res/merged/release/values-h720dp-v13/values-h720dp-v13.xml",
@@ -71,7 +70,5 @@
                 }
             }
         ]
-=======
->>>>>>> origin/master
     }
 ]

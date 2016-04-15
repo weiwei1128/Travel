@@ -4,7 +4,6 @@
         "source": "/Users/wei/Documents/Travel/library/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.0.1/res/drawable/abc_item_background_holo_dark.xml"
     },
     {
-<<<<<<< HEAD
         "merged": "/Users/wei/Documents/Travel/D:\\Users\\wei\\Documents\\Travel\\library\\build\\intermediates\\res\\merged\\release\\drawable\\abc_text_cursor_material.xml",
         "source": "/Users/wei/Documents/Travel/D:\\Users\\wei\\Documents\\Travel\\library\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.0.1\\res\\drawable\\abc_text_cursor_material.xml"
     },
@@ -39,18 +38,6 @@
     {
         "merged": "/Users/wei/Documents/Travel/D:\\Dropbox\\GitHub\\Travel\\library\\build\\intermediates\\res\\merged\\release\\drawable\\abc_item_background_holo_dark.xml",
         "source": "/Users/wei/Documents/Travel/D:\\Dropbox\\GitHub\\Travel\\library\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.0.1\\res\\drawable\\abc_item_background_holo_dark.xml"
-=======
-        "merged": "D:\\Dropbox\\GitHub\\Travel\\library\\build\\intermediates\\res\\merged\\release\\drawable\\abc_text_cursor_material.xml",
-        "source": "D:\\Dropbox\\GitHub\\Travel\\library\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.0.1\\res\\drawable\\abc_text_cursor_material.xml"
-    },
-    {
-        "merged": "D:\\Dropbox\\GitHub\\Travel\\library\\build\\intermediates\\res\\merged\\release\\drawable\\abc_item_background_holo_dark.xml",
-        "source": "D:\\Dropbox\\GitHub\\Travel\\library\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.0.1\\res\\drawable\\abc_item_background_holo_dark.xml"
-    },
-    {
-        "merged": "D:\\Dropbox\\GitHub\\Travel\\library\\build\\intermediates\\res\\merged\\release\\drawable\\abc_cab_background_internal_bg.xml",
-        "source": "D:\\Dropbox\\GitHub\\Travel\\library\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.0.1\\res\\drawable\\abc_cab_background_internal_bg.xml"
->>>>>>> origin/master
     },
     {
         "merged": "/Users/wei/Documents/Travel/library/build/intermediates/res/merged/release/drawable/snackbar_background.xml",
@@ -61,7 +48,6 @@
         "source": "/Users/wei/Documents/Travel/library/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.0.1/res/drawable/abc_list_selector_holo_dark.xml"
     },
     {
-<<<<<<< HEAD
         "merged": "/Users/wei/Documents/Travel/D:\\Dropbox\\GitHub\\Travel\\library\\build\\intermediates\\res\\merged\\release\\drawable\\abc_cab_background_internal_bg.xml",
         "source": "/Users/wei/Documents/Travel/D:\\Dropbox\\GitHub\\Travel\\library\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.0.1\\res\\drawable\\abc_cab_background_internal_bg.xml"
     },
@@ -84,88 +70,40 @@
     {
         "merged": "/Users/wei/Documents/Travel/D:\\Users\\wei\\Documents\\Travel\\library\\build\\intermediates\\res\\merged\\release\\drawable\\abc_list_selector_background_transition_holo_light.xml",
         "source": "/Users/wei/Documents/Travel/D:\\Users\\wei\\Documents\\Travel\\library\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.0.1\\res\\drawable\\abc_list_selector_background_transition_holo_light.xml"
-=======
-        "merged": "D:\\Dropbox\\GitHub\\Travel\\library\\build\\intermediates\\res\\merged\\release\\drawable\\abc_edit_text_material.xml",
-        "source": "D:\\Dropbox\\GitHub\\Travel\\library\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.0.1\\res\\drawable\\abc_edit_text_material.xml"
-    },
-    {
-        "merged": "D:\\Dropbox\\GitHub\\Travel\\library\\build\\intermediates\\res\\merged\\release\\drawable\\abc_list_selector_background_transition_holo_dark.xml",
-        "source": "D:\\Dropbox\\GitHub\\Travel\\library\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.0.1\\res\\drawable\\abc_list_selector_background_transition_holo_dark.xml"
-    },
-    {
-        "merged": "D:\\Dropbox\\GitHub\\Travel\\library\\build\\intermediates\\res\\merged\\release\\drawable\\abc_switch_thumb_material.xml",
-        "source": "D:\\Dropbox\\GitHub\\Travel\\library\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.0.1\\res\\drawable\\abc_switch_thumb_material.xml"
-    },
-    {
-        "merged": "D:\\Dropbox\\GitHub\\Travel\\library\\build\\intermediates\\res\\merged\\release\\drawable\\abc_spinner_textfield_background_material.xml",
-        "source": "D:\\Dropbox\\GitHub\\Travel\\library\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.0.1\\res\\drawable\\abc_spinner_textfield_background_material.xml"
-    },
-    {
-        "merged": "D:\\Dropbox\\GitHub\\Travel\\library\\build\\intermediates\\res\\merged\\release\\drawable\\abc_dialog_material_background_light.xml",
-        "source": "D:\\Dropbox\\GitHub\\Travel\\library\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.0.1\\res\\drawable\\abc_dialog_material_background_light.xml"
-    },
-    {
-        "merged": "D:\\Dropbox\\GitHub\\Travel\\library\\build\\intermediates\\res\\merged\\release\\drawable\\abc_item_background_holo_light.xml",
-        "source": "D:\\Dropbox\\GitHub\\Travel\\library\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.0.1\\res\\drawable\\abc_item_background_holo_light.xml"
->>>>>>> origin/master
     },
     {
         "merged": "/Users/wei/Documents/Travel/D:\\Dropbox\\GitHub\\Travel\\library\\build\\intermediates\\res\\merged\\release\\drawable\\abc_item_background_holo_light.xml",
         "source": "/Users/wei/Documents/Travel/D:\\Dropbox\\GitHub\\Travel\\library\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.0.1\\res\\drawable\\abc_item_background_holo_light.xml"
     },
     {
-<<<<<<< HEAD
         "merged": "/Users/wei/Documents/Travel/D:\\Users\\wei\\Documents\\Travel\\library\\build\\intermediates\\res\\merged\\release\\drawable\\abc_dialog_material_background_light.xml",
         "source": "/Users/wei/Documents/Travel/D:\\Users\\wei\\Documents\\Travel\\library\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.0.1\\res\\drawable\\abc_dialog_material_background_light.xml"
-=======
-        "merged": "D:\\Dropbox\\GitHub\\Travel\\library\\build\\intermediates\\res\\merged\\release\\drawable\\snackbar_background.xml",
-        "source": "D:\\Dropbox\\GitHub\\Travel\\library\\build\\intermediates\\exploded-aar\\com.android.support\\design\\22.2.1\\res\\drawable\\snackbar_background.xml"
->>>>>>> origin/master
     },
     {
         "merged": "/Users/wei/Documents/Travel/D:\\Users\\wei\\Documents\\Travel\\library\\build\\intermediates\\res\\merged\\release\\drawable\\abc_btn_radio_material.xml",
         "source": "/Users/wei/Documents/Travel/D:\\Users\\wei\\Documents\\Travel\\library\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.0.1\\res\\drawable\\abc_btn_radio_material.xml"
     },
     {
-<<<<<<< HEAD
         "merged": "/Users/wei/Documents/Travel/D:\\Dropbox\\GitHub\\Travel\\library\\build\\intermediates\\res\\merged\\release\\drawable\\abc_list_selector_holo_light.xml",
         "source": "/Users/wei/Documents/Travel/D:\\Dropbox\\GitHub\\Travel\\library\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.0.1\\res\\drawable\\abc_list_selector_holo_light.xml"
-=======
-        "merged": "D:\\Dropbox\\GitHub\\Travel\\library\\build\\intermediates\\res\\merged\\release\\drawable\\abc_list_selector_holo_dark.xml",
-        "source": "D:\\Dropbox\\GitHub\\Travel\\library\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.0.1\\res\\drawable\\abc_list_selector_holo_dark.xml"
-    },
-    {
-        "merged": "D:\\Dropbox\\GitHub\\Travel\\library\\build\\intermediates\\res\\merged\\release\\drawable\\indicator_corner_bg.xml",
-        "source": "D:\\Dropbox\\GitHub\\Travel\\library\\src\\main\\res\\drawable\\indicator_corner_bg.xml"
->>>>>>> origin/master
     },
     {
         "merged": "/Users/wei/Documents/Travel/D:\\Dropbox\\GitHub\\Travel\\library\\build\\intermediates\\res\\merged\\release\\drawable\\abc_tab_indicator_material.xml",
         "source": "/Users/wei/Documents/Travel/D:\\Dropbox\\GitHub\\Travel\\library\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.0.1\\res\\drawable\\abc_tab_indicator_material.xml"
     },
     {
-<<<<<<< HEAD
         "merged": "/Users/wei/Documents/Travel/D:\\Users\\wei\\Documents\\Travel\\library\\build\\intermediates\\res\\merged\\release\\drawable\\abc_btn_check_material.xml",
         "source": "/Users/wei/Documents/Travel/D:\\Users\\wei\\Documents\\Travel\\library\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.0.1\\res\\drawable\\abc_btn_check_material.xml"
     },
     {
         "merged": "/Users/wei/Documents/Travel/library/build/intermediates/res/merged/release/drawable/abc_list_selector_background_transition_holo_dark.xml",
         "source": "/Users/wei/Documents/Travel/library/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.0.1/res/drawable/abc_list_selector_background_transition_holo_dark.xml"
-=======
-        "merged": "D:\\Dropbox\\GitHub\\Travel\\library\\build\\intermediates\\res\\merged\\release\\drawable\\fab_background.xml",
-        "source": "D:\\Dropbox\\GitHub\\Travel\\library\\build\\intermediates\\exploded-aar\\com.android.support\\design\\22.2.1\\res\\drawable\\fab_background.xml"
-    },
-    {
-        "merged": "D:\\Dropbox\\GitHub\\Travel\\library\\build\\intermediates\\res\\merged\\release\\drawable\\abc_btn_radio_material.xml",
-        "source": "D:\\Dropbox\\GitHub\\Travel\\library\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.0.1\\res\\drawable\\abc_btn_radio_material.xml"
->>>>>>> origin/master
     },
     {
         "merged": "/Users/wei/Documents/Travel/D:\\Users\\wei\\Documents\\Travel\\library\\build\\intermediates\\res\\merged\\release\\drawable\\abc_btn_borderless_material.xml",
         "source": "/Users/wei/Documents/Travel/D:\\Users\\wei\\Documents\\Travel\\library\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.0.1\\res\\drawable\\abc_btn_borderless_material.xml"
     },
     {
-<<<<<<< HEAD
         "merged": "/Users/wei/Documents/Travel/library/build/intermediates/res/merged/release/drawable/abc_dialog_material_background_light.xml",
         "source": "/Users/wei/Documents/Travel/library/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.0.1/res/drawable/abc_dialog_material_background_light.xml"
     },
@@ -252,17 +190,12 @@
     {
         "merged": "/Users/wei/Documents/Travel/library/build/intermediates/res/merged/release/drawable/abc_btn_default_mtrl_shape.xml",
         "source": "/Users/wei/Documents/Travel/library/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.0.1/res/drawable/abc_btn_default_mtrl_shape.xml"
-=======
-        "merged": "D:\\Dropbox\\GitHub\\Travel\\library\\build\\intermediates\\res\\merged\\release\\drawable\\abc_btn_borderless_material.xml",
-        "source": "D:\\Dropbox\\GitHub\\Travel\\library\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.0.1\\res\\drawable\\abc_btn_borderless_material.xml"
->>>>>>> origin/master
     },
     {
         "merged": "/Users/wei/Documents/Travel/library/build/intermediates/res/merged/release/drawable/abc_btn_borderless_material.xml",
         "source": "/Users/wei/Documents/Travel/library/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.0.1/res/drawable/abc_btn_borderless_material.xml"
     },
     {
-<<<<<<< HEAD
         "merged": "/Users/wei/Documents/Travel/library/build/intermediates/res/merged/release/drawable/abc_ratingbar_full_material.xml",
         "source": "/Users/wei/Documents/Travel/library/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.0.1/res/drawable/abc_ratingbar_full_material.xml"
     },
@@ -365,13 +298,5 @@
     {
         "merged": "/Users/wei/Documents/Travel/D:\\Users\\wei\\Documents\\Travel\\library\\build\\intermediates\\res\\merged\\release\\drawable\\abc_switch_thumb_material.xml",
         "source": "/Users/wei/Documents/Travel/D:\\Users\\wei\\Documents\\Travel\\library\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.0.1\\res\\drawable\\abc_switch_thumb_material.xml"
-=======
-        "merged": "D:\\Dropbox\\GitHub\\Travel\\library\\build\\intermediates\\res\\merged\\release\\drawable\\abc_btn_colored_material.xml",
-        "source": "D:\\Dropbox\\GitHub\\Travel\\library\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.0.1\\res\\drawable\\abc_btn_colored_material.xml"
-    },
-    {
-        "merged": "D:\\Dropbox\\GitHub\\Travel\\library\\build\\intermediates\\res\\merged\\release\\drawable\\abc_btn_default_mtrl_shape.xml",
-        "source": "D:\\Dropbox\\GitHub\\Travel\\library\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.0.1\\res\\drawable\\abc_btn_default_mtrl_shape.xml"
->>>>>>> origin/master
     }
 ]

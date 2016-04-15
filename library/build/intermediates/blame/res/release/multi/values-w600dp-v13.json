@@ -41,7 +41,6 @@
                 }
             }
         ]
-<<<<<<< HEAD
     },
     {
         "outputFile": "/Users/wei/Documents/Travel/D:\\Dropbox\\GitHub\\Travel\\library\\build\\intermediates\\res\\merged\\release\\values-w600dp-v13\\values-w600dp-v13.xml",
@@ -128,7 +127,5 @@
                 }
             }
         ]
-=======
->>>>>>> origin/master
     }
 ]

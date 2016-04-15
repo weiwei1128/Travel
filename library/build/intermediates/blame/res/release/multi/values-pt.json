@@ -1,6 +1,5 @@
 [
     {
-<<<<<<< HEAD
         "outputFile": "/Users/wei/Documents/Travel/D:\\Dropbox\\GitHub\\Travel\\library\\build\\intermediates\\res\\merged\\release\\values-pt\\values-pt.xml",
         "map": [
             {
@@ -349,9 +348,6 @@
     },
     {
         "outputFile": "/Users/wei/Documents/Travel/D:\\Users\\wei\\Documents\\Travel\\library\\build\\intermediates\\res\\merged\\release\\values-pt\\values-pt.xml",
-=======
-        "outputFile": "D:\\Dropbox\\GitHub\\Travel\\library\\build\\intermediates\\res\\merged\\release\\values-pt\\values-pt.xml",
->>>>>>> origin/master
         "map": [
             {
                 "to": {

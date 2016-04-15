@@ -1,6 +1,5 @@
 [
     {
-<<<<<<< HEAD
         "outputFile": "/Users/wei/Documents/Travel/D:\\Dropbox\\GitHub\\Travel\\library\\build\\intermediates\\res\\merged\\release\\values-ro\\values-ro.xml",
         "map": [
             {
@@ -349,9 +348,6 @@
     },
     {
         "outputFile": "/Users/wei/Documents/Travel/library/build/intermediates/res/merged/release/values-ro/values-ro.xml",
-=======
-        "outputFile": "D:\\Dropbox\\GitHub\\Travel\\library\\build\\intermediates\\res\\merged\\release\\values-ro\\values-ro.xml",
->>>>>>> origin/master
         "map": [
             {
                 "to": {
