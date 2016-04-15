@@ -132,7 +132,7 @@ public class HomepageActivity extends FragmentActivity {
 
     public void changeFragment(Fragment f) {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        Log.d("4.7","HA:"+getSupportFragmentManager()+"=manager"+getSupportFragmentManager().getFragments());
+//        Log.d("4.7","HA:"+getSupportFragmentManager()+"=manager"+getSupportFragmentManager().getFragments());
         transaction.replace(R.id.fragment_test, f);
         transaction.commit();
     }
