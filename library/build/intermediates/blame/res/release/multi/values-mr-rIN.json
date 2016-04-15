@@ -1,5 +1,6 @@
 [
     {
+<<<<<<< HEAD
         "outputFile": "/Users/wei/Documents/Travel/library/build/intermediates/res/merged/release/values-mr-rIN/values-mr-rIN.xml",
         "map": [
             {
@@ -348,6 +349,9 @@
     },
     {
         "outputFile": "/Users/wei/Documents/Travel/D:\\Users\\wei\\Documents\\Travel\\library\\build\\intermediates\\res\\merged\\release\\values-mr-rIN\\values-mr-rIN.xml",
+=======
+        "outputFile": "D:\\Dropbox\\GitHub\\Travel\\library\\build\\intermediates\\res\\merged\\release\\values-mr-rIN\\values-mr-rIN.xml",
+>>>>>>> origin/master
         "map": [
             {
                 "to": {

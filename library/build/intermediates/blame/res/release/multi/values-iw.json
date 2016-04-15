@@ -1,5 +1,6 @@
 [
     {
+<<<<<<< HEAD
         "outputFile": "/Users/wei/Documents/Travel/library/build/intermediates/res/merged/release/values-iw/values-iw.xml",
         "map": [
             {
@@ -348,6 +349,9 @@
     },
     {
         "outputFile": "/Users/wei/Documents/Travel/D:\\Dropbox\\GitHub\\Travel\\library\\build\\intermediates\\res\\merged\\release\\values-iw\\values-iw.xml",
+=======
+        "outputFile": "D:\\Dropbox\\GitHub\\Travel\\library\\build\\intermediates\\res\\merged\\release\\values-iw\\values-iw.xml",
+>>>>>>> origin/master
         "map": [
             {
                 "to": {

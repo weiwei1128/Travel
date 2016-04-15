@@ -1,5 +1,6 @@
 [
     {
+<<<<<<< HEAD
         "outputFile": "/Users/wei/Documents/Travel/library/build/intermediates/res/merged/release/values-mk-rMK/values-mk-rMK.xml",
         "map": [
             {
@@ -310,6 +311,9 @@
     },
     {
         "outputFile": "/Users/wei/Documents/Travel/D:\\Dropbox\\GitHub\\Travel\\library\\build\\intermediates\\res\\merged\\release\\values-mk-rMK\\values-mk-rMK.xml",
+=======
+        "outputFile": "D:\\Dropbox\\GitHub\\Travel\\library\\build\\intermediates\\res\\merged\\release\\values-mk-rMK\\values-mk-rMK.xml",
+>>>>>>> origin/master
         "map": [
             {
                 "to": {

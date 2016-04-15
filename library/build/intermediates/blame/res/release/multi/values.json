@@ -4005,9 +4005,9 @@
                     "position": {
                         "startLine": 1,
                         "startColumn": 4,
-                        "startOffset": 16,
+                        "startOffset": 17,
                         "endColumn": 43,
-                        "endOffset": 55
+                        "endOffset": 56
                     }
                 }
             },
@@ -4101,10 +4101,10 @@
                     "position": {
                         "startLine": 23,
                         "startColumn": 4,
-                        "startOffset": 1001,
+                        "startOffset": 1024,
                         "endLine": 41,
                         "endColumn": 12,
-                        "endOffset": 1871
+                        "endOffset": 1912
                     }
                 }
             },
@@ -4122,10 +4122,10 @@
                     "position": {
                         "startLine": 2,
                         "startColumn": 4,
-                        "startOffset": 55,
+                        "startOffset": 57,
                         "endLine": 21,
                         "endColumn": 12,
-                        "endOffset": 995
+                        "endOffset": 1016
                     }
                 }
             },
@@ -4143,10 +4143,10 @@
                     "position": {
                         "startLine": 43,
                         "startColumn": 4,
-                        "startOffset": 1877,
+                        "startOffset": 1920,
                         "endLine": 61,
                         "endColumn": 12,
-                        "endOffset": 2747
+                        "endOffset": 2808
                     }
                 }
             },
@@ -10227,6 +10227,7 @@
                 }
             }
         ]
+<<<<<<< HEAD
     },
     {
         "outputFile": "/Users/wei/Documents/Travel/D:\\Users\\wei\\Documents\\Travel\\library\\build\\intermediates\\res\\merged\\release\\values\\values.xml",
@@ -30685,5 +30686,7 @@
                 }
             }
         ]
+=======
+>>>>>>> origin/master
     }
 ]

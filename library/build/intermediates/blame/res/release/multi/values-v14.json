@@ -201,6 +201,7 @@
                 }
             }
         ]
+<<<<<<< HEAD
     },
     {
         "outputFile": "/Users/wei/Documents/Travel/D:\\Users\\wei\\Documents\\Travel\\library\\build\\intermediates\\res\\merged\\release\\values-v14\\values-v14.xml",
@@ -607,5 +608,7 @@
                 }
             }
         ]
+=======
+>>>>>>> origin/master
     }
 ]

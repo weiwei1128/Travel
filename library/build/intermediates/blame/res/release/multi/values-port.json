@@ -22,6 +22,7 @@
                 }
             }
         ]
+<<<<<<< HEAD
     },
     {
         "outputFile": "/Users/wei/Documents/Travel/D:\\Users\\wei\\Documents\\Travel\\library\\build\\intermediates\\res\\merged\\release\\values-port\\values-port.xml",
@@ -70,5 +71,7 @@
                 }
             }
         ]
+=======
+>>>>>>> origin/master
     }
 ]

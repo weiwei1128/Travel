@@ -1,5 +1,6 @@
 [
     {
+<<<<<<< HEAD
         "outputFile": "/Users/wei/Documents/Travel/D:\\Users\\wei\\Documents\\Travel\\library\\build\\intermediates\\res\\merged\\release\\values-large-v4\\values-large-v4.xml",
         "map": [
             {
@@ -215,6 +216,9 @@
     },
     {
         "outputFile": "/Users/wei/Documents/Travel/library/build/intermediates/res/merged/release/values-large-v4/values-large-v4.xml",
+=======
+        "outputFile": "D:\\Dropbox\\GitHub\\Travel\\library\\build\\intermediates\\res\\merged\\release\\values-large-v4\\values-large-v4.xml",
+>>>>>>> origin/master
         "map": [
             {
                 "to": {

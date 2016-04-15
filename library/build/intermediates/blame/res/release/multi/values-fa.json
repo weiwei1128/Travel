@@ -345,6 +345,7 @@
                 }
             }
         ]
+<<<<<<< HEAD
     },
     {
         "outputFile": "/Users/wei/Documents/Travel/D:\\Dropbox\\GitHub\\Travel\\library\\build\\intermediates\\res\\merged\\release\\values-fa\\values-fa.xml",
@@ -1039,5 +1040,7 @@
                 }
             }
         ]
+=======
+>>>>>>> origin/master
     }
 ]
