@@ -73,8 +73,8 @@ public class SpotListViewFragment extends Fragment {
 
         mlistView = (ListView) view.findViewById(R.id.spotlist_listView);
 
-        int index = SpotListFragment.viewPager.getCurrentItem();
-        adapter = new SpotListAdapter(getActivity(), (index+1));
+        //int index = SpotListFragment.viewPager.getCurrentItem();
+        adapter = new SpotListAdapter(getActivity(), mPageNo);
         mlistView.setAdapter(adapter);
         mlistView.setOnItemClickListener(new itemListener());
 
@@ -88,6 +88,9 @@ public class SpotListViewFragment extends Fragment {
 
             @Override
             public boolean onQueryTextChange(String newText) {
+                int index = SpotListFragment.viewPager.getCurrentItem();
+                adapter = new SpotListAdapter(getActivity(), (index+1));
+                mlistView.setAdapter(adapter);
                 adapter.getFilter().filter(newText.toString());
                 //Log.e("4/1_", "搜尋: " + newText.toString());
                 return true;

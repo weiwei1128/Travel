@@ -159,9 +159,7 @@ public class SpotDetailActivity extends AppCompatActivity {
 
         SpotName.setText(globalVariable.SpotDataSorted.get(mPosition).getName());
 
-        if (globalVariable.SpotDataSorted.get(mPosition).getOpenTime() == null) {
-            SpotOpenTime.setText("1. 開放時間：無");
-        } else if (globalVariable.SpotDataSorted.get(mPosition).getOpenTime().equals("")) {
+        if (globalVariable.SpotDataSorted.get(mPosition).getOpenTime().equals("")) {
             SpotOpenTime.setText("1. 開放時間：無");
         } else {
             SpotOpenTime.setText("1. 開放時間：" + globalVariable.SpotDataSorted.get(mPosition).getOpenTime());
