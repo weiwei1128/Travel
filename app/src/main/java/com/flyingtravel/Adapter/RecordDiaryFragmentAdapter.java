@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.daimajia.slider.library.Indicators.PagerIndicator;
 import com.daimajia.slider.library.SliderLayout;
@@ -142,6 +143,8 @@ public class RecordDiaryFragmentAdapter extends BaseAdapter implements ViewPager
                     mViewHolder.ImageSlider.stopAutoCycle();
                     img_cursor.close();
                 }
+            } else {
+                Toast.makeText(context, "未新增任何日誌！", Toast.LENGTH_SHORT).show();
             }
             trackRoute_cursor.close();
         }
