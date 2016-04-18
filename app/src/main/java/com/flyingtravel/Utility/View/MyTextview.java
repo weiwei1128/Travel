@@ -33,6 +33,7 @@ public class MyTextview extends TextView {
         setSingleLine();
         mScroller = new Scroller(context,new LinearInterpolator());
         setScroller(mScroller);
+
     }
 
     public MyTextview(Context context, AttributeSet attrs, int defStyleAttr) {
@@ -58,7 +59,9 @@ public class MyTextview extends TextView {
     }
     private int calculateMoveDistance(boolean isFirstRun, float velocity){
         Rect rect = new Rect();
-        String textString = (String) getText();
+//        String textString = (String) getText();
+        //0414w in case java.lang.ClassCastException: android.text.SpannableString cannot be cast to java.lang.String
+        String textString =getText()+"";
         getPaint().getTextBounds(textString,0,textString.length(),rect);
         int moveDistance = rect.width();
         rect = null;

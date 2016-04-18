@@ -11,7 +11,8 @@ import android.database.sqlite.SQLiteOpenHelper;
  */
 public class DataBaseHelper extends SQLiteOpenHelper {
     private static DataBaseHelper mInstance = null;
-    private static final int VERSION = 1;
+    private static final int VERSION = 2;
+    // version 2: news 新增一個column //TODO 尚未測試!
     private static final String DATABASE_NAME = "Travel.db";
     private Context mcontext;
 
@@ -163,7 +164,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
         //最新消息
         String DATABASE_CREATE_TABLE_NEWS = "create table news("
-                + "_ID INTEGER PRIMARY KEY," + "title TEXT"
+                + "_ID INTEGER PRIMARY KEY," + "title TEXT,"
+                +"link TEXT"
                 + ");";
         db.execSQL(DATABASE_CREATE_TABLE_NEWS);
 
@@ -189,13 +191,16 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
         System.out.println("database CREATE");
     }
+    private static final String DATABASE_ALTER_TEAM_1 = "ALTER TABLE "
+            + "news" + " ADD COLUMN " + "link" + " TEXT;";
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         /** TODO 正式版要修改!!
          * [0308] [BAD!] [若有相同名稱則重建]
          * **/
-        db.execSQL("DROP TABLE IF EXISTS newMemorandum");
+        if(oldVersion<2)
+            db.execSQL(DATABASE_ALTER_TEAM_1);
 
     }
 

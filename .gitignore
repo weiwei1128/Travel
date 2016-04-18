@@ -81,3 +81,10 @@ library/build/intermediates/blame/res/release/single/drawable-xhdpi-v4.json
 *.json
 *.jar
 *.iml
+
+*.json
+*.xml
+library/build/intermediates/incremental/mergeReleaseJniLibFolders/merger.xml
+*.xml
+library/build/intermediates/incremental/packageReleaseResources/merger.xml
+*.iml

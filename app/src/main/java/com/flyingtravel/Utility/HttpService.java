@@ -142,7 +142,7 @@ public class HttpService extends Service {
                     try {
                         contentValues.clear();
                         contentValues.put("img_url", "http://zhiyou.lin366.com" + jsonArray.getJSONObject(i).getString("img_url"));
-                        database.insert("banner",null,contentValues);
+                        database.insert("banner", null, contentValues);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -163,14 +163,16 @@ public class HttpService extends Service {
         }
     }
 
-    private class News extends AsyncTask<String, Void, String> {
+    private class News extends AsyncTask<String, Void, String[]> {
 
         //{"act":"top","type":"tophot","size":"10"}
         //http://zhiyou.lin366.com/api/news/index.aspx
+        int count = 0;
+        String link[];
 
         @Override
-        protected String doInBackground(String... params) {
-            Log.e("3.9", "=========News======doInBackground");
+        protected String[] doInBackground(String... params) {
+//            Log.e("3.9", "=========News======doInBackground");
 
             HttpClient client = new DefaultHttpClient();
             HttpPost post = new HttpPost("http://zhiyou.lin366.com/api/news/index.aspx");
@@ -186,7 +188,8 @@ public class HttpService extends Service {
             HttpResponse resp = null;
             String result = null;
             String states = null;
-            String message = "";
+            String message[] = new String[0];
+
             try {
                 resp = client.execute(post);
                 result = EntityUtils.toString(resp.getEntity());
@@ -211,14 +214,23 @@ public class HttpService extends Service {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                if (jsonArray != null)
+                if (jsonArray != null) {
+                    count = jsonArray.length();
+                    message = new String[count];
+                    link = new String[count];
                     for (int i = 0; i < jsonArray.length(); i++) {
                         try {
-                            message = message + jsonArray.getJSONObject(i).getString("title") + "    ";
+                            message[i] =jsonArray.getJSONObject(i).getString("title");
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        try {
+                            link[i] =jsonArray.getJSONObject(i).getString("link_url");
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
                     }
+                }
 //                message="";//test
 //                Log.e("3.10","news: "+message); //3.10 OK
                 return message;
@@ -227,24 +239,36 @@ public class HttpService extends Service {
         }
 
         @Override
-        protected void onPostExecute(String s) {
+        protected void onPostExecute(String[] s) {
             DataBaseHelper helper = DataBaseHelper.getmInstance(context);
             SQLiteDatabase database = helper.getWritableDatabase();
-            Cursor news_cursor = database.query("news", new String[]{"title"}, null, null, null, null, null);
-            if (news_cursor != null && s != null && !s.equals("")) {
+            Cursor news_cursor = database.query("news", new String[]{"title", "link"}, null, null, null, null, null);
+            if (news_cursor != null && s != null && s.length>0) {
+                ContentValues cv = new ContentValues();
 //                Log.e("3.10","news cursor count: "+news_cursor.getCount());
                 news_cursor.moveToFirst();
                 if (news_cursor.getCount() == 0) {
-                    ContentValues cv = new ContentValues();
-                    cv.put("title", s);
-                    long result = database.insert("news", null, cv);
+                    for(int i=0;i<count;i++){
+                        cv.clear();
+                        cv.put("title", s[i]);
+                        cv.put("link",link[i]);
+                        long result = database.insert("news", null, cv);
+                    }
+
 //                    Log.e("3.10","news insert DB result: "+result);
-                } else if (!news_cursor.getString(0).equals(s)) { //資料不相同 -> 更新
-                    ContentValues cv = new ContentValues();
-                    cv.put("title", s);
-                    long result = database.update("news", cv, null, null);
+                } else //資料不相同 -> 更新
+                    for(int i=0;i<count;i++){
+                        news_cursor.moveToPosition(i);
+                        if (!news_cursor.getString(0).equals(s[i])) {
+                            cv.clear();
+                            cv.put("title", s[i]);
+                            cv.put("link", link[i]);
+                            //.update("special_activity", cv, "special_id=?", new String[]{jsonObjects[i][0]});
+                            long result = database.update("news", cv,"title=?",new String[]{news_cursor.getString(i)});
+                        }
+                    }
 //                    Log.e("3.10","news update DB result: "+result);
-                }
+
                 news_cursor.close();
             }
 //            else Log.e("3.10","news: cursor=NULL? message:"+s);
@@ -258,7 +282,7 @@ public class HttpService extends Service {
 
         @Override
         protected Map<String, String[][]> doInBackground(String... params) {
-            Log.e("3.9", "=========Special======doInBackground");
+//            Log.e("3.9", "=========Special======doInBackground");
             HttpClient client = new DefaultHttpClient();
             HttpPost post = new HttpPost("http://zhiyou.lin366.com/api/article/index.aspx");
             MultipartEntity multipartEntity = new MultipartEntity();
