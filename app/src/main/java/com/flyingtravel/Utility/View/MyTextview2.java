@@ -19,6 +19,7 @@ public class MyTextview2 extends TextView implements Runnable {
     int mDistance;
     int mDuration;
     Boolean FirstRun = true;
+    int count=0;
 
     public MyTextview2(Context context) {
         super(context);
@@ -61,7 +62,12 @@ public class MyTextview2 extends TextView implements Runnable {
             currentScrollX = -(this.getWidth());
             FirstRun = false;
         }
-        currentScrollX += 1;// 速度
+        if(count<5)
+            count++;
+        else {
+            count=0;
+            currentScrollX += 1;// 速度
+        }
 //        scrollTo(currentScrollX, 0);
         scrollTo(currentScrollX, 0);
         if (isStop) {

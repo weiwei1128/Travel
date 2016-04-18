@@ -1,7 +1,6 @@
 package com.flyingtravel.Activity;
 
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.ColorDrawable;
@@ -42,12 +41,12 @@ import java.nio.charset.Charset;
 public class CheckScheduleActivity extends AppCompatActivity {
     ListView listView;
     CheckScheduleAdapter adapter;
-    int itemCount = 0;
     String uid = null;
     int count = 0;
     String[] itemid, itemno, itemdate, itemprice, itemcontent, itemstate;
-    LinearLayout putItemLayout, backImg,moreLayout;
-    Context context;
+    LinearLayout putItemLayout, backImg, moreLayout;
+    WebView webView;
+    Boolean ifWebView = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +60,7 @@ public class CheckScheduleActivity extends AppCompatActivity {
                         HomepageActivity.class, null);
             }
         });
-        moreLayout = (LinearLayout)findViewById(R.id.checkschedule_more);
+        moreLayout = (LinearLayout) findViewById(R.id.checkschedule_more);
         moreLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -104,7 +103,8 @@ public class CheckScheduleActivity extends AppCompatActivity {
         dialog.setMessage("載入中");
         dialog.show();
 
-        WebView webView = new WebView(CheckScheduleActivity.this);
+        ifWebView = true;
+        webView = new WebView(CheckScheduleActivity.this);
         putItemLayout.addView(webView);
 
         WebSettings websettings = webView.getSettings();
@@ -126,9 +126,16 @@ public class CheckScheduleActivity extends AppCompatActivity {
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK)
-            Functions.go(true, CheckScheduleActivity.this, CheckScheduleActivity.this,
-                    HomepageActivity.class, null);
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            //make the webview go back
+            if (ifWebView && webView.canGoBack())
+                webView.goBack();
+
+            else
+                Functions.go(true, CheckScheduleActivity.this, CheckScheduleActivity.this,
+                        HomepageActivity.class, null);
+        }
+
         return false;
     }
 
