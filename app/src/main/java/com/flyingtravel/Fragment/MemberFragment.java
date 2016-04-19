@@ -124,7 +124,7 @@ public class MemberFragment extends Fragment {
                     fo.close();
                 } catch (IOException e) {
                     e.printStackTrace();
-                    Log.d("4.18", "error" + e.toString());
+//                    Log.d("4.18", "error" + e.toString());
                 }
                 /*
                 * try

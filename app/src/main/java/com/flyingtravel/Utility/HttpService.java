@@ -10,7 +10,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
-import android.util.Log;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -220,12 +219,12 @@ public class HttpService extends Service {
                     link = new String[count];
                     for (int i = 0; i < jsonArray.length(); i++) {
                         try {
-                            message[i] =jsonArray.getJSONObject(i).getString("title");
+                            message[i] = jsonArray.getJSONObject(i).getString("title");
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
                         try {
-                            link[i] =jsonArray.getJSONObject(i).getString("link_url");
+                            link[i] = jsonArray.getJSONObject(i).getString("link_url");
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -243,28 +242,28 @@ public class HttpService extends Service {
             DataBaseHelper helper = DataBaseHelper.getmInstance(context);
             SQLiteDatabase database = helper.getWritableDatabase();
             Cursor news_cursor = database.query("news", new String[]{"title", "link"}, null, null, null, null, null);
-            if (news_cursor != null && s != null && s.length>0) {
+            if (news_cursor != null && s != null && s.length > 0) {
                 ContentValues cv = new ContentValues();
 //                Log.e("3.10","news cursor count: "+news_cursor.getCount());
                 news_cursor.moveToFirst();
                 if (news_cursor.getCount() == 0) {
-                    for(int i=0;i<count;i++){
+                    for (int i = 0; i < count; i++) {
                         cv.clear();
                         cv.put("title", s[i]);
-                        cv.put("link",link[i]);
+                        cv.put("link", link[i]);
                         long result = database.insert("news", null, cv);
                     }
 
 //                    Log.e("3.10","news insert DB result: "+result);
                 } else //資料不相同 -> 更新
-                    for(int i=0;i<count;i++){
+                    for (int i = 0; i < count; i++) {
                         news_cursor.moveToPosition(i);
                         if (!news_cursor.getString(0).equals(s[i])) {
                             cv.clear();
                             cv.put("title", s[i]);
                             cv.put("link", link[i]);
                             //.update("special_activity", cv, "special_id=?", new String[]{jsonObjects[i][0]});
-                            long result = database.update("news", cv,"title=?",new String[]{news_cursor.getString(i)});
+                            long result = database.update("news", cv, "title=?", new String[]{news_cursor.getString(i)});
                         }
                     }
 //                    Log.e("3.10","news update DB result: "+result);
@@ -379,6 +378,7 @@ public class HttpService extends Service {
         @Override
         protected void onPostExecute(Map<String, String[][]> s) {
             if (s != null) {
+//                Log.e("4.19","S != null");
                 Intent intent = new Intent("news");
                 intent.putExtra("news", true);
                 sendBroadcast(intent);
@@ -391,7 +391,7 @@ public class HttpService extends Service {
                 Cursor special = database.query("special_activity", new String[]{"special_id", "title", "img", "content", "price", "click"},
                         null, null, null, null, null);
                 if (special != null && jsonObjects != null) {
-
+//                    Log.e("4.19","special != null"+jsonObjects.length);
 
                     if (special.getCount() == 0) //如果還沒新增過資料->直接新增!
                         for (int i = 0; i < jsonObjects.length; i++) {
@@ -400,9 +400,10 @@ public class HttpService extends Service {
                             cv.put("title", jsonObjects[i][1]);
                             cv.put("img", jsonObjects[i][2]);
                             cv.put("content", jsonObjects[i][3]);
-                            cv.put("price", jsonObjects[i][4]);
-                            cv.put("click", jsonObjects[i][5]);
+                            cv.put("price", jsonObjects[i][5]);
+                            cv.put("click", jsonObjects[i][4]);
                             long result = database.insert("special_activity", null, cv);
+//                            Log.e("4.19","price:"+jsonObjects[i][5]);
 //                            Log.d("3.10", "special_activity: " + result + " = DB INSERT" + i + "title " + jsonObjects[i][1]);
                         }
                     else { //資料庫已經有資料了!
@@ -421,18 +422,20 @@ public class HttpService extends Service {
                                     cv.put("img", jsonObjects[i][2]);
                                 if (!special_dul.getString(3).equals(jsonObjects[i][3]))
                                     cv.put("content", jsonObjects[i][3]);
-                                if (!special_dul.getString(4).equals(jsonObjects[i][4]))
-                                    cv.put("price", jsonObjects[i][1]);
-                                if (!special_dul.getString(5).equals(jsonObjects[i][5]))
-                                    cv.put("click", jsonObjects[i][5]);
+                                if (!special_dul.getString(4).equals(jsonObjects[i][5]))
+                                    cv.put("price", jsonObjects[i][5]);
+                                if (!special_dul.getString(5).equals(jsonObjects[i][4]))
+                                    cv.put("click", jsonObjects[i][4]);
                                 if (!special_dul.getString(1).equals(jsonObjects[i][1]) ||
                                         !special_dul.getString(2).equals(jsonObjects[i][2]) ||
                                         !special_dul.getString(3).equals(jsonObjects[i][3]) ||
-                                        !special_dul.getString(4).equals(jsonObjects[i][4]) ||
-                                        !special_dul.getString(5).equals(jsonObjects[i][5])) {
+                                        !special_dul.getString(4).equals(jsonObjects[i][5]) ||
+                                        !special_dul.getString(5).equals(jsonObjects[i][4])) {
                                     long result = database.update("special_activity", cv, "special_id=?", new String[]{jsonObjects[i][0]});
-//                                    Log.e("3.10", "special_activity updated: " + result + " title: " + jsonObjects[i][1]);
+//                                    Log.e("3.10", "special_activity updated: " + result + " title: " + jsonObjects[i][1]+" price "+jsonObjects[i][5]);
+//                                    Log.e("4.19","2 price:"+jsonObjects[i][5]);
                                 }
+//                                else Log.e("4.19","?? price:"+jsonObjects[i][5]);
                             } else {
                                 //資料庫存在 但資料不存在
                                 ContentValues cv = new ContentValues();
@@ -440,9 +443,10 @@ public class HttpService extends Service {
                                 cv.put("title", jsonObjects[i][1]);
                                 cv.put("img", jsonObjects[i][2]);
                                 cv.put("content", jsonObjects[i][3]);
-                                cv.put("price", jsonObjects[i][4]);
-                                cv.put("click", jsonObjects[i][5]);
+                                cv.put("price", jsonObjects[i][5]);
+                                cv.put("click", jsonObjects[i][4]);
                                 long result = database.insert("special_activity", null, cv);
+//                                Log.e("4.19","3 price:"+jsonObjects[i][5]);
 //                                Log.d("3.10", "special_activity insert: " + result + " = DB INSERT" + i + "title " + jsonObjects[i][1]);
                             }
                             if (special_dul != null)
@@ -455,6 +459,7 @@ public class HttpService extends Service {
 //                database.endTransaction();
 //                database.close();
             }
+//            else Log.e("4.19", "S = null");
 
             super.onPostExecute(s);
         }

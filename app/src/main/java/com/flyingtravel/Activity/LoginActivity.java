@@ -281,6 +281,10 @@ public class LoginActivity extends AppCompatActivity {
             try {
                 state = new JSONObject(result.substring(
                         result.indexOf("{"), result.lastIndexOf("}") + 1)).getString("states");
+            } catch (JSONException | NullPointerException e2) {
+                e2.printStackTrace();
+            }
+            try{
                 message = new JSONObject(result.substring(
                         result.indexOf("{"), result.lastIndexOf("}") + 1)).getString("msg");
             } catch (JSONException | NullPointerException e2) {
