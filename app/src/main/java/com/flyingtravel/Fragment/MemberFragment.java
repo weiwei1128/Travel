@@ -147,9 +147,9 @@ public class MemberFragment extends Fragment {
                 sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, "寶島好智遊");
                 sharingIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(f));
                 sharingIntent.setType("image/jpeg");
-                Log.d("4.18", "path:" + path + " lens: " + len+" bytes"+bytes.size());
-                File file = new File(path);
-                Log.d("4.18", String.valueOf(file.exists()));
+//                Log.d("4.18", "path:" + path + " lens: " + len+" bytes"+bytes.size());
+//                File file = new File(path);
+//                Log.d("4.18", String.valueOf(file.exists()));
 
 
 //                image/jpeg
