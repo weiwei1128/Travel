@@ -136,19 +136,19 @@ public class SpotMapFragment extends Fragment implements
         super.onCreate(savedInstanceState);
 
         if (!globalVariable.isAPILoaded) {
-            Log.e("3/23_", "API is not ready");
+//            Log.e("3/23_", "API is not ready");
             mProgressDialog.setMessage("景點資料龐大，載入中...");
             mProgressDialog.show();
         } else {
             if (CurrentLocation != null) {
-                Log.e("3/23_onActivityCreated", "事先Sort");
+//                Log.e("3/23_onActivityCreated", "事先Sort");
                 if (globalVariable.isAPILoaded && globalVariable.SpotDataSorted.isEmpty()) {
                     new GetSpotsNSort(getActivity(), CurrentLocation.getLatitude(),
                             CurrentLocation.getLongitude()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                 }
             }
             if (globalVariable.MarkerOptionsArray.isEmpty()) {
-                Log.e("3/23_", "Marker is not ready");
+//                Log.e("3/23_", "Marker is not ready");
                 mProgressDialog.setMessage("景點Marker載入中...");
                 mProgressDialog.show();
                 // Get Marker Info
@@ -196,7 +196,7 @@ public class SpotMapFragment extends Fragment implements
 
     @Override
     public void onDestroyView() {
-        Log.e("3/23_SpotMap", "onDestroyView");
+//        Log.e("3/23_SpotMap", "onDestroyView");
         mapView.onDestroy();
         if (broadcastReceiver != null)
             getActivity().unregisterReceiver(broadcastReceiver);
@@ -214,7 +214,7 @@ public class SpotMapFragment extends Fragment implements
 
     @Override
     public void onLowMemory() {
-        Log.e("3/23_SpotMap", "onLowMemory");
+//        Log.e("3/23_SpotMap", "onLowMemory");
         mapView.onLowMemory();
         MarkerIcon.recycle();
         System.gc();
@@ -226,7 +226,7 @@ public class SpotMapFragment extends Fragment implements
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
             //you are visible to user now - so set whatever you need
-            Log.e("3/23_SpotMap", "setUserVisibleHint: Visible");
+//            Log.e("3/23_SpotMap", "setUserVisibleHint: Visible");
             if (MarkerIcon == null) {
                 MarkerIcon = decodeBitmapFromResource(getResources(), R.drawable.location3, 10, 18);
                 if (!globalVariable.MarkerOptionsArray.isEmpty()) {

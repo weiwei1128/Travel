@@ -72,7 +72,7 @@ public class RecordDiaryFragment extends Fragment {
             mFragmentName = getArguments().getString(FRAGMENT_NAME);
             //mParam2 = getArguments().getString(ARG_PARAM2);
         }
-        Log.e("3/27_", "RecordDiaryFragment. onCreate");
+//        Log.e("3/27_", "RecordDiaryFragment. onCreate");
     }
 
     @Override
@@ -115,7 +115,7 @@ public class RecordDiaryFragment extends Fragment {
         }
 
         mAdapter = new RecordDiaryFragmentAdapter(getActivity());
-        Log.e("3/27_", "RecordDiaryFragment. onActivityCreated");
+//        Log.e("3/27_", "RecordDiaryFragment. onActivityCreated");
     }
 
     @Override
@@ -126,7 +126,7 @@ public class RecordDiaryFragment extends Fragment {
 
     @Override
     public void onLowMemory() {
-        Log.e("3/23_SpotMap", "onLowMemory");
+//        Log.e("3/23_SpotMap", "onLowMemory");
         System.gc();
         super.onLowMemory();
     }
@@ -136,7 +136,7 @@ public class RecordDiaryFragment extends Fragment {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
             //you are visible to user now - so set whatever you need
-            Log.e("3/23_SpotMap", "setUserVisibleHint: Visible");
+//            Log.e("3/23_SpotMap", "setUserVisibleHint: Visible");
             if (mlistView != null) {
                 mlistView.setAdapter(mAdapter);
                 mlistView.setOnItemClickListener(new itemListener());
@@ -144,7 +144,7 @@ public class RecordDiaryFragment extends Fragment {
         }
         else {
             //you are no longer visible to the user so cleanup whatever you need
-            Log.e("3/23_SpotMap", "setUserVisibleHint: not Visible");
+//            Log.e("3/23_SpotMap", "setUserVisibleHint: not Visible");
             System.gc();
         }
     }

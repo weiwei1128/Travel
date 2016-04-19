@@ -38,7 +38,7 @@ public class SpotFragmentPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public void destroyItem(ViewGroup container, int position, Object object) {
-        Log.e("3/23_PagerAdapter", "destroyItem");
+//        Log.e("3/23_PagerAdapter", "destroyItem");
         container.removeView(fragments.get(position).getView());
     }
 }

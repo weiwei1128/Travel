@@ -13,6 +13,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +27,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 public class MemberFragment extends Fragment {
     Context context;
@@ -103,26 +105,51 @@ public class MemberFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
-                sharingIntent.setType("image/jpeg");
+
                 //drawable -> bitmap
                 Bitmap icon = BitmapFactory.decodeResource(context.getResources(), R.drawable.icon_512);
                 ByteArrayOutputStream bytes = new ByteArrayOutputStream();
                 icon.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
-                File f = new File(Environment.getExternalStorageDirectory() + File.separator + "temporary_file.jpg");
+//                InputStream inputStream = getResources().openRawResource(R.drawable.icon_512);
+                byte buf[] = new byte[1024];
+                int len = 0;
+
+                String path = Environment.getExternalStorageDirectory() + File.separator + "temporary_file.jpg";
+                File f = new File(path);
                 try {
-                    f.createNewFile();
                     FileOutputStream fo = new FileOutputStream(f);
                     fo.write(bytes.toByteArray());
+//                    while ((len = inputStream.read(buf)) > 0)
+//                        fo.write(buf);
+                    fo.close();
                 } catch (IOException e) {
                     e.printStackTrace();
+                    Log.d("4.18", "error" + e.toString());
                 }
+                /*
+                * try
+    {
+    File f=new File("your file name");
+    InputStream inputStream = getResources().openRawResource(id);
+    OutputStream out=new FileOutputStream(f);
+    byte buf[]=new byte[1024];
+    int len;
+    while((len=inputStream.read(buf))>0)
+    out.write(buf,0,len);
+    out.close();
+    inputStream.close();
+    }
+    catch (IOException e){}
+    }
+                * */
                 //setting share information
                 sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "寶島好智遊");
                 sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, "寶島好智遊");
-                sharingIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://+"+
-                        Environment.getExternalStorageDirectory().getPath()
-//                        "/sdcard/"
-                        +"temporary_file.jpg"));
+                sharingIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(f));
+                sharingIntent.setType("image/jpeg");
+                Log.d("4.18", "path:" + path + " lens: " + len+" bytes"+bytes.size());
+                File file = new File(path);
+                Log.d("4.18", String.valueOf(file.exists()));
 
 
 //                image/jpeg
