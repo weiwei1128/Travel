@@ -64,19 +64,6 @@
                 android:textSize="20dp"
                 android:layout_weight="1" />
 
-            <ImageView
-                android:layout_width="25dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical|right"
-                android:src="@drawable/addplus"
-                android:layout_marginRight="10dp" />
-
-            <ImageView
-                android:layout_width="25dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical|right"
-                android:src="@drawable/moredetail"
-                android:layout_marginRight="30dp" />
         </LinearLayout>
 
         <View
