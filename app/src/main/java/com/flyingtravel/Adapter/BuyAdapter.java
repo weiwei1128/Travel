@@ -135,8 +135,13 @@ public class BuyAdapter extends BaseAdapter {
                     mcell.clickText.append(goods_cursor.getString(6));
 
             if (goods_cursor.getString(3) != null)
-                loader.displayImage("http://zhiyou.lin366.com/" + goods_cursor.getString(3)
-                        , mcell.buyImg, options, listener);
+                if (goods_cursor.getString(3).startsWith("http:"))
+                    loader.displayImage(goods_cursor.getString(3)
+                            , mcell.buyImg, options, listener);
+                else
+                    loader.displayImage("http://zhiyou.lin366.com/" + goods_cursor.getString(3)
+                            , mcell.buyImg, options, listener);
+
         }
 
         if (goods_cursor != null)
