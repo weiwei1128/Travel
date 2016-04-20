@@ -15,12 +15,12 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.flyingtravel.R;
+import com.flyingtravel.Utility.DataBaseHelper;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
-import com.flyingtravel.R;
-import com.flyingtravel.Utility.DataBaseHelper;
 
 /**
  * Created by wei on 2015/12/30.
@@ -154,7 +154,10 @@ public class BuyitemAdapter extends BaseAdapter {
                 newcell.cellfromTxt.setText(goods_cursor_big.getString(2));
                 newcell.cellmoneyTxt.setText(goods_cursor_big.getString(3));
                 newcell.cellnumberTxt.setText(sharedPreferences.getInt("InBuyListgC" + BigitemID + "id" + getitemPosition, 0) + "");
-                loader.displayImage("http://zhiyou.lin366.com/" + itemImg, newcell.cellImg, options, listener);
+                if (itemImg.startsWith("http:"))
+                    loader.displayImage(itemImg, newcell.cellImg, options, listener);
+                else
+                    loader.displayImage("http://zhiyou.lin366.com/" + itemImg, newcell.cellImg, options, listener);
 
 //                Log.i("3.24", " bigID " + goods_cursor_big.getString(0));
 //                Log.i("3.24", " itemID " + goods_cursor_big.getString(1));

@@ -74,7 +74,7 @@ public class BuyItemListActivity extends AppCompatActivity {
                     if (!goLogin.isShowing())
                         goLogin.show();
                 } else {
-                    Log.d("12/30", "listconfirmLayout CLICKED!!!");
+//                    Log.d("12/30", "listconfirmLayout CLICKED!!!");
                     Bundle bundle = new Bundle();
                     bundle.putInt("WhichItem", lastItem);
                     Functions.go(false, BuyItemListActivity.this, BuyItemListActivity.this,

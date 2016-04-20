@@ -21,13 +21,13 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.flyingtravel.R;
+import com.flyingtravel.Utility.DataBaseHelper;
+import com.flyingtravel.Utility.Functions;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
-import com.flyingtravel.R;
-import com.flyingtravel.Utility.DataBaseHelper;
-import com.flyingtravel.Utility.Functions;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -144,7 +144,10 @@ public class BuyItemDetailActivity extends AppCompatActivity {
             if (goods_cursor.getString(2) != null)
                 ItemHeader.setText(goods_cursor.getString(2));
             if (goods_cursor.getString(3) != null)
-                loader.displayImage("http://zhiyou.lin366.com/" + goods_cursor.getString(3)
+                if (goods_cursor.getString(3).startsWith("http://"))
+                    loader.displayImage(goods_cursor.getString(3)
+                            , ItemImg, options, listener);
+                else loader.displayImage("http://zhiyou.lin366.com/" + goods_cursor.getString(3)
                         , ItemImg, options, listener);
             new checkitem(new Functions.TaskCallBack() {
                 @Override
@@ -250,7 +253,9 @@ public class BuyItemDetailActivity extends AppCompatActivity {
                     * Integer.valueOf(numberText[i].getText().toString()) + "");
             totalprice[0] += Integer.valueOf(totalText[i].getText().toString());
             totalPrice.setText(totalprice[0] + "");
-            loader.displayImage("http://zhiyou.lin366.com/" + itemImg, Img[i], options, listener);
+            if(itemImg.startsWith("http://"))
+            loader.displayImage(itemImg, Img[i], options, listener);
+            else loader.displayImage("http://zhiyou.lin366.com/" + itemImg, Img[i], options, listener);
 
             final int finalI = i;
             addButton[i].setOnClickListener(new View.OnClickListener() {
