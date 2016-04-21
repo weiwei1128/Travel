@@ -113,14 +113,15 @@ public class HomepageActivity extends FragmentActivity {
             // Check Permissions Now
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION);
+        } else {
+            UI();
+
+            changeFragment(mainFragment);
+            homeImg.setClickable(false);
+            homeImg.setImageResource(R.drawable.tab_selected_home);
+            homeText.setTextColor(getResources().getColor(R.color.blue_click));
         }
 
-        UI();
-
-        changeFragment(mainFragment);
-        homeImg.setClickable(false);
-        homeImg.setImageResource(R.drawable.tab_selected_home);
-        homeText.setTextColor(getResources().getColor(R.color.blue_click));
     }
 
     @Override
@@ -133,7 +134,7 @@ public class HomepageActivity extends FragmentActivity {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 //        Log.d("4.7","HA:"+getSupportFragmentManager()+"=manager"+getSupportFragmentManager().getFragments());
         transaction.replace(R.id.fragment_test, f);
-        transaction.commit();
+        transaction.commitAllowingStateLoss();
     }
 
     void UI() {
@@ -390,6 +391,13 @@ public class HomepageActivity extends FragmentActivity {
             if(grantResults.length == 1
                     && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 // We can now safely use the API we requested access to
+
+                UI();
+
+                changeFragment(mainFragment);
+                homeImg.setClickable(false);
+                homeImg.setImageResource(R.drawable.tab_selected_home);
+                homeText.setTextColor(getResources().getColor(R.color.blue_click));
 
             } else {
                 // Permission was denied or request was cancelled
