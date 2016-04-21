@@ -232,6 +232,37 @@ public class HttpService extends Service {
                 }
 //                message="";//test
 //                Log.e("3.10","news: "+message); //3.10 OK
+                DataBaseHelper helper = DataBaseHelper.getmInstance(context);
+                SQLiteDatabase database = helper.getWritableDatabase();
+                Cursor news_cursor = database.query("news", new String[]{"title", "link"}, null, null, null, null, null);
+                if (news_cursor != null && message != null && message.length > 0) {
+                    ContentValues cv = new ContentValues();
+//                Log.e("3.10","news cursor count: "+news_cursor.getCount());
+                    news_cursor.moveToFirst();
+                    if (news_cursor.getCount() == 0) {
+                        for (int i = 0; i < count; i++) {
+                            cv.clear();
+                            cv.put("title", message[i]);
+                            cv.put("link", link[i]);
+                            long result2 = database.insert("news", null, cv);
+                        }
+
+//                    Log.e("3.10","news insert DB result: "+result);
+                    } else //資料不相同 -> 更新
+                        for (int i = 0; i < count; i++) {
+                            news_cursor.moveToPosition(i);
+                            if (!news_cursor.getString(0).equals(message[i])) {
+                                cv.clear();
+                                cv.put("title", message[i]);
+                                cv.put("link", link[i]);
+                                //.update("special_activity", cv, "special_id=?", new String[]{jsonObjects[i][0]});
+                                long result2 = database.update("news", cv, "title=?", new String[]{news_cursor.getString(i)});
+                            }
+                        }
+//                    Log.e("3.10","news update DB result: "+result);
+
+                    news_cursor.close();
+                }
                 return message;
             }
 
@@ -239,37 +270,7 @@ public class HttpService extends Service {
 
         @Override
         protected void onPostExecute(String[] s) {
-            DataBaseHelper helper = DataBaseHelper.getmInstance(context);
-            SQLiteDatabase database = helper.getWritableDatabase();
-            Cursor news_cursor = database.query("news", new String[]{"title", "link"}, null, null, null, null, null);
-            if (news_cursor != null && s != null && s.length > 0) {
-                ContentValues cv = new ContentValues();
-//                Log.e("3.10","news cursor count: "+news_cursor.getCount());
-                news_cursor.moveToFirst();
-                if (news_cursor.getCount() == 0) {
-                    for (int i = 0; i < count; i++) {
-                        cv.clear();
-                        cv.put("title", s[i]);
-                        cv.put("link", link[i]);
-                        long result = database.insert("news", null, cv);
-                    }
 
-//                    Log.e("3.10","news insert DB result: "+result);
-                } else //資料不相同 -> 更新
-                    for (int i = 0; i < count; i++) {
-                        news_cursor.moveToPosition(i);
-                        if (!news_cursor.getString(0).equals(s[i])) {
-                            cv.clear();
-                            cv.put("title", s[i]);
-                            cv.put("link", link[i]);
-                            //.update("special_activity", cv, "special_id=?", new String[]{jsonObjects[i][0]});
-                            long result = database.update("news", cv, "title=?", new String[]{news_cursor.getString(i)});
-                        }
-                    }
-//                    Log.e("3.10","news update DB result: "+result);
-
-                news_cursor.close();
-            }
 //            else Log.e("3.10","news: cursor=NULL? message:"+s);
             super.onPostExecute(s);
         }
@@ -368,29 +369,17 @@ public class HttpService extends Service {
                 }
             }
             if (jsonObjects != null) {
-                Map<String, String[][]> fromnet = new HashMap<>();
-                fromnet.put("item", jsonObjects);
-                return fromnet;
-            } else
-                return null;
-        }
-
-        @Override
-        protected void onPostExecute(Map<String, String[][]> s) {
-            if (s != null) {
-//                Log.e("4.19","S != null");
                 Intent intent = new Intent("news");
                 intent.putExtra("news", true);
                 sendBroadcast(intent);
 
-                String[][] jsonObjects = s.get("item");
 //                Log.e("3.10","special_activity item size:"+jsonObjects.length);
                 DataBaseHelper helper = DataBaseHelper.getmInstance(context);
                 SQLiteDatabase database = helper.getWritableDatabase();
 //                database.beginTransaction();
                 Cursor special = database.query("special_activity", new String[]{"special_id", "title", "img", "content", "price", "click"},
                         null, null, null, null, null);
-                if (special != null && jsonObjects != null) {
+                if (special != null) {
 //                    Log.e("4.19","special != null"+jsonObjects.length);
 
                     if (special.getCount() == 0) //如果還沒新增過資料->直接新增!
@@ -452,14 +441,16 @@ public class HttpService extends Service {
                             if (special_dul != null)
                                 special_dul.close();
                         }
-
                     }
                     special.close();
                 }
-//                database.endTransaction();
-//                database.close();
-            }
-//            else Log.e("4.19", "S = null");
+                return null;
+            } else
+                return null;
+        }
+
+        @Override
+        protected void onPostExecute(Map<String, String[][]> s) {
 
             super.onPostExecute(s);
         }
@@ -517,6 +508,12 @@ public class HttpService extends Service {
             try {
                 state = new JSONObject(getString.substring(
                         getString.indexOf("{"), getString.lastIndexOf("}") + 1)).getString("states");
+
+            } catch (JSONException | NullPointerException e) {
+                e.printStackTrace();
+            }
+            try {
+
                 totalcount = new JSONObject(getString).getString("totalCount");
             } catch (JSONException | NullPointerException e) {
                 e.printStackTrace();
@@ -613,17 +610,8 @@ public class HttpService extends Service {
                 }
                 ifOK = true;
                 Count = Integer.parseInt(totalcount);
-            }
-
-
-            Map<String, String[][]> fromnet = new HashMap<>();
-            fromnet.put("item", jsonObjects);
-            return fromnet;
-        }
-
-        @Override
-        protected void onPostExecute(Map<String, String[][]> stringStringMap) {
-            String[][] jsonObjects = stringStringMap.get("item");
+            } else return null;
+            //===start writing to DB==//
             if (ifOK && Count != 0) {
                 DataBaseHelper helper = DataBaseHelper.getmInstance(context);
                 SQLiteDatabase database = helper.getWritableDatabase();
@@ -687,6 +675,15 @@ public class HttpService extends Service {
                 if (goods_cursor != null)
                     goods_cursor.close();
             }
+
+            Map<String, String[][]> fromnet = new HashMap<>();
+            fromnet.put("item", jsonObjects);
+            return fromnet;
+        }
+
+        @Override
+        protected void onPostExecute(Map<String, String[][]> stringStringMap) {
+
             super.onPostExecute(stringStringMap);
         }
     }
