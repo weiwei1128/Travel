@@ -67,7 +67,7 @@ public class MainFragment extends Fragment {
             context.registerReceiver(getNewsBroadcast, new IntentFilter("news"));
             context.registerReceiver(getNewsBroadcast, new IntentFilter("banner"));
         }
-        String message = "讀取資料中";
+        String message = getContext().getResources().getString(R.string.loading_text);
         SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
         DataBaseHelper helper = DataBaseHelper.getmInstance(context);
         final SQLiteDatabase database = helper.getWritableDatabase();
@@ -205,7 +205,7 @@ Linkify.addLinks(legalDescription, privacyPolicyMatcher, "privacy:");
 
 //        news = new MyTextview(context);
         news = new MyTextview2(context);
-        news.setText("讀取資料中");
+        news.setText(getContext().getResources().getString(R.string.loading_text));
         news.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         params.gravity = Gravity.CENTER_VERTICAL;
@@ -302,7 +302,7 @@ Linkify.addLinks(legalDescription, privacyPolicyMatcher, "privacy:");
                 if (intent.getBooleanExtra("news", false)) {
                     DataBaseHelper helper = DataBaseHelper.getmInstance(context);
                     SQLiteDatabase database = helper.getWritableDatabase();
-                    String message = "讀取資料中";
+                    String message = getContext().getResources().getString(R.string.loading_text);
                     SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
                     final Cursor news_cursor = database.query("news", new String[]{"title", "link"}, null, null, null, null, null);
                     if (news_cursor != null && news_cursor.getCount() > 0) {

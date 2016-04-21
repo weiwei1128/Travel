@@ -113,7 +113,7 @@ public class RecordActivity extends FragmentActivity  {
 
     private void initViewPager(){
         List<android.support.v4.app.Fragment> fragments = getFragments();
-        RecordFragmentPagerAdapter adapter = new RecordFragmentPagerAdapter(getSupportFragmentManager(), fragments);
+        RecordFragmentPagerAdapter adapter = new RecordFragmentPagerAdapter(getSupportFragmentManager(), fragments,getApplicationContext());
 
         ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
         viewPager.setAdapter(adapter);
@@ -148,7 +148,7 @@ public class RecordActivity extends FragmentActivity  {
                 // Permission was denied or request was cancelled
                 ActivityCompat.requestPermissions(this,
                         new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION);
-                Toast.makeText(RecordActivity.this, "請允許寶島好智遊存取您的位置!", Toast.LENGTH_LONG).show();
+                Toast.makeText(RecordActivity.this, getApplicationContext().getResources().getString(R.string.requestLocation_text), Toast.LENGTH_LONG).show();
             }
         }
     }

@@ -100,7 +100,7 @@ public class CheckScheduleActivity extends AppCompatActivity {
 //        Log.i("3.25", "setWebView");
         //WEBVIEW VERSION
         final ProgressDialog dialog = new ProgressDialog(CheckScheduleActivity.this);
-        dialog.setMessage("載入中");
+        dialog.setMessage(CheckScheduleActivity.this.getResources().getString(R.string.loading_text));
         dialog.show();
 
         ifWebView = true;
@@ -150,7 +150,8 @@ public class CheckScheduleActivity extends AppCompatActivity {
                 Functions.go(false, CheckScheduleActivity.this,
                         CheckScheduleActivity.this, CheckScheduleOKActivity.class, bundle);
             } else
-                Toast.makeText(CheckScheduleActivity.this, "資料錯誤!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(CheckScheduleActivity.this,
+                        CheckScheduleActivity.this.getResources().getString(R.string.wrongData_text), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -167,7 +168,7 @@ public class CheckScheduleActivity extends AppCompatActivity {
         @Override
         protected void onPreExecute() {
 //            Log.e("3.25", "OnPreExecute");
-            dialog.setMessage("抓取資料中");
+            dialog.setMessage(CheckScheduleActivity.this.getResources().getString(R.string.loading_text));
             dialog.setCancelable(false);
             dialog.show();
 
@@ -243,12 +244,12 @@ public class CheckScheduleActivity extends AppCompatActivity {
                             e.printStackTrace();
                         }
                         try {
-                            itemcontent[i] = "姓名：" + jsonArray.getJSONObject(i).getString("accept_name");
+                            itemcontent[i] = CheckScheduleActivity.this.getResources().getString(R.string.name_textColon) + jsonArray.getJSONObject(i).getString("accept_name");
                         } catch (JSONException | NullPointerException e) {
                             e.printStackTrace();
                         }
                         try {
-                            itemcontent[i] = itemcontent[i] + "\n電話：" + jsonArray.getJSONObject(i).getString("mobile");
+                            itemcontent[i] = itemcontent[i] + "\n"+CheckScheduleActivity.this.getResources().getString(R.string.tel_textColon) + jsonArray.getJSONObject(i).getString("mobile");
                         } catch (JSONException | NullPointerException e) {
                             e.printStackTrace();
                         }

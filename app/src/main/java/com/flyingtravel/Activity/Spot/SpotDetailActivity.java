@@ -61,7 +61,7 @@ public class SpotDetailActivity extends AppCompatActivity {
                     while (location_cursor.moveToNext()) {
                         Latitude = location_cursor.getDouble(0);
                         Longitude = location_cursor.getDouble(1);
-                        Log.d("3/8_抓取位置", Latitude.toString() + Longitude.toString());
+//                        Log.d("3/8_抓取位置", Latitude.toString() + Longitude.toString());
                     }
                 }
                 location_cursor.close();
@@ -160,21 +160,24 @@ public class SpotDetailActivity extends AppCompatActivity {
         SpotName.setText(globalVariable.SpotDataSorted.get(mPosition).getName());
 
         if (globalVariable.SpotDataSorted.get(mPosition).getOpenTime().equals("")) {
-            SpotOpenTime.setText("1. 開放時間：無");
+            SpotOpenTime.setText(SpotDetailActivity.this.getResources().getString(R.string.OpenTime_text)+
+                    SpotDetailActivity.this.getResources().getString(R.string.Empty_text));
         } else {
-            SpotOpenTime.setText("1. 開放時間：" + globalVariable.SpotDataSorted.get(mPosition).getOpenTime());
+            SpotOpenTime.setText(SpotDetailActivity.this.getResources().getString(R.string.OpenTime_text)+ globalVariable.SpotDataSorted.get(mPosition).getOpenTime());
         }
 
         if (globalVariable.SpotDataSorted.get(mPosition).getAdd().equals("")) {
-            SpotAddress.setText("2. 地址：無");
+            SpotAddress.setText(SpotDetailActivity.this.getResources().getString(R.string.Address_text)+
+                    SpotDetailActivity.this.getResources().getString(R.string.Empty_text));
         } else {
-            SpotAddress.setText("2. 地址：" + globalVariable.SpotDataSorted.get(mPosition).getAdd());
+            SpotAddress.setText(SpotDetailActivity.this.getResources().getString(R.string.Address_text) + globalVariable.SpotDataSorted.get(mPosition).getAdd());
         }
 
         if (globalVariable.SpotDataSorted.get(mPosition).getTicketInfo().equals("")) {
-            SpotTicketInfo.setText("門票資訊：無");
+            SpotTicketInfo.setText(SpotDetailActivity.this.getResources().getString(R.string.TicketInfo_text)+
+                    SpotDetailActivity.this.getResources().getString(R.string.Empty_text));
         } else {
-            SpotTicketInfo.setText("門票資訊：" + globalVariable.SpotDataSorted.get(mPosition).getTicketInfo());
+            SpotTicketInfo.setText(SpotDetailActivity.this.getResources().getString(R.string.TicketInfo_text) + globalVariable.SpotDataSorted.get(mPosition).getTicketInfo());
         }
 
         SpotDetail.setText(globalVariable.SpotDataSorted.get(mPosition).getInfoDetail());

@@ -84,7 +84,7 @@ public class ShopRecordAdapter extends BaseAdapter {
             if (order_cursor.getString(3) != null)
                 item.order_date.setText(order_cursor.getString(3));
             if (order_cursor.getString(4) != null)
-                item.order_info.setText("收件人姓名: " + order_cursor.getString(4));
+                item.order_info.setText(m_context.getResources().getString(R.string.addressee_textColon) + order_cursor.getString(4));
 //            if (order_cursor.getString(5) != null)
 //                item.order_info.append("\n電話: " + order_cursor.getString(5));
             if (order_cursor.getString(7) != null)

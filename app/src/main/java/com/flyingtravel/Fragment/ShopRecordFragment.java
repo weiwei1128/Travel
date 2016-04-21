@@ -47,7 +47,8 @@ public class ShopRecordFragment extends Fragment {
 
     @Override
     public void onResume() {
-        dialog.setMessage("載入中...");
+        //
+        dialog.setMessage(getContext().getResources().getString(R.string.loading_text));
         dialog.show();
 //        Log.e("3.22", "!!!!!!shop record on resume!!!!!!");
         new OrderUpdate(userId, OldCount, context, new Functions.TaskCallBack() {
@@ -147,7 +148,7 @@ public class ShopRecordFragment extends Fragment {
                 }
             }).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         } else if (OldCount == 0)
-            Toast.makeText(context, "尚無資料!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, getContext().getResources().getString(R.string.nofile_text), Toast.LENGTH_SHORT).show();
     }
 
 

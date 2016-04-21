@@ -45,7 +45,7 @@ public class BuyItemListConfirmWebview extends AppCompatActivity {
 
     void setWebView(String id) {
         final ProgressDialog dialog = new ProgressDialog(BuyItemListConfirmWebview.this);
-        dialog.setMessage("載入中");
+        dialog.setMessage(BuyItemListConfirmWebview.this.getResources().getString(R.string.loading_text));
         dialog.setCancelable(false);
         dialog.show();
 
@@ -70,7 +70,7 @@ public class BuyItemListConfirmWebview extends AppCompatActivity {
         backImg = (LinearLayout) findViewById(R.id.checkschedulelist_backImg);
         header = (TextView) findViewById(R.id.checkschedulelistHeader);
         webView = (WebView) findViewById(R.id.webView);
-        header.setText("付款頁面");
+        header.setText(BuyItemListConfirmWebview.this.getResources().getString(R.string.Pay_text));
         backImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

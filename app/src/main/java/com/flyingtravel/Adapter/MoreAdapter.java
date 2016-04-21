@@ -50,10 +50,10 @@ public class MoreAdapter extends BaseAdapter {
 
         switch (position){
             case 0:
-                item.itemName.setText("關於我們");
+                item.itemName.setText(context.getResources().getString(R.string.aboutUs_text));
                 break;
             case 1:
-                item.itemName.setText("規劃行程");
+                item.itemName.setText(context.getResources().getString(R.string.planschedule_text));
                 break;
         }
 

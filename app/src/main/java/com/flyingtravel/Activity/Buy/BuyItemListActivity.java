@@ -63,13 +63,13 @@ public class BuyItemListActivity extends AppCompatActivity {
                     AlertDialog goLogin = new AlertDialog.Builder(BuyItemListActivity.this).create();
 
                     // 設置對話框標題
-                    goLogin.setTitle("系統提示");
+                    goLogin.setTitle(BuyItemListActivity.this.getResources().getString(R.string.systemMessage_text));
                     goLogin.setCancelable(false);
                     // 設置對話框消息
-                    goLogin.setMessage("請先登入");
+                    goLogin.setMessage(BuyItemListActivity.this.getResources().getString(R.string.loginFirst_text));
                     // 添加選擇按鈕並注冊監聽
-                    goLogin.setButton("確定", listenerLogin);
-                    goLogin.setButton2("取消", listenerLogin);
+                    goLogin.setButton(BuyItemListActivity.this.getResources().getString(R.string.ok_text), listenerLogin);
+                    goLogin.setButton2(BuyItemListActivity.this.getResources().getString(R.string.cancel_text), listenerLogin);
                     // 顯示對話框
                     if (!goLogin.isShowing())
                         goLogin.show();

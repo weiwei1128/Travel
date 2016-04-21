@@ -90,12 +90,12 @@ public class MemberFragment extends Fragment {
                     // 創建退出對話框
                     AlertDialog isExit = new AlertDialog.Builder(context).create();
                     // 設置對話框標題
-                    isExit.setTitle("系統提示");
+                    isExit.setTitle(getContext().getResources().getString(R.string.systemMessage_text));
                     // 設置對話框消息
-                    isExit.setMessage("登出後會自動離開");
+                    isExit.setMessage(getContext().getResources().getString(R.string.logoutLeave_text));
                     // 添加選擇按鈕並注冊監聽
-                    isExit.setButton("確定", listener);
-                    isExit.setButton2("取消", listener);
+                    isExit.setButton(getContext().getResources().getString(R.string.ok_text), listener);
+                    isExit.setButton2(getContext().getResources().getString(R.string.cancel_text), listener);
                     // 顯示對話框
                     isExit.show();
                 }
@@ -143,8 +143,8 @@ public class MemberFragment extends Fragment {
     }
                 * */
                 //setting share information
-                sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "寶島好智遊");
-                sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, "寶島好智遊");
+                sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, getContext().getResources().getString(R.string.title_text));
+                sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, getContext().getResources().getString(R.string.title_text));
                 sharingIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(f));
                 sharingIntent.setType("image/jpeg");
 //                Log.d("4.18", "path:" + path + " lens: " + len+" bytes"+bytes.size());
@@ -153,7 +153,7 @@ public class MemberFragment extends Fragment {
 
 
 //                image/jpeg
-                startActivity(Intent.createChooser(sharingIntent, "分享至"));
+                startActivity(Intent.createChooser(sharingIntent, getContext().getResources().getString(R.string.shareto_text)));
             }
         });
 

@@ -117,7 +117,7 @@ public class SpecialAdapter extends BaseAdapter {
             if (special.getString(1) != null)
                 item.name.setText(special.getString(1));
             if (special.getString(4) != null)
-                item.what.setText("價格: " + special.getString(4));
+                item.what.setText(mContext.getResources().getString(R.string.price_text)+ special.getString(4));
             if (special.getString(2) != null)
                 if (special.getString(2).startsWith("http:"))
                     loader.displayImage(special.getString(2), item.m_img, options, listener);

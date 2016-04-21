@@ -109,7 +109,7 @@ public class SpecialActivity extends AppCompatActivity {
         viewPager.setAdapter(specialFragmentViewPagerAdapter);
         viewPager.setOnPageChangeListener(new PageListener());
         if (specialFragmentViewPagerAdapter.getCount() == 0)
-            Toast.makeText(this, "尚無資料！", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, SpecialActivity.this.getResources().getString(R.string.nofile_text), Toast.LENGTH_SHORT).show();
 //*/
 //
     }

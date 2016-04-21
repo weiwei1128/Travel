@@ -180,13 +180,14 @@ public class HomepageActivity extends FragmentActivity {
                     AlertDialog goLogin = new AlertDialog.Builder(HomepageActivity.this).create();
 
                     // 設置對話框標題
-                    goLogin.setTitle("系統提示");
+                    //getApplicationContext().getResources().getString(R.string.requestLocation_text)
+                    goLogin.setTitle(getApplicationContext().getResources().getString(R.string.systemMessage_text));
                     goLogin.setCancelable(false);
                     // 設置對話框消息
-                    goLogin.setMessage("請先登入");
+                    goLogin.setMessage(getApplicationContext().getResources().getString(R.string.LoginFirst_text));
                     // 添加選擇按鈕並注冊監聽
-                    goLogin.setButton("確定", listenerLogin);
-                    goLogin.setButton2("取消", listenerLogin);
+                    goLogin.setButton(getApplicationContext().getResources().getString(R.string.ok_text), listenerLogin);
+                    goLogin.setButton2(getApplicationContext().getResources().getString(R.string.cancel_text), listenerLogin);
                     // 顯示對話框
                     if (!goLogin.isShowing())
                         goLogin.show();
@@ -222,13 +223,13 @@ public class HomepageActivity extends FragmentActivity {
                     AlertDialog goLogin = new AlertDialog.Builder(HomepageActivity.this).create();
 
                     // 設置對話框標題
-                    goLogin.setTitle("系統提示");
+                    goLogin.setTitle(getApplicationContext().getResources().getString(R.string.systemMessage_text));
                     goLogin.setCancelable(false);
                     // 設置對話框消息
-                    goLogin.setMessage("請先登入");
+                    goLogin.setMessage(getApplicationContext().getResources().getString(R.string.LoginFirst_text));
                     // 添加選擇按鈕並注冊監聽
-                    goLogin.setButton(AlertDialog.BUTTON_NEGATIVE, "取消", listenerLogin);
-                    goLogin.setButton(AlertDialog.BUTTON_POSITIVE,"確定",listenerLogin);
+                    goLogin.setButton(AlertDialog.BUTTON_NEGATIVE, getApplicationContext().getResources().getString(R.string.cancel_text), listenerLogin);
+                    goLogin.setButton(AlertDialog.BUTTON_POSITIVE,getApplicationContext().getResources().getString(R.string.ok_text),listenerLogin);
                     /*
     On devices prior to Honeycomb, the button order (left to right) was POSITIVE - NEUTRAL - NEGATIVE.
     On newer devices using the Holo theme, the button order (left to right) is now NEGATIVE - NEUTRAL - POSITIVE.
@@ -343,12 +344,12 @@ public class HomepageActivity extends FragmentActivity {
             // 創建退出對話框
             AlertDialog isExit = new AlertDialog.Builder(this).create();
             // 設置對話框標題
-            isExit.setTitle("系統提示");
+            isExit.setTitle(getApplicationContext().getResources().getString(R.string.systemMessage_text));
             // 設置對話框消息
-            isExit.setMessage("確定要退出嗎");
+            isExit.setMessage(getApplicationContext().getResources().getString(R.string.LeaveMessage_text));
             // 添加選擇按鈕並注冊監聽
-            isExit.setButton("確定", listener);
-            isExit.setButton2("取消", listener);
+            isExit.setButton(getApplicationContext().getResources().getString(R.string.ok_text), listener);
+            isExit.setButton2(getApplicationContext().getResources().getString(R.string.cancel_text), listener);
             // 顯示對話框
             isExit.show();
 
@@ -403,7 +404,7 @@ public class HomepageActivity extends FragmentActivity {
                 // Permission was denied or request was cancelled
                 ActivityCompat.requestPermissions(this,
                         new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION);
-                Toast.makeText(HomepageActivity.this, "請允許寶島好智遊存取您的位置!", Toast.LENGTH_LONG).show();
+                Toast.makeText(HomepageActivity.this, getApplicationContext().getResources().getString(R.string.requestLocation_text), Toast.LENGTH_LONG).show();
             }
         }
     }

@@ -134,7 +134,7 @@ public class SpotListFragment extends Fragment implements
         viewPager = (ViewPager) view.findViewById(R.id.spotList_viewpager);
 
         if (globalVariable.SpotDataSorted.isEmpty()) {
-            Log.e("3/23_SpotListFragment", "no sort");
+//            Log.e("3/23_SpotListFragment", "no sort");
             progressBar.setVisibility(View.VISIBLE);
             spotList_pageLayout.setVisibility(View.INVISIBLE);
             //viewPager.setAdapter(null);
@@ -270,7 +270,7 @@ public class SpotListFragment extends Fragment implements
 
     @Override
     public void onConnectionSuspended(int i) {
-        Log.i(TAG, "Location services suspended. Please reconnect.");
+//        Log.i(TAG, "Location services suspended. Please reconnect.");
     }
 
     @Override
@@ -340,7 +340,7 @@ public class SpotListFragment extends Fragment implements
             if (intent != null) {
                 Boolean isSpotSorted = intent.getBooleanExtra("isSpoted", false);
                 if (isSpotSorted) {
-                    Log.e("3/23_景點排序完畢", "Receive Broadcast");
+//                    Log.e("3/23_景點排序完畢", "Receive Broadcast");
 
                     count = globalVariable.SpotDataSorted.size();
                     count = count / 20;

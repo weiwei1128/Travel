@@ -49,7 +49,7 @@ public class TwApi extends AsyncTask<String, Void, ArrayList<SpotData>> {
 
     @Override
     protected ArrayList<SpotData> doInBackground(String... params) {
-        Log.e("3/23_", "=========TwApi======doInBackground");
+//        Log.e("3/23_", "=========TwApi======doInBackground");
         try {
             //Create an HTTP client
             HttpClient client = new DefaultHttpClient();
@@ -63,7 +63,7 @@ public class TwApi extends AsyncTask<String, Void, ArrayList<SpotData>> {
                 HttpEntity entity = response.getEntity();
                 InputStream content = entity.getContent();
 
-                Log.e("3/23_TWSpotJson", "start to JsonParse");
+//                Log.e("3/23_TWSpotJson", "start to JsonParse");
                 JsonReader reader = new JsonReader(new InputStreamReader(content, "UTF-8"));
 
                 reader.beginObject();
@@ -153,11 +153,13 @@ public class TwApi extends AsyncTask<String, Void, ArrayList<SpotData>> {
                 reader.endObject();
                 reader.close();
                 content.close();
-            } else {
-                Log.e(TAG, "Server responded with status code: " + statusLine.getStatusCode());
             }
+//            else {
+//                Log.e(TAG, "Server responded with status code: " + statusLine.getStatusCode());
+//            }
         } catch (Exception ex) {
-            Log.e(TAG, "Failed to send HTTP POST request due to: " + ex);
+            ex.printStackTrace();
+//            Log.e(TAG, "Failed to send HTTP POST request due to: " + ex);
         }
 
         isTWAPILoaded = true;
@@ -166,10 +168,10 @@ public class TwApi extends AsyncTask<String, Void, ArrayList<SpotData>> {
             intent.putExtra("isTWAPILoaded", true);
             mcontext.sendBroadcast(intent);
         }
-        Log.e("3/23_TWSpotJson", "Loaded to globalVariable");
+//        Log.e("3/23_TWSpotJson", "Loaded to globalVariable");
 
 
-        Log.e("3/23_", "=========TWSpotJson======Write to DB");
+//        Log.e("3/23_", "=========TWSpotJson======Write to DB");
         DataBaseHelper helper = DataBaseHelper.getmInstance(mcontext);
         SQLiteDatabase database = helper.getWritableDatabase();
         Cursor spotDataRaw_cursor = database.query("spotDataRaw", new String[]{"spotName", "spotAdd",
@@ -177,7 +179,7 @@ public class TwApi extends AsyncTask<String, Void, ArrayList<SpotData>> {
                         "openTime", "ticketInfo", "infoDetail"},
                 null, null, null, null, null);
         Integer InfoLength = globalVariable.SpotDataTW.size();
-        Log.e("3/23_TwApi", InfoLength.toString());
+//        Log.e("3/23_TwApi", InfoLength.toString());
         if (spotDataRaw_cursor != null && InfoLength > 0) {
             if (spotDataRaw_cursor.getCount() == 0) {
 
@@ -244,7 +246,7 @@ public class TwApi extends AsyncTask<String, Void, ArrayList<SpotData>> {
     }
 
     protected void onPostExecute(ArrayList<SpotData> s) {
-        Log.e("3/23_TwApi", "DONE");
+//        Log.e("3/23_TwApi", "DONE");
         super.onPostExecute(s);
     }
 

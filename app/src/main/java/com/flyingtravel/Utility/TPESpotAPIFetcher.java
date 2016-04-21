@@ -52,7 +52,7 @@ public class TPESpotAPIFetcher extends AsyncTask<Void, Void, TPESpotJson> {
 
     @Override
     protected TPESpotJson doInBackground(Void... params) {
-        Log.e("3/23_", "=========TPESpotJson======doInBackground");
+//        Log.e("3/23_", "=========TPESpotJson======doInBackground");
         TPESpotJson spotJson = null;
         try {
             //Create an HTTP client
@@ -66,7 +66,7 @@ public class TPESpotAPIFetcher extends AsyncTask<Void, Void, TPESpotJson> {
             if (statusLine.getStatusCode() == 200) {
                 HttpEntity entity = response.getEntity();
                 InputStream content = entity.getContent();
-                Log.d("3/23_TPESpotJson", "response from server");
+//                Log.d("3/23_TPESpotJson", "response from server");
 
                 JsonReader reader = new JsonReader(new InputStreamReader(content, "UTF-8"));
                 GsonBuilder gsonBuilder = new GsonBuilder();

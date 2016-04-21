@@ -160,7 +160,8 @@ public class BuyItemListConfirmActivity extends AppCompatActivity {
                                 int money = Integer.valueOf(goods_cursor_big.getString(3)) * smallItemCount;
                                 totalmoney = totalmoney + money;
                                 buylistText.append(goods_cursor.getString(2) + " " + goods_cursor_big.getString(2) + " : "
-                                        + smallItemCount + "個 $" + money + "\n");
+                                        + smallItemCount +BuyItemListConfirmActivity.this.getResources().getString(R.string.a_text)
+                                        +" $" + money + "\n");
                                 cartList.put(SmallitemID, smallItemCount);
                             }
                         }
@@ -216,7 +217,7 @@ public class BuyItemListConfirmActivity extends AppCompatActivity {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            progressDialog.setMessage("傳送資料中...");
+            progressDialog.setMessage(BuyItemListConfirmActivity.this.getResources().getString(R.string.sending_text));
             progressDialog.show();
         }
 
@@ -299,7 +300,8 @@ public class BuyItemListConfirmActivity extends AppCompatActivity {
                 if (progressDialog.isShowing())
                     progressDialog.dismiss();
                 progressDialog.setCancelable(false);
-                progressDialog.setMessage("送出成功\n即將跳轉至付款畫面");
+                progressDialog.setMessage(BuyItemListConfirmActivity.this.getResources().getString(R.string.sendingOk_text)
+                        + "\n" + BuyItemListConfirmActivity.this.getResources().getString(R.string.gotoPay_text));
                 progressDialog.show();
                 Timer a = new Timer();
                 a.schedule(new TimerTask() {
@@ -318,7 +320,7 @@ public class BuyItemListConfirmActivity extends AppCompatActivity {
                 );
 
             } else {
-                Toast.makeText(BuyItemListConfirmActivity.this, "傳送失敗!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(BuyItemListConfirmActivity.this, BuyItemListConfirmActivity.this.getResources().getString(R.string.sendingError_text), Toast.LENGTH_SHORT).show();
             }
         }
     }

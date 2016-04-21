@@ -1,8 +1,11 @@
 package com.flyingtravel.Adapter;
 
+import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+
+import com.flyingtravel.R;
 
 import java.util.List;
 
@@ -12,11 +15,14 @@ import java.util.List;
  */
 public class RecordFragmentPagerAdapter extends FragmentPagerAdapter {
     private List<Fragment> fragments;
-    private String tabTitles[] = new String[] {"旅遊軌跡", "旅遊日誌"};
-
-    public RecordFragmentPagerAdapter(FragmentManager fm,List<Fragment> fragments) {
+    Context context;
+    private String tabTitles[] ;
+    public RecordFragmentPagerAdapter(FragmentManager fm,List<Fragment> fragments,Context context) {
         super(fm);
         this.fragments = fragments;
+        this.context = context;
+        tabTitles= new String[] {context.getResources().getString(R.string.track_text),
+                context.getResources().getString(R.string.trackmemo_text)};
     }
 
     @Override

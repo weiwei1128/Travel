@@ -43,9 +43,11 @@
     <string name="password_text">密碼</string>
     <string name="passwordInput_text">請輸入密碼</string>
     <string name="name_text">姓名</string>
+    <string name="name_textColon">姓名</string>
     <string name="nameInput_text">請輸入姓名</string>
     <string name="accountemailInput_text">請輸入帳號及電子郵件</string>
     <string name="startRecord_text">開始記錄</string>
+    <string name="stopRecord_text">停止記錄</string>
     <string name="recordSpot_text">記錄景點</string>
     <string name="login_text">登入</string>
     <string name="reg_text">註冊</string>
@@ -76,6 +78,52 @@
     <string name="deliverCount_text">運費</string>
     <string name="price_text">價格 :</string>
     <string name="spotDetail_text">景點詳細資訊</string>
-
+    <string name="spotLoading_text">景點資料龐大，載入中…</string>
+    <string name="spotMarkerLoading_text">景點Marker載入中…</string>
+    <string name="recordTitleInput_text">請輸入這趟旅程的標題</string>
+    <string name="emptyInput_text">未輸入任何文字！</string>
+    <string name="uploaded_text">心得已上傳！</string>
+    <string name="uploadedPic_text">圖片已上傳！</string>
+    <string name="camera_text">相機</string>
+    <string name="album_text">相簿</string>
+    <string name="uploadPhoto_text">上傳照片</string>
+    <string name="chooseFile_text">選擇檔案</string>
+    <string name="noUpload_text">未新增任何日誌</string>
+    <string name="noUploadmemo_text">未上傳景點心得。</string>
+    <string name="requestLocation_text">請允許寶島好智遊存取您的位置!</string>
+    <string name="systemMessage_text">系統提示</string>
+    <string name="LoginFirst_text">請先登入</string>
+    <string name="LeaveMessage_text">確定要離開嗎</string>
+    <string name="InputSpotName_text">請輸入景點名稱</string>
+    <string name="loading_text">載入中…</string>
+    <string name="nofile_text">尚無資料!</string>
+    <string name="logoutLeave_text">登出後會自動離開</string>
+    <string name="shareto_text">分享至</string>
+    <string name="aboutUs_text">關於我們</string>
+    <string name="track_text">旅遊軌跡</string>
+    <string name="trackmemo_text">旅遊日誌</string>
+    <string name="spotMap_text">景點地圖</string>
+    <string name="spotList_text">景點列表</string>
+    <string name="notsend_text">訊息尚未送出</string>
+    <string name="sending_text">傳送中......</string>
+    <string name="connecterror_text">與伺服器連線錯誤!</string>
+    <string name="reply_text">===系統回覆====</string>
+    <string name="noaccountAndpassword_text">未輸入帳號或密碼</string>
+    <string name="InputData_text">請輸入資料</string>
+    <string name="regReply_text">註冊訊息:</string>
+    <string name="errorReply_text">錯誤訊息:</string>
+    <string name="logining_text">登入中…</string>
+    <string name="nonet_text">請連接網路！</string>
+    <string name="loginok_text">登入成功！</string>
+    <string name="Empty_text">無</string>
+    <string name="OpenTime_text">1. 開放時間：</string>
+    <string name="Address_text">2. 地址：</string>
+    <string name="TicketInfo_text">門票資訊：</string>
+    <string name="loginFirst_text">請先登入</string>
+    <string name="a_text">個</string>
+    <string name="sendingOk_text">送出成功</string>
+    <string name="sendingError_text">傳送失敗!</string>
+    <string name="gotoPay_text">即將跳轉至付款畫面</string>
+    <string name="Pay_text">付款頁面</string>
 
 </resources>

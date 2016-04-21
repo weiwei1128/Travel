@@ -141,7 +141,7 @@ public class RecordDiaryFragment extends Fragment {
                 mlistView.setAdapter(mAdapter);
                 mlistView.setOnItemClickListener(new itemListener());
                 if (mAdapter.getCount() == 0)
-                    Toast.makeText(getActivity(), "未新增任何日誌！", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), getContext().getResources().getString(R.string.noUpload_text), Toast.LENGTH_SHORT).show();
             }
         }
         else {

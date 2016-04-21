@@ -56,7 +56,7 @@ public class ShopRecordItemActivity extends AppCompatActivity {
             new getOrder().execute();
             getDB();
         } else {
-            Toast.makeText(ShopRecordItemActivity.this, "資料錯誤!!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(ShopRecordItemActivity.this, this.getResources().getString(R.string.wrongData_text), Toast.LENGTH_SHORT).show();
         }
 
     }
@@ -118,7 +118,7 @@ public class ShopRecordItemActivity extends AppCompatActivity {
         protected void onPreExecute() {
             //Loading Dialog
             mDialog = new ProgressDialog(ShopRecordItemActivity.this);
-            mDialog.setMessage("接收資料中......");
+            mDialog.setMessage(context.getResources().getString(R.string.loading_text));
             mDialog.setCancelable(false);
             if (!mDialog.isShowing()) {
                 mDialog.show();
@@ -165,11 +165,11 @@ public class ShopRecordItemActivity extends AppCompatActivity {
                 } catch (IOException | NullPointerException e) {
                     e.printStackTrace();
                 }
-                try {
-                    Log.e("3.15", "getString::" + getString);
-                } catch (NullPointerException e) {
-                    e.printStackTrace();
-                }
+//                try {
+//                    Log.e("3.15", "getString::" + getString);
+//                } catch (NullPointerException e) {
+//                    e.printStackTrace();
+//                }
                 String state = null;
                 try {
                     state = new JSONObject(getString.substring(getString.indexOf("{"),

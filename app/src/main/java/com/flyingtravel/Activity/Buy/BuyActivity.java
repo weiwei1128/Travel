@@ -126,7 +126,7 @@ public class BuyActivity extends AppCompatActivity {
         viewPager.setAdapter(adapter);
         viewPager.setOnPageChangeListener(new PageListener());
         if (adapter.getCount() == 0)
-            Toast.makeText(BuyActivity.this, "尚無資料!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(BuyActivity.this, BuyActivity.this.getResources().getString(R.string.nofile_text), Toast.LENGTH_SHORT).show();
         //        Log.e("3.8", "currentItem:" + viewPager.getCurrentItem() + "" + adapter.getCurrentPosition());
     }
 

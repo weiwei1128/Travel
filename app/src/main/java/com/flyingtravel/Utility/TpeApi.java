@@ -49,7 +49,7 @@ public class TpeApi extends AsyncTask<String, Void, ArrayList<SpotData>> {
 
     @Override
     protected ArrayList<SpotData> doInBackground(String... params) {
-        Log.e("3/23_", "=========TpeApi======doInBackground");
+//        Log.e("3/23_", "=========TpeApi======doInBackground");
         try {
             //Create an HTTP client
             HttpClient client = new DefaultHttpClient();
@@ -63,7 +63,7 @@ public class TpeApi extends AsyncTask<String, Void, ArrayList<SpotData>> {
                 HttpEntity entity = response.getEntity();
                 InputStream content = entity.getContent();
 
-                Log.e("3/23_TpeSpotJson", "start to JsonParse");
+//                Log.e("3/23_TpeSpotJson", "start to JsonParse");
                 JsonReader reader = new JsonReader(new InputStreamReader(content, "UTF-8"));
 
                 reader.beginObject();
@@ -174,9 +174,9 @@ public class TpeApi extends AsyncTask<String, Void, ArrayList<SpotData>> {
             intent.putExtra("isTPEAPILoaded", true);
             mcontext.sendBroadcast(intent);
         }
-        Log.e("3/23_TPESpotJson", "Loaded to globalVariable");
+//        Log.e("3/23_TPESpotJson", "Loaded to globalVariable");
 
-        Log.e("3/23_", "=========TPESpotJson======Write to DB");
+//        Log.e("3/23_", "=========TPESpotJson======Write to DB");
         DataBaseHelper helper = DataBaseHelper.getmInstance(mcontext);
         SQLiteDatabase database = helper.getWritableDatabase();
         Cursor spotDataRaw_cursor = database.query("spotDataRaw", new String[]{"spotName", "spotAdd",
@@ -184,7 +184,7 @@ public class TpeApi extends AsyncTask<String, Void, ArrayList<SpotData>> {
                         "openTime", "ticketInfo", "infoDetail"},
                 null, null, null, null, null);
         Integer ResultsLength = globalVariable.SpotDataTPE.size();
-        Log.e("3/23_TpeApi", ResultsLength.toString());
+//        Log.e("3/23_TpeApi", ResultsLength.toString());
         if (spotDataRaw_cursor != null && ResultsLength > 0) {
             if (spotDataRaw_cursor.getCount() == 0) {
 
@@ -251,7 +251,7 @@ public class TpeApi extends AsyncTask<String, Void, ArrayList<SpotData>> {
     }
 
     protected void onPostExecute(ArrayList<SpotData> s) {
-        Log.e("3/23_TpeApi", "DONE");
+//        Log.e("3/23_TpeApi", "DONE");
         super.onPostExecute(s);
     }
 }

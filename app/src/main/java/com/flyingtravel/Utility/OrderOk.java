@@ -159,7 +159,7 @@ public class OrderOk extends AsyncTask<String, Void, String[]> {
             for (int i = 0; i < s.length; i++) {
                 new OrderList(s[i], context).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             }
-        else Log.e("3.23", "OrderOK NULL");
+//        else Log.e("3.23", "OrderOK NULL");
         super.onPostExecute(s);
     }
 }

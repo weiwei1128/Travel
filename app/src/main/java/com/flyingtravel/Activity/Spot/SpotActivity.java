@@ -98,7 +98,7 @@ public class SpotActivity extends FragmentActivity {
 
     private void initViewPager(){
         List<Fragment> fragments = getFragments();
-        SpotFragmentPagerAdapter adapter = new SpotFragmentPagerAdapter(getSupportFragmentManager(), fragments);
+        SpotFragmentPagerAdapter adapter = new SpotFragmentPagerAdapter(getSupportFragmentManager(), fragments,SpotActivity.this);
 
         ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
         viewPager.setAdapter(adapter);
@@ -138,7 +138,7 @@ public class SpotActivity extends FragmentActivity {
                 // Permission was denied or request was cancelled
                 ActivityCompat.requestPermissions(this,
                         new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION);
-                Toast.makeText(SpotActivity.this, "請允許寶島好智遊存取您的位置!", Toast.LENGTH_LONG).show();
+                Toast.makeText(SpotActivity.this, SpotActivity.this.getResources().getString(R.string.requestLocation_text), Toast.LENGTH_LONG).show();
             }
         }
     }

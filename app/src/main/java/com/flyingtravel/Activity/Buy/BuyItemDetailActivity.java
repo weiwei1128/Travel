@@ -417,7 +417,7 @@ public class BuyItemDetailActivity extends AppCompatActivity {
         @Override
         protected void onPreExecute() {
             mDialog = new ProgressDialog(BuyItemDetailActivity.this);
-            mDialog.setMessage("讀取資料中......");
+            mDialog.setMessage(BuyItemDetailActivity.this.getResources().getString(R.string.loading_text));
 //            mDialog.setCancelable(false);
             if (!mDialog.isShowing()) {
                 mDialog.show();

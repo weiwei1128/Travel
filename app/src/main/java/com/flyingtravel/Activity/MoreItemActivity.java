@@ -38,7 +38,7 @@ public class MoreItemActivity extends AppCompatActivity {
             }
         });
         final ProgressDialog dialog = new ProgressDialog(this);
-        dialog.setMessage("載入中");
+        dialog.setMessage(this.getResources().getString(R.string.loading_text));
         dialog.show();
         Bundle bundle = this.getIntent().getExtras();
         if (bundle.containsKey("position")) {
@@ -60,11 +60,11 @@ public class MoreItemActivity extends AppCompatActivity {
             switch (position) {
                 case 0://關於我們
                     myURL = "http://zhiyou.lin366.com/help.aspx?tid=84";
-                    header.setText("關於我們");
+                    header.setText(this.getResources().getString(R.string.aboutUs_text));
                     break;
                 case 1://規劃行程
                     myURL = "http://zhiyou.lin366.com/diy/";
-                    header.setText("規劃行程");
+                    header.setText(this.getResources().getString(R.string.planschedule_text));
                     break;
             }
             webView.loadUrl(myURL);

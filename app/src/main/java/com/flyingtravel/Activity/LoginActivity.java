@@ -117,7 +117,8 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (accountEdit.getText().toString().equals("") || !accountEdit.isShown()
                         || passEdit.getText().toString().equals("") || !passEdit.isShown()) {
-                    Toast.makeText(LoginActivity.this, "未輸入帳號或密碼", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(LoginActivity.this,
+                            LoginActivity.this.getResources().getString(R.string.noaccountAndpassword_text), Toast.LENGTH_SHORT).show();
                 } else {
 //                    Log.d("1/4", "account:" + accountEdit.getText() + "_ \n password:" + passEdit.getText() + "_");
                     login_Data loginData = new login_Data(accountEdit.getText().toString(),
@@ -150,7 +151,8 @@ public class LoginActivity extends AppCompatActivity {
                     public void onClick(View v) {
                         if (accountEdit.getText().toString().equals("")
                                 || emailEdit.getText().toString().equals("")) {
-                            Toast.makeText(LoginActivity.this, "請輸入資料", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(LoginActivity.this,
+                                    LoginActivity.this.getResources().getString(R.string.InputData_text), Toast.LENGTH_SHORT).show();
                         } else {
                             findPwd findPwd = new findPwd(findpwdDialog, accountEdit.getText().toString(),
                                     emailEdit.getText().toString());
@@ -184,7 +186,8 @@ public class LoginActivity extends AppCompatActivity {
                                 || phone.getText().toString().equals("")
                                 || email.getText().toString().equals("")
                                 ) {
-                            Toast.makeText(LoginActivity.this, "請輸入資料", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(LoginActivity.this,
+                                    LoginActivity.this.getResources().getString(R.string.InputData_text), Toast.LENGTH_SHORT).show();
                         } else {
                             sighUp sighUp = new sighUp(account.getText().toString(),
                                     password.getText().toString(), name.getText().toString(),
@@ -299,7 +302,7 @@ public class LoginActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Boolean aBoolean) {
             if (aBoolean)
-                message = "註冊訊息:" + message;
+                message = LoginActivity.this.getResources().getString(R.string.regReply_text) + message;
 
             Toast.makeText(LoginActivity.this, message, Toast.LENGTH_SHORT).show();
             Timer a = new Timer();
@@ -371,7 +374,7 @@ public class LoginActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Boolean s) {
             if (s)
-                message = "錯誤訊息:" + message;
+                message = LoginActivity.this.getResources().getString(R.string.errorReply_text) + message;
 
             Toast.makeText(LoginActivity.this, message, Toast.LENGTH_SHORT).show();
             Timer a = new Timer();
@@ -400,7 +403,7 @@ public class LoginActivity extends AppCompatActivity {
         protected void onPreExecute() {
             //Loading Dialog
             mDialog = new ProgressDialog(LoginActivity.this);
-            mDialog.setMessage("登入中......");
+            mDialog.setMessage(LoginActivity.this.getResources().getString(R.string.logining_text));
             mDialog.setCancelable(false);
             if (!mDialog.isShowing()) {
                 mDialog.show();
@@ -570,10 +573,10 @@ public class LoginActivity extends AppCompatActivity {
 
             //等toast跑完再跳到下個activity
             if (login_result == null)
-                login_result = "請連接網路！";
+                login_result = LoginActivity.this.getResources().getString(R.string.nonet_text);
             if (!OK)
-                login_result = "錯誤:" + login_result;
-            else login_result = "成功登入！";
+                login_result = LoginActivity.this.getResources().getString(R.string.errorReply_text) + login_result;
+            else login_result = LoginActivity.this.getResources().getString(R.string.loginok_text);
             final Toast toast = Toast.makeText(getApplicationContext(),
 //                    "=====測試結果=====" + "\n" +
                     login_result, Toast.LENGTH_LONG);

@@ -69,7 +69,7 @@ public class ServiceActivity extends AppCompatActivity {
             public void onClick(View v) {
 //                Log.d("3.9", "ServiceActivity sendLayout clicked!" + commentEdt.getText().toString());
                 if (commentEdt.getText().toString().equals(""))
-                    Toast.makeText(ServiceActivity.this, "沒有輸入資料！", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ServiceActivity.this, ServiceActivity.this.getResources().getString(R.string.emptyInput_text), Toast.LENGTH_SHORT).show();
                 else
                     new sendMessage(commentEdt.getText().toString()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             }
@@ -83,12 +83,12 @@ public class ServiceActivity extends AppCompatActivity {
                     // 創建退出對話框
                     AlertDialog isExit = new AlertDialog.Builder(ServiceActivity.this).create();
                     // 設置對話框標題
-                    isExit.setTitle("訊息尚未送出");
+                    isExit.setTitle(ServiceActivity.this.getResources().getString(R.string.notsend_text));
                     // 設置對話框消息
-                    isExit.setMessage("確定要離開此頁嗎");
+                    isExit.setMessage(ServiceActivity.this.getResources().getString(R.string.LeaveMessage_text));
                     // 添加選擇按鈕並注冊監聽
-                    isExit.setButton("確定", listener);
-                    isExit.setButton2("取消", listener);
+                    isExit.setButton(ServiceActivity.this.getResources().getString(R.string.ok_text), listener);
+                    isExit.setButton2(ServiceActivity.this.getResources().getString(R.string.cancel_text), listener);
                     // 顯示對話框
                     isExit.show();
                 } else {
@@ -135,7 +135,7 @@ public class ServiceActivity extends AppCompatActivity {
         protected void onPreExecute() {
             //Loading Dialog
             mDialog = new ProgressDialog(ServiceActivity.this);
-            mDialog.setMessage("傳送中......");
+            mDialog.setMessage(ServiceActivity.this.getResources().getString(R.string.sending_text));
             mDialog.setCancelable(false);
             if (!mDialog.isShowing()) {
                 mDialog.show();
@@ -181,8 +181,8 @@ public class ServiceActivity extends AppCompatActivity {
             mDialog.dismiss();
             commentEdt.setText("");
             if (s == null)
-                s = "與伺服器連線錯誤!";
-            Toast.makeText(ServiceActivity.this, "===系統回復====\n" + s, Toast.LENGTH_SHORT).show();
+                s = ServiceActivity.this.getResources().getString(R.string.connecterror_text);
+            Toast.makeText(ServiceActivity.this, ServiceActivity.this.getResources().getString(R.string.reply_text)+"\n" + s, Toast.LENGTH_SHORT).show();
             super.onPostExecute(s);
         }
 

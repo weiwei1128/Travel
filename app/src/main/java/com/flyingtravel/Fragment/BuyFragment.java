@@ -46,7 +46,7 @@ public class BuyFragment extends Fragment {
         gridView.setAdapter(adapter);
         gridView.setOnItemClickListener(new itemListener());
         if (adapter.getCount() == 0)
-            Toast.makeText(context, "尚無資料!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, getContext().getResources().getString(R.string.nofile_text), Toast.LENGTH_SHORT).show();
         return view;
     }
 

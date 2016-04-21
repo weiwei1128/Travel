@@ -79,7 +79,7 @@ public class SpotListViewFragment extends Fragment {
         mlistView.setOnItemClickListener(new itemListener());
 
         search = (SearchView) view.findViewById(R.id.searchView);
-        search.setQueryHint("請輸入景點名稱");
+        search.setQueryHint(getContext().getResources().getString(R.string.InputSpotName_text));
         search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {

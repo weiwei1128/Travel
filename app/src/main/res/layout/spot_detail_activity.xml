@@ -16,7 +16,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:text="景點詳細資訊"
+                android:text="@string/spotDetail_text"
                 android:id="@+id/spotdetailHeader"
                 android:textSize="22dp"
                 android:gravity="center_vertical|center_horizontal"

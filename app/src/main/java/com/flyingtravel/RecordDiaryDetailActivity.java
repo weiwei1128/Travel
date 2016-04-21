@@ -281,7 +281,7 @@ public class RecordDiaryDetailActivity extends AppCompatActivity implements
 
     @Override
     public void onConnectionSuspended(int i) {
-        Log.i(TAG, "Location services suspended. Please reconnect.");
+//        Log.i(TAG, "Location services suspended. Please reconnect.");
     }
 
     @Override
@@ -364,7 +364,7 @@ public class RecordDiaryDetailActivity extends AppCompatActivity implements
                     Polyline line = mMap.addPolyline(polylineOpt);
                     line.setWidth(10);
 
-                    Log.d("3/20_還原軌跡", "RetrieveRouteFromDB" + track_latLng.toString());
+//                    Log.d("3/20_還原軌跡", "RetrieveRouteFromDB" + track_latLng.toString());
 
                 }
 
@@ -425,7 +425,7 @@ public class RecordDiaryDetailActivity extends AppCompatActivity implements
         // Raw height and width of image
         final int height = options.outHeight;
         final int width = options.outWidth;
-        Log.e("3/27_", "Marker size. " + height + "," + width);
+//        Log.e("3/27_", "Marker size. " + height + "," + width);
         int inSampleSize = 1;
 
         if (height > reqHeight || width > reqWidth) {
@@ -514,7 +514,7 @@ public class RecordDiaryDetailActivity extends AppCompatActivity implements
                         Bitmap bmp = BitmapFactory.decodeByteArray(d, 0, d.length);
                         Map<String, Bitmap> item = new HashMap<String, Bitmap>();
                         item.put("image", bmp);
-                        Log.e("3/27_image: ", bmp.toString());
+//                        Log.e("3/27_image: ", bmp.toString());
                         items.add(item);
                     }
                     mViewHolder.MemoImg.setImageBitmap(items.get(position).get("image"));
@@ -586,9 +586,9 @@ public class RecordDiaryDetailActivity extends AppCompatActivity implements
                 if (memo_cursor.getCount() != 0) {
                     memo_cursor.moveToPosition(position);
                     mViewHolder.DiaryString.setText(memo_cursor.getString(2));
-                    Log.e("3/27_memo content: ", memo_cursor.getString(2));
+//                    Log.e("3/27_memo content: ", memo_cursor.getString(2));
                 } else {
-                    mViewHolder.DiaryString.setText("未上傳景點心得。");
+                    mViewHolder.DiaryString.setText(getApplicationContext().getResources().getString(R.string.noUploadmemo_text));
                 }
                 memo_cursor.close();
             }

@@ -140,7 +140,7 @@ public class SpotMapFragment extends Fragment implements
 
         if (!globalVariable.isAPILoaded) {
 //            Log.e("3/23_", "API is not ready");
-            mProgressDialog.setMessage("景點資料龐大，載入中...");
+            mProgressDialog.setMessage(getContext().getResources().getString(R.string.spotLoading_text));
             mProgressDialog.show();
         } else {
             if (CurrentLocation != null) {
@@ -152,7 +152,7 @@ public class SpotMapFragment extends Fragment implements
             }
             if (globalVariable.MarkerOptionsArray.isEmpty()) {
 //                Log.e("3/23_", "Marker is not ready");
-                mProgressDialog.setMessage("景點Marker載入中...");
+                mProgressDialog.setMessage(getContext().getResources().getString(R.string.spotMarkerLoading_text));
                 mProgressDialog.show();
                 // Get Marker Info
                 //new GetMarkerInfo(getActivity()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
@@ -264,7 +264,7 @@ public class SpotMapFragment extends Fragment implements
         // 已經連線到Google Services
         // 啟動位置更新服務
         // 位置資訊更新的時候，應用程式會自動呼叫LocationListener.onLocationChanged
-        Log.i(TAG, "Location services connected.");
+//        Log.i(TAG, "Location services connected.");
 
         Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         if (location == null) {
@@ -273,7 +273,7 @@ public class SpotMapFragment extends Fragment implements
         } else {
             HandleNewLocation(location);
             if (globalVariable.isAPILoaded && globalVariable.SpotDataSorted.isEmpty()) {
-                Log.e("3/23_Connected", "事先Sort");
+//                Log.e("3/23_Connected", "事先Sort");
                 new GetSpotsNSort(getActivity(), CurrentLocation.getLatitude(),
                         CurrentLocation.getLongitude()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             }
@@ -360,7 +360,7 @@ public class SpotMapFragment extends Fragment implements
                     }
                     if (globalVariable.MarkerOptionsArray.isEmpty()) {
                         // Get Marker Info
-                        mProgressDialog.setMessage("景點Marker載入中...");
+                        mProgressDialog.setMessage(getContext().getResources().getString(R.string.spotMarkerLoading_text));
                         //new GetMarkerInfo(getActivity()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                     } else {
                         if (mProgressDialog.isShowing()) {

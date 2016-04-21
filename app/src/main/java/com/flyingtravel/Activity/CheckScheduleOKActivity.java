@@ -26,7 +26,8 @@ public class CheckScheduleOKActivity extends AppCompatActivity {
         if (bundle != null && bundle.containsKey("order_id")) {
             itemid = bundle.getString("order_id");
             setupWebview();
-        } else Toast.makeText(CheckScheduleOKActivity.this, "資料錯誤！", Toast.LENGTH_SHORT).show();
+        } else Toast.makeText(CheckScheduleOKActivity.this,
+                CheckScheduleOKActivity.this.getResources().getString(R.string.wrongData_text), Toast.LENGTH_SHORT).show();
 
         backImg = (LinearLayout) findViewById(R.id.checkschedule_backImg);
         backImg.setOnClickListener(new View.OnClickListener() {
@@ -41,7 +42,7 @@ public class CheckScheduleOKActivity extends AppCompatActivity {
     void setupWebview() {
         //WEBVIEW VERSION
         final ProgressDialog dialog = new ProgressDialog(CheckScheduleOKActivity.this);
-        dialog.setMessage("載入中");
+        dialog.setMessage(CheckScheduleOKActivity.this.getResources().getString(R.string.loading_text));
         dialog.setCancelable(false);
         dialog.show();
 
