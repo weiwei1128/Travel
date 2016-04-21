@@ -125,5 +125,8 @@
     <string name="sendingError_text">傳送失敗!</string>
     <string name="gotoPay_text">即將跳轉至付款畫面</string>
     <string name="Pay_text">付款頁面</string>
-
+    <string name="app_name">寶島好智遊</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="google_play_service_missing">裝置沒有安裝Google Play服務</string>
+    <string name="title_activity_check_schedule_activity_new">CheckScheduleActivityNew</string>
 </resources>

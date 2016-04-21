@@ -81,6 +81,7 @@ public class SpecialAdapter extends BaseAdapter {
             if (number / 10 + 1 == page_no)
                 number = number % 10;
             else number = 10;
+        else number=10;
         return number;
     }
 

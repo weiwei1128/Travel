@@ -2,6 +2,7 @@ package com.flyingtravel.Fragment;
 
 
 import android.app.AlertDialog;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -19,6 +20,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.flyingtravel.R;
 import com.flyingtravel.Utility.DataBaseHelper;
@@ -32,7 +34,7 @@ import java.io.InputStream;
 public class MemberFragment extends Fragment {
     Context context;
     TextView NameText, PhoneText, EmailText, AddrText;
-    LinearLayout logoutLayout, shareLayout;
+    LinearLayout logoutLayout, shareLayout,ratingLayout;
 
     public MemberFragment() {
         // Required empty public constructor
@@ -56,6 +58,7 @@ public class MemberFragment extends Fragment {
     public void memberData(View view) {
         logoutLayout = (LinearLayout) view.findViewById(R.id.member_logout_layout);
         shareLayout = (LinearLayout) view.findViewById(R.id.member_share_layout);
+        ratingLayout = (LinearLayout)view.findViewById(R.id.member_value_layout);
         NameText = (TextView) view.findViewById(R.id.member_name_text);
         PhoneText = (TextView) view.findViewById(R.id.member_phone_text);
         EmailText = (TextView) view.findViewById(R.id.member_email_text);
@@ -157,7 +160,22 @@ public class MemberFragment extends Fragment {
             }
         });
 
-
+    //======rating====//
+        ratingLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                launchMarket();
+            }
+        });
+    }
+    private void launchMarket() {
+        Uri uri = Uri.parse("market://details?id=" + context.getPackageName());
+        Intent myAppLinkToMarket = new Intent(Intent.ACTION_VIEW, uri);
+        try {
+            startActivity(myAppLinkToMarket);
+        } catch (ActivityNotFoundException e) {
+            Toast.makeText(context, " unable to find market app", Toast.LENGTH_LONG).show();
+        }
     }
 
     DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {

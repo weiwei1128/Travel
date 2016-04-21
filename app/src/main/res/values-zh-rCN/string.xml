@@ -125,4 +125,8 @@
     <string name="sendingError_text">传送失败!</string>
     <string name="gotoPay_text">即将跳转至付款画面</string>
     <string name="Pay_text">付款页面</string>
+    <string name="app_name">宝岛好智游</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="google_play_service_missing">装置没有安装Google Play服务</string>
+    <string name="title_activity_check_schedule_activity_new">CheckScheduleActivityNew</string>
 </resources>

@@ -613,7 +613,7 @@ public class RecordTrackFragment extends Fragment implements
     }
 
     private void HandleNewLocation(Location location) {
-        Log.d(TAG, location.toString());
+//        Log.d(TAG, location.toString());
 
         CurrentLocation = location;
         CurrentLatlng = new LatLng(location.getLatitude(), location.getLongitude());
