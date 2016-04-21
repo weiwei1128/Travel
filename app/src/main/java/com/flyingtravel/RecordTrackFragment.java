@@ -580,7 +580,7 @@ public class RecordTrackFragment extends Fragment implements
         Location last_location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         if (last_location == null) {
             LocationServices.FusedLocationApi.requestLocationUpdates
-                    (mGoogleApiClient, mLocationRequest, (LocationListener) getContext());
+                    (mGoogleApiClient, mLocationRequest, (LocationListener) this);
         } else {
             HandleNewLocation(last_location);
         }
