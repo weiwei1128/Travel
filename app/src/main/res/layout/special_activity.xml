@@ -92,7 +92,7 @@
         android:layout_centerHorizontal="true"
         android:layout_weight="1"
         android:gravity="center_vertical|center_horizontal"
-        android:text="即時好康"
+        android:text="@string/special_text"
         android:textColor="@color/white"
         android:textSize="22dp" />
 

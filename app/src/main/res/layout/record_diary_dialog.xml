@@ -7,7 +7,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="是否要記錄景點心得或上傳照片？"
+        android:text="@string/recordupload_text"
         android:textColor="@color/black"
         android:textSize="18dp"
         android:id="@+id/dialog_header_text"
@@ -28,7 +28,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="旅程標題"
+            android:text="@string/recordtitle_text"
             android:id="@+id/title_TextView"
             android:layout_margin="10dp" />
         <EditText
@@ -41,7 +41,7 @@
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:id="@+id/title_confirmTextView"
-            android:text="確  定"
+            android:text="@string/ok_text"
             android:layout_gravity="center"
             android:gravity="center"
             android:layout_weight="1"
@@ -82,7 +82,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:text="景點心得"
+                    android:text="@string/recordmemo_text"
                     android:id="@+id/content_TextView"
                     android:layout_centerHorizontal="true" />
                 <EditText
@@ -145,7 +145,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="50dp"
-            android:text="確  定"
+            android:text="@string/ok_text"
             android:layout_gravity="center"
             android:gravity="center"
             android:layout_weight="1"

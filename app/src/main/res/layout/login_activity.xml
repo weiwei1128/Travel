@@ -13,7 +13,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="忘記密碼了嗎"
+        android:text="@string/forgetpassword_text"
         android:id="@+id/home_forgetpa_text"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
@@ -36,7 +36,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="登入"
+            android:text="@string/login_text"
             android:id="@+id/home_login_text"
             android:textColor="@color/black"
             android:textSize="25dp"
@@ -52,7 +52,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="註冊"
+            android:text="@string/reg_text"
             android:id="@+id/home_sighup_text"
             android:textSize="25dp"
             android:textColor="@color/black"
@@ -65,7 +65,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:text="密碼"
+        android:text="@string/password_text"
         android:id="@+id/home_pass_text"
         android:layout_above="@+id/linearLayout"
         android:layout_marginBottom="25dp"
@@ -86,12 +86,12 @@
         android:layout_centerHorizontal="true"
         android:padding="10dp"
         android:background="@drawable/border_rec_red"
-        android:hint="請輸入密碼" />
+        android:hint="@string/passwordInput_text" />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:text="帳號"
+        android:text="@string/account_text"
         android:id="@+id/home_account_text"
         android:layout_above="@+id/home_pass_text"
         android:layout_marginBottom="27dp"
@@ -112,7 +112,7 @@
         android:layout_centerHorizontal="true"
         android:background="@drawable/border_rec_blue"
         android:padding="10dp"
-        android:hint="請輸入帳號" />
+        android:hint="@string/accountInput_text" />
 
     <TextView
         android:layout_width="wrap_content"

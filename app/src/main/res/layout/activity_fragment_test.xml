@@ -43,7 +43,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="首頁"
+                android:text="@string/home_text"
                 android:textColor="#0044BB"
                 android:textSize="14dp" />
         </LinearLayout>
@@ -73,7 +73,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="會員"
+                android:text="@string/member_text"
                 android:textColor="@color/gray"
                 android:textSize="14dp" />
         </LinearLayout>
@@ -103,7 +103,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="訂購紀錄"
+                android:text="@string/order_text"
                 android:textColor="@color/gray"
                 android:textSize="14dp" />
         </LinearLayout>
@@ -133,7 +133,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="更多"
+                android:text="@string/more_text"
                 android:textColor="@color/gray"
                 android:textSize="14dp" />
         </LinearLayout>

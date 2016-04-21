@@ -7,7 +7,7 @@
     <TextView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="請輸入註冊訊息"
+        android:text="@string/regMessage_text"
         android:textColor="@color/white"
         android:textSize="18dp"
         android:layout_gravity="center"
@@ -35,7 +35,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="帳號"
+                android:text="@string/account_text"
                 android:textColor="@color/blue"
                 android:textSize="16dp"
                 android:background="@drawable/border_rec_blue"
@@ -45,6 +45,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/reg_account"
+                android:hint="@string/accountInput_text"
                 android:textSize="16dp"
                 android:textColor="@color/black" />
         </LinearLayout>
@@ -61,7 +62,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="密碼"
+                android:text="@string/password_text"
                 android:textColor="@color/blue"
                 android:textSize="16dp"
                 android:background="@drawable/border_rec_blue"
@@ -71,6 +72,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/reg_password"
+                android:hint="@string/passwordInput_text"
                 android:textColor="@color/black"
                 android:textSize="16dp" />
         </LinearLayout>
@@ -87,7 +89,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="姓名"
+                android:text="@string/name_text"
                 android:textColor="@color/blue"
                 android:textSize="16dp"
                 android:background="@drawable/border_rec_blue"
@@ -97,6 +99,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/reg_name"
+                android:hint="@string/nameInput_text"
                 android:textSize="16dp"
                 android:textColor="@color/black" />
         </LinearLayout>
@@ -113,7 +116,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="手機"
+                android:text="@string/tel_text"
                 android:textColor="@color/blue"
                 android:textSize="16dp"
                 android:background="@drawable/border_rec_blue"
@@ -123,6 +126,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/reg_phone"
+                android:hint="@string/telInput_text"
                 android:textSize="16dp"
                 android:textColor="@color/black" />
         </LinearLayout>
@@ -139,7 +143,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="電子郵件"
+                android:text="@string/email_text"
                 android:textSize="16dp"
                 android:textColor="@color/blue"
                 android:background="@drawable/border_rec_blue"
@@ -149,6 +153,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/reg_email"
+                android:hint="@string/emailInput_text"
                 android:textColor="@color/black"
                 android:textSize="16dp" />
         </LinearLayout>
@@ -164,7 +169,7 @@
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="確定"
+                android:text="@string/ok_text"
                 android:id="@+id/reg_ok"
                 android:layout_marginRight="10dp"
                 android:background="@color/blue"
@@ -175,7 +180,7 @@
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="取消"
+                android:text="@string/cancel_text"
                 android:id="@+id/reg_cancel"
                 android:textSize="16dp"
                 android:textStyle="bold"

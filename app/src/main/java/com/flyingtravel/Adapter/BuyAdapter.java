@@ -127,7 +127,7 @@ public class BuyAdapter extends BaseAdapter {
 
             if (goods_cursor.getString(2) != null)
                 mcell.buyText.setText(goods_cursor.getString(2));
-            else mcell.buyText.setText("資料錯誤");
+            else mcell.buyText.setText(R.string.wrongData_text);
 
             if (!(mcell.clickText.getText().toString().substring(3).startsWith("0") &&
                     mcell.clickText.getText().toString().endsWith("0")))

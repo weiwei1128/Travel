@@ -56,7 +56,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="left|center"
                     android:gravity="center"
-                    android:text="購買於"
+                    android:text="@string/buyfrom_text"
                     android:textColor="@color/black"
                     android:textSize="15dp" />
 
@@ -64,7 +64,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="right"
-                    android:text="訂單號碼"
+                    android:text="@string/orderNo_text"
                     android:textColor="@color/black"
                     android:textSize="15dp" />
 
@@ -91,7 +91,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="left"
-                    android:text="付款方式"
+                    android:text="@string/orderPayment_text"
                     android:textColor="@color/black"
                     android:textSize="15dp" />
 
@@ -99,7 +99,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="right"
-                    android:text="交易狀態"
+                    android:text="@string/orderState_text"
                     android:textColor="@color/black"
                     android:textSize="15dp" />
 
@@ -148,7 +148,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="運送方式"
+                        android:text="@string/deliverMethod_text"
                         android:textColor="@color/black"
                         android:textSize="15dp" />
 
@@ -170,7 +170,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="收件人"
+                        android:text="@string/addressee_text"
                         android:textColor="@color/black"
                         android:textSize="15dp" />
 
@@ -221,7 +221,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="備註事項"
+                        android:text="@string/memo_text"
                         android:textColor="@color/black"
                         android:textSize="15dp" />
 
@@ -255,7 +255,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="價格小計"
+                        android:text="@string/memonycount_text"
                         android:textColor="@color/black"
                         android:textSize="15dp" />
 
@@ -279,7 +279,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="運費"
+                        android:text="@string/deliverCount_text"
                         android:textColor="@color/black"
                         android:textSize="15dp" />
 
@@ -301,7 +301,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="總計"
+                        android:text="@string/totalCount_text"
                         android:textColor="@color/black"
                         android:textSize="15dp" />
 
@@ -326,7 +326,7 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:gravity="center_vertical|center_horizontal"
-        android:text="訂單明細"
+        android:text="@string/orderDetail"
         android:textColor="@color/white"
         android:textSize="22dp" />
 

@@ -7,7 +7,7 @@
     <TextView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="請輸入帳號及電子郵件"
+        android:text="@string/accountemailInput_text"
         android:textColor="@color/white"
         android:textSize="18dp"
         android:textStyle="bold"
@@ -34,7 +34,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="帳號"
+                android:text="@string/account_text"
                 android:textColor="@color/blue"
                 android:textSize="16dp"
                 android:background="@drawable/border_rec_blue"
@@ -45,7 +45,8 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/findpwd_accountEdit"
                 android:textSize="16dp"
-                android:textColor="@color/black" />
+                android:textColor="@color/black"
+                android:hint="@string/accountInput_text" />
         </LinearLayout>
 
         <LinearLayout
@@ -59,7 +60,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="電子郵件"
+                android:text="@string/email_text"
                 android:layout_gravity="center"
                 android:textColor="@color/blue"
                 android:textSize="16dp"
@@ -73,7 +74,8 @@
                 android:id="@+id/findpwd_emailEdit"
                 android:layout_gravity="center"
                 android:textSize="16dp"
-                android:textColor="@color/black" />
+                android:textColor="@color/black"
+                android:hint="@string/passwordInput_text" />
         </LinearLayout>
 
         <LinearLayout
@@ -88,7 +90,7 @@
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="確定"
+                android:text="@string/ok_text"
                 android:id="@+id/findpwd_OkButt"
                 android:layout_gravity="center_horizontal"
                 android:textColor="@color/white"
@@ -100,7 +102,7 @@
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="取消"
+                android:text="@string/cancel_text"
                 android:id="@+id/findpwd_CancelButt"
                 android:textColor="@color/white"
                 android:textSize="16dp"

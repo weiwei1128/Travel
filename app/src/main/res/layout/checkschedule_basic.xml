@@ -46,7 +46,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="規劃行程"
+                android:text="@string/planschedule_text"
                 android:textColor="@color/red"
                 android:textSize="16dp" />
 
@@ -69,7 +69,7 @@
         android:layout_centerHorizontal="true"
         android:layout_weight="1"
         android:gravity="center_vertical|center_horizontal"
-        android:text="行程查詢"
+        android:text="@string/checkschedule_text"
         android:textColor="@color/white"
         android:textSize="22dp" />
 </RelativeLayout>

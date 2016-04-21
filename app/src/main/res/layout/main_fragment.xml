@@ -18,7 +18,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:text="寶島好智遊"
+            android:text="@string/title_text"
             android:id="@+id/mainHeader"
             android:layout_gravity="top|center"
             android:gravity="center"
@@ -54,7 +54,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="最新消息"
+                android:text="@string/news_text"
                 android:textSize="15dp"
                 android:textStyle="bold"
                 android:layout_margin="10dp"
@@ -125,7 +125,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="行程查詢"
+                        android:text="@string/checkschedule_text"
                         android:layout_gravity="center"
                         android:textSize="16dp"
                         android:textColor="@color/black"
@@ -151,7 +151,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="景點資訊"
+                        android:text="@string/spot_text"
                         android:layout_gravity="center"
                         android:textColor="@color/black"
                         android:textSize="16dp"
@@ -177,7 +177,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="伴手禮選購"
+                        android:text="@string/goods_text"
                         android:textColor="@color/black"
                         android:textSize="16dp"
                         android:layout_gravity="center"
@@ -210,7 +210,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="旅程紀錄"
+                        android:text="@string/record_text"
                         android:textSize="16dp"
                         android:textColor="@color/black"
                         android:gravity="center_vertical|center_horizontal"
@@ -237,7 +237,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="即時服務"
+                        android:text="@string/service_text"
                         android:textSize="16dp"
                         android:textColor="@color/black"
                         android:gravity="center_vertical|center_horizontal"
@@ -264,7 +264,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="即時好康"
+                        android:text="@string/special_text"
                         android:textSize="16dp"
                         android:textColor="@color/black"
                         android:gravity="center_vertical|center_horizontal"

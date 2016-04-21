@@ -50,7 +50,7 @@
         android:layout_weight="1"
         android:background="@color/blue"
         android:gravity="center_vertical|center_horizontal"
-        android:text="伴手禮列表"
+        android:text="@string/buyList_text"
         android:textColor="@color/white"
         android:textSize="22dp"
         android:layout_alignParentTop="true"

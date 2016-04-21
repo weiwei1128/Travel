@@ -13,7 +13,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="旅程紀錄"
+            android:text="@string/record_text"
             android:id="@+id/recordHeader"
             android:textSize="22dp"
             android:gravity="center_vertical|center_horizontal"
