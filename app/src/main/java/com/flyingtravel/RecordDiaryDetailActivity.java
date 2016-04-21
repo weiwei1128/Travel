@@ -52,7 +52,7 @@ import java.util.List;
 import java.util.Map;
 
 public class RecordDiaryDetailActivity extends AppCompatActivity implements
-        LocationListener,
+        com.google.android.gms.location.LocationListener,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener {
 
@@ -273,7 +273,7 @@ public class RecordDiaryDetailActivity extends AppCompatActivity implements
         Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         if (location == null) {
             LocationServices.FusedLocationApi.requestLocationUpdates
-                    (mGoogleApiClient, mLocationRequest, (LocationListener) this);
+                    (mGoogleApiClient, mLocationRequest, this);
         } else {
             //HandleNewLocation(location);
         }

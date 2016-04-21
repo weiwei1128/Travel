@@ -42,7 +42,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -58,7 +57,6 @@ import com.flyingtravel.Fragment.MoreFragment;
 import com.flyingtravel.Fragment.ShopRecordFragment;
 import com.flyingtravel.ImageSlide.MainImageFragment;
 import com.flyingtravel.Utility.Functions;
-import com.flyingtravel.Utility.GlobalVariable;
 import com.flyingtravel.Utility.HttpService;
 import com.flyingtravel.Utility.LoadApiService;
 import com.flyingtravel.Utility.View.MyTextview;
@@ -86,12 +84,6 @@ public class HomepageActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fragment_test);
-        UI();
-
-        changeFragment(mainFragment);
-        homeImg.setClickable(false);
-        homeImg.setImageResource(R.drawable.tab_selected_home);
-        homeText.setTextColor(getResources().getColor(R.color.blue_click));
 
         ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(HomepageActivity.this)
                 .build();
@@ -122,6 +114,13 @@ public class HomepageActivity extends FragmentActivity {
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION);
         }
+
+        UI();
+
+        changeFragment(mainFragment);
+        homeImg.setClickable(false);
+        homeImg.setImageResource(R.drawable.tab_selected_home);
+        homeText.setTextColor(getResources().getColor(R.color.blue_click));
     }
 
     @Override

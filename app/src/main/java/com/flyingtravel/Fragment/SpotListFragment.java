@@ -38,7 +38,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SpotListFragment extends Fragment implements
-        //LocationListener,
+        com.google.android.gms.location.LocationListener,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener {
 
@@ -229,7 +229,7 @@ public class SpotListFragment extends Fragment implements
     public void setUserVisibleHint(boolean isVisibleToUser) {
         if (isVisibleToUser) {
             //you are visible to user now - so set whatever you need
-            Log.e("3/23_SpotList", "setUserVisibleHint: Visible");
+            //Log.e("3/23_SpotList", "setUserVisibleHint: Visible");
             if (viewPager != null && viewPager.getAdapter() == null && pages != 0) {
                 if (adapter == null)
                     adapter = new SpotListFragmentViewPagerAdapter(getChildFragmentManager(), pages);
@@ -242,7 +242,7 @@ public class SpotListFragment extends Fragment implements
         }
         else {
             //you are no longer visible to the user so cleanup whatever you need
-            Log.e("3/23_SpotList", "setUserVisibleHint: not Visible");
+            //Log.e("3/23_SpotList", "setUserVisibleHint: not Visible");
             /*if (viewPager != null) {
                 viewPager.removeAllViews();
                 viewPager.removeOnPageChangeListener(new PageListener());
@@ -262,7 +262,7 @@ public class SpotListFragment extends Fragment implements
         Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         if (location == null) {
             LocationServices.FusedLocationApi.requestLocationUpdates
-                    (mGoogleApiClient, mLocationRequest, (LocationListener) getActivity());
+                    (mGoogleApiClient, mLocationRequest, (LocationListener) getContext());
         } else {
             //HandleNewLocation(location);
         }
@@ -284,14 +284,14 @@ public class SpotListFragment extends Fragment implements
         }
     }
 
-/*
+
     @Override
     public void onLocationChanged(Location location) {
         if (CurrentLocation != location) {
-            HandleNewLocation(CurrentLocation);
+            //HandleNewLocation(CurrentLocation);
         }
     }
-*/
+
     private void HandleNewLocation(Location location) {
         Log.d(TAG, location.toString());
 /*

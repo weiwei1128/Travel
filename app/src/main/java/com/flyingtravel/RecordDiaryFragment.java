@@ -6,13 +6,13 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.flyingtravel.Adapter.RecordDiaryFragmentAdapter;
 import com.flyingtravel.Utility.DataBaseHelper;
@@ -140,6 +140,8 @@ public class RecordDiaryFragment extends Fragment {
             if (mlistView != null) {
                 mlistView.setAdapter(mAdapter);
                 mlistView.setOnItemClickListener(new itemListener());
+                if (mAdapter.getCount() == 0)
+                    Toast.makeText(getActivity(), "未新增任何日誌！", Toast.LENGTH_SHORT).show();
             }
         }
         else {

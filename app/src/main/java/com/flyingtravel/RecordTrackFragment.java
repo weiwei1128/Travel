@@ -41,6 +41,9 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.flyingtravel.Utility.DataBaseHelper;
+import com.flyingtravel.Utility.Functions;
+import com.flyingtravel.Utility.TrackRouteService;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
@@ -56,9 +59,6 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
-import com.flyingtravel.Utility.DataBaseHelper;
-import com.flyingtravel.Utility.Functions;
-import com.flyingtravel.Utility.TrackRouteService;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
@@ -76,7 +76,7 @@ import java.util.Date;
  * create an instance of this fragment.
  */
 public class RecordTrackFragment extends Fragment implements
-        LocationListener,
+        com.google.android.gms.location.LocationListener,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener {
 
@@ -193,11 +193,13 @@ public class RecordTrackFragment extends Fragment implements
 
         // Gets to GoogleMap from the MapView and does initialization stuff
         mMap = mapView.getMap();
-        mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-        mMap.setMyLocationEnabled(true);
-        mMap.getUiSettings().setCompassEnabled(true);
-        mMap.getUiSettings().setAllGesturesEnabled(true);
-        mMap.getUiSettings().setMapToolbarEnabled(false);
+        if (mMap != null) {
+            mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+            mMap.setMyLocationEnabled(true);
+            mMap.getUiSettings().setCompassEnabled(true);
+            mMap.getUiSettings().setAllGesturesEnabled(true);
+            mMap.getUiSettings().setMapToolbarEnabled(false);
+        }
 
         // Needs to call MapsInitializer before doing any CameraUpdateFactory calls
         MapsInitializer.initialize(this.getActivity());
@@ -578,7 +580,7 @@ public class RecordTrackFragment extends Fragment implements
         Location last_location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         if (last_location == null) {
             LocationServices.FusedLocationApi.requestLocationUpdates
-                    (mGoogleApiClient, mLocationRequest, (LocationListener) getActivity());
+                    (mGoogleApiClient, mLocationRequest, (LocationListener) getContext());
         } else {
             HandleNewLocation(last_location);
         }

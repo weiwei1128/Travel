@@ -21,6 +21,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.flyingtravel.Utility.DataBaseHelper;
+import com.flyingtravel.Utility.GetSpotsNSort;
+import com.flyingtravel.Utility.GlobalVariable;
+import com.flyingtravel.Utility.LoadApiService;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
@@ -34,15 +38,11 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.flyingtravel.Utility.GlobalVariable;
-import com.flyingtravel.Utility.DataBaseHelper;
-import com.flyingtravel.Utility.GetSpotsNSort;
-import com.flyingtravel.Utility.LoadApiService;
 
 import java.util.ArrayList;
 
 public class SpotMapFragment extends Fragment implements
-        LocationListener,
+        com.google.android.gms.location.LocationListener,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener {
 
@@ -90,6 +90,7 @@ public class SpotMapFragment extends Fragment implements
             mFragmentName = getArguments().getString(FRAGMENT_NAME);
             //mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
         globalVariable = (GlobalVariable) getActivity().getApplicationContext();
         getActivity().registerReceiver(broadcastReceiver, new IntentFilter(LoadApiService.BROADCAST_ACTION));
         getActivity().registerReceiver(broadcastReceiver_SpotSort, new IntentFilter(GetSpotsNSort.BROADCAST_ACTION));
@@ -119,11 +120,13 @@ public class SpotMapFragment extends Fragment implements
 
         // Gets to GoogleMap from the MapView and does initialization stuff
         mMap = mapView.getMap();
-        mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-        mMap.setMyLocationEnabled(true);
-        mMap.getUiSettings().setCompassEnabled(true);
-        mMap.getUiSettings().setAllGesturesEnabled(true);
-        mMap.getUiSettings().setMapToolbarEnabled(false);
+        if (mMap != null) {
+            mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+            mMap.setMyLocationEnabled(true);
+            mMap.getUiSettings().setCompassEnabled(true);
+            mMap.getUiSettings().setAllGesturesEnabled(true);
+            mMap.getUiSettings().setMapToolbarEnabled(false);
+        }
 
         // Needs to call MapsInitializer before doing any CameraUpdateFactory calls
         MapsInitializer.initialize(this.getActivity());
@@ -163,8 +166,16 @@ public class SpotMapFragment extends Fragment implements
         if (!mGoogleApiClient.isConnected()) {
             mGoogleApiClient.connect();
         }
-        if (MarkerIcon == null) {
+        if (MarkerIcon.isRecycled()) {
             MarkerIcon = decodeBitmapFromResource(getResources(), R.drawable.location3, 10, 18);
+            if (!globalVariable.MarkerOptionsArray.isEmpty()) {
+                int MarkerCount = globalVariable.MarkerOptionsArray.size();
+                for (int i = 0; i < MarkerCount/12; i++) {
+                    mMap.addMarker(globalVariable.MarkerOptionsArray.get(i)
+                            .icon(BitmapDescriptorFactory.fromBitmap(MarkerIcon)));
+                }
+            }
+        } else {
             if (!globalVariable.MarkerOptionsArray.isEmpty()) {
                 int MarkerCount = globalVariable.MarkerOptionsArray.size();
                 for (int i = 0; i < MarkerCount/12; i++) {
@@ -226,8 +237,8 @@ public class SpotMapFragment extends Fragment implements
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
             //you are visible to user now - so set whatever you need
-//            Log.e("3/23_SpotMap", "setUserVisibleHint: Visible");
-            if (MarkerIcon == null) {
+            //Log.e("3/23_SpotMap", "setUserVisibleHint: Visible");
+            if (MarkerIcon.isRecycled()) {
                 MarkerIcon = decodeBitmapFromResource(getResources(), R.drawable.location3, 10, 18);
                 if (!globalVariable.MarkerOptionsArray.isEmpty()) {
                     int MarkerCount = globalVariable.MarkerOptionsArray.size();
@@ -240,7 +251,7 @@ public class SpotMapFragment extends Fragment implements
         }
         else {
             //you are no longer visible to the user so cleanup whatever you need
-            Log.e("3/23_SpotMap", "setUserVisibleHint: not Visible");
+            //Log.e("3/23_SpotMap", "setUserVisibleHint: not Visible");
             if (MarkerIcon != null) {
                 MarkerIcon.recycle();
             }
@@ -258,7 +269,7 @@ public class SpotMapFragment extends Fragment implements
         Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         if (location == null) {
             LocationServices.FusedLocationApi.requestLocationUpdates
-                    (mGoogleApiClient, mLocationRequest, (LocationListener) getActivity());
+                    (mGoogleApiClient, mLocationRequest, (LocationListener) getContext());
         } else {
             HandleNewLocation(location);
             if (globalVariable.isAPILoaded && globalVariable.SpotDataSorted.isEmpty()) {
@@ -285,7 +296,6 @@ public class SpotMapFragment extends Fragment implements
         }
     }
 
-
     @Override
     public void onLocationChanged(Location location) {
         if (CurrentLocation != location) {
@@ -301,13 +311,14 @@ public class SpotMapFragment extends Fragment implements
 
         // 設定目前位置的標記
         if (CurrentMarker == null) {
-            // 移動地圖到目前的位置
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 16));
             CurrentMarker = mMap.addMarker(new MarkerOptions().position(latLng).title("I am here!")
                     .icon(BitmapDescriptorFactory.fromBitmap(MarkerIcon)));
         } else {
             CurrentMarker.setPosition(latLng);
         }
+
+        // 移動地圖到目前的位置
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 16));
 
         DataBaseHelper helper = DataBaseHelper.getmInstance(getActivity());
         SQLiteDatabase database = helper.getWritableDatabase();
@@ -319,14 +330,14 @@ public class SpotMapFragment extends Fragment implements
                 cv.put("CurrentLat", location.getLatitude());
                 cv.put("CurrentLng", location.getLongitude());
                 long result = database.insert("location", null, cv);
-                Log.d("3/10_新增位置", result + " = DB INSERT " + location.getLatitude() + " " + location.getLongitude());
+                //Log.d("3/10_新增位置", result + " = DB INSERT " + location.getLatitude() + " " + location.getLongitude());
 
             } else {
                 ContentValues cv = new ContentValues();
                 cv.put("CurrentLat", location.getLatitude());
                 cv.put("CurrentLng", location.getLongitude());
                 long result = database.update("location", cv, "_ID=1", null);
-                Log.d("3/10_位置更新", result + " = DB INSERT " + location.getLatitude() + " " + location.getLongitude());
+                //Log.d("3/10_位置更新", result + " = DB INSERT " + location.getLatitude() + " " + location.getLongitude());
             }
             location_cursor.close();
         }
@@ -339,9 +350,9 @@ public class SpotMapFragment extends Fragment implements
             if (intent != null) {
                 globalVariable.isAPILoaded = intent.getBooleanExtra("isAPILoaded", false);
                 if (globalVariable.isAPILoaded) {
-                    Log.e("3/23_", "Receive Broadcast: APILoaded");
+                    //Log.e("3/23_", "Receive Broadcast: APILoaded");
                     if (CurrentLocation != null) {
-                        Log.e("3/23_broadcast", "事先Sort");
+                        //Log.e("3/23_broadcast", "事先Sort");
                         if (globalVariable.isAPILoaded && globalVariable.SpotDataSorted.isEmpty()) {
                             new GetSpotsNSort(getActivity(), CurrentLocation.getLatitude(),
                                     CurrentLocation.getLongitude()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
@@ -368,7 +379,7 @@ public class SpotMapFragment extends Fragment implements
             if (intent != null) {
                 Boolean isSpotSorted = intent.getBooleanExtra("isSpoted", false);
                 if (isSpotSorted) {
-                    Log.e("3/23_景點排序完畢", "Receive Broadcast");
+                    //Log.e("3/23_景點排序完畢", "Receive Broadcast");
                     new GetMarkerInfo(getActivity()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                 }
             }
@@ -421,7 +432,7 @@ public class SpotMapFragment extends Fragment implements
 
         @Override
         protected void onPreExecute() {
-            Log.d("3/23_GetMarkerInfo", "MarkerOption載入中...");
+            //Log.d("3/23_GetMarkerInfo", "MarkerOption載入中...");
             super.onPreExecute();
         }
 
@@ -476,7 +487,7 @@ public class SpotMapFragment extends Fragment implements
                 mMap.addMarker(globalVariable.MarkerOptionsArray.get(i)
                         .icon(BitmapDescriptorFactory.fromBitmap(MarkerIcon)));
             }
-            Log.d("3/23_MarkerCount", MarkerCount+" MarkerCount/12: "+MarkerCount/12);
+            //Log.d("3/23_MarkerCount", MarkerCount+" MarkerCount/12: "+MarkerCount/12);
             mProgressDialog.dismiss();
             /*
             for (MarkerOptions markerOptions : globalVariable.MarkerOptionsArray) {
