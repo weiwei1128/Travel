@@ -78,7 +78,7 @@ public class HomepageActivity extends FragmentActivity {
 
 
     //3.10 Hua
-    final int REQUEST_LOCATION = 2;
+    final int REQUEST_PERMISSION = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,11 +108,15 @@ public class HomepageActivity extends FragmentActivity {
 
         // API 23 Needs to Check Permission
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                || ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                || ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                || ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
+                || ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)  != PackageManager.PERMISSION_GRANTED) {
 
             // Check Permissions Now
             ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION);
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.CAMERA,
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE},
+                    REQUEST_PERMISSION);
         } else {
             UI();
 
@@ -388,8 +392,8 @@ public class HomepageActivity extends FragmentActivity {
     };
 
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        if (requestCode == REQUEST_LOCATION) {
-            if(grantResults.length == 1
+        if (requestCode == REQUEST_PERMISSION) {
+            if(grantResults.length > 0
                     && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 // We can now safely use the API we requested access to
 
@@ -403,7 +407,7 @@ public class HomepageActivity extends FragmentActivity {
             } else {
                 // Permission was denied or request was cancelled
                 ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION);
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_PERMISSION);
                 Toast.makeText(HomepageActivity.this, getApplicationContext().getResources().getString(R.string.requestLocation_text), Toast.LENGTH_LONG).show();
             }
         }
