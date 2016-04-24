@@ -52,8 +52,8 @@ public class SpecialAdapter extends BaseAdapter {
 
             @Override
             public void onLoadingFailed(String s, View view, FailReason failReason) {
-//                ImageView imageView = (ImageView) view.findViewById(R.id.special_img);
-//                loader.displayImage(null, imageView, options, listener);
+                ImageView imageView = (ImageView) view.findViewById(R.id.special_img);
+                loader.displayImage(null, imageView, options, listener);
             }
 
             @Override

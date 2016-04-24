@@ -100,6 +100,7 @@ public class ImageSliderAdapter extends PagerAdapter {
         ImageLoader.getInstance().init(config);
         imageLoader.displayImage(((Product) products.get(position)).getImageUrl()
                 , imageView, options, listener);
+        imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
         container.addView(view);
         return view;
     }
