@@ -17,6 +17,8 @@ import com.flyingtravel.Utility.Functions;
 public class CheckScheduleOKActivity extends AppCompatActivity {
     String itemid;
     LinearLayout backImg;
+    WebView webView;
+    Boolean ifWebView = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +47,7 @@ public class CheckScheduleOKActivity extends AppCompatActivity {
         dialog.setMessage(CheckScheduleOKActivity.this.getResources().getString(R.string.loading_text));
         dialog.setCancelable(false);
         dialog.show();
-
+        ifWebView = true;
         WebView webView = (WebView) findViewById(R.id.checkschedule_webview);
         String myURL = "http://zhiyou.lin366.com/guihua.aspx?id=" + itemid;
 
@@ -67,8 +69,11 @@ public class CheckScheduleOKActivity extends AppCompatActivity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK)
-            Functions.go(true, CheckScheduleOKActivity.this, CheckScheduleOKActivity.this,
-                    CheckScheduleActivity.class, null);
+            if (ifWebView && webView.canGoBack())
+                webView.goBack();
+            else
+                Functions.go(true, CheckScheduleOKActivity.this, CheckScheduleOKActivity.this,
+                        CheckScheduleActivity.class, null);
         return super.onKeyDown(keyCode, event);
     }
 }

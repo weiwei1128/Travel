@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.view.KeyEvent;
 import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -22,7 +23,8 @@ import com.flyingtravel.Utility.Functions;
 public class MoreItemActivity extends AppCompatActivity {
     int position = 0;
     TextView header;
-
+    WebView webView;
+    Boolean ifWebview=false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -43,7 +45,8 @@ public class MoreItemActivity extends AppCompatActivity {
         Bundle bundle = this.getIntent().getExtras();
         if (bundle.containsKey("position")) {
             position = bundle.getInt("position");
-            WebView webView = new WebView(this);
+            webView = new WebView(this);
+            ifWebview=true;
             WebSettings websettings = webView.getSettings();
             websettings.setSupportZoom(true);
             websettings.setBuiltInZoomControls(true);
@@ -73,5 +76,14 @@ public class MoreItemActivity extends AppCompatActivity {
 
     }
 
-
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            //make the webview go back
+            if (ifWebview && webView.canGoBack())
+                webView.goBack();
+            else Functions.go(true,MoreItemActivity.this,MoreItemActivity.this,HomepageActivity.class,null);
+        }
+        return false;
+    }
 }

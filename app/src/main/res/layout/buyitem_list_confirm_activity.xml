@@ -66,6 +66,14 @@
                     android:layout_height="wrap_content"
                     android:hint="@string/addresseeInput_text"
                     android:textColor="@color/black"
+                    android:textSize="16dp"
+                    android:singleLine="true" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="*"
+                    android:textColor="@color/red"
                     android:textSize="16dp" />
             </LinearLayout>
 
@@ -98,6 +106,14 @@
                     android:hint="@string/telInput_text"
                     android:inputType="phone"
                     android:textColor="@color/black"
+                    android:textSize="16dp"
+                    android:singleLine="true" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="*"
+                    android:textColor="@color/red"
                     android:textSize="16dp" />
             </LinearLayout>
 
@@ -130,6 +146,14 @@
                     android:hint="@string/emailInput_text"
                     android:inputType="textEmailAddress"
                     android:textColor="@color/black"
+                    android:textSize="16dp"
+                    android:singleLine="true" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="*"
+                    android:textColor="@color/red"
                     android:textSize="16dp" />
             </LinearLayout>
 
@@ -161,6 +185,14 @@
                     android:layout_height="wrap_content"
                     android:hint="@string/placeInput_text"
                     android:textColor="@color/black"
+                    android:textSize="16dp"
+                    android:singleLine="true" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="*"
+                    android:textColor="@color/red"
                     android:textSize="16dp" />
             </LinearLayout>
 

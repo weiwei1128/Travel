@@ -33,6 +33,8 @@ import com.flyingtravel.Activity.CheckScheduleActivity;
 import com.flyingtravel.Activity.ServiceActivity;
 import com.flyingtravel.Activity.Special.SpecialActivity;
 import com.flyingtravel.Activity.Spot.SpotActivity;
+import com.flyingtravel.Activity.WebviewActivity;
+import com.flyingtravel.HomepageActivity;
 import com.flyingtravel.ImageSlide.MainImageFragment;
 import com.flyingtravel.R;
 import com.flyingtravel.RecordActivity;
@@ -61,6 +63,11 @@ public class MainFragment extends Fragment {
     }
 
     @Override
+    protected Object clone() throws CloneNotSupportedException {
+        return super.clone();
+    }
+
+    @Override
     public void onResume() {
 //        Log.e("3.22", "=========Main onResume");
         if (getNewsBroadcast == null) {
@@ -82,32 +89,33 @@ public class MainFragment extends Fragment {
                     @Override
                     public void onClick(View widget) {
 //                        Log.d("4.14","onClick!");
-                        Dialog dialog = new Dialog(context);
-                        dialog.setContentView(R.layout.dialog_webview);
-                        WebView webView = (WebView) dialog.findViewById(R.id.webView2);
+                        Bundle bundle = new Bundle();
+                        bundle.putString("NewsLink", link);
+                        Functions.go(false, MainFragment.this.getActivity(), context,
+                                WebviewActivity.class,
+                        bundle
+                        );
+//                        Dialog dialog = new Dialog(context);
+//                        dialog.setContentView(R.layout.dialog_webview);
+//                        WebView webView = (WebView) dialog.findViewById(R.id.webView2);
 
                         //mWebview.loadUrl("javascript:getDeviceID('maomao')");
 
-                        webView.addJavascriptInterface(this, "mouseover");
-                        WebSettings websettings = webView.getSettings();
-                        webView.setWebViewClient(new WebViewClient() {
-                            @Override
-                            public void onPageFinished(WebView view, String url) {
-                                super.onPageFinished(view, url);
-                                view.loadUrl(link);
-                            }
-
-                            @Override
-                            public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                                return false;
-                            }
-                        });
-                        websettings.setSupportZoom(true);
-                        websettings.setBuiltInZoomControls(true);
-                        websettings.setJavaScriptEnabled(true);
-                        webView.loadUrl(link);
+//                        webView.addJavascriptInterface(this, "mouseover");
+//                        WebSettings websettings = webView.getSettings();
+//                        webView.setWebViewClient(new WebViewClient() {
+//                            @Override
+//                            public void onPageFinished(WebView view, String url) {
+//                                super.onPageFinished(view, url);
+//                            }
+//
+//                        });
+//                        websettings.setSupportZoom(true);
+//                        websettings.setBuiltInZoomControls(true);
+//                        websettings.setJavaScriptEnabled(true);
+//                        webView.loadUrl(link);
 //                        dialog.setTitle(setup + "Clicked");
-                        dialog.show();
+//                        dialog.show();
 //                        news.setSelected(false);
 //                                    Toast.makeText(context, setup + "clicked!",
 //                                            Toast.LENGTH_SHORT).show();
@@ -313,31 +321,37 @@ Linkify.addLinks(legalDescription, privacyPolicyMatcher, "privacy:");
                             spannableStringBuilder.setSpan(new ClickableSpan() {
                                 @Override
                                 public void onClick(View widget) {
+                                    Bundle bundle = new Bundle();
+                                    bundle.putString("NewsLink", link);
+                                    Functions.go(false, MainFragment.this.getActivity(), context,
+                                            WebviewActivity.class,
+                        bundle
+                                    );
 //                                    Log.e("4.14","onClick!");
-                                    Dialog dialog = new Dialog(context);
-                                    dialog.setContentView(R.layout.dialog_webview);
-                                    WebView webView = (WebView) dialog.findViewById(R.id.webView2);
-
-                                    WebSettings websettings = webView.getSettings();
-                                    webView.addJavascriptInterface(this, "mouseover");
-                                    webView.setWebViewClient(new WebViewClient() {
-                                        @Override
-                                        public void onPageFinished(WebView view, String url) {
-                                            super.onPageFinished(view, url);
-                                            view.loadUrl(link);
-                                        }
-
-                                        @Override
-                                        public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                                            return false;
-                                        }
-                                    });
-                                    websettings.setSupportZoom(true);
-                                    websettings.setBuiltInZoomControls(true);
-                                    websettings.setJavaScriptEnabled(true);
-                                    webView.loadUrl(link);
+//                                    Dialog dialog = new Dialog(context);
+//                                    dialog.setContentView(R.layout.dialog_webview);
+//                                    WebView webView = (WebView) dialog.findViewById(R.id.webView2);
+//
+//                                    WebSettings websettings = webView.getSettings();
+//                                    webView.addJavascriptInterface(this, "mouseover");
+//                                    webView.setWebViewClient(new WebViewClient() {
+//                                        @Override
+//                                        public void onPageFinished(WebView view, String url) {
+//                                            super.onPageFinished(view, url);
+//                                            view.loadUrl(link);
+//                                        }
+//
+//                                        @Override
+//                                        public boolean shouldOverrideUrlLoading(WebView view, String url) {
+//                                            return false;
+//                                        }
+//                                    });
+//                                    websettings.setSupportZoom(true);
+//                                    websettings.setBuiltInZoomControls(true);
+//                                    websettings.setJavaScriptEnabled(true);
+//                                    webView.loadUrl(link);
 //                                    dialog.setTitle(setup + "Clicked");
-                                    dialog.show();
+//                                    dialog.show();
 //                                    news.setSelected(false);
 //                                    Toast.makeText(context, setup + "clicked!",
 //                                            Toast.LENGTH_SHORT).show();

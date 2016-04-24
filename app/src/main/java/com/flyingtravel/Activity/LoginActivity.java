@@ -588,7 +588,7 @@ public class LoginActivity extends AppCompatActivity {
                 public void run() {
                     toast.cancel();
                 }
-            }, 2000);
+            }, 1000);
 
 
             Timer a = new Timer();

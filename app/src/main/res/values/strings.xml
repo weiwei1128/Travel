@@ -129,5 +129,6 @@
     <string name="sendingError_text">傳送失敗!</string>
     <string name="gotoPay_text">即將跳轉至付款畫面</string>
     <string name="Pay_text">付款頁面</string>
+    <string name="title_activity_webview">WebviewActivity</string>
     <!-- TODO: Remove or change this placeholder text -->
 </resources>

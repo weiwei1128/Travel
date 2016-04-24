@@ -8,6 +8,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.EditText;
@@ -71,7 +72,7 @@ public class BuyItemListConfirmActivity extends AppCompatActivity {
             finish();
 
 
-        final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+
         helper =DataBaseHelper.getmInstance(BuyItemListConfirmActivity.this);
         database = helper.getWritableDatabase();
 
@@ -87,34 +88,32 @@ public class BuyItemListConfirmActivity extends AppCompatActivity {
         confrimLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!nameEdit.getText().toString().equals(""))
-                    nameS = nameEdit.getText().toString();
-                if (!telEdit.getText().toString().equals(""))
-                    phoneS = telEdit.getText().toString();
-                if (!emailEdit.getText().toString().equals(""))
-                    emailS = emailEdit.getText().toString();
-                if (!addrEdit.getText().toString().equals(""))
-                    addrS = addrEdit.getText().toString();
-                if (!messageEdit.getText().toString().equals(""))
-                    messageS = messageEdit.getText().toString();
-                Cursor member_cursor = database.query("member", new String[]{"account", "password",
-                        "name", "phone", "email", "addr"}, null, null, null, null, null);
-                if (member_cursor != null) {
-                    if (member_cursor.getCount() > 0) {
-                        member_cursor.moveToFirst();
-                        idS = member_cursor.getString(0);
-                        if (member_cursor.getString(2) != null && nameS == null)
-                            nameS = member_cursor.getString(2);
-                        if (member_cursor.getString(3) != null && phoneS == null)
-                            phoneS = member_cursor.getString(3);
-                        if (member_cursor.getString(4) != null && emailS == null)
-                            emailS = member_cursor.getString(4);
-                        if (member_cursor.getString(5) != null && addrS == null)
-                            addrS = member_cursor.getString(5);
+                if(nameEdit.getText().toString().equals("")||telEdit.getText().toString().equals("")||
+                        emailEdit.getText().toString().equals("")||addrEdit.getText().toString().equals(""))
+                    Toast.makeText(BuyItemListConfirmActivity.this,
+                            BuyItemListConfirmActivity.this.getResources().getString(R.string.InputData_text),Toast.LENGTH_SHORT).show();
+                else {
+                    Cursor member_cursor = database.query("member", new String[]{"account", "password",
+                            "name", "phone", "email", "addr"}, null, null, null, null, null);
+                    if (member_cursor != null) {
+                        if (member_cursor.getCount() > 0) {
+                            member_cursor.moveToFirst();
+                            idS = member_cursor.getString(0);
+                        }
+                        member_cursor.close();//old85->102
                     }
-                    member_cursor.close();//old85->102
+                    if (!nameEdit.getText().toString().equals(""))
+                        nameS = nameEdit.getText().toString();
+                    if (!telEdit.getText().toString().equals(""))
+                        phoneS = telEdit.getText().toString();
+                    if (!emailEdit.getText().toString().equals(""))
+                        emailS = emailEdit.getText().toString();
+                    if (!addrEdit.getText().toString().equals(""))
+                        addrS = addrEdit.getText().toString();
+                    if (!messageEdit.getText().toString().equals(""))
+                        messageS = messageEdit.getText().toString();
+                    new SendOrder().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                 }
-                new SendOrder().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 //                for (Object key : cartList.keySet()) {
 //                    System.out.println(key + " : " + cartList.get(key));
 //                }
@@ -126,10 +125,24 @@ public class BuyItemListConfirmActivity extends AppCompatActivity {
         });
 //        removeList.add(sharedPreferences.getString("InBuyList", null) + "");
 //        Log.i("3.24", "INBUYLIST:" + sharedPreferences.getInt("InBuyList", 0));
+
+    }
+
+    void UI() {
+        buylistText = (TextView) findViewById(R.id.buyitemlistconfirm_listText);
+        backImg = (LinearLayout) findViewById(R.id.buyitemlistconfirm_backImg);
+        confrimLayout = (LinearLayout) findViewById(R.id.buyitemlistconfirm_confirmLay);
+        nameEdit = (EditText) findViewById(R.id.buyitemlistconfirm_nameEdit);
+        telEdit = (EditText) findViewById(R.id.buyitemlistconfirm_telEdit);
+        emailEdit = (EditText) findViewById(R.id.buyitemlistconfirm_emailEdit);
+        addrEdit = (EditText) findViewById(R.id.buyitemlistconfirm_addrEdit);
+        messageEdit = (EditText) findViewById(R.id.buyitemlistconfirm_messageEdit);
+        totalText = (TextView) findViewById(R.id.buyitemlistconfirm_totalText);
         int totalnumber = 0, getitemPosition = 0, BiginCart = 0, totalmoney = 0;
         String BigitemID = null, SmallitemID = null, itemName = null;
         Cursor goods_cursor = database.query("goods", new String[]{"totalCount", "goods_id", "goods_title",
                 "goods_url", "goods_money", "goods_content", "goods_addtime"}, null, null, null, null, null);
+        final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         if (goods_cursor != null && goods_cursor.getCount() != 0) {
             while (goods_cursor.moveToNext()) {
                 BiginCart = sharedPreferences.getInt("InBuyListg" + goods_cursor.getString(1), 0);
@@ -152,7 +165,7 @@ public class BuyItemListConfirmActivity extends AppCompatActivity {
                             getitemPosition = k + 1;
                             SmallitemID = a;
 
-                            if (BigitemID != null && SmallitemID != null) {
+                            if (BigitemID != null) {
                                 Cursor goods_cursor_big = database.query("goodsitem", new String[]{"goods_bigid",
                                                 "goods_itemid", "goods_title", "goods_money", "goods_url"},
                                         "goods_bigid=? and goods_itemid=?", new String[]{BigitemID, SmallitemID}, null, null, null);
@@ -180,18 +193,6 @@ public class BuyItemListConfirmActivity extends AppCompatActivity {
             goods_cursor.close();
 
         totalText.setText(totalmoney + "");
-    }
-
-    void UI() {
-        buylistText = (TextView) findViewById(R.id.buyitemlistconfirm_listText);
-        backImg = (LinearLayout) findViewById(R.id.buyitemlistconfirm_backImg);
-        confrimLayout = (LinearLayout) findViewById(R.id.buyitemlistconfirm_confirmLay);
-        nameEdit = (EditText) findViewById(R.id.buyitemlistconfirm_nameEdit);
-        telEdit = (EditText) findViewById(R.id.buyitemlistconfirm_telEdit);
-        emailEdit = (EditText) findViewById(R.id.buyitemlistconfirm_emailEdit);
-        addrEdit = (EditText) findViewById(R.id.buyitemlistconfirm_addrEdit);
-        messageEdit = (EditText) findViewById(R.id.buyitemlistconfirm_messageEdit);
-        totalText = (TextView) findViewById(R.id.buyitemlistconfirm_totalText);
     }
 
 
@@ -237,7 +238,7 @@ public class BuyItemListConfirmActivity extends AppCompatActivity {
                     carlist = carlist + ",{\"gid\":\"" + key + "\",\"num\":\"" + cartList.get(key) + "\"}";
 //                    System.out.println(key + " : " + cartList.get(key));
             }
-//            Log.i("3.24", "carList:" + carlist);
+            Log.i("3.24", "carList:" + carlist);
             try {
                 multipartEntity.addPart("json",
                         new StringBody("{\"act\":\"add\"," +
@@ -262,10 +263,12 @@ public class BuyItemListConfirmActivity extends AppCompatActivity {
             //{"states":"1","msg":"加入成功","id":"60"}
             try {
                 getString = EntityUtils.toString(response.getEntity());
+                Log.d("4.22","response:"+getString);
             } catch (IOException | NullPointerException e) {
                 e.printStackTrace();
 //                Log.e("3.10", e.toString() + "error");
             }
+            Log.d("4.22","response:"+getString);
             String state = null;
             try {
                 state = new JSONObject(getString.substring(getString.indexOf("{"), getString.lastIndexOf("}") + 1)).getString("states");
@@ -320,6 +323,8 @@ public class BuyItemListConfirmActivity extends AppCompatActivity {
                 );
 
             } else {
+                if (progressDialog.isShowing())
+                    progressDialog.dismiss();
                 Toast.makeText(BuyItemListConfirmActivity.this, BuyItemListConfirmActivity.this.getResources().getString(R.string.sendingError_text), Toast.LENGTH_SHORT).show();
             }
         }

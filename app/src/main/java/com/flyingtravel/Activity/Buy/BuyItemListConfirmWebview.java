@@ -20,6 +20,7 @@ public class BuyItemListConfirmWebview extends AppCompatActivity {
     LinearLayout backImg;
     TextView header;
     WebView webView;
+    Boolean ifwebview = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,16 +38,20 @@ public class BuyItemListConfirmWebview extends AppCompatActivity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            Functions.go(true, BuyItemListConfirmWebview.this, BuyItemListConfirmWebview.this, BuyActivity.class, null);
+            if (ifwebview && webView.canGoBack())
+                webView.goBack();
+            else
+                Functions.go(true, BuyItemListConfirmWebview.this, BuyItemListConfirmWebview.this, BuyActivity.class, null);
         }
 
         return false;
     }
 
     void setWebView(String id) {
+        ifwebview = true;
         final ProgressDialog dialog = new ProgressDialog(BuyItemListConfirmWebview.this);
         dialog.setMessage(BuyItemListConfirmWebview.this.getResources().getString(R.string.loading_text));
-        dialog.setCancelable(false);
+        dialog.setCancelable(true);
         dialog.show();
 
 
