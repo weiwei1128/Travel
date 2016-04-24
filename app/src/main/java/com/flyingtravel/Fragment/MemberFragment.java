@@ -107,8 +107,8 @@ public class MemberFragment extends Fragment {
         shareLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
-
+//                Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+                Intent sharingIntent = new Intent(Intent.ACTION_SEND_MULTIPLE);
                 //drawable -> bitmap
                 Bitmap icon = BitmapFactory.decodeResource(context.getResources(), R.drawable.icon_512);
                 ByteArrayOutputStream bytes = new ByteArrayOutputStream();
@@ -147,9 +147,13 @@ public class MemberFragment extends Fragment {
                 * */
                 //setting share information
                 sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, getContext().getResources().getString(R.string.title_text));
-                sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, getContext().getResources().getString(R.string.title_text));
-                sharingIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(f));
+                sharingIntent.putExtra(Intent.EXTRA_TEMPLATE,"testtt");
+//                sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, getContext().getResources().getString(R.string.title_text));
+                sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, "https://play.google.com/store/apps/details?id=com.flyingtravel");
+
+//                sharingIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(f));
                 sharingIntent.setType("image/jpeg");
+                sharingIntent.setType("*/*");
 //                Log.d("4.18", "path:" + path + " lens: " + len+" bytes"+bytes.size());
 //                File file = new File(path);
 //                Log.d("4.18", String.valueOf(file.exists()));
