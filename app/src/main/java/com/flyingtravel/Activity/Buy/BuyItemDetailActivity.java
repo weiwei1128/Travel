@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -60,6 +61,8 @@ public class BuyItemDetailActivity extends AppCompatActivity {
     String[][] cartItem;
     LinearLayout addLayout, BackImg;
 
+
+
     //按下返回鍵
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -80,7 +83,6 @@ public class BuyItemDetailActivity extends AppCompatActivity {
         if (bundle.containsKey("WhichItem")) {
             ItemPosition = bundle.getInt("WhichItem");
         }
-
 
         ItemName = (TextView) findViewById(R.id.buyitemName_Text);
         ItemDetail = (TextView) findViewById(R.id.buyitemDetail_text);
@@ -114,6 +116,8 @@ public class BuyItemDetailActivity extends AppCompatActivity {
 
             @Override
             public void onLoadingFailed(String s, View view, FailReason failReason) {
+                ImageView imageView = (ImageView) view.findViewById(R.id.buyitem_Img);
+                loader.displayImage(null, imageView, options, listener);
 
             }
 
@@ -131,8 +135,9 @@ public class BuyItemDetailActivity extends AppCompatActivity {
         //===各個item的資料=02_24==//
         helper = DataBaseHelper.getmInstance(BuyItemDetailActivity.this);
         database = helper.getWritableDatabase();
-        Cursor goods_cursor = database.query("goods", new String[]{"totalCount", "goods_id", "goods_title",
-                "goods_url", "goods_money", "goods_content", "goods_addtime"}, null, null, null, null, null);
+        Cursor goods_cursor = database.query("goods", new String[]{"totalCount", "goods_id",
+                "goods_title", "goods_url", "goods_money", "goods_content", "goods_click",
+                "goods_addtime"}, null, null, null, null, null);
         if (goods_cursor != null && goods_cursor.getCount() >= ItemPosition) {
             goods_cursor.moveToPosition(ItemPosition);
             if (goods_cursor.getString(1) != null)

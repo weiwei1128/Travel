@@ -5,10 +5,12 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -34,9 +36,12 @@ public class BuyAdapter extends BaseAdapter {
 
     int pageNO = 0;
 
-    public BuyAdapter(Context mcontext, Integer index) {
+    GridView gridView;
+
+    public BuyAdapter(Context mcontext, Integer index, GridView gridView) {
         this.context = mcontext;
         inflater = LayoutInflater.from(mcontext);
+        this.gridView = gridView;
 
         pageNO = index;
         helper = DataBaseHelper.getmInstance(context);
@@ -57,8 +62,8 @@ public class BuyAdapter extends BaseAdapter {
 
             @Override
             public void onLoadingFailed(String s, View view, FailReason failReason) {
-//                ImageView imageView = (ImageView) view.findViewById(R.id.buy_thingImg);
-//                loader.displayImage(null, imageView, options, listener);
+                ImageView imageView = (ImageView) view.findViewById(R.id.buy_thingImg);
+                loader.displayImage(null, imageView, options, listener);
 
             }
 
@@ -112,7 +117,8 @@ public class BuyAdapter extends BaseAdapter {
             mcell = new cell(
                     (ImageView) convertView.findViewById(R.id.buy_thingImg),
                     (TextView) convertView.findViewById(R.id.buy_thingText),
-                    (TextView) convertView.findViewById(R.id.buything_clickText)
+                    (TextView) convertView.findViewById(R.id.buything_clickText),
+                    (TextView) convertView.findViewById(R.id.buy_thingMoney)
             );
             convertView.setTag(mcell);
         } else
@@ -128,11 +134,16 @@ public class BuyAdapter extends BaseAdapter {
             if (goods_cursor.getString(2) != null)
                 mcell.buyText.setText(goods_cursor.getString(2));
             else mcell.buyText.setText(R.string.wrongData_text);
+            if (goods_cursor.getString(4) != null)
+                mcell.moneyText.setText("$" + goods_cursor.getString(4));
 
-            if (!(mcell.clickText.getText().toString().substring(3).startsWith("0") &&
-                    mcell.clickText.getText().toString().endsWith("0")))
-                if (goods_cursor.getString(6) != null) //避免出現:00
-                    mcell.clickText.append(goods_cursor.getString(6));
+//            if (!(mcell.clickText.getText().toString().substring(3).startsWith("0") &&
+//                    mcell.clickText.getText().toString().endsWith("0")))//避免出現:00
+                if (goods_cursor.getString(6) != null) {
+                    Log.d("4.25", "BuyAdapter:" + goods_cursor.getString(6));
+                    String click = context.getResources().getString(R.string.buyClick_text);
+                    mcell.clickText.setText(click + goods_cursor.getString(6));
+                }
 
             if (goods_cursor.getString(3) != null)
                 if (goods_cursor.getString(3).startsWith("http:"))
@@ -152,13 +163,57 @@ public class BuyAdapter extends BaseAdapter {
 
     public class cell {
         ImageView buyImg;
-        TextView buyText, clickText;
+        TextView buyText, clickText, moneyText;
 
-        public cell(ImageView buy_img, TextView buy_text, TextView click_Text) {
+        public cell(ImageView buy_img, TextView buy_text, TextView click_Text, TextView money_Text) {
             this.buyImg = buy_img;
             this.buyText = buy_text;
             this.clickText = click_Text;
+            this.moneyText = money_Text;
         }
+
+    }
+
+
+    /**
+     * Update certain view
+     * [BAD] whole adapter wont update
+     *
+     * @param ItemIndex item position in DB
+     * @param position item position in GridView
+     *
+     *
+     */
+    public void UpdateView(int ItemIndex, int position) {
+        int visiblePosition = gridView.getFirstVisiblePosition();
+//        Log.e("4.25", "UpdateView" + ItemIndex + "visiblePosition" + visiblePosition + "position" + position);
+        View view = gridView.getChildAt(position - visiblePosition);
+        cell mcell = new cell(
+                (ImageView) view.findViewById(R.id.buy_thingImg),
+                (TextView) view.findViewById(R.id.buy_thingText),
+                (TextView) view.findViewById(R.id.buything_clickText),
+                (TextView) view.findViewById(R.id.buy_thingMoney)
+        );
+        Cursor goods_cursor = database.query("goods", new String[]{"totalCount", "goods_id", "goods_title",
+                "goods_url", "goods_money", "goods_content", "goods_click", "goods_addtime"}, null, null, null, null, null);
+
+        if (goods_cursor != null && goods_cursor.getCount() >= ItemIndex) {
+            goods_cursor.moveToPosition(ItemIndex);
+            if (goods_cursor.getString(6) != null) {
+                Log.e("4.25", "2222 BuyAdapter:" + goods_cursor.getString(6));
+                String click = context.getResources().getString(R.string.buyClick_text);
+                mcell.clickText.setText(click + goods_cursor.getString(6));
+            }
+//            else {
+//                Log.e("4.25", "2222 BuyAdapter: NULL");
+//            }
+
+        }
+//        else
+//            Log.e("4.25","UpdateView NULL!");
+//        Log.e("4.25", "UpdateView" + mcell.buyText.getText());
+        if (goods_cursor != null)
+            goods_cursor.close();
 
     }
 }

@@ -196,8 +196,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        /** TODO 正式版要修改!!
-         * [0308] [BAD!] [若有相同名稱則重建]
+        /** TODO 正式版已修改!!
+         * [0425] [DATABASE_ALTER_TEAM_1] [新增一個table]
          * **/
         if(oldVersion<2)
             db.execSQL(DATABASE_ALTER_TEAM_1);

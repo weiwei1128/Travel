@@ -9,6 +9,7 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageView;
@@ -35,6 +36,7 @@ public class BuyActivity extends AppCompatActivity {
     ImageView ListImg;
     LinearLayout backImg;
     int count = 0, pageNo = 1, pages = 0, minus = pageNo - 1;
+    int UpdateItem=0;
     TextView number, lastPage, nextPage;
     //http://www.anbon.tw/travel/good_cover.png
 
@@ -42,7 +44,7 @@ public class BuyActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         //if need to display button
-//        Log.d("3.9", "BuyActivity onResume");
+        Log.d("4.25", "BuyActivity onResume"+pages);
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         int howmany = sharedPreferences.getInt("InBuyList", 0);
         if (howmany > 0) {
@@ -57,6 +59,8 @@ public class BuyActivity extends AppCompatActivity {
         } else {
             ListImg.setVisibility(View.INVISIBLE);
         }
+//        setPageNo();
+//        adapter.notifyDataSetChanged();
         super.onResume();
     }
 
@@ -68,16 +72,8 @@ public class BuyActivity extends AppCompatActivity {
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         UI();
+        setPageNo();
 
-
-        helper = DataBaseHelper.getmInstance(BuyActivity.this);
-        database = helper.getWritableDatabase();
-        Cursor goods_cursor = database.query("goods", new String[]{"totalCount", "goods_id", "goods_title",
-                "goods_url", "goods_money", "goods_content", "goods_addtime"}, null, null, null, null, null);
-        if (goods_cursor != null) {
-            count = goods_cursor.getCount();
-            goods_cursor.close();
-        }
         int howmany = sharedPreferences.getInt("InBuyList", 0);
         if (howmany > 0) {
             ListImg.setVisibility(View.VISIBLE);
@@ -94,9 +90,7 @@ public class BuyActivity extends AppCompatActivity {
 
 //        Log.d("3.7", "" + count);
 
-        if (count % 10 > 0)
-            pages = (count / 10) + 1;
-        else pages = (count / 10);
+
 
 
         //fragment(i) -> i代表第幾頁
@@ -109,6 +103,20 @@ public class BuyActivity extends AppCompatActivity {
         number.setTextColor((Color.parseColor("#FF0088")));
         layout.addView(number);
         layout.addView(textView);
+    }
+    public void setPageNo(){
+        Log.d("4.25", "setPageNo");
+        helper = DataBaseHelper.getmInstance(BuyActivity.this);
+        database = helper.getWritableDatabase();
+        Cursor goods_cursor = database.query("goods", new String[]{"totalCount", "goods_id", "goods_title",
+                "goods_url", "goods_money", "goods_content", "goods_addtime"}, null, null, null, null, null);
+        if (goods_cursor != null) {
+            count = goods_cursor.getCount();
+            goods_cursor.close();
+        }
+        if (count % 10 > 0)
+            pages = (count / 10) + 1;
+        else pages = (count / 10);
 
         for (int i = 0; i < pages; i++) {
             BuyFragment fragment = new BuyFragment();
@@ -117,19 +125,14 @@ public class BuyActivity extends AppCompatActivity {
             fragment.setArguments(bundle);
             fragments.add(fragment);
         }
-
-
         adapter = new BuyFragmentViewPagerAdapter(this.getSupportFragmentManager(), viewPager,
                 fragments, BuyActivity.this);
-
         viewPager.setOffscreenPageLimit(1);
         viewPager.setAdapter(adapter);
         viewPager.setOnPageChangeListener(new PageListener());
         if (adapter.getCount() == 0)
             Toast.makeText(BuyActivity.this, BuyActivity.this.getResources().getString(R.string.nofile_text), Toast.LENGTH_SHORT).show();
-        //        Log.e("3.8", "currentItem:" + viewPager.getCurrentItem() + "" + adapter.getCurrentPosition());
     }
-
 
     void UI() {
         lastPage = (TextView) findViewById(R.id.lastpage_text);
@@ -158,6 +161,7 @@ public class BuyActivity extends AppCompatActivity {
 
             }
         });
+
     }
 
     private class PageListener implements ViewPager.OnPageChangeListener {

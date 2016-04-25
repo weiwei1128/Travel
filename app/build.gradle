@@ -22,8 +22,8 @@ android {
         applicationId 'com.flyingtravel'
         minSdkVersion 14
         targetSdkVersion 23
-        versionCode 9
-        versionName "1.8"
+        versionCode 10
+        versionName "1.9"
         multiDexEnabled true
     }
     buildTypes {
