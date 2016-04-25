@@ -1,5 +1,6 @@
 package com.flyingtravel.Activity;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -8,7 +9,9 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -105,6 +108,14 @@ public class CheckScheduleActivity extends AppCompatActivity {
 
         ifWebView = true;
         webView = new WebView(CheckScheduleActivity.this);
+        webView.setOnTouchListener(new View.OnTouchListener() {
+            public boolean onTouch(View v, MotionEvent event) {
+                // The code of the hiding goest here, just call hideSoftKeyboard(View v);
+                InputMethodManager inputMethodManager = (InputMethodManager)  CheckScheduleActivity.this.getSystemService(Activity.INPUT_METHOD_SERVICE);
+                inputMethodManager.hideSoftInputFromWindow(CheckScheduleActivity.this.getCurrentFocus().getWindowToken(), 0);
+                return false;
+            }
+        });
         putItemLayout.addView(webView);
 
         WebSettings websettings = webView.getSettings();
