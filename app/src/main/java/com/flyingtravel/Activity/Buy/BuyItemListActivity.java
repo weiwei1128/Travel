@@ -3,6 +3,7 @@ package com.flyingtravel.Activity.Buy;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
@@ -41,8 +42,12 @@ public class BuyItemListActivity extends AppCompatActivity {
         if (bundle != null && bundle.containsKey("AfterPay") && bundle.getBoolean("AfterPay"))
             finish();
 //        }
+
         listView = (ListView) findViewById(R.id.listview);
         backImg = (LinearLayout) findViewById(R.id.buyitemlist_backImg);
+        confirmLayout = (LinearLayout) findViewById(R.id.buyitemlist_listLayout);
+        adapter = new BuyitemAdapter(BuyItemListActivity.this);
+
         backImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -55,7 +60,7 @@ public class BuyItemListActivity extends AppCompatActivity {
                 );
             }
         });
-        confirmLayout = (LinearLayout) findViewById(R.id.buyitemlist_listLayout);
+
         confirmLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -84,8 +89,8 @@ public class BuyItemListActivity extends AppCompatActivity {
                 }
             }
         });
-        adapter = new BuyitemAdapter(this);
         listView.setAdapter(adapter);
+
     }
 
     DialogInterface.OnClickListener listenerLogin = new DialogInterface.OnClickListener() {

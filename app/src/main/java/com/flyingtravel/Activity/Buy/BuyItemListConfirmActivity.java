@@ -238,7 +238,7 @@ public class BuyItemListConfirmActivity extends AppCompatActivity {
                     carlist = carlist + ",{\"gid\":\"" + key + "\",\"num\":\"" + cartList.get(key) + "\"}";
 //                    System.out.println(key + " : " + cartList.get(key));
             }
-            Log.i("3.24", "carList:" + carlist);
+//            Log.i("3.24", "carList:" + carlist);
             try {
                 multipartEntity.addPart("json",
                         new StringBody("{\"act\":\"add\"," +
