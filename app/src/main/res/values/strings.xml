@@ -130,5 +130,8 @@
     <string name="gotoPay_text">即將跳轉至付款畫面</string>
     <string name="Pay_text">付款頁面</string>
     <string name="title_activity_webview">WebviewActivity</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
     <!-- TODO: Remove or change this placeholder text -->
 </resources>
