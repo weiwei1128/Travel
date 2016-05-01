@@ -78,6 +78,11 @@ public class CheckScheduleAdapter extends BaseAdapter {
         return convertView;
     }
 
+    @Override
+    public void notifyDataSetChanged() {
+        super.notifyDataSetChanged();
+    }
+
     public class item {
         TextView no, date, price, content, state;
 

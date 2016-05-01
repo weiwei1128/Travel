@@ -238,7 +238,7 @@ public class BuyItemListConfirmActivity extends AppCompatActivity {
                     carlist = carlist + ",{\"gid\":\"" + key + "\",\"num\":\"" + cartList.get(key) + "\"}";
 //                    System.out.println(key + " : " + cartList.get(key));
             }
-            Log.i("3.24", "carList:" + carlist);
+//            Log.i("3.24", "carList:" + carlist);
             try {
                 multipartEntity.addPart("json",
                         new StringBody("{\"act\":\"add\"," +
@@ -263,12 +263,12 @@ public class BuyItemListConfirmActivity extends AppCompatActivity {
             //{"states":"1","msg":"加入成功","id":"60"}
             try {
                 getString = EntityUtils.toString(response.getEntity());
-                Log.d("4.22","response:"+getString);
+//                Log.d("4.22","response:"+getString);
             } catch (IOException | NullPointerException e) {
                 e.printStackTrace();
 //                Log.e("3.10", e.toString() + "error");
             }
-            Log.d("4.22","response:"+getString);
+//            Log.d("4.22","response:"+getString);
             String state = null;
             try {
                 state = new JSONObject(getString.substring(getString.indexOf("{"), getString.lastIndexOf("}") + 1)).getString("states");

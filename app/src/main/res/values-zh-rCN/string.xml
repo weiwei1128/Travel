@@ -132,4 +132,5 @@
     <string name="google_play_service_missing">装置没有安装Google Play服务</string>
     <string name="title_activity_check_schedule_activity_new">CheckScheduleActivityNew</string>
     <string name="title_activity_webview">WebviewActivity</string>
+    <string name="navi_text">导  航</string>
 </resources>

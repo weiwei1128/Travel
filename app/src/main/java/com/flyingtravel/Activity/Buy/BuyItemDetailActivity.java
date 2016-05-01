@@ -83,24 +83,7 @@ public class BuyItemDetailActivity extends AppCompatActivity {
         if (bundle.containsKey("WhichItem")) {
             ItemPosition = bundle.getInt("WhichItem");
         }
-
-        ItemName = (TextView) findViewById(R.id.buyitemName_Text);
-        ItemDetail = (TextView) findViewById(R.id.buyitemDetail_text);
-        ItemHeader = (TextView) findViewById(R.id.buyItemHeader);
-        ItemImg = (ImageView) findViewById(R.id.buyitem_Img);
-        BackImg = (LinearLayout) findViewById(R.id.buyitem_backImg);
-        BackImg.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Functions.go(true, BuyItemDetailActivity.this, BuyItemDetailActivity.this, BuyActivity.class, null);
-            }
-        });
-        AddImg = (ImageView) findViewById(R.id.buyitemAdd_Img);
-        AddImg.setVisibility(View.INVISIBLE);
-        addLayout = (LinearLayout) findViewById(R.id.buyitem_addLayout);
-        addLayout.setVisibility(View.INVISIBLE);
-
-
+        UI();
         //show image
         options = new DisplayImageOptions.Builder()
                 .showImageOnFail(R.drawable.error)
@@ -131,8 +114,13 @@ public class BuyItemDetailActivity extends AppCompatActivity {
 
             }
         };
+        getInfo();
+    }
 
+
+    void getInfo(){
         //===各個item的資料=02_24==//
+//        Log.e("4.25","!!!!!getIngo!!!!!");
         helper = DataBaseHelper.getmInstance(BuyItemDetailActivity.this);
         database = helper.getWritableDatabase();
         Cursor goods_cursor = database.query("goods", new String[]{"totalCount", "goods_id",
@@ -163,6 +151,24 @@ public class BuyItemDetailActivity extends AppCompatActivity {
         }
         if (goods_cursor != null)
             goods_cursor.close();
+    }
+
+    void UI(){
+        ItemName = (TextView) findViewById(R.id.buyitemName_Text);
+        ItemDetail = (TextView) findViewById(R.id.buyitemDetail_text);
+        ItemHeader = (TextView) findViewById(R.id.buyItemHeader);
+        ItemImg = (ImageView) findViewById(R.id.buyitem_Img);
+        BackImg = (LinearLayout) findViewById(R.id.buyitem_backImg);
+        BackImg.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Functions.go(true, BuyItemDetailActivity.this, BuyItemDetailActivity.this, BuyActivity.class, null);
+            }
+        });
+        AddImg = (ImageView) findViewById(R.id.buyitemAdd_Img);
+        AddImg.setVisibility(View.INVISIBLE);
+        addLayout = (LinearLayout) findViewById(R.id.buyitem_addLayout);
+        addLayout.setVisibility(View.INVISIBLE);
     }
 
     void setupAddDialog() {

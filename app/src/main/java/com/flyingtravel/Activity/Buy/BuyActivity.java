@@ -43,55 +43,18 @@ public class BuyActivity extends AppCompatActivity {
 
     @Override
     protected void onResume() {
-        //if need to display button
-        Log.d("4.25", "BuyActivity onResume"+pages);
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        int howmany = sharedPreferences.getInt("InBuyList", 0);
-        if (howmany > 0) {
-            ListImg.setVisibility(View.VISIBLE);
-            ListImg.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Functions.go(false, BuyActivity.this,
-                            BuyActivity.this, BuyItemListActivity.class, null);
-                }
-            });
-        } else {
-            ListImg.setVisibility(View.INVISIBLE);
-        }
-//        setPageNo();
-//        adapter.notifyDataSetChanged();
+        getPages();
         super.onResume();
     }
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.buy_activity);
 
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         UI();
         setPageNo();
-
-        int howmany = sharedPreferences.getInt("InBuyList", 0);
-        if (howmany > 0) {
-            ListImg.setVisibility(View.VISIBLE);
-            ListImg.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Functions.go(false, BuyActivity.this,
-                            BuyActivity.this, BuyItemListActivity.class, null);
-                }
-            });
-        } else
-            ListImg.setVisibility(View.INVISIBLE);
-
-
-//        Log.d("3.7", "" + count);
-
-
-
+        getPages();
 
         //fragment(i) -> i代表第幾頁
         LinearLayout layout = (LinearLayout) findViewById(R.id.buy_textLayout);
@@ -104,8 +67,25 @@ public class BuyActivity extends AppCompatActivity {
         layout.addView(number);
         layout.addView(textView);
     }
+
+    void getPages(){
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(BuyActivity.this);
+        int howmany = sharedPreferences.getInt("InBuyList", 0);
+        if (howmany > 0) {
+            ListImg.setVisibility(View.VISIBLE);
+            ListImg.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Functions.go(false, BuyActivity.this,
+                            BuyActivity.this, BuyItemListActivity.class, null);
+                }
+            });
+        } else
+            ListImg.setVisibility(View.INVISIBLE);
+    }
+
     public void setPageNo(){
-        Log.d("4.25", "setPageNo");
+//        Log.d("4.25", "setPageNo");
         helper = DataBaseHelper.getmInstance(BuyActivity.this);
         database = helper.getWritableDatabase();
         Cursor goods_cursor = database.query("goods", new String[]{"totalCount", "goods_id", "goods_title",
