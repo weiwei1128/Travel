@@ -408,6 +408,7 @@ public class HomepageActivity extends FragmentActivity {
                 // Permission was denied or request was cancelled
                 Toast.makeText(HomepageActivity.this, getApplicationContext().getResources()
                         .getString(R.string.requestLocation_text), Toast.LENGTH_LONG).show();
+
                 ActivityCompat.requestPermissions(this,
                         new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_PERMISSION);
             }

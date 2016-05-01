@@ -698,9 +698,7 @@ public class RecordDiaryDetailActivity extends AppCompatActivity implements
 
         String share_url = "";
 
-        List<String> piclist = new ArrayList<String>();
         HashMap<String, List<String>> picList = new HashMap<String, List<String>>();
-        List<String> contentlist = new ArrayList<String>();
         HashMap<String, List<String>> contentList = new HashMap<String, List<String>>();
 
         public UploadToServer(Context context) {
@@ -748,16 +746,11 @@ public class RecordDiaryDetailActivity extends AppCompatActivity implements
             if (img_cursor != null) {
                 if (img_cursor.getCount() != 0) {
                     while (img_cursor.moveToNext()) {
-                        piclist.clear();
+                        List<String> piclist = new ArrayList<String>();
                         piclist.add("http://zhiyou.lin366.com" + img_cursor.getString(6));
                         piclist.add(img_cursor.getString(4));
                         piclist.add(img_cursor.getString(5));
                         picList.put(String.valueOf(img_cursor.getPosition()), piclist);
-                    }
-
-                    for (String key : picList.keySet()) {
-                        Log.e("4/26", "key:" + key);
-                        Log.e("4/26", "picList:" + picList.get(key));
                     }
                 }
                 img_cursor.close();
@@ -765,7 +758,6 @@ public class RecordDiaryDetailActivity extends AppCompatActivity implements
 
             Boolean picfirst = true;
             for (Object key : picList.keySet()) {
-                //Log.e("4/26", "key:" + key);
                 if (picfirst) {
                     picfirst = false;
                     pic = "{\"picurl\":\"" + picList.get(key).get(0) + "\"," +
@@ -784,7 +776,7 @@ public class RecordDiaryDetailActivity extends AppCompatActivity implements
             if (memo_cursor != null) {
                 if (memo_cursor.getCount() != 0) {
                     while (memo_cursor.moveToNext()) {
-                        contentlist.clear();
+                        List<String> contentlist = new ArrayList<String>();
                         contentlist.add(memo_cursor.getString(2));
                         contentlist.add(memo_cursor.getString(4));
                         contentlist.add(memo_cursor.getString(5));
@@ -796,7 +788,6 @@ public class RecordDiaryDetailActivity extends AppCompatActivity implements
 
             Boolean contentfirst = true;
             for (Object key : contentList.keySet()) {
-                //Log.e("4/26", "key:" + key);
                 if (contentfirst) {
                     contentfirst = false;
                     con = "{\"content\":\"" + contentList.get(key).get(0) + "\"," +
