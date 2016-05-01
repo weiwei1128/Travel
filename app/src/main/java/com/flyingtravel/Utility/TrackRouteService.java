@@ -51,8 +51,8 @@ public class TrackRouteService extends Service {
 
     @Override
     public void onCreate() {
-        Log.d("3/10_", "TrackRouteService: onCreate");
-        Log.i(TAG, "onCreate");
+        //Log.d("3/10_", "TrackRouteService: onCreate");
+        //Log.i(TAG, "onCreate");
 
         registerReceiver(broadcastReceiver, new IntentFilter(RecordTrackFragment.TRACK_TO_SERVICE));
         registerReceiver(broadcastReceiver_timer, new IntentFilter(RecordTrackFragment.TIMER_TO_SERVICE));
@@ -82,7 +82,7 @@ public class TrackRouteService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.d("3/10_", "TrackRouteService: onStartCommand");
+        //Log.d("3/10_", "TrackRouteService: onStartCommand");
         if (intent != null) {
             //record_start_boolean = intent.getBooleanExtra("isStart", false);
             start_time = intent.getLongExtra("start", 0);
@@ -99,19 +99,19 @@ public class TrackRouteService extends Service {
         Location mLastLocation;
 
         public LocationListener(String provider) {
-            Log.d(TAG, "LocationListener " + provider);
+            //Log.d(TAG, "LocationListener " + provider);
             mLastLocation = new Location(provider);
         }
 
         @Override
         public void onLocationChanged(Location location) {
-            Log.d(TAG, "onLocationChanged: " + location);
+            //Log.d(TAG, "onLocationChanged: " + location);
             mLastLocation.set(location);
 
             final Double Latitude = mLastLocation.getLatitude();
             final Double Longitude = mLastLocation.getLongitude();
-            Log.d("3/10_", "Latitude " + Latitude);
-            Log.d("3/10_", "Longitude " + Longitude);
+            //Log.d("3/10_", "Latitude " + Latitude);
+            //Log.d("3/10_", "Longitude " + Longitude);
 
             if (!isPause) {
                 // 廣播畫軌跡
@@ -153,8 +153,13 @@ public class TrackRouteService extends Service {
                                     + " status " + record_status);
                             RecordActivity.time_text.setText("");
                             RecordDiaryFragment.mAdapter.notifyDataSetChanged();
-                            Log.e("3/27_", "TrackService. notifyDataSetChanged");
-                            Log.e("3/10_", "Call stop TrackRouteService");
+                            //Log.e("3/27_", "TrackService. notifyDataSetChanged");
+                            //Log.e("3/10_", "Call stop TrackRouteService");
+
+                            if (RecordTrackFragment.mProgressDialog.isShowing()) {
+                                RecordTrackFragment.mProgressDialog.dismiss();
+                            }
+
                             stopSelf();
                         }
                         trackRoute_cursor.close();
@@ -165,17 +170,17 @@ public class TrackRouteService extends Service {
 
         @Override
         public void onProviderDisabled(String provider) {
-            Log.d(TAG, "onProviderDisabled: " + provider);
+            //Log.d(TAG, "onProviderDisabled: " + provider);
         }
 
         @Override
         public void onProviderEnabled(String provider) {
-            Log.d(TAG, "onProviderEnabled: " + provider);
+            //Log.d(TAG, "onProviderEnabled: " + provider);
         }
 
         @Override
         public void onStatusChanged(String provider, int status, Bundle extras) {
-            Log.d(TAG, "onStatusChanged: " + provider);
+            //Log.d(TAG, "onStatusChanged: " + provider);
         }
     }
 
@@ -191,7 +196,7 @@ public class TrackRouteService extends Service {
 
     @Override
     public void onDestroy() {
-        Log.d("3/10_", "TrackRouteService: onDestroy");
+        //Log.d("3/10_", "TrackRouteService: onDestroy");
         handler.removeCallbacks(count);
 
         if (broadcastReceiver != null)
@@ -212,7 +217,7 @@ public class TrackRouteService extends Service {
     }
 
     private void initializeLocationManager() {
-        Log.i(TAG, "initializeLocationManager");
+        //Log.i(TAG, "initializeLocationManager");
         if (mLocationManager == null) {
             mLocationManager = (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
         }
@@ -288,8 +293,13 @@ public class TrackRouteService extends Service {
                         + " status " + record_status);
                 RecordActivity.time_text.setText("");
                 RecordDiaryFragment.mAdapter.notifyDataSetChanged();
-                Log.e("3/27_", "RecordTrackFragment. notifyDataSetChanged");
-                Log.e("3/10_", "Call stop TrackRouteService");
+                //Log.e("3/27_", "RecordTrackFragment. notifyDataSetChanged");
+                //Log.e("3/10_", "Call stop TrackRouteService");
+
+                if (RecordTrackFragment.mProgressDialog.isShowing()) {
+                    RecordTrackFragment.mProgressDialog.dismiss();
+                }
+
                 stopSelf();
             }
             trackRoute_cursor.close();

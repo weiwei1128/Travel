@@ -32,6 +32,15 @@
                 android:layout_gravity="center_vertical"
                 android:layout_marginLeft="10dp"
                 android:background="@drawable/click_effect_general" />
+
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="40dp"
+                android:id="@+id/DiaryDetail_shareImg"
+                android:src="@drawable/navigation_share"
+                android:layout_marginRight="10dp"
+                android:background="@drawable/click_effect_general"
+                android:layout_gravity="center_vertical|right" />
         </FrameLayout>
 
         <FrameLayout

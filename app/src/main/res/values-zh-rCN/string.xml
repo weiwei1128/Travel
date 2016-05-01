@@ -65,6 +65,7 @@
     <string name="recordupload_text">是否要记录景点心得或上传照片？</string>
     <string name="recordtitle_text">旅程标题</string>
     <string name="recordmemo_text">景点心得</string>
+    <string name="recordremind_text">请先开始记录，才可上传景点心得</string>
     <string name="serviceLine_text">客服专线</string>
     <string name="serviceLineTitle_text">飞行家服务专线</string>
     <string name="serviceTime_text">服务时间：10–21</string>
@@ -96,6 +97,7 @@
     <string name="LeaveMessage_text">确定要离开吗</string>
     <string name="InputSpotName_text">请输入景点名称</string>
     <string name="loading_text">载入中…</string>
+    <string name="handling_text">处理中…</string>
     <string name="nofile_text">尚无资料!</string>
     <string name="logoutLeave_text">登出后会自动离开</string>
     <string name="shareto_text">分享至</string>

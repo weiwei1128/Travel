@@ -113,7 +113,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 + "memo_content TEXT,"
                 + "memo_img BLOB,"
                 + "memo_latlng BLOB,"
-                + "memo_time TEXT"
+                + "memo_time TEXT,"
+                + "memo_imgUrl TEXT"
                 + ");";
         db.execSQL(DATABASE_CREATE_TABLE_TRAVELMEMO);
 

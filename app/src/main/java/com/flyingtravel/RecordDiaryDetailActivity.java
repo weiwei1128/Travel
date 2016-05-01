@@ -1,6 +1,11 @@
 package com.flyingtravel;
 
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
+import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -8,6 +13,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.location.Location;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -24,12 +30,13 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.flyingtravel.Activity.LoginActivity;
 import com.flyingtravel.Utility.DataBaseHelper;
 import com.flyingtravel.Utility.Functions;
+import com.flyingtravel.Utility.TPESpotAPIFetcher;
 import com.flyingtravel.Utility.View.ExpandableHeightGridView;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdate;
@@ -38,7 +45,6 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
@@ -46,6 +52,20 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.entity.mime.content.StringBody;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -79,7 +99,7 @@ public class RecordDiaryDetailActivity extends AppCompatActivity implements
 
     private FrameLayout HeaderLayout, MapLayout;
     private LinearLayout ContentLayout;
-    private ImageView backImg, EnlargeImg, ReduceImg;
+    private ImageView backImg, shareImg, EnlargeImg, ReduceImg;
     private TextView DiaryDetailTitleTextView;
     private ExpandableHeightGridView gridView;
     private ListView mlistView;
@@ -90,6 +110,8 @@ public class RecordDiaryDetailActivity extends AppCompatActivity implements
 
     private DataBaseHelper helper;
     private SQLiteDatabase database;
+
+    private ProgressDialog mProgressDialog;
 
     LatLngBounds.Builder builder;
     CameraUpdate cu;
@@ -220,6 +242,34 @@ public class RecordDiaryDetailActivity extends AppCompatActivity implements
             }
             trackRoute_cursor.close();
         }
+
+        shareImg = (ImageView) findViewById(R.id.DiaryDetail_shareImg);
+        shareImg.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!Functions.ifLogin(RecordDiaryDetailActivity.this)) {
+                    AlertDialog goLogin = new AlertDialog.Builder(RecordDiaryDetailActivity.this).create();
+
+                    // 設置對話框標題
+                    //getApplicationContext().getResources().getString(R.string.requestLocation_text)
+                    goLogin.setTitle(getApplicationContext().getResources().getString(R.string.systemMessage_text));
+                    goLogin.setCancelable(false);
+                    // 設置對話框消息
+                    goLogin.setMessage(getApplicationContext().getResources().getString(R.string.LoginFirst_text));
+                    // 添加選擇按鈕並注冊監聽
+                    goLogin.setButton(getApplicationContext().getResources().getString(R.string.ok_text), listenerLogin);
+                    goLogin.setButton2(getApplicationContext().getResources().getString(R.string.cancel_text), listenerLogin);
+                    // 顯示對話框
+                    if (!goLogin.isShowing())
+                        goLogin.show();
+                } else {
+                    mProgressDialog = new ProgressDialog(RecordDiaryDetailActivity.this);
+                    mProgressDialog.setMessage(getApplication().getResources().getString(R.string.handling_text));
+                    mProgressDialog.show();
+                    new UploadToServer(getApplication()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                }
+            }
+        });
     }
 
     @Override
@@ -401,6 +451,20 @@ public class RecordDiaryDetailActivity extends AppCompatActivity implements
         }
     }
 
+    DialogInterface.OnClickListener listenerLogin = new DialogInterface.OnClickListener() {
+        public void onClick(DialogInterface dialog, int which) {
+            switch (which) {
+                case AlertDialog.BUTTON_POSITIVE:// "確認"按鈕前往登入
+                    Functions.go(false, RecordDiaryDetailActivity.this, RecordDiaryDetailActivity.this, LoginActivity.class, null);
+                    break;
+                case AlertDialog.BUTTON_NEGATIVE:// "取消"第二個按鈕取消對話框
+                    break;
+                default:
+                    break;
+            }
+        }
+    };
+
     public int getPx(int dimensionDp) {
         float density = getResources().getDisplayMetrics().density;
         return (int) (dimensionDp * density + 0.5f);
@@ -468,8 +532,8 @@ public class RecordDiaryDetailActivity extends AppCompatActivity implements
         @Override
         public int getCount() {
             int number = 0;
-            Cursor img_cursor = database.query("travelmemo", new String[]{"memo_routesCounter", "memo_trackNo",
-                            "memo_content", "memo_img", "memo_latlng", "memo_time"},
+            Cursor img_cursor = database.query("travelMemo", new String[]{"memo_routesCounter", "memo_trackNo",
+                            "memo_content", "memo_img", "memo_latlng", "memo_time", "memo_imgUrl"},
                     "memo_routesCounter=\"" + routeCounter + "\" AND memo_img!=\"null\"", null, null, null, null, null);
             if (img_cursor != null) {
                 if (img_cursor.getCount() != 0) {
@@ -503,8 +567,8 @@ public class RecordDiaryDetailActivity extends AppCompatActivity implements
                 mViewHolder = (ViewHolder) convertView.getTag();
             }
 
-            Cursor img_cursor = database.query("travelmemo", new String[]{"memo_routesCounter", "memo_trackNo",
-                            "memo_content", "memo_img", "memo_latlng", "memo_time"},
+            Cursor img_cursor = database.query("travelMemo", new String[]{"memo_routesCounter", "memo_trackNo",
+                            "memo_content", "memo_img", "memo_latlng", "memo_time", "memo_imgUrl"},
                     "memo_routesCounter=\"" + routeCounter + "\" AND memo_img!=\"null\"", null, null, null, null, null);
             if (img_cursor != null) {
                 if (img_cursor.getCount() != 0) {
@@ -545,8 +609,8 @@ public class RecordDiaryDetailActivity extends AppCompatActivity implements
         @Override
         public int getCount() {
             int number = 0;
-            Cursor memo_cursor = database.query("travelmemo", new String[]{"memo_routesCounter", "memo_trackNo",
-                            "memo_content", "memo_img", "memo_latlng", "memo_time"},
+            Cursor memo_cursor = database.query("travelMemo", new String[]{"memo_routesCounter", "memo_trackNo",
+                            "memo_content", "memo_img", "memo_latlng", "memo_time", "memo_imgUrl"},
                     "memo_routesCounter=\"" + routeCounter + "\" AND memo_content!=\"null\"", null, null, null, null, null);
             if (memo_cursor != null) {
                 if (memo_cursor.getCount() != 0) {
@@ -579,8 +643,8 @@ public class RecordDiaryDetailActivity extends AppCompatActivity implements
             } else {
                 mViewHolder = (ViewHolder) convertView.getTag();
             }
-            Cursor memo_cursor = database.query("travelmemo", new String[]{"memo_routesCounter", "memo_trackNo",
-                            "memo_content", "memo_img", "memo_latlng", "memo_time"},
+            Cursor memo_cursor = database.query("travelMemo", new String[]{"memo_routesCounter", "memo_trackNo",
+                            "memo_content", "memo_img", "memo_latlng", "memo_time", "memo_imgUrl"},
                     "memo_routesCounter=\"" + routeCounter + "\" AND memo_content!=\"null\"", null, null, null, null, null);
             if (memo_cursor != null) {
                 if (memo_cursor.getCount() != 0) {
@@ -619,5 +683,188 @@ public class RecordDiaryDetailActivity extends AppCompatActivity implements
         ViewGroup.LayoutParams params = listView.getLayoutParams();
         params.height = totalHeight + (listView.getDividerHeight() * (listAdapter.getCount() - 1));
         listView.setLayoutParams(params);
+    }
+
+    public class UploadToServer extends AsyncTask<String, String, String> {
+        Context mcontext;
+        String account;
+        String title = "";
+        String add_time = "";
+        String link_url = "";
+        String content = "";
+        String jinwei = "";
+        String pic = "";
+        String con = "";
+
+        String share_url = "";
+
+        List<String> piclist = new ArrayList<String>();
+        HashMap<String, List<String>> picList = new HashMap<String, List<String>>();
+        List<String> contentlist = new ArrayList<String>();
+        HashMap<String, List<String>> contentList = new HashMap<String, List<String>>();
+
+        public UploadToServer(Context context) {
+            this.mcontext = context;
+        }
+
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+            Log.e("4/26", "=========UploadToServer======doInBackground");
+
+            DataBaseHelper helper = DataBaseHelper.getmInstance(mcontext);
+            SQLiteDatabase database = helper.getWritableDatabase();
+            Cursor member_cursor = database.query("member", new String[]{"account", "password",
+                    "name", "phone", "email", "addr"}, null, null, null, null, null);
+            if (member_cursor != null && member_cursor.getCount() > 0) {
+                member_cursor.moveToFirst();
+                account = member_cursor.getString(0);
+            }
+            if (member_cursor != null)
+                member_cursor.close();
+
+            Cursor trackRoute_cursor = database.query("trackRoute",
+                    new String[]{"routesCounter", "track_no", "track_lat", "track_lng",
+                            "track_start", "track_title", "track_totaltime", "track_completetime"},
+                    "track_start=\"0\"", null, null, null, null, null);
+            if (trackRoute_cursor != null) {
+                if (trackRoute_cursor.getCount() != 0) {
+                    trackRoute_cursor.moveToPosition(trackRoute_cursor.getCount() - mPosition - 1);
+                    title = trackRoute_cursor.getString(5);
+                    jinwei = trackRoute_cursor.getString(3)+","+trackRoute_cursor.getString(2);
+                    add_time = trackRoute_cursor.getString(7);
+                }
+                trackRoute_cursor.close();
+            }
+
+            Cursor img_cursor = database.query("travelMemo", new String[]{"memo_routesCounter", "memo_trackNo",
+                            "memo_content", "memo_img", "memo_latlng", "memo_time", "memo_imgUrl"},
+                    "memo_routesCounter=\"" + RoutesCounter + "\" AND memo_imgUrl!=\"null\"", null, null, null, null, null);
+            if (img_cursor != null) {
+                if (img_cursor.getCount() != 0) {
+                    while (img_cursor.moveToNext()) {
+                        piclist.clear();
+                        piclist.add("http://zhiyou.lin366.com" + img_cursor.getString(6));
+                        piclist.add(img_cursor.getString(4));
+                        piclist.add(img_cursor.getString(5));
+                        picList.put(String.valueOf(img_cursor.getPosition()), piclist);
+                    }
+
+                    for (String key : picList.keySet()) {
+                        Log.e("4/26", "key:" + key);
+                        Log.e("4/26", "picList:" + picList.get(key));
+                    }
+                }
+                img_cursor.close();
+            }
+
+            Boolean picfirst = true;
+            for (Object key : picList.keySet()) {
+                //Log.e("4/26", "key:" + key);
+                if (picfirst) {
+                    picfirst = false;
+                    pic = "{\"picurl\":\"" + picList.get(key).get(0) + "\"," +
+                            "\"jinwei\":\"" + picList.get(key).get(1) + "\"," +
+                            "\"add_time\":\"" + picList.get(key).get(2) + "\"}";
+                } else
+                    pic = pic + ",{\"picurl\":\"" + picList.get(key).get(0) + "\"," +
+                                "\"jinwei\":\"" + picList.get(key).get(1) + "\"," +
+                                "\"add_time\":\"" + picList.get(key).get(2) + "\"}";
+            }
+            Log.e("4/26", "picList:" + pic);
+
+            Cursor memo_cursor = database.query("travelMemo", new String[]{"memo_routesCounter", "memo_trackNo",
+                            "memo_content", "memo_img", "memo_latlng", "memo_time", "memo_imgUrl"},
+                    "memo_routesCounter=\"" + RoutesCounter + "\" AND memo_content!=\"null\"", null, null, null, null, null);
+            if (memo_cursor != null) {
+                if (memo_cursor.getCount() != 0) {
+                    while (memo_cursor.moveToNext()) {
+                        contentlist.clear();
+                        contentlist.add(memo_cursor.getString(2));
+                        contentlist.add(memo_cursor.getString(4));
+                        contentlist.add(memo_cursor.getString(5));
+                        contentList.put(String.valueOf(memo_cursor.getPosition()), contentlist);
+                    }
+                }
+                member_cursor.close();
+            }
+
+            Boolean contentfirst = true;
+            for (Object key : contentList.keySet()) {
+                //Log.e("4/26", "key:" + key);
+                if (contentfirst) {
+                    contentfirst = false;
+                    con = "{\"content\":\"" + contentList.get(key).get(0) + "\"," +
+                            "\"jinwei\":\"" + contentList.get(key).get(1) + "\"," +
+                            "\"add_time\":\"" + contentList.get(key).get(2) + "\"}";
+                } else
+                    con = con + ",{\"content\":\"" + contentList.get(key).get(0) + "\"," +
+                            "\"jinwei\":\"" + contentList.get(key).get(1) + "\"," +
+                            "\"add_time\":\"" + contentList.get(key).get(2) + "\"}";
+            }
+            Log.e("4/26", "contentList:" + con);
+
+            HttpClient client = new DefaultHttpClient();
+            HttpPost post = new HttpPost("http://zhiyou.lin366.com/api/diy/index.aspx");
+            MultipartEntity multipartEntity = new MultipartEntity();
+            Charset charset = Charset.forName("UTF-8");
+            try {
+                multipartEntity.addPart("json",
+                        new StringBody("{\"act\":\"add\"," +
+                                "\"uid\":\"" + account + "\"," +
+                                "\"title\":\"" + title + "\"," +
+                                "\"add_time\":\"" + add_time + "\"," +
+                                "\"link_url\":\"" + link_url + "\"," +
+                                "\"content\":\"" + content + "\"," +
+                                "\"jinwei\":\"" + jinwei + "\","+
+                                "\"piclist\":[" + pic + "]," +
+                                "\"contentlist\":[" + con + "]}", charset));
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+            post.setEntity(multipartEntity);
+            HttpResponse response = null;
+            String getString = null;
+            try {
+                response = client.execute(post);
+                getString = EntityUtils.toString(response.getEntity());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            String state = null;
+            String id = null;
+            try {
+                state = new JSONObject(getString.substring(
+                        getString.indexOf("{"), getString.lastIndexOf("}") + 1)).getString("states");
+                id = new JSONObject(getString).getString("id");
+            } catch (JSONException | NullPointerException e) {
+                e.printStackTrace();
+            }
+
+            if (state != null && state.equals("1") && id != null) {
+                // 分享 http://zhiyou.lin366.com/share.aspx?id=654
+                share_url = "http://zhiyou.lin366.com/share.aspx?id=" + id;
+                Log.e("4/26_", "share_url: " + share_url);
+            }
+            return share_url;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            if (mProgressDialog.isShowing()) {
+                mProgressDialog.dismiss();
+            }
+            Intent sharingIntent = new Intent(Intent.ACTION_SEND_MULTIPLE);
+            sharingIntent.setType("text/plain");
+            sharingIntent.putExtra(Intent.EXTRA_SUBJECT, title);
+            sharingIntent.putExtra(Intent.EXTRA_TEXT, s);
+            startActivity(Intent.createChooser(sharingIntent, getApplication().getResources().getString(R.string.shareto_text)));
+            super.onPostExecute(s);
+        }
     }
 }

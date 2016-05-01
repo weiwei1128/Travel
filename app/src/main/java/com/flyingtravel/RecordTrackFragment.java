@@ -4,6 +4,7 @@ package com.flyingtravel;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.ContentUris;
@@ -22,6 +23,7 @@ import android.graphics.Matrix;
 import android.location.Location;
 import android.media.ExifInterface;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -59,6 +61,16 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.entity.mime.content.ByteArrayBody;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
@@ -132,6 +144,8 @@ public class RecordTrackFragment extends Fragment implements
     public static final String TIMER_TO_SERVICE = "com.example.tracking.restartcount";
     public static final String TRACK_TO_SERVICE = "com.example.tracking.restarttrack";
 
+    public static ProgressDialog mProgressDialog;
+
     //private OnFragmentInteractionListener mListener;
 
     public RecordTrackFragment() {
@@ -166,6 +180,8 @@ public class RecordTrackFragment extends Fragment implements
         //globalVariable = (GlobalVariable) getActivity().getApplicationContext();
         getActivity().registerReceiver(broadcastReceiver, new IntentFilter(TrackRouteService.BROADCAST_ACTION));
         getActivity().registerReceiver(broadcastReceiver_timer, new IntentFilter(TrackRouteService.BROADCAST_ACTION_TIMER));
+
+        mProgressDialog = new ProgressDialog(getActivity());
 
         MarkerIcon = decodeBitmapFromResource(getResources(), R.drawable.location3, 10, 18);
 
@@ -270,25 +286,32 @@ public class RecordTrackFragment extends Fragment implements
                 title_confirmTextView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Track_no = 1;
-                        RoutesCounter++;
-                        RecordActivity.time_text.setVisibility(View.INVISIBLE);
-                        RecordActivity.record_completeImg.setVisibility(View.INVISIBLE);
+                        if (title_editText.getText().equals("")) {
+                            Toast.makeText(getActivity(), getContext().getResources().getString(R.string.emptyInput_text), Toast.LENGTH_SHORT).show();
+                        } else {
+                            mProgressDialog.setMessage(getContext().getResources().getString(R.string.handling_text));
+                            mProgressDialog.setCancelable(false);
+                            mProgressDialog.show();
 
-                        record_start_layout.setBackgroundColor(Color.parseColor("#FFFFFF"));
-                        record_start_text.setTextColor(Color.parseColor("#555555"));
-                        record_start_text.setText(getContext().getResources().getString(R.string.startRecord_text));
-                        record_start_img.setImageResource(R.drawable.ic_play_light);
-                        record_status = 0;
+                            Track_no = 1;
+                            RoutesCounter++;
+                            RecordActivity.time_text.setVisibility(View.INVISIBLE);
+                            RecordActivity.record_completeImg.setVisibility(View.INVISIBLE);
 
-                        if (Functions.isMyServiceRunning(getActivity(), TrackRouteService.class)) {
-                            Intent intent_Trace = new Intent(TRACK_TO_SERVICE);
-                            intent_Trace.putExtra("record_status", 0);
-                            intent_Trace.putExtra("track_title", title_editText.getText().toString());
-                            getActivity().sendBroadcast(intent_Trace);
+                            record_start_layout.setBackgroundColor(Color.parseColor("#FFFFFF"));
+                            record_start_text.setTextColor(Color.parseColor("#555555"));
+                            record_start_text.setText(getContext().getResources().getString(R.string.startRecord_text));
+                            record_start_img.setImageResource(R.drawable.ic_play_light);
+                            record_status = 0;
+
+                            if (Functions.isMyServiceRunning(getActivity(), TrackRouteService.class)) {
+                                Intent intent_Trace = new Intent(TRACK_TO_SERVICE);
+                                intent_Trace.putExtra("record_status", 0);
+                                intent_Trace.putExtra("track_title", title_editText.getText().toString());
+                                getActivity().sendBroadcast(intent_Trace);
+                            }
+                            spotDialog.dismiss();
                         }
-                        record_spot_layout.setClickable(false);
-                        spotDialog.dismiss();
                     }
                 });
                 spotDialog.show();
@@ -311,7 +334,6 @@ public class RecordTrackFragment extends Fragment implements
                         getActivity().sendBroadcast(intent_Trace);
                     }
                 } else {
-                    record_spot_layout.setClickable(true);
                     record_start_layout.setBackgroundColor(Color.parseColor("#5599FF"));
                     record_start_text.setTextColor(Color.parseColor("#FFFFFF"));
                     record_start_text.setText(getContext().getResources().getString(R.string.stopRecord_text));
@@ -365,7 +387,9 @@ public class RecordTrackFragment extends Fragment implements
         record_spot_layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!spotDialog.isShowing()) {
+                if (record_status == 0) {
+                    Toast.makeText(getActivity(), getContext().getResources().getString(R.string.recordremind_text), Toast.LENGTH_LONG).show();
+                } else if (!spotDialog.isShowing()) {
                     // reset內容
                     dialog_header_text.setText(getContext().getResources().getString(R.string.recordupload_text));
                     dialog_img.setImageBitmap(null);
@@ -392,7 +416,6 @@ public class RecordTrackFragment extends Fragment implements
                 }
             }
         });
-        record_spot_layout.setClickable(false);
 
         write.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -422,8 +445,8 @@ public class RecordTrackFragment extends Fragment implements
                         } else {
                             DataBaseHelper helper = DataBaseHelper.getmInstance(getActivity());
                             SQLiteDatabase db = helper.getReadableDatabase();
-                            Cursor memo_cursor = db.query("travelmemo", new String[]{"memo_routesCounter", "memo_trackNo",
-                                            "memo_content", "memo_img", "memo_latlng", "memo_time"},
+                            Cursor memo_cursor = db.query("travelMemo", new String[]{"memo_routesCounter", "memo_trackNo",
+                                            "memo_content", "memo_img", "memo_latlng", "memo_time", "memo_imgUrl"},
                                     null, null, null, null, null);
                             if (memo_cursor != null) {
                                 ContentValues cv = new ContentValues();
@@ -431,13 +454,13 @@ public class RecordTrackFragment extends Fragment implements
                                 cv.put("memo_trackNo", Track_no);
                                 cv.put("memo_content", content_editText.getText().toString());
                                 if (CurrentLatlng != null) {
-                                    cv.put("memo_latlng", CurrentLatlng.toString());
+                                    cv.put("memo_latlng", CurrentLocation.getLongitude()+","+CurrentLocation.getLatitude());
                                 }
-                                SimpleDateFormat fmt = new SimpleDateFormat("HH:mm");
+                                SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd");
                                 Date date = new Date();
                                 String dateString = fmt.format(date);
                                 cv.put("memo_time", dateString);
-                                inDB = db.insert("travelmemo", null, cv);
+                                inDB = db.insert("travelMemo", null, cv);
 //                                Log.e("3/23_", "DB insert content" + inDB + " content:"
 //                                        + content_editText.getText().toString() + " Addtime " + dateString);
 
@@ -756,8 +779,6 @@ public class RecordTrackFragment extends Fragment implements
                         record_start_img.setImageResource(R.drawable.ic_play_light);
                         TraceRoute.clear();
                     }
-
-                    record_spot_layout.setClickable(true);
                 }
             }
             trackRoute_cursor.close();
@@ -767,7 +788,6 @@ public class RecordTrackFragment extends Fragment implements
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == getActivity().RESULT_OK) {
-            // TODO 旋轉問題
             if (requestCode == REQUEST_CAMERA) {
                 ContentResolver cr = getActivity().getContentResolver();
                 try {
@@ -815,7 +835,7 @@ public class RecordTrackFragment extends Fragment implements
             }
             dialog_scrollview.setVisibility(View.VISIBLE);
             RelativeLayout.LayoutParams otelParams = new RelativeLayout.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT, getPx(120));
+                    ViewGroup.LayoutParams.MATCH_PARENT, getPx(200));
             otelParams.addRule(RelativeLayout.BELOW, R.id.dialog_header_text);
             dialog_scrollview.setLayoutParams(otelParams);
 
@@ -835,64 +855,8 @@ public class RecordTrackFragment extends Fragment implements
     View.OnClickListener ok = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            /**DB**/
-            DataBaseHelper helper = DataBaseHelper.getmInstance(getActivity());
-            SQLiteDatabase db = helper.getReadableDatabase();
-            Cursor memo_cursor = db.query("travelmemo", new String[]{"memo_routesCounter", "memo_trackNo",
-                            "memo_content", "memo_img", "memo_latlng", "memo_time"},
-                    null, null, null, null, null);
-            if (memo_cursor != null) {
-                ContentValues cv = new ContentValues();
-                cv.put("memo_routesCounter", RoutesCounter);
-                cv.put("memo_trackNo", Track_no);
-                if (memo_img != null) {
-                    try {
-                        ByteArrayOutputStream stream2 = new ByteArrayOutputStream();
-                        Boolean a;
-                        a = memo_img.compress(Bitmap.CompressFormat.JPEG, 50, stream2);
-//                        Log.e("3/23_", "compress " + a);
-                        byte[] bytes2 = stream2.toByteArray();
-                        cv.put("memo_img", bytes2);
-                    } catch (Exception e) {
-                        Log.e("EXCEPTION", e.toString());
-                    }
-                }
-                if (CurrentLatlng != null) {
-                    cv.put("memo_latlng", CurrentLatlng.toString());
-                }
-                SimpleDateFormat fmt = new SimpleDateFormat("HH:mm");
-                Date date = new Date();
-                String dateString = fmt.format(date);
-                cv.put("memo_time", dateString);
-                inDB = db.insert("travelmemo", null, cv);
-//                Log.e("23_", "DB insert img" + inDB + " Addtime " + dateString);
-
-            }
-            //2.9 for testing
-/*
-            if (img_cursor.getCount() > 0) {
-                img_cursor.moveToFirst();
-                if (img_cursor.getBlob(3) != null) {
-                    byte[] d = img_cursor.getBlob(3);
-                    Bitmap bmp = BitmapFactory.decodeByteArray(d, 0, d.length);
-                    dialog_img.setImageBitmap(bmp);
-                }
-            }
-*/
-            if (inDB != -1) {
-                if (spotDialog.isShowing()) {
-                    if (memo_img != null) {
-                        dialog_img.setImageBitmap(null);
-                    }
-                    spotDialog.dismiss();
-                }
-                Toast.makeText(getActivity(), getContext().getResources().getString(R.string.uploadedPic_text), Toast.LENGTH_SHORT).show();
-            }
-            memo_cursor.close();
-
-            if (spotDialog.isShowing()) {
-                spotDialog.dismiss();
-            }
+            // TODO:upload image
+            new uploadImage().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }
     };
 
@@ -950,6 +914,99 @@ public class RecordTrackFragment extends Fragment implements
     public int getPx(int dimensionDp) {
         float density = getResources().getDisplayMetrics().density;
         return (int) (dimensionDp * density + 0.5f);
+    }
+
+    public class uploadImage extends AsyncTask<String, String, String> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+            try {
+                ByteArrayOutputStream stream2 = new ByteArrayOutputStream();
+                memo_img.compress(Bitmap.CompressFormat.JPEG, 80, stream2);
+                byte[] data = stream2.toByteArray();
+
+                HttpClient client = new DefaultHttpClient();
+                HttpPost post = new HttpPost("http://zhiyou.lin366.com/api/diy/upload.aspx");
+
+                ByteArrayBody bab = new ByteArrayBody(data, "image.jpg");
+                MultipartEntity multipartEntity = new MultipartEntity();
+                multipartEntity.addPart("file", bab);
+                post.setEntity(multipartEntity);
+
+                HttpResponse response = null;
+                String getString = null;
+                try {
+                    response = client.execute(post);
+                    getString = EntityUtils.toString(response.getEntity());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                String state = null;
+                String imageUrl = null;
+                try {
+                    state = new JSONObject(getString.substring(
+                            getString.indexOf("{"), getString.lastIndexOf("}") + 1)).getString("states");
+                    imageUrl = new JSONObject(getString).getString("msg");
+                } catch (JSONException | NullPointerException e) {
+                    e.printStackTrace();
+                }
+
+                if (state != null && state.equals("1") && imageUrl != null) {
+                    Log.e("4/26", "imageUrl: " + imageUrl);
+
+                    DataBaseHelper helper = DataBaseHelper.getmInstance(getActivity());
+                    SQLiteDatabase db = helper.getReadableDatabase();
+                    Cursor memo_cursor = db.query("travelMemo", new String[]{"memo_routesCounter", "memo_trackNo",
+                                    "memo_content", "memo_img", "memo_latlng", "memo_time", "memo_imgUrl"},
+                            null, null, null, null, null);
+                    if (memo_cursor != null) {
+                        ContentValues cv = new ContentValues();
+                        cv.put("memo_routesCounter", RoutesCounter);
+                        cv.put("memo_trackNo", Track_no);
+                        if (memo_img != null) {
+                            cv.put("memo_img", data);
+                        }
+                        if (CurrentLatlng != null) {
+                            cv.put("memo_latlng", CurrentLocation.getLongitude()+","+CurrentLocation.getLatitude());
+                        }
+                        SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd");
+                        Date date = new Date();
+                        String dateString = fmt.format(date);
+                        cv.put("memo_time", dateString);
+                        cv.put("memo_imgUrl", imageUrl);
+                        inDB = db.insert("travelMemo", null, cv);
+                    }
+                    if (memo_cursor != null)
+                        memo_cursor.close();
+                }
+            } catch (Exception e) {
+                // handle exception here
+                Log.e("4/26", e.toString());
+            }
+            return null;
+        }
+
+        protected void onPostExecute(String s) {
+            if (inDB != -1) {
+                if (spotDialog.isShowing()) {
+                    if (memo_img != null) {
+                        dialog_img.setImageBitmap(null);
+                    }
+                    spotDialog.dismiss();
+                }
+                Toast.makeText(getActivity(), getContext().getResources().getString(R.string.uploadedPic_text), Toast.LENGTH_SHORT).show();
+            }
+
+            if (spotDialog.isShowing()) {
+                spotDialog.dismiss();
+            }
+            super.onPostExecute(s);
+        }
     }
 
     public static Bitmap rotateImage(Bitmap source, float angle) {
