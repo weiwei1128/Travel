@@ -45,7 +45,7 @@ public class CheckScheduleOKActivity extends AppCompatActivity {
     Boolean ifWebView = false;
 
     String[][] data;
-    String[] summary;
+    String[] summary,address,lat;
     int count=0;
     List<Fragment> fragments = new ArrayList<>();
     TextView dayText;
@@ -120,7 +120,7 @@ public class CheckScheduleOKActivity extends AppCompatActivity {
         @Override
         protected void onPreExecute() {
             progressDialog.setMessage(CheckScheduleOKActivity.this.getResources().getString(R.string.loading_text));
-            progressDialog.setCancelable(false);
+//            progressDialog.setCancelable(false);
             progressDialog.show();
             super.onPreExecute();
         }
@@ -171,10 +171,12 @@ public class CheckScheduleOKActivity extends AppCompatActivity {
                 if (jsonArray != null && jsonArray.length() > 0) {
 
                     count = jsonArray.length();
-                    data = new String[count][5];
+                    data = new String[count][6];
                     summary = new String[count];
+                    address = new String[count];
+                    lat = new String[count];
 //                    Log.e("4.26","jsonlength:"+count);
-                    String temp_summary =null;
+                    String temp_summary =null,temp_address=null,temp_lat=null;
                     for (int i = 0; i < jsonArray.length(); i++) {
                         try {
                             data[i][0] = jsonArray.getJSONObject(i).getString("day");
@@ -186,6 +188,21 @@ public class CheckScheduleOKActivity extends AppCompatActivity {
                             summary[i-1] = temp_summary;
                             try {
                                 summary[i] = jsonArray.getJSONObject(i).getString("summary");
+                            } catch (JSONException | NullPointerException e) {
+                                e.printStackTrace();
+                            }
+
+                            address[i-1] = temp_address;
+                            try {
+                                address[i] = jsonArray.getJSONObject(i).getString("address");
+                            } catch (JSONException | NullPointerException e) {
+                                e.printStackTrace();
+                            }
+
+                            lat[i-1]=temp_lat;
+
+                            try {
+                                lat[i] = jsonArray.getJSONObject(i).getString("jinwei");
                             } catch (JSONException | NullPointerException e) {
                                 e.printStackTrace();
                             }
@@ -208,10 +225,18 @@ public class CheckScheduleOKActivity extends AppCompatActivity {
                         }
                         temp_summary = data[i][3];
                         try {
-                            data[i][4] = jsonArray.getJSONObject(i).getString("jinwei");
+                            data[i][4] = jsonArray.getJSONObject(i).getString("address");
                         } catch (JSONException | NullPointerException e) {
                             e.printStackTrace();
                         }
+                        temp_address = data[i][4];
+                        try {
+                            data[i][5] = jsonArray.getJSONObject(i).getString("jinwei");
+                        } catch (JSONException | NullPointerException e) {
+                            e.printStackTrace();
+                        }
+
+                        temp_lat = data[i][5];
                     }
                     return true;
                 } else return false;
@@ -235,7 +260,7 @@ public class CheckScheduleOKActivity extends AppCompatActivity {
 //
                 if((i!=0&&data[i][0].equals(data[i-1][0])||(i==0&&count>1&&data[i][0].equals(data[i+1][0]))))
                 {
-                    Log.d("4.26","in if::"+data[i][0]+"i:"+i+"add:"+addFragment);
+                    Log.d("4.26","in if::"+data[i][4]+"i:"+i+"add:"+addFragment);
                     if(addFragment)
                         break;
                     CheckScheduleFragment fragment = new CheckScheduleFragment();
@@ -243,11 +268,17 @@ public class CheckScheduleOKActivity extends AppCompatActivity {
                     bundle.putString("scheduleday", data[i][0]);
                     bundle.putString("scheduledate", data[i][1]);
                     bundle.putString("scheduletime", data[i][2]);
-                    for(int k=0;k<summary.length;k++)
-                    bundle.putString("schedulesummary"+k, summary[k]);
+                    for(int k=0;k<summary.length;k++) {
+                        bundle.putString("schedulesummary" + k, summary[k]);
+                        bundle.putString("scheduleaddress" + k, address[k]);
+                        bundle.putString("scheduleajinwei" + k, lat[k]);
+                    }
                     bundle.putInt("schedulecount", count);
                     addFragment = true;
+                    if(data[i][4]!=null)
                     bundle.putString("schedulejinwei", data[i][4]);
+                    else if(data[i][5]!=null)
+                        bundle.putString("schedulejinwei", data[i][5]);
                     fragment.setArguments(bundle);
                     fragments.add(fragment);
                 } else {
@@ -257,13 +288,16 @@ public class CheckScheduleOKActivity extends AppCompatActivity {
                     bundle.putString("scheduledate", data[i][1]);
                     bundle.putString("scheduletime", data[i][2]);
                     bundle.putString("schedulesummary", data[i][3]);
-                    bundle.putString("schedulejinwei", data[i][4]);
+                    if(data[i][4]!=null)
+                        bundle.putString("schedulejinwei", data[i][4]);
+                    else if(data[i][5]!=null)
+                        bundle.putString("schedulejinwei", data[i][5]);
                     fragment.setArguments(bundle);
                     fragments.add(fragment);
                 }
 
             }
-            Log.e("4.26","fragments"+fragments.size());
+//            Log.e("4.26","fragments"+fragments.size());
             ViewPager viewPager = (ViewPager)findViewById(R.id.checkschedule_viewpager);
             checkScheduleFragmentAdapter =new CheckScheduleFragmentAdapter(
                     CheckScheduleOKActivity.this.getSupportFragmentManager(),
@@ -282,7 +316,7 @@ public class CheckScheduleOKActivity extends AppCompatActivity {
         }
 
         public void onPageSelected(int position) {
-            Log.e("4.26","onPageSelected"+position+"--data[position][0]"+data[position][0]);
+//            Log.e("4.26","onPageSelected"+position+"--data[position][0]"+data[position][0]);
             dayText.setText("Day" + data[position][0]);
             dateText.setText(data[position][1]);
             /*
