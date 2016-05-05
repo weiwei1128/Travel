@@ -60,10 +60,18 @@ import com.flyingtravel.Utility.Functions;
 import com.flyingtravel.Utility.HttpService;
 import com.flyingtravel.Utility.LoadApiService;
 import com.flyingtravel.Utility.View.MyTextview;
+import com.google.android.gms.analytics.GoogleAnalytics;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
 public class HomepageActivity extends FragmentActivity {
+    /***GA**/
+    //0505 GA setup OK
+    public static GoogleAnalytics analytics;
+    public static Tracker tracker;
+    /***GA**/
     private Fragment contentFragment;
     MainImageFragment homefragment;
     LinearLayout homeLayout, memberLayout, shoprecordLayout, moreLayout;
@@ -84,6 +92,16 @@ public class HomepageActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fragment_test);
+        /***GA**/
+        analytics = GoogleAnalytics.getInstance(this);
+        analytics.setLocalDispatchPeriod(1800);
+        tracker = analytics.newTracker("UA-77367126-1");
+        tracker.enableExceptionReporting(true);
+        tracker.enableAdvertisingIdCollection(true);
+        tracker.enableAutoActivityTracking(true);
+        /***GA**/
+
+
 
         ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(HomepageActivity.this)
                 .build();
@@ -153,6 +171,14 @@ public class HomepageActivity extends FragmentActivity {
         homeLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                /***GA**/
+                tracker.send(new HitBuilders.EventBuilder().setCategory("UX")
+                .setAction("click")
+                .setLabel("submit")
+                .build());
+                /***GA**/
+
+
                 changeFragment(mainFragment);
                 memberClick(false);
                 homeClick(true);
