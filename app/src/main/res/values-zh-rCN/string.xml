@@ -133,4 +133,7 @@
     <string name="title_activity_check_schedule_activity_new">CheckScheduleActivityNew</string>
     <string name="title_activity_webview">WebviewActivity</string>
     <string name="navi_text">导  航</string>
+    <string name="shownav_text">浏览旅程</string>
+    <string name="startplay_text">开始</string>
+    <string name="stopplay_text">停止</string>
 </resources>

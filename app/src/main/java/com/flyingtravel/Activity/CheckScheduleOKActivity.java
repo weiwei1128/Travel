@@ -18,6 +18,7 @@ import com.flyingtravel.Adapter.CheckScheduleFragmentAdapter;
 import com.flyingtravel.Fragment.BuyFragment;
 import com.flyingtravel.Fragment.CheckScheduleFragment;
 import com.flyingtravel.R;
+import com.flyingtravel.ScheduleMapsActivity;
 import com.flyingtravel.Utility.Functions;
 
 import org.apache.http.HttpResponse;
@@ -39,7 +40,7 @@ import java.util.List;
 
 public class CheckScheduleOKActivity extends AppCompatActivity {
     String itemid;
-    LinearLayout backImg;
+    LinearLayout backImg,showLayout;
     CheckScheduleFragmentAdapter checkScheduleFragmentAdapter;
     WebView webView;
     Boolean ifWebView = false;
@@ -83,31 +84,9 @@ public class CheckScheduleOKActivity extends AppCompatActivity {
                         CheckScheduleActivity.class, null);
             }
         });
+
     }
 
-    //    void setupWebview() {
-//        //WEBVIEW VERSION
-//        final ProgressDialog dialog = new ProgressDialog(CheckScheduleOKActivity.this);
-//        dialog.setMessage(CheckScheduleOKActivity.this.getResources().getString(R.string.loading_text));
-//        dialog.setCancelable(false);
-//        dialog.show();
-//        ifWebView = true;
-//        WebView webView = (WebView) findViewById(R.id.checkschedule_webview);
-//        String myURL = "http://zhiyou.lin366.com/guihua.aspx?id=" + itemid;
-//
-//        WebSettings websettings = webView.getSettings();
-//        websettings.setSupportZoom(true);
-//        websettings.setBuiltInZoomControls(true);
-//        websettings.setJavaScriptEnabled(true);
-//
-//        webView.setWebViewClient(new WebViewClient() {
-//            @Override
-//            public void onPageFinished(WebView view, String url) {
-//                super.onPageFinished(view, url);
-//                dialog.dismiss();
-//            }
-//        });
-//        webView.loadUrl(myURL);
 //    }
     class getScheduleDetail extends AsyncTask<String, Void, Boolean> {
         ProgressDialog progressDialog = new ProgressDialog(CheckScheduleOKActivity.this);

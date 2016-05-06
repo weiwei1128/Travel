@@ -10,11 +10,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import com.flyingtravel.Adapter.CheckScheduleNavAdapter;
 import com.flyingtravel.R;
+import com.flyingtravel.ScheduleMapsActivity;
+import com.flyingtravel.Utility.Functions;
 
 public class CheckScheduleFragment extends Fragment {
     String[] data = new String[5];
@@ -24,12 +27,13 @@ public class CheckScheduleFragment extends Fragment {
     Activity activity;
     ListView gridView;
     CheckScheduleNavAdapter adapter;
+    LinearLayout showLayout;
 
     public CheckScheduleFragment() {
         // Required empty public constructor
     }
 
-//05020502!!!!
+    //05020502!!!!
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,6 +68,23 @@ public class CheckScheduleFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.checkschedule_frament, container, false);
+        showLayout = (LinearLayout) view.findViewById(R.id.checkschedule_allLayout);
+        //瀏覽導航
+        showLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Bundle bundle = new Bundle();
+                int putcount=1;
+                if(count>0)
+                    putcount = count;
+                bundle.putInt("count",putcount);
+                if(count!=0)
+                    bundle.putStringArray("address",getaddress);
+                else bundle.putStringArray("address",new String[]{data[4]});
+                Functions.go(false, getActivity(), context, ScheduleMapsActivity.class, bundle);
+            }
+        });
+        //瀏覽導航
         gridView = (ListView) view.findViewById(R.id.schedule_gridview);
         if (count != 0)
             adapter = new CheckScheduleNavAdapter(context, count, getsummary, getaddress);

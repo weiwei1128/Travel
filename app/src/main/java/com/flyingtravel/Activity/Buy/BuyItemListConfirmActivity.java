@@ -138,6 +138,11 @@ public class BuyItemListConfirmActivity extends AppCompatActivity {
         addrEdit = (EditText) findViewById(R.id.buyitemlistconfirm_addrEdit);
         messageEdit = (EditText) findViewById(R.id.buyitemlistconfirm_messageEdit);
         totalText = (TextView) findViewById(R.id.buyitemlistconfirm_totalText);
+
+
+
+
+
         int totalnumber = 0, getitemPosition = 0, BiginCart = 0, totalmoney = 0;
         String BigitemID = null, SmallitemID = null, itemName = null;
         Cursor goods_cursor = database.query("goods", new String[]{"totalCount", "goods_id", "goods_title",

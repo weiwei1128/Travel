@@ -342,7 +342,7 @@ public class HttpService extends Service {
                     } catch (JSONException | NullPointerException e) {
                         e.printStackTrace();
                     }
-                    Log.e("3.10","price**title"+jsonObjects[i][1]);
+//                    Log.e("3.10","price**title"+jsonObjects[i][1]);
                     try {
                         jsonObjects[i][2] = jsonArray.getJSONObject(i).getString("img_url");
                     } catch (JSONException | NullPointerException e) {
@@ -394,7 +394,7 @@ public class HttpService extends Service {
                             cv.put("price", jsonObjects[i][5]);
                             cv.put("click", jsonObjects[i][4]);
                             long result = database.insert("special_activity", null, cv);
-                            Log.e("4.19", "3 price:" + jsonObjects[i][5]+" title"+jsonObjects[i][1]);
+                            Log.e("4.19", "3 price:" + jsonObjects[i][5] + " title" + jsonObjects[i][1]);
 //                            Log.d("3.10", "special_activity: " + result + " = DB INSERT" + i + "title " + jsonObjects[i][1]);
                         }
                     else { //資料庫已經有資料了!
