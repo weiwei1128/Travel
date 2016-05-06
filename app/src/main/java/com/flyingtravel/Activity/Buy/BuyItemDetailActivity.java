@@ -468,7 +468,12 @@ public class BuyItemDetailActivity extends AppCompatActivity {
             } catch (IOException | NullPointerException e) {
                 e.printStackTrace();
             }
-            String htmlString = Html.fromHtml(getString).toString();
+            String htmlString=null;
+            try {
+                 htmlString = Html.fromHtml(getString).toString();
+            }catch (NullPointerException e){
+                e.printStackTrace();
+            }
             String state = null;
             try {
                 state = new JSONObject(htmlString.substring(htmlString.indexOf("{"), htmlString.lastIndexOf("}") + 1)).getString("states");

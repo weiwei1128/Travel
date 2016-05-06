@@ -100,7 +100,7 @@ public class BuyItemListConfirmActivity extends AppCompatActivity {
                             member_cursor.moveToFirst();
                             idS = member_cursor.getString(0);
                         }
-                        member_cursor.close();//old85->102
+                        member_cursor.close();
                     }
                     if (!nameEdit.getText().toString().equals(""))
                         nameS = nameEdit.getText().toString();
@@ -138,7 +138,21 @@ public class BuyItemListConfirmActivity extends AppCompatActivity {
         addrEdit = (EditText) findViewById(R.id.buyitemlistconfirm_addrEdit);
         messageEdit = (EditText) findViewById(R.id.buyitemlistconfirm_messageEdit);
         totalText = (TextView) findViewById(R.id.buyitemlistconfirm_totalText);
-
+        Cursor member_cursor = database.query("member", new String[]{"account", "password",
+                "name", "phone", "email", "addr"}, null, null, null, null, null);
+        if (member_cursor != null && member_cursor.getCount() > 0) {
+            member_cursor.moveToFirst();
+            if(member_cursor.getString(2)!=null)
+                nameEdit.setText(member_cursor.getString(2));
+            if(member_cursor.getString(3)!=null)
+                telEdit.setText(member_cursor.getString(3));
+            if(member_cursor.getString(4)!=null)
+                emailEdit.setText(member_cursor.getString(4));
+            if(member_cursor.getString(5)!=null)
+                addrEdit.setText(member_cursor.getString(5));
+        }
+        if(member_cursor!=null)
+            member_cursor.close();
 
 
 
