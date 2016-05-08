@@ -24,6 +24,10 @@ import android.widget.Toast;
 
 import com.flyingtravel.R;
 import com.flyingtravel.Utility.DataBaseHelper;
+import com.flyingtravel.Utility.GlobalVariable;
+import com.google.android.gms.analytics.GoogleAnalytics;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -35,7 +39,8 @@ public class MemberFragment extends Fragment {
     Context context;
     TextView NameText, PhoneText, EmailText, AddrText;
     LinearLayout logoutLayout, shareLayout,ratingLayout;
-
+    public static GoogleAnalytics analytics;
+    public static Tracker tracker;
     public MemberFragment() {
         // Required empty public constructor
     }
@@ -44,8 +49,21 @@ public class MemberFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.context = getActivity();
+        /**GA**/
+        GlobalVariable globalVariable = (GlobalVariable)getActivity().getApplication();
+        tracker = globalVariable.getDefaultTracker();
+        /**GA**/
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+//        Log.i("5.6","======Resume=====");
+        /**GA**/
+        tracker.setScreenName("會員");
+        tracker.send(new HitBuilders.ScreenViewBuilder().build());
+        /**GA**/
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -107,6 +125,10 @@ public class MemberFragment extends Fragment {
         shareLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                tracker.send(new HitBuilders.EventBuilder().setCategory("分享")
+//                .setAction("click")
+//                .setLabel("submit")
+                        .build());
 //                Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
                 Intent sharingIntent = new Intent(Intent.ACTION_SEND_MULTIPLE);
                 //drawable -> bitmap
@@ -173,6 +195,10 @@ public class MemberFragment extends Fragment {
         });
     }
     private void launchMarket() {
+        tracker.send(new HitBuilders.EventBuilder().setCategory("評價")
+//                .setAction("click")
+//                .setLabel("submit")
+                .build());
         Uri uri = Uri.parse("market://details?id=" + context.getPackageName());
         Intent myAppLinkToMarket = new Intent(Intent.ACTION_VIEW, uri);
         try {

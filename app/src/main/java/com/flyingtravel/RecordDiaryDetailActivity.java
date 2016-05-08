@@ -2,7 +2,6 @@ package com.flyingtravel;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -33,8 +32,10 @@ import android.widget.Toast;
 import com.flyingtravel.Activity.LoginActivity;
 import com.flyingtravel.Utility.DataBaseHelper;
 import com.flyingtravel.Utility.Functions;
-import com.flyingtravel.Utility.TPESpotAPIFetcher;
+import com.flyingtravel.Utility.GlobalVariable;
 import com.flyingtravel.Utility.View.ExpandableHeightGridView;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationRequest;
@@ -59,7 +60,6 @@ import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -116,11 +116,17 @@ public class RecordDiaryDetailActivity extends AppCompatActivity implements
     LatLngBounds.Builder builder;
     CameraUpdate cu;
 
+    /*GA*/
+    public static Tracker tracker;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.record_diary_detail_activity);
-
+        /**GA**/
+        GlobalVariable globalVariable = (GlobalVariable) getApplication();
+        tracker = globalVariable.getDefaultTracker();
+        /**GA**/
         helper = DataBaseHelper.getmInstance(getApplicationContext());
         database = helper.getWritableDatabase();
 
@@ -169,6 +175,10 @@ public class RecordDiaryDetailActivity extends AppCompatActivity implements
         EnlargeImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                tracker.send(new HitBuilders.EventBuilder().setCategory("旅程紀錄地圖放大")
+//                .setAction("click")
+//                .setLabel("submit")
+                        .build());
                 // TODO 放大地圖
                 MapLayout.setLayoutParams(new LinearLayout.LayoutParams(
                         LinearLayout.LayoutParams.MATCH_PARENT,
@@ -230,7 +240,7 @@ public class RecordDiaryDetailActivity extends AppCompatActivity implements
                 RetrieveRouteFromDB();
 
                 DiaryImgAdapter adapter = new DiaryImgAdapter(getApplicationContext(), RoutesCounter);
-                gridView = (ExpandableHeightGridView)findViewById(R.id.DiaryDetailImg_gridView);
+                gridView = (ExpandableHeightGridView) findViewById(R.id.DiaryDetailImg_gridView);
                 gridView.setNumColumns(3);
                 gridView.setAdapter(adapter);
                 gridView.setExpanded(true);
@@ -713,7 +723,7 @@ public class RecordDiaryDetailActivity extends AppCompatActivity implements
 
         @Override
         protected String doInBackground(String... params) {
-            Log.e("4/26", "=========UploadToServer======doInBackground");
+//            Log.e("4/26", "=========UploadToServer======doInBackground");
 
             DataBaseHelper helper = DataBaseHelper.getmInstance(mcontext);
             SQLiteDatabase database = helper.getWritableDatabase();
@@ -734,7 +744,7 @@ public class RecordDiaryDetailActivity extends AppCompatActivity implements
                 if (trackRoute_cursor.getCount() != 0) {
                     trackRoute_cursor.moveToPosition(trackRoute_cursor.getCount() - mPosition - 1);
                     title = trackRoute_cursor.getString(5);
-                    jinwei = trackRoute_cursor.getString(3)+","+trackRoute_cursor.getString(2);
+                    jinwei = trackRoute_cursor.getString(3) + "," + trackRoute_cursor.getString(2);
                     add_time = trackRoute_cursor.getString(7);
                 }
                 trackRoute_cursor.close();
@@ -765,8 +775,8 @@ public class RecordDiaryDetailActivity extends AppCompatActivity implements
                             "\"add_time\":\"" + picList.get(key).get(2) + "\"}";
                 } else
                     pic = pic + ",{\"picurl\":\"" + picList.get(key).get(0) + "\"," +
-                                "\"jinwei\":\"" + picList.get(key).get(1) + "\"," +
-                                "\"add_time\":\"" + picList.get(key).get(2) + "\"}";
+                            "\"jinwei\":\"" + picList.get(key).get(1) + "\"," +
+                            "\"add_time\":\"" + picList.get(key).get(2) + "\"}";
             }
             Log.e("4/26", "picList:" + pic);
 
@@ -812,7 +822,7 @@ public class RecordDiaryDetailActivity extends AppCompatActivity implements
                                 "\"add_time\":\"" + add_time + "\"," +
                                 "\"link_url\":\"" + link_url + "\"," +
                                 "\"content\":\"" + content + "\"," +
-                                "\"jinwei\":\"" + jinwei + "\","+
+                                "\"jinwei\":\"" + jinwei + "\"," +
                                 "\"piclist\":[" + pic + "]," +
                                 "\"contentlist\":[" + con + "]}", charset));
             } catch (UnsupportedEncodingException e) {

@@ -83,3 +83,7 @@ library/build/intermediates/blame/res/release/single/drawable-xhdpi-v4.json
 *.iml
 
 *.json
+
+app/app.iml
+
+library/library.iml

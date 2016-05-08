@@ -47,7 +47,8 @@
                 android:id="@+id/reg_account"
                 android:hint="@string/accountInput_text"
                 android:textSize="16dp"
-                android:textColor="@color/black" />
+                android:textColor="@color/black"
+                android:singleLine="true" />
         </LinearLayout>
 
         <LinearLayout
@@ -74,7 +75,8 @@
                 android:id="@+id/reg_password"
                 android:hint="@string/passwordInput_text"
                 android:textColor="@color/black"
-                android:textSize="16dp" />
+                android:textSize="16dp"
+                android:singleLine="true" />
         </LinearLayout>
 
         <LinearLayout
@@ -101,7 +103,8 @@
                 android:id="@+id/reg_name"
                 android:hint="@string/nameInput_text"
                 android:textSize="16dp"
-                android:textColor="@color/black" />
+                android:textColor="@color/black"
+                android:singleLine="true" />
         </LinearLayout>
 
         <LinearLayout
@@ -128,7 +131,8 @@
                 android:id="@+id/reg_phone"
                 android:hint="@string/telInput_text"
                 android:textSize="16dp"
-                android:textColor="@color/black" />
+                android:textColor="@color/black"
+                android:singleLine="true" />
         </LinearLayout>
 
         <LinearLayout
@@ -155,7 +159,8 @@
                 android:id="@+id/reg_email"
                 android:hint="@string/emailInput_text"
                 android:textColor="@color/black"
-                android:textSize="16dp" />
+                android:textSize="16dp"
+                android:singleLine="true" />
         </LinearLayout>
 
         <LinearLayout

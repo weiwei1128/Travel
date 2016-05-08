@@ -45,7 +45,10 @@ import android.widget.Toast;
 
 import com.flyingtravel.Utility.DataBaseHelper;
 import com.flyingtravel.Utility.Functions;
+import com.flyingtravel.Utility.GlobalVariable;
 import com.flyingtravel.Utility.TrackRouteService;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
@@ -147,6 +150,8 @@ public class RecordTrackFragment extends Fragment implements
     public static ProgressDialog mProgressDialog;
 
     //private OnFragmentInteractionListener mListener;
+    /**GA**/
+    public static Tracker tracker;
 
     public RecordTrackFragment() {
         // Required empty public constructor
@@ -176,7 +181,10 @@ public class RecordTrackFragment extends Fragment implements
             mFragmentName = getArguments().getString(FRAGMENT_NAME);
             //mParam2 = getArguments().getString(ARG_PARAM2);
         }
-
+        /**GA**/
+        GlobalVariable globalVariable = (GlobalVariable)getActivity().getApplication();
+        tracker = globalVariable.getDefaultTracker();
+        /**GA**/
         //globalVariable = (GlobalVariable) getActivity().getApplicationContext();
         getActivity().registerReceiver(broadcastReceiver, new IntentFilter(TrackRouteService.BROADCAST_ACTION));
         getActivity().registerReceiver(broadcastReceiver_timer, new IntentFilter(TrackRouteService.BROADCAST_ACTION_TIMER));
@@ -443,6 +451,10 @@ public class RecordTrackFragment extends Fragment implements
                         if (content_editText.getText().equals("")) {
                             Toast.makeText(getActivity(), getContext().getResources().getString(R.string.emptyInput_text), Toast.LENGTH_SHORT).show();
                         } else {
+                            tracker.send(new HitBuilders.EventBuilder().setCategory("旅程紀錄筆記  (紀錄中)")
+//                .setAction("click")
+//                .setLabel("submit")
+                                    .build());
                             DataBaseHelper helper = DataBaseHelper.getmInstance(getActivity());
                             SQLiteDatabase db = helper.getReadableDatabase();
                             Cursor memo_cursor = db.query("travelMemo", new String[]{"memo_routesCounter", "memo_trackNo",
@@ -454,7 +466,7 @@ public class RecordTrackFragment extends Fragment implements
                                 cv.put("memo_trackNo", Track_no);
                                 cv.put("memo_content", content_editText.getText().toString());
                                 if (CurrentLatlng != null) {
-                                    cv.put("memo_latlng", CurrentLocation.getLongitude()+","+CurrentLocation.getLatitude());
+                                    cv.put("memo_latlng", CurrentLocation.getLongitude() + "," + CurrentLocation.getLatitude());
                                 }
                                 SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd");
                                 Date date = new Date();
@@ -489,6 +501,10 @@ public class RecordTrackFragment extends Fragment implements
         camera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                tracker.send(new HitBuilders.EventBuilder().setCategory("旅程紀錄拍照  (紀錄中)")
+//                .setAction("click")
+//                .setLabel("submit")
+                        .build());
 //                Log.e("3/23_", "CAMERA");
                 //getContext().getResources().getString(R.string.uploaded_text)
                 final CharSequence[] items = {getContext().getResources().getString(R.string.camera_text),
@@ -511,15 +527,15 @@ public class RecordTrackFragment extends Fragment implements
                             Intent intent_camera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                             intent_camera.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
                             startActivityForResult(intent_camera, REQUEST_CAMERA);
-                            } else if (items[item].equals(getContext().getResources().getString(R.string.album_text))) {
-                                Intent intent_photo = new Intent(Intent.ACTION_GET_CONTENT);
-                                intent_photo.setType("image/*");
-                                startActivityForResult(Intent.createChooser(intent_photo, getContext().getResources().getString(R.string.chooseFile_text)),
-                                        SELECT_FILE);
-                            } else if (items[item].equals(getContext().getResources().getString(R.string.cancel_text))) {
-                                dialog.dismiss();
+                        } else if (items[item].equals(getContext().getResources().getString(R.string.album_text))) {
+                            Intent intent_photo = new Intent(Intent.ACTION_GET_CONTENT);
+                            intent_photo.setType("image/*");
+                            startActivityForResult(Intent.createChooser(intent_photo, getContext().getResources().getString(R.string.chooseFile_text)),
+                                    SELECT_FILE);
+                        } else if (items[item].equals(getContext().getResources().getString(R.string.cancel_text))) {
+                            dialog.dismiss();
                         }
-                        }
+                    }
                 });
                 builder.show();
             }
@@ -554,6 +570,10 @@ public class RecordTrackFragment extends Fragment implements
             MarkerIcon = decodeBitmapFromResource(getResources(), R.drawable.location3, 10, 18);
         }
         super.onResume();
+        /**GA**/
+        tracker.setScreenName("旅程紀錄地圖");
+        tracker.send(new HitBuilders.ScreenViewBuilder().build());
+        /**GA**/
     }
 
     @Override
@@ -660,7 +680,7 @@ public class RecordTrackFragment extends Fragment implements
         DataBaseHelper helper = DataBaseHelper.getmInstance(getActivity());
         SQLiteDatabase database = helper.getWritableDatabase();
         Cursor trackRoute_cursor = database.query("trackRoute",
-                new String[]{"routesCounter","track_no", "track_lat", "track_lng",
+                new String[]{"routesCounter", "track_no", "track_lat", "track_lng",
                         "track_start", "track_title", "track_totaltime", "track_completetime"},
                 null, null, null, null, null);
         if (trackRoute_cursor != null) {
@@ -701,7 +721,7 @@ public class RecordTrackFragment extends Fragment implements
         DataBaseHelper helper = DataBaseHelper.getmInstance(getActivity());
         SQLiteDatabase database = helper.getWritableDatabase();
         Cursor trackRoute_cursor = database.query("trackRoute",
-                new String[]{"routesCounter","track_no", "track_lat", "track_lng",
+                new String[]{"routesCounter", "track_no", "track_lat", "track_lng",
                         "track_start", "track_title", "track_totaltime", "track_completetime"},
                 null, null, null, null, null);
         if (trackRoute_cursor != null) {
@@ -769,10 +789,10 @@ public class RecordTrackFragment extends Fragment implements
                         // 暫停紀錄
                         record_status = 2;
                         Integer min = Integer.valueOf(temp_totaltime.substring(0, temp_totaltime.indexOf(":", 0)));
-                        Integer sec = Integer.valueOf(temp_totaltime.substring(temp_totaltime.indexOf(":", 0)+1, temp_totaltime.length()));
+                        Integer sec = Integer.valueOf(temp_totaltime.substring(temp_totaltime.indexOf(":", 0) + 1, temp_totaltime.length()));
                         //Log.d("4/1_", "min:" + temp_totaltime.substring(0, temp_totaltime.indexOf(":", 0)));
                         //Log.d("4/1_", "sec:" + temp_totaltime.substring(temp_totaltime.indexOf(":", 0)+1, temp_totaltime.length()));
-                        tempSpent = Long.valueOf((min*60+sec)*1000);
+                        tempSpent = Long.valueOf((min * 60 + sec) * 1000);
                         record_start_layout.setBackgroundColor(Color.parseColor("#FFFFFF"));
                         record_start_text.setTextColor(Color.parseColor("#555555"));
                         record_start_text.setText(getContext().getResources().getString(R.string.startRecord_text));
@@ -817,7 +837,7 @@ public class RecordTrackFragment extends Fragment implements
                 e.printStackTrace();
             }
             String orientString = exif.getAttribute(ExifInterface.TAG_ORIENTATION);
-            int orientation = orientString != null ? Integer.parseInt(orientString):ExifInterface.ORIENTATION_NORMAL;
+            int orientation = orientString != null ? Integer.parseInt(orientString) : ExifInterface.ORIENTATION_NORMAL;
 
 //            Log.e("4/1_", "exifOrientation: " + orientation);
 
@@ -877,11 +897,10 @@ public class RecordTrackFragment extends Fragment implements
                                     RecordActivity.time_text.setText("0" + ((spent / 1000) / 60) + ":0" + ((spent / 1000) % 60));
                                 else
                                     RecordActivity.time_text.setText("0" + ((spent / 1000) / 60) + ":" + ((spent / 1000) % 60));
+                            else if (((spent / 1000) % 60) < 10)
+                                RecordActivity.time_text.setText(((spent / 1000) / 60) + ":0" + ((spent / 1000) % 60));
                             else
-                                if (((spent / 1000) % 60) < 10)
-                                    RecordActivity.time_text.setText(((spent / 1000) / 60) + ":0" + ((spent / 1000) % 60));
-                                else
-                                    RecordActivity.time_text.setText(((spent / 1000) / 60) + ":" + ((spent / 1000) % 60));
+                                RecordActivity.time_text.setText(((spent / 1000) / 60) + ":" + ((spent / 1000) % 60));
                         } else {
                             if (((spent / 1000) % 60) < 10)
                                 RecordActivity.time_text.setText("00:0" + ((spent / 1000) % 60));
@@ -972,7 +991,7 @@ public class RecordTrackFragment extends Fragment implements
                             cv.put("memo_img", data);
                         }
                         if (CurrentLatlng != null) {
-                            cv.put("memo_latlng", CurrentLocation.getLongitude()+","+CurrentLocation.getLatitude());
+                            cv.put("memo_latlng", CurrentLocation.getLongitude() + "," + CurrentLocation.getLatitude());
                         }
                         SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd");
                         Date date = new Date();
@@ -1063,7 +1082,7 @@ public class RecordTrackFragment extends Fragment implements
                 }
 
                 final String selection = "_id=?";
-                final String[] selectionArgs = new String[] {
+                final String[] selectionArgs = new String[]{
                         split[1]
                 };
 
@@ -1086,9 +1105,9 @@ public class RecordTrackFragment extends Fragment implements
      * Get the value of the data column for this Uri. This is useful for
      * MediaStore Uris, and other file-based ContentProviders.
      *
-     * @param context The context.
-     * @param uri The Uri to query.
-     * @param selection (Optional) Filter used in the query.
+     * @param context       The context.
+     * @param uri           The Uri to query.
+     * @param selection     (Optional) Filter used in the query.
      * @param selectionArgs (Optional) Selection arguments used in the query.
      * @return The value of the _data column, which is typically a file path.
      */

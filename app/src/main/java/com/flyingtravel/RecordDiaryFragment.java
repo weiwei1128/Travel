@@ -17,6 +17,9 @@ import android.widget.Toast;
 import com.flyingtravel.Adapter.RecordDiaryFragmentAdapter;
 import com.flyingtravel.Utility.DataBaseHelper;
 import com.flyingtravel.Utility.Functions;
+import com.flyingtravel.Utility.GlobalVariable;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -43,6 +46,8 @@ public class RecordDiaryFragment extends Fragment {
     public static RecordDiaryFragmentAdapter mAdapter;
 
     private OnFragmentInteractionListener mListener;
+    /*GA*/
+    public static Tracker tracker;
 
     public RecordDiaryFragment() {
         // Required empty public constructor
@@ -66,12 +71,25 @@ public class RecordDiaryFragment extends Fragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        /**GA**/
+        tracker.setScreenName("旅程紀錄列表");
+        tracker.send(new HitBuilders.ScreenViewBuilder().build());
+        /**GA**/
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mFragmentName = getArguments().getString(FRAGMENT_NAME);
             //mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        /**GA**/
+        GlobalVariable globalVariable = (GlobalVariable)getActivity().getApplication();
+        tracker = globalVariable.getDefaultTracker();
+        /**GA**/
 //        Log.e("3/27_", "RecordDiaryFragment. onCreate");
     }
 
@@ -108,7 +126,7 @@ public class RecordDiaryFragment extends Fragment {
                 DateOfLastOne.setText(dateString);
             } else {
                 SimpleDateFormat DateFormat = new SimpleDateFormat("yyyy-MM-dd");
-                Date date=new Date();
+                Date date = new Date();
                 DateOfLastOne.setText(DateFormat.format(date));
             }
             trackRoute_cursor.close();
@@ -143,8 +161,7 @@ public class RecordDiaryFragment extends Fragment {
                 if (mAdapter.getCount() == 0)
                     Toast.makeText(getActivity(), getContext().getResources().getString(R.string.noUpload_text), Toast.LENGTH_SHORT).show();
             }
-        }
-        else {
+        } else {
             //you are no longer visible to the user so cleanup whatever you need
 //            Log.e("3/23_SpotMap", "setUserVisibleHint: not Visible");
             System.gc();
