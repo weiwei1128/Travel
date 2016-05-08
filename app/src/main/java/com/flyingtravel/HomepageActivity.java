@@ -61,17 +61,20 @@ import com.flyingtravel.Utility.HttpService;
 import com.flyingtravel.Utility.LoadApiService;
 import com.flyingtravel.Utility.View.MyTextview;
 import com.google.android.gms.analytics.GoogleAnalytics;
-import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
 public class HomepageActivity extends FragmentActivity {
-    /***GA**/
+    /***
+     * GA
+     **/
     //0505 GA setup OK
     public static GoogleAnalytics analytics;
     public static Tracker tracker;
-    /***GA**/
+    /***
+     * GA
+     **/
     private Fragment contentFragment;
     MainImageFragment homefragment;
     LinearLayout homeLayout, memberLayout, shoprecordLayout, moreLayout;
@@ -89,18 +92,19 @@ public class HomepageActivity extends FragmentActivity {
     final int REQUEST_PERMISSION = 2;
 
     @Override
+    protected void onStop() {
+        super.onStop();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fragment_test);
-        /***GA**/
-        analytics = GoogleAnalytics.getInstance(this);
-        analytics.setLocalDispatchPeriod(1800);
-        tracker = analytics.newTracker("UA-77367126-1");
-        tracker.enableExceptionReporting(true);
-        tracker.enableAdvertisingIdCollection(true);
-        tracker.enableAutoActivityTracking(true);
-        /***GA**/
-
 
 
         ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(HomepageActivity.this)
@@ -128,7 +132,7 @@ public class HomepageActivity extends FragmentActivity {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                 || ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
                 || ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
-                || ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)  != PackageManager.PERMISSION_GRANTED) {
+                || ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
 
             // Check Permissions Now
             ActivityCompat.requestPermissions(this,
@@ -171,14 +175,6 @@ public class HomepageActivity extends FragmentActivity {
         homeLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                /***GA**/
-                tracker.send(new HitBuilders.EventBuilder().setCategory("UX")
-                .setAction("click")
-                .setLabel("submit")
-                .build());
-                /***GA**/
-
-
                 changeFragment(mainFragment);
                 memberClick(false);
                 homeClick(true);
@@ -259,7 +255,7 @@ public class HomepageActivity extends FragmentActivity {
                     goLogin.setMessage(getApplicationContext().getResources().getString(R.string.LoginFirst_text));
                     // 添加選擇按鈕並注冊監聽
                     goLogin.setButton(AlertDialog.BUTTON_NEGATIVE, getApplicationContext().getResources().getString(R.string.cancel_text), listenerLogin);
-                    goLogin.setButton(AlertDialog.BUTTON_POSITIVE,getApplicationContext().getResources().getString(R.string.ok_text),listenerLogin);
+                    goLogin.setButton(AlertDialog.BUTTON_POSITIVE, getApplicationContext().getResources().getString(R.string.ok_text), listenerLogin);
                     /*
     On devices prior to Honeycomb, the button order (left to right) was POSITIVE - NEUTRAL - NEGATIVE.
     On newer devices using the Holo theme, the button order (left to right) is now NEGATIVE - NEUTRAL - POSITIVE.
@@ -419,7 +415,7 @@ public class HomepageActivity extends FragmentActivity {
 
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         if (requestCode == REQUEST_PERMISSION) {
-            if(grantResults.length > 0
+            if (grantResults.length > 0
                     && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 // We can now safely use the API we requested access to
 

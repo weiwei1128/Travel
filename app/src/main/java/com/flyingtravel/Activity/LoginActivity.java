@@ -22,9 +22,12 @@ import com.crashlytics.android.Crashlytics;
 import com.flyingtravel.HomepageActivity;
 import com.flyingtravel.R;
 import com.flyingtravel.Utility.DataBaseHelper;
+import com.flyingtravel.Utility.GlobalVariable;
 import com.flyingtravel.Utility.HttpService;
 import com.flyingtravel.Utility.LoadApiService;
 import com.flyingtravel.Utility.View.MyAnimation;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -52,16 +55,28 @@ public class LoginActivity extends AppCompatActivity {
     EditText accountEdit, passEdit;
     ProgressDialog mDialog;
 
-    //2.29 Hua
-    //GlobalVariable globalVariable;
-    //2.29 Hua
+    /**
+     * GA
+     **/
+    public static Tracker tracker;
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        /**GA**/
+        tracker.setScreenName("登入");
+        tracker.send(new HitBuilders.ScreenViewBuilder().build());
+        /**GA**/
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Fabric.with(this, new Crashlytics());
         setContentView(R.layout.login_activity);
-        //globalVariable = (GlobalVariable) getApplicationContext();
+        /**GA**/
+        GlobalVariable globalVariable = (GlobalVariable) getApplication();
+        tracker = globalVariable.getDefaultTracker();
 
         Intent intent_LoadApi = new Intent(LoginActivity.this, LoadApiService.class);
         startService(intent_LoadApi);
@@ -120,6 +135,12 @@ public class LoginActivity extends AppCompatActivity {
                     Toast.makeText(LoginActivity.this,
                             LoginActivity.this.getResources().getString(R.string.noaccountAndpassword_text), Toast.LENGTH_SHORT).show();
                 } else {
+                    /***GA**/
+                    tracker.send(new HitBuilders.EventBuilder().setCategory("登入")
+//                .setAction("click")
+//                .setLabel("submit")
+                            .build());
+                    /***GA**/
 //                    Log.d("1/4", "account:" + accountEdit.getText() + "_ \n password:" + passEdit.getText() + "_");
                     login_Data loginData = new login_Data(accountEdit.getText().toString(),
                             passEdit.getText().toString());
@@ -154,6 +175,13 @@ public class LoginActivity extends AppCompatActivity {
                             Toast.makeText(LoginActivity.this,
                                     LoginActivity.this.getResources().getString(R.string.InputData_text), Toast.LENGTH_SHORT).show();
                         } else {
+                            /***GA**/
+                            tracker.send(new HitBuilders.EventBuilder().setCategory("忘記密碼")
+//                .setAction("click")
+//                .setLabel("submit")
+                                    .build());
+                            /***GA**/
+//                    Log.d("1/4
                             findPwd findPwd = new findPwd(findpwdDialog, accountEdit.getText().toString(),
                                     emailEdit.getText().toString());
                             findPwd.execute();
@@ -167,6 +195,10 @@ public class LoginActivity extends AppCompatActivity {
         signupText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                /**GA**/
+                tracker.setScreenName("註冊");
+                tracker.send(new HitBuilders.ScreenViewBuilder().build());
+                /**GA**/
                 final Dialog signDialog = new Dialog(LoginActivity.this);
                 signDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
                 signDialog.setContentView(R.layout.dialog_reg);
@@ -189,6 +221,13 @@ public class LoginActivity extends AppCompatActivity {
                             Toast.makeText(LoginActivity.this,
                                     LoginActivity.this.getResources().getString(R.string.InputData_text), Toast.LENGTH_SHORT).show();
                         } else {
+                            /***GA**/
+                            tracker.send(new HitBuilders.EventBuilder().setCategory("註冊")
+//                .setAction("click")
+//                .setLabel("submit")
+                                    .build());
+                            /***GA**/
+//                    Log.d("1/4
                             sighUp sighUp = new sighUp(account.getText().toString(),
                                     password.getText().toString(), name.getText().toString(),
                                     phone.getText().toString(), email.getText().toString(), signDialog);
@@ -287,7 +326,7 @@ public class LoginActivity extends AppCompatActivity {
             } catch (JSONException | NullPointerException e2) {
                 e2.printStackTrace();
             }
-            try{
+            try {
                 message = new JSONObject(result.substring(
                         result.indexOf("{"), result.lastIndexOf("}") + 1)).getString("msg");
             } catch (JSONException | NullPointerException e2) {

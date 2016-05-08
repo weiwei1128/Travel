@@ -3,6 +3,7 @@
 /.idea/workspace.xml
 /.idea/libraries
 .DS_Store
+/library/build/
 /build
 /captures
 .idea/misc.xml
@@ -82,4 +83,13 @@ library/build/intermediates/blame/res/release/single/drawable-xhdpi-v4.json
 *.jar
 *.iml
 
+*.json
+
+app/app.iml
+
+library/library.iml
+*.json
+*.json
+*.json
+*.aar
 *.json

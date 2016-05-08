@@ -12,7 +12,6 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,6 +24,9 @@ import android.widget.TextView;
 import com.flyingtravel.R;
 import com.flyingtravel.Utility.DataBaseHelper;
 import com.flyingtravel.Utility.Functions;
+import com.flyingtravel.Utility.GlobalVariable;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
@@ -60,8 +62,10 @@ public class BuyItemDetailActivity extends AppCompatActivity {
     String itemID;
     String[][] cartItem;
     LinearLayout addLayout, BackImg;
-
-
+    /**
+     * GA
+     **/
+    public static Tracker tracker;
 
     //按下返回鍵
     @Override
@@ -69,14 +73,28 @@ public class BuyItemDetailActivity extends AppCompatActivity {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             Functions.go(true, BuyItemDetailActivity.this, BuyItemDetailActivity.this, BuyActivity.class, null);
         }
-
         return false;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(itemID!=null){
+            /**GA**/
+            tracker.setScreenName("伴手禮內頁-ID:"+itemID);
+            tracker.send(new HitBuilders.ScreenViewBuilder().build());
+            /**GA**/
+        }
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.buyitem_detail_activity);
+        /**GA**/
+        GlobalVariable globalVariable = (GlobalVariable) getApplication();
+        tracker = globalVariable.getDefaultTracker();
+        /**GA**/
 
         //record which item is clicked
         Bundle bundle = this.getIntent().getExtras();
@@ -118,7 +136,7 @@ public class BuyItemDetailActivity extends AppCompatActivity {
     }
 
 
-    void getInfo(){
+    void getInfo() {
         //===各個item的資料=02_24==//
 //        Log.e("4.25","!!!!!getIngo!!!!!");
         helper = DataBaseHelper.getmInstance(BuyItemDetailActivity.this);
@@ -153,7 +171,7 @@ public class BuyItemDetailActivity extends AppCompatActivity {
             goods_cursor.close();
     }
 
-    void UI(){
+    void UI() {
         ItemName = (TextView) findViewById(R.id.buyitemName_Text);
         ItemDetail = (TextView) findViewById(R.id.buyitemDetail_text);
         ItemHeader = (TextView) findViewById(R.id.buyItemHeader);
@@ -264,9 +282,10 @@ public class BuyItemDetailActivity extends AppCompatActivity {
                     * Integer.valueOf(numberText[i].getText().toString()) + "");
             totalprice[0] += Integer.valueOf(totalText[i].getText().toString());
             totalPrice.setText(totalprice[0] + "");
-            if(itemImg.startsWith("http://"))
-            loader.displayImage(itemImg, Img[i], options, listener);
-            else loader.displayImage("http://zhiyou.lin366.com/" + itemImg, Img[i], options, listener);
+            if (itemImg.startsWith("http://"))
+                loader.displayImage(itemImg, Img[i], options, listener);
+            else
+                loader.displayImage("http://zhiyou.lin366.com/" + itemImg, Img[i], options, listener);
 
             final int finalI = i;
             addButton[i].setOnClickListener(new View.OnClickListener() {
@@ -468,10 +487,10 @@ public class BuyItemDetailActivity extends AppCompatActivity {
             } catch (IOException | NullPointerException e) {
                 e.printStackTrace();
             }
-            String htmlString=null;
+            String htmlString = null;
             try {
-                 htmlString = Html.fromHtml(getString).toString();
-            }catch (NullPointerException e){
+                htmlString = Html.fromHtml(getString).toString();
+            } catch (NullPointerException e) {
                 e.printStackTrace();
             }
             String state = null;
