@@ -121,7 +121,7 @@ public class HttpService extends Service {
 //                Log.d("3.7", "BannerService result:" + jsonArray.length());
                 DataBaseHelper helper = DataBaseHelper.getmInstance(context);
                 SQLiteDatabase database = helper.getWritableDatabase();
-                Cursor cursor = database.query("banner", new String[]{"img_url"}, null, null, null, null, null);
+                Cursor cursor = database.query("banner", new String[]{"img_url", "link","bannerid"}, null, null, null, null, null);
                 if (cursor != null && cursor.getCount() > 0)
                     database.delete("banner", null, null);
                 if (cursor != null)
@@ -139,13 +139,25 @@ public class HttpService extends Service {
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
+                    //link_url"
                     try {
                         contentValues.clear();
                         contentValues.put("img_url", "http://zhiyou.lin366.com" + jsonArray.getJSONObject(i).getString("img_url"));
-                        database.insert("banner", null, contentValues);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
+                    try {
+                        contentValues.put("link", jsonArray.getJSONObject(i).getString("link_url"));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    //id
+                    try {
+                        contentValues.put("bannerid", jsonArray.getJSONObject(i).getString("id"));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    database.insert("banner", null, contentValues);
                 }
                 editor.apply();
             }

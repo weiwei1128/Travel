@@ -16,7 +16,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.text.SpannableStringBuilder;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -31,7 +30,6 @@ import com.flyingtravel.Activity.ServiceActivity;
 import com.flyingtravel.Activity.Special.SpecialActivity;
 import com.flyingtravel.Activity.Spot.SpotActivity;
 import com.flyingtravel.Activity.WebviewActivity;
-import com.flyingtravel.AnalyticsApplication;
 import com.flyingtravel.ImageSlide.MainImageFragment;
 import com.flyingtravel.R;
 import com.flyingtravel.RecordActivity;
@@ -56,7 +54,9 @@ public class MainFragment extends Fragment {
     //    MyTextview news;
     MyTextview2 news;
     Bundle getSavedInstanceState;
-    /**GA**/
+    /**
+     * GA
+     **/
     public static GoogleAnalytics analytics;
     public static Tracker tracker;
 
@@ -91,7 +91,7 @@ public class MainFragment extends Fragment {
                     @Override
                     public void onClick(View widget) {
 //                        Log.d("4.14","onClick!");
-                        tracker.send(new HitBuilders.EventBuilder().setCategory("最新消息-ID:"+setup)
+                        tracker.send(new HitBuilders.EventBuilder().setCategory("最新消息-ID:" + setup)
 //                .setAction("click")
 //                .setLabel("submit")
                                 .build());
@@ -140,7 +140,7 @@ public class MainFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         /**GA**/
-        GlobalVariable globalVariable = (GlobalVariable)getActivity().getApplication();
+        GlobalVariable globalVariable = (GlobalVariable) getActivity().getApplication();
         tracker = globalVariable.getDefaultTracker();
         /**GA**/
 
@@ -203,8 +203,6 @@ public class MainFragment extends Fragment {
 
         //little trick
         ((LinearLayout.LayoutParams) news.getLayoutParams()).gravity = Gravity.CENTER_VERTICAL;
-//        news.scrollText(20);////開始跑囉
-//        news.startScroll();
         news.startFor0();
         news.setTextColor(Color.BLACK);
         /////跑馬燈

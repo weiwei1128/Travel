@@ -35,7 +35,7 @@ public class GlobalVariable extends Application {
         if (mTracker == null) {
             GoogleAnalytics analytics = GoogleAnalytics.getInstance(this);
             // To enable debug logging use: adb shell setprop log.tag.GAv4 DEBUG
-            mTracker = analytics.newTracker(" UA-77414748-1");
+            mTracker = analytics.newTracker("UA-77414748-1");
             mTracker.enableExceptionReporting(true);
             mTracker.enableAdvertisingIdCollection(true);
 //            mTracker.enableAutoActivityTracking(true);
