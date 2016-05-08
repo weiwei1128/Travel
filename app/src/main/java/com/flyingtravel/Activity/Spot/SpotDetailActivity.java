@@ -12,6 +12,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -191,9 +192,14 @@ public class SpotDetailActivity extends AppCompatActivity {
         NaviImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
-                        Uri.parse("google.navigation:q=" + globalVariable.SpotDataSorted.get(mPosition).getAdd()));
-                startActivity(intent);
+                if (globalVariable.SpotDataSorted.get(mPosition).getAdd() != "") {
+                    Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
+                            Uri.parse("google.navigation:q=" + globalVariable.SpotDataSorted.get(mPosition).getAdd()));
+                    startActivity(intent);
+                } else {
+                    Toast.makeText(SpotDetailActivity.this,  SpotDetailActivity.this.getResources()
+                            .getString(R.string.wrongData_text), Toast.LENGTH_SHORT).show();
+                }
             }
         });
 

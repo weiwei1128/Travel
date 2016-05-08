@@ -35,7 +35,7 @@ public class LoadApiService extends Service {
 //        Log.d("3/23_", "LoadApiService onCreate");
         context = getApplicationContext();
         globalVariable = (GlobalVariable) context.getApplicationContext();
-        registerReceiver(broadcastReceiver_TPE, new IntentFilter(TPESpotAPIFetcher.BROADCAST_ACTION));
+        registerReceiver(broadcastReceiver_TPE, new IntentFilter(TpeApi.BROADCAST_ACTION));
         registerReceiver(broadcastReceiver_TW, new IntentFilter(TwApi.BROADCAST_ACTION));
         super.onCreate();
     }
@@ -62,7 +62,6 @@ public class LoadApiService extends Service {
                         "openTime", "ticketInfo", "infoDetail"},
                 null, null, null, null, null);
         if (spotDataRaw_cursor != null) {
-            //TPESpotAPIFetcher tpeApi = new TPESpotAPIFetcher(context);
             TpeApi tpeApi = new TpeApi(context);
             TwApi twApi = new TwApi(context);
 
@@ -75,7 +74,6 @@ public class LoadApiService extends Service {
                 if(!(twApi.getStatus() == AsyncTask.Status.RUNNING)) {
                     twApi.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                 }
-                //new TPESpotAPIFetcher(context).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             } else if (spotDataRaw_cursor.getCount() > 300 && spotDataRaw_cursor.getCount() < 4600) {
                 if(!(twApi.getStatus() == AsyncTask.Status.RUNNING)) {
                     twApi.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
