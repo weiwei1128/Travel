@@ -294,9 +294,16 @@ public class RecordTrackFragment extends Fragment implements
                 title_confirmTextView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if (title_editText.getText().equals("")) {
+                        if (title_editText.getText().toString().equals("")) {
                             Toast.makeText(getActivity(), getContext().getResources().getString(R.string.emptyInput_text), Toast.LENGTH_SHORT).show();
                         } else {
+                            if (Functions.isMyServiceRunning(getActivity(), TrackRouteService.class)) {
+                                Intent intent_Trace = new Intent(TRACK_TO_SERVICE);
+                                intent_Trace.putExtra("record_status", 0);
+                                intent_Trace.putExtra("track_title", title_editText.getText().toString());
+                                getActivity().sendBroadcast(intent_Trace);
+                            }
+
                             mProgressDialog.setMessage(getContext().getResources().getString(R.string.handling_text));
                             mProgressDialog.setCancelable(false);
                             mProgressDialog.show();
@@ -312,12 +319,6 @@ public class RecordTrackFragment extends Fragment implements
                             record_start_img.setImageResource(R.drawable.ic_play_light);
                             record_status = 0;
 
-                            if (Functions.isMyServiceRunning(getActivity(), TrackRouteService.class)) {
-                                Intent intent_Trace = new Intent(TRACK_TO_SERVICE);
-                                intent_Trace.putExtra("record_status", 0);
-                                intent_Trace.putExtra("track_title", title_editText.getText().toString());
-                                getActivity().sendBroadcast(intent_Trace);
-                            }
                             spotDialog.dismiss();
                         }
                     }
@@ -448,7 +449,7 @@ public class RecordTrackFragment extends Fragment implements
                     @Override
                     public void onClick(View v) {
                         // save content to DB
-                        if (content_editText.getText().equals("")) {
+                        if (content_editText.getText().toString().equals("")) {
                             Toast.makeText(getActivity(), getContext().getResources().getString(R.string.emptyInput_text), Toast.LENGTH_SHORT).show();
                         } else {
                             tracker.send(new HitBuilders.EventBuilder().setCategory("旅程紀錄筆記  (紀錄中)")
