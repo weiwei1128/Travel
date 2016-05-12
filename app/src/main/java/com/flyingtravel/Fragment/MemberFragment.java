@@ -38,7 +38,7 @@ import java.io.InputStream;
 public class MemberFragment extends Fragment {
     Context context;
     TextView NameText, PhoneText, EmailText, AddrText;
-    LinearLayout logoutLayout, shareLayout,ratingLayout;
+    LinearLayout logoutLayout, shareLayout,ratingLayout,telLayout;
     public static GoogleAnalytics analytics;
     public static Tracker tracker;
     public MemberFragment() {
@@ -77,6 +77,7 @@ public class MemberFragment extends Fragment {
         logoutLayout = (LinearLayout) view.findViewById(R.id.member_logout_layout);
         shareLayout = (LinearLayout) view.findViewById(R.id.member_share_layout);
         ratingLayout = (LinearLayout)view.findViewById(R.id.member_value_layout);
+        telLayout = (LinearLayout)view.findViewById(R.id.member_tel_layout);
         NameText = (TextView) view.findViewById(R.id.member_name_text);
         PhoneText = (TextView) view.findViewById(R.id.member_phone_text);
         EmailText = (TextView) view.findViewById(R.id.member_email_text);
@@ -99,6 +100,16 @@ public class MemberFragment extends Fragment {
             member_cursor.close();
         if (database.isOpen())
             database.close();
+        //=====telephone====//
+        telLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.e("5.12","click");
+                String phone = PhoneText.getText().toString();
+                Intent intent = new Intent("android.intent.action.CALL",Uri.parse("tel:"+phone));
+                startActivity(intent);
+            }
+        });
         //=======Logout=======//
 
 
@@ -169,7 +180,7 @@ public class MemberFragment extends Fragment {
                 * */
                 //setting share information
                 sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, getContext().getResources().getString(R.string.title_text));
-                sharingIntent.putExtra(Intent.EXTRA_TEMPLATE,"testtt");
+//                sharingIntent.putExtra(Intent.EXTRA_TEMPLATE,"testtt");
 //                sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, getContext().getResources().getString(R.string.title_text));
                 sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, "https://play.google.com/store/apps/details?id=com.flyingtravel");
 
@@ -206,6 +217,7 @@ public class MemberFragment extends Fragment {
         } catch (ActivityNotFoundException e) {
             Toast.makeText(context, " unable to find market app", Toast.LENGTH_LONG).show();
         }
+
     }
 
     DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
@@ -216,8 +228,8 @@ public class MemberFragment extends Fragment {
                     DataBaseHelper helper = DataBaseHelper.getmInstance(context);
                     SQLiteDatabase database = helper.getWritableDatabase();
                     database.delete("member", null, null);
-                    if (database.isOpen())
-                        database.close();
+//                    if (database.isOpen())
+//                        database.close();
                     Intent MyIntent = new Intent(Intent.ACTION_MAIN);
                     MyIntent.addCategory(Intent.CATEGORY_HOME);
                     MyIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

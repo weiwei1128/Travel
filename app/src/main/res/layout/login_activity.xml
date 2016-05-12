@@ -87,7 +87,8 @@
         android:padding="10dp"
         android:background="@drawable/border_rec_red"
         android:hint="@string/passwordInput_text"
-        android:singleLine="true" />
+        android:singleLine="true"
+        android:inputType="textPassword" />
 
     <TextView
         android:layout_width="match_parent"

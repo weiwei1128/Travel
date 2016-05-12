@@ -13,11 +13,13 @@ import android.graphics.Color;
 import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.view.MotionEvent;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.flyingtravel.R;
 
@@ -225,4 +227,21 @@ public class Functions {
         return inSampleSize;
     }
 
+    /**
+     * show the toast for 500 milliseconds
+     *
+     * @param string string to show
+     */
+    public static void toast(Context context,String string){
+        final Toast toast = Toast.makeText(context, string,Toast.LENGTH_SHORT);
+        toast.show();
+        Handler handler = new Handler();
+        handler.postDelayed(new
+                                    Runnable() {
+                                        @Override
+                                        public void run() {
+                                            toast.cancel();
+                                        }
+                                    },500);
+    }
 }

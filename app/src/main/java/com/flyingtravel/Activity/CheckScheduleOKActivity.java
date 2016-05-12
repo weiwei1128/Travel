@@ -9,7 +9,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
-import android.webkit.WebView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -41,10 +40,8 @@ import java.util.List;
 
 public class CheckScheduleOKActivity extends AppCompatActivity {
     String itemid = null;
-    LinearLayout backImg, showLayout;
+    LinearLayout backImg;
     CheckScheduleFragmentAdapter checkScheduleFragmentAdapter;
-    WebView webView;
-    Boolean ifWebView = false;
 
     String[][] data;
     String[] summary, address, lat;

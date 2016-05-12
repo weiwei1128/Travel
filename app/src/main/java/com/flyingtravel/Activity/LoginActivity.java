@@ -10,6 +10,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -209,6 +210,7 @@ public class LoginActivity extends AppCompatActivity {
                 final EditText name = (EditText) signDialog.findViewById(R.id.reg_name);
                 final EditText phone = (EditText) signDialog.findViewById(R.id.reg_phone);
                 final EditText email = (EditText) signDialog.findViewById(R.id.reg_email);
+                final EditText addr = (EditText) signDialog.findViewById(R.id.reg_addr);
                 OK.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -217,6 +219,7 @@ public class LoginActivity extends AppCompatActivity {
                                 || name.getText().toString().equals("")
                                 || phone.getText().toString().equals("")
                                 || email.getText().toString().equals("")
+                                || addr.getText().toString().equals("")
                                 ) {
                             Toast.makeText(LoginActivity.this,
                                     LoginActivity.this.getResources().getString(R.string.InputData_text), Toast.LENGTH_SHORT).show();
@@ -230,7 +233,8 @@ public class LoginActivity extends AppCompatActivity {
 //                    Log.d("1/4
                             sighUp sighUp = new sighUp(account.getText().toString(),
                                     password.getText().toString(), name.getText().toString(),
-                                    phone.getText().toString(), email.getText().toString(), signDialog);
+                                    phone.getText().toString(), email.getText().toString(),
+                                    addr.getText().toString(),signDialog);
                             sighUp.execute();
                         }
                     }
@@ -275,16 +279,18 @@ public class LoginActivity extends AppCompatActivity {
 
     class sighUp extends AsyncTask<String, Void, Boolean> {
 
-        String account, password, name, phone, email, message;
+        String account, password, name, phone, email, message,address;
         Dialog dialog;
 
         public sighUp(String maccount, String mpassword, String mname, String mphone, String memail,
+                      String maddress,
                       Dialog mdialog) {
             this.account = maccount;
             this.password = mpassword;
             this.name = mname;
             this.phone = mphone;
             this.email = memail;
+            this.address = maddress;
             this.dialog = mdialog;
         }
 
@@ -332,10 +338,7 @@ public class LoginActivity extends AppCompatActivity {
             } catch (JSONException | NullPointerException e2) {
                 e2.printStackTrace();
             }
-            if (state != null && state.equals("1"))
-                return true;
-            else
-                return false;
+            return state != null && state.equals("1");
         }
 
         @Override
@@ -345,14 +348,11 @@ public class LoginActivity extends AppCompatActivity {
 
             Toast.makeText(LoginActivity.this, message, Toast.LENGTH_SHORT).show();
             Timer a = new Timer();
-            if (aBoolean)
-                a.schedule(new TimerTask() {
-                    @Override
-                    public void run() {
-                        if (dialog.isShowing())
-                            dialog.dismiss();
-                    }
-                }, 2500);
+            if (aBoolean){
+                if(dialog.isShowing())
+                    dialog.dismiss();
+                new login_Data(account,password).execute();
+            }
             super.onPostExecute(aBoolean);
         }
     }
@@ -529,7 +529,7 @@ public class LoginActivity extends AppCompatActivity {
                         }
                         try {
                             mPhone = new JSONObject(result.substring(
-                                    result.indexOf("{"), result.lastIndexOf("}") + 1)).getString("telphone");
+                                    result.indexOf("{"), result.lastIndexOf("}") + 1)).getString("mobile");
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }

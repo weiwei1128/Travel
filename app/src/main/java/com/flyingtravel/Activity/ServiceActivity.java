@@ -233,7 +233,7 @@ public class ServiceActivity extends AppCompatActivity {
                 Log.e("5.3", "company" + company + "phone:" + phone + "time: " + time + "lineID: " + lineId);
                 phoneText.setText(phone);
 
-                lineIdText.setText("LINE ID：" + time);
+                lineIdText.setText("LINE ID：" + lineId);
 //                timeText.append(time);
                 timeText.setText(ServiceActivity.this.getResources().getString(R.string.serviceTime_text) + time);
             } else
