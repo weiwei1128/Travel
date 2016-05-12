@@ -93,3 +93,11 @@ library/library.iml
 *.json
 *.aar
 *.json
+
+*.iml
+
+*.json
+
+*.json
+
+app/app.iml
