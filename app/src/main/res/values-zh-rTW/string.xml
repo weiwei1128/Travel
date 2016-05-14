@@ -141,4 +141,5 @@
     <string name="AddrInput_text">請輸入地址</string>
     <string name="addok_text">加入成功</string>
     <string name="satisfy_text">滿意度</string>
+    <string name="CancelSend_text">確定要取消上傳嗎</string>
 </resources>

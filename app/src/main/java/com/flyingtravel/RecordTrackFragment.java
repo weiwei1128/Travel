@@ -129,6 +129,7 @@ public class RecordTrackFragment extends Fragment implements
     private ImageView dialog_img, write, camera, leave;
     private TextView record_start_text, record_spot_text;
     private TextView dialog_header_text, title_textView, title_confirmTextView, content_textView;
+    private TextView dialog_ok_text, dialog_cancel_text;
     private EditText title_editText, content_editText;
 
     private Integer RoutesCounter = 1;
@@ -255,6 +256,8 @@ public class RecordTrackFragment extends Fragment implements
         content_editText = (EditText) spotDialog.findViewById(R.id.content_editText);
 
         dialog_confirm_layout = (LinearLayout) spotDialog.findViewById(R.id.dialog_confirm_layout);
+        dialog_ok_text = (TextView) spotDialog.findViewById(R.id.dialog_ok);
+        dialog_cancel_text = (TextView) spotDialog.findViewById(R.id.dialog_cancel);
         write = (ImageView) spotDialog.findViewById(R.id.dialog_write_img);
         camera = (ImageView) spotDialog.findViewById(R.id.dialog_camera_img);
         leave = (ImageView) spotDialog.findViewById(R.id.dialog_leave_img);
@@ -445,7 +448,7 @@ public class RecordTrackFragment extends Fragment implements
                 dialog_choose_layout.setVisibility(View.INVISIBLE);
 
                 dialog_confirm_layout.setVisibility(View.VISIBLE);
-                dialog_confirm_layout.setOnClickListener(new View.OnClickListener() {
+                dialog_ok_text.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         // save content to DB
@@ -494,6 +497,38 @@ public class RecordTrackFragment extends Fragment implements
                             }
                         }
 
+                    }
+                });
+
+                dialog_cancel_text.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (content_editText.getText().toString().equals("")) {
+                            dialog_scrollview.setVisibility(View.INVISIBLE);
+                            RelativeLayout.LayoutParams otelParams1 = new RelativeLayout.LayoutParams(
+                                    ViewGroup.LayoutParams.MATCH_PARENT, 0);
+                            otelParams1.addRule(RelativeLayout.BELOW, R.id.dialog_header_text);
+                            dialog_scrollview.setLayoutParams(otelParams1);
+
+                            dialog_relativeLayout.setVisibility(View.INVISIBLE);
+                            content_layout.setVisibility(View.INVISIBLE);
+
+                            dialog_choose_layout.setVisibility(View.VISIBLE);
+
+                            dialog_confirm_layout.setVisibility(View.INVISIBLE);
+                        } else {
+                            // 創建退出對話框
+                            AlertDialog isExit = new AlertDialog.Builder(getContext()).create();
+                            // 設置對話框標題
+                            isExit.setTitle(getContext().getResources().getString(R.string.systemMessage_text));
+                            // 設置對話框消息
+                            isExit.setMessage(getContext().getResources().getString(R.string.CancelSend_text));
+                            // 添加選擇按鈕並注冊監聽
+                            isExit.setButton(getContext().getResources().getString(R.string.ok_text), listener);
+                            isExit.setButton2(getContext().getResources().getString(R.string.cancel_text), listener);
+                            // 顯示對話框
+                            isExit.show();
+                        }
                     }
                 });
             }
@@ -861,13 +896,44 @@ public class RecordTrackFragment extends Fragment implements
             dialog_scrollview.setLayoutParams(otelParams);
 
             dialog_relativeLayout.setVisibility(View.VISIBLE);
-
             dialog_img.setVisibility(View.VISIBLE);
 
             dialog_choose_layout.setVisibility(View.INVISIBLE);
 
             dialog_confirm_layout.setVisibility(View.VISIBLE);
-            dialog_confirm_layout.setOnClickListener(ok);
+            dialog_ok_text.setOnClickListener(ok);
+            dialog_cancel_text.setOnClickListener(
+                    new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if (memo_img == null) {
+                                dialog_scrollview.setVisibility(View.INVISIBLE);
+                                RelativeLayout.LayoutParams otelParams1 = new RelativeLayout.LayoutParams(
+                                        ViewGroup.LayoutParams.MATCH_PARENT, 0);
+                                otelParams1.addRule(RelativeLayout.BELOW, R.id.dialog_header_text);
+                                dialog_scrollview.setLayoutParams(otelParams1);
+
+                                dialog_relativeLayout.setVisibility(View.INVISIBLE);
+                                dialog_img.setVisibility(View.INVISIBLE);
+
+                                dialog_choose_layout.setVisibility(View.VISIBLE);
+
+                                dialog_confirm_layout.setVisibility(View.INVISIBLE);
+                            } else {
+                                // 創建退出對話框
+                                AlertDialog isExit = new AlertDialog.Builder(getContext()).create();
+                                // 設置對話框標題
+                                isExit.setTitle(getContext().getResources().getString(R.string.systemMessage_text));
+                                // 設置對話框消息
+                                isExit.setMessage(getContext().getResources().getString(R.string.CancelSend_text));
+                                // 添加選擇按鈕並注冊監聽
+                                isExit.setButton(getContext().getResources().getString(R.string.ok_text), listener);
+                                isExit.setButton2(getContext().getResources().getString(R.string.cancel_text), listener);
+                                // 顯示對話框
+                                isExit.show();
+                            }
+                        }
+                    });
         }
 
         super.onActivityResult(requestCode, resultCode, data);
@@ -1016,6 +1082,7 @@ public class RecordTrackFragment extends Fragment implements
                 if (spotDialog.isShowing()) {
                     if (memo_img != null) {
                         dialog_img.setImageBitmap(null);
+                        System.gc();
                     }
                     spotDialog.dismiss();
                 }
@@ -1028,6 +1095,35 @@ public class RecordTrackFragment extends Fragment implements
             super.onPostExecute(s);
         }
     }
+
+    DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
+        public void onClick(DialogInterface dialog, int which) {
+            switch (which) {
+                case AlertDialog.BUTTON_POSITIVE:// "確認"
+                    content_editText.setText("");
+                    dialog_img.setImageBitmap(null);
+                    System.gc();
+                    dialog_scrollview.setVisibility(View.INVISIBLE);
+                    RelativeLayout.LayoutParams otelParams1 = new RelativeLayout.LayoutParams(
+                            ViewGroup.LayoutParams.MATCH_PARENT, 0);
+                    otelParams1.addRule(RelativeLayout.BELOW, R.id.dialog_header_text);
+                    dialog_scrollview.setLayoutParams(otelParams1);
+
+                    dialog_relativeLayout.setVisibility(View.INVISIBLE);
+                    dialog_img.setVisibility(View.INVISIBLE);
+                    content_layout.setVisibility(View.INVISIBLE);
+
+                    dialog_choose_layout.setVisibility(View.VISIBLE);
+
+                    dialog_confirm_layout.setVisibility(View.INVISIBLE);
+                    break;
+                case AlertDialog.BUTTON_NEGATIVE:// "取消"第二個按鈕取消對話框
+                    break;
+                default:
+                    break;
+            }
+        }
+    };
 
     public static Bitmap rotateImage(Bitmap source, float angle) {
         Bitmap retVal;
