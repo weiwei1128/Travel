@@ -9,6 +9,11 @@ import com.google.android.gcm.GCMBaseIntentService;
  * Created by wei on 2016/5/12.
  */
 public class GCMIntentService extends GCMBaseIntentService{
+
+    protected GCMIntentService(String senderId) {
+        super(senderId);
+    }
+
     @Override
     protected void onMessage(Context context, Intent intent) {
 
