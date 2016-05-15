@@ -41,6 +41,7 @@ public class RecordDiaryFragment extends Fragment {
     private String mFragmentName;
     //private String mParam2;
 
+    private TextView DateOfLastOne;
     private ListView mlistView;
     public static RecordDiaryFragmentAdapter mAdapter;
 
@@ -96,6 +97,7 @@ public class RecordDiaryFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_record_diary, container, false);
+        DateOfLastOne = (TextView) rootView.findViewById(R.id.LastOneDate);
         mlistView = (ListView) rootView.findViewById(R.id.diary_listView);
         return rootView;
     }
@@ -110,6 +112,26 @@ public class RecordDiaryFragment extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        DataBaseHelper helper = DataBaseHelper.getmInstance(getActivity());
+        SQLiteDatabase database = helper.getWritableDatabase();
+        Cursor trackRoute_cursor = database.query("trackRoute",
+                new String[]{"routesCounter", "track_no", "track_lat", "track_lng",
+                        "track_start", "track_title", "track_totaltime", "track_completetime"},
+                "track_start=\"0\"", null, null, null, null, null);
+        if (trackRoute_cursor != null) {
+            if (trackRoute_cursor.getCount() != 0) {
+                trackRoute_cursor.moveToLast();
+                String dateString = trackRoute_cursor.getString(7);
+                DateOfLastOne.setText(dateString);
+            } else {
+                SimpleDateFormat DateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                Date date = new Date();
+                DateOfLastOne.setText(DateFormat.format(date));
+            }
+            trackRoute_cursor.close();
+        }
+
         mAdapter = new RecordDiaryFragmentAdapter(getActivity());
 //        Log.e("3/27_", "RecordDiaryFragment. onActivityCreated");
     }

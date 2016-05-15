@@ -10,6 +10,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -233,7 +234,7 @@ public class LoginActivity extends AppCompatActivity {
                             sighUp sighUp = new sighUp(account.getText().toString(),
                                     password.getText().toString(), name.getText().toString(),
                                     phone.getText().toString(), email.getText().toString(),
-                                    addr.getText().toString(), signDialog);
+                                    addr.getText().toString(),signDialog);
                             sighUp.execute();
                         }
                     }
@@ -278,7 +279,7 @@ public class LoginActivity extends AppCompatActivity {
 
     class sighUp extends AsyncTask<String, Void, Boolean> {
 
-        String account, password, name, phone, email, message, address;
+        String account, password, name, phone, email, message,address;
         Dialog dialog;
 
         public sighUp(String maccount, String mpassword, String mname, String mphone, String memail,
@@ -347,10 +348,10 @@ public class LoginActivity extends AppCompatActivity {
 
             Toast.makeText(LoginActivity.this, message, Toast.LENGTH_SHORT).show();
             Timer a = new Timer();
-            if (aBoolean) {
-                if (dialog.isShowing())
+            if (aBoolean){
+                if(dialog.isShowing())
                     dialog.dismiss();
-                new login_Data(account, password).execute();
+                new login_Data(account,password).execute();
             }
             super.onPostExecute(aBoolean);
         }
