@@ -80,6 +80,7 @@ public class RecordDiaryFragmentAdapter extends BaseAdapter implements ViewPager
         if (convertView == null) {
             convertView = inflater.inflate(R.layout.fragment_record_diarylist, parent, false);
             mViewHolder = new ViewHolder();
+            mViewHolder.DiaryDate = (TextView) convertView.findViewById(R.id.Date);
             mViewHolder.ImageSlider = (SliderLayout) convertView.findViewById(R.id.slider);
             mViewHolder.pagerIndicator = (PagerIndicator) convertView.findViewById(R.id.custom_indicator);
             mViewHolder.DiaryImage = (ImageView) convertView.findViewById(R.id.DiaryImage);
@@ -101,6 +102,8 @@ public class RecordDiaryFragmentAdapter extends BaseAdapter implements ViewPager
             if (trackRoute_cursor.getCount() != 0) {
                 pos = trackRoute_cursor.getCount() - position-1;
                 trackRoute_cursor.moveToPosition(trackRoute_cursor.getCount() - position-1);
+                String dateString = trackRoute_cursor.getString(7);
+                mViewHolder.DiaryDate.setText(dateString);
                 mViewHolder.DiaryTitle.setText(trackRoute_cursor.getString(5));
                 mViewHolder.DiaryTotalTime.setText(trackRoute_cursor.getString(6));
                 RoutesCounter = trackRoute_cursor.getInt(0);
@@ -178,6 +181,6 @@ public class RecordDiaryFragmentAdapter extends BaseAdapter implements ViewPager
         SliderLayout ImageSlider;
         PagerIndicator pagerIndicator;
         ImageView DiaryImage;
-        TextView DiaryTitle, DiaryTotalTime, DiaryString;
+        TextView DiaryDate, DiaryTitle, DiaryTotalTime, DiaryString;
     }
 }

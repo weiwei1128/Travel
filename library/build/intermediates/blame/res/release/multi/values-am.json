@@ -1,5 +1,6 @@
 [
     {
+<<<<<<< HEAD
         "outputFile": "/Users/wei/Documents/Travel/C:\\Users\\wei\\Documents\\Travel\\library\\build\\intermediates\\res\\merged\\release\\values-am\\values-am.xml",
         "map": [
             {
@@ -348,6 +349,7 @@
     },
     {
         "outputFile": "/Users/wei/Documents/Travel/library/build/intermediates/res/merged/release/values-am/values-am.xml",
+
         "map": [
             {
                 "to": {

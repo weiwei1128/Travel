@@ -5,8 +5,19 @@
     android:layout_height="match_parent"
     android:descendantFocusability="blocksDescendants">
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:id="@+id/Date"
+        android:text="Date"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp" />
+
     <ImageView
         android:id="@+id/DiaryImage"
+        android:layout_below="@+id/Date"
         android:layout_width="wrap_content"
         android:layout_height="180dp"
         android:layout_centerHorizontal="true"
@@ -15,6 +26,7 @@
 
     <com.daimajia.slider.library.SliderLayout
         android:id="@+id/slider"
+        android:layout_below="@+id/Date"
         android:layout_width="wrap_content"
         android:layout_height="180dp"
         android:focusable="false"

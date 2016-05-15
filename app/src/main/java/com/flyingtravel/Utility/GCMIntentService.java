@@ -9,7 +9,6 @@ import com.google.android.gcm.GCMBaseIntentService;
  * Created by wei on 2016/5/12.
  */
 public class GCMIntentService extends GCMBaseIntentService{
-
     public GCMIntentService() {
         super("241768189228");
     }
