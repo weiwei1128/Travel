@@ -100,7 +100,7 @@ public class GetSpotsNSort extends AsyncTask<Void, Void, ArrayList<SpotData>> {
         globalVariable.SpotDataSorted = mSpotData;
         if (!globalVariable.SpotDataSorted.isEmpty()) {
             Intent intent = new Intent(BROADCAST_ACTION);
-            intent.putExtra("isSpoted", true);
+            intent.putExtra("isSorted", true);
             mcontext.sendBroadcast(intent);
         }
 

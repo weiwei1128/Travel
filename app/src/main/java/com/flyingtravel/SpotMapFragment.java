@@ -387,7 +387,7 @@ public class SpotMapFragment extends Fragment implements
         public void onReceive(Context context, Intent intent) {
             //Update Your UI here..
             if (intent != null) {
-                Boolean isSpotSorted = intent.getBooleanExtra("isSpoted", false);
+                Boolean isSpotSorted = intent.getBooleanExtra("isSorted", false);
                 if (isSpotSorted) {
                     //Log.e("3/23_景點排序完畢", "Receive Broadcast");
                     new GetMarkerInfo(getActivity()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);

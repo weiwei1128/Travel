@@ -15,6 +15,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     // version 2: news 新增一個column
     // version 4: banner 新增一個column
     // version 5: banner 新增一個column
+    // version 6: travelMemo 新增一個column: memo_imgUrl
     private static final String DATABASE_NAME = "Travel.db";
     private Context mcontext;
 
@@ -120,18 +121,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 + ");";
         db.execSQL(DATABASE_CREATE_TABLE_TRAVELMEMO);
 
-/*        //旅遊日誌 日誌列表 同步Server的版本
-        String DATABASE_CREATE_TABLE_TRAVELMEMO = "create table travelMemo("
-                +"_ID INTEGER PRIMARY KEY,"+"totalCount TEXT,"
-                +"id TEXT,"
-                +"title TEXT,"
-                +"url TEXT,"
-                +"zhaiyao TEXT,"
-                +"click TEXT,"
-                +"addtime TEXT"
-                +");";
-        db.execSQL(DATABASE_CREATE_TABLE_TRAVELMEMO);
-*/
         //伴手禮
         String DATABASE_CREATE_TABLE_GOODS = "create table goods("
                 + "_ID INTEGER PRIMARY KEY," + "totalCount TEXT,"
@@ -205,20 +194,28 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_ALTER_TEAM_3 = "ALTER TABLE "
             + "banner" + " ADD COLUMN " + "bannerid" + " TEXT;";
 
+    private static final String DATABASE_ALTER_TEAM_4 = "ALTER TABLE "
+            + "travelMemo" + " ADD COLUMN " + "memo_imgUrl" + " TEXT;";
+
+
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         /** TODO 正式版已修改!!
          * [0425] [DATABASE_ALTER_TEAM_1] [新增一個column]
          * [0508] [DATABASE_ALTER_TEAM_2] [新增一個column]
          * **/
-        if(oldVersion<5) {
-            if (oldVersion < 4) {
-                if (oldVersion < 2)
-                    db.execSQL(DATABASE_ALTER_TEAM_1);
-                db.execSQL(DATABASE_ALTER_TEAM_2);
+        if(oldVersion < 6) {
+            if(oldVersion < 5) {
+                if (oldVersion < 4) {
+                    if (oldVersion < 2)
+                        db.execSQL(DATABASE_ALTER_TEAM_1);
+                    db.execSQL(DATABASE_ALTER_TEAM_2);
+                }
+                db.execSQL(DATABASE_ALTER_TEAM_3);
             }
-            db.execSQL(DATABASE_ALTER_TEAM_3);
+            db.execSQL(DATABASE_ALTER_TEAM_4);
         }
+
     }
 
 }

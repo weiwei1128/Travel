@@ -41,7 +41,6 @@ public class RecordDiaryFragment extends Fragment {
     private String mFragmentName;
     //private String mParam2;
 
-    private TextView DateOfLastOne;
     private ListView mlistView;
     public static RecordDiaryFragmentAdapter mAdapter;
 
