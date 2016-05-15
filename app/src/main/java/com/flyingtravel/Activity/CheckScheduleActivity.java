@@ -8,7 +8,6 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -73,7 +72,7 @@ public class CheckScheduleActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.checkschedule_basic);
         /**GA**/
-        GlobalVariable globalVariable = (GlobalVariable)getApplication();
+        GlobalVariable globalVariable = (GlobalVariable) getApplication();
         tracker = globalVariable.getDefaultTracker();
         /**GA**/
         backImg = (LinearLayout) findViewById(R.id.checkschedule_backImg);
@@ -133,7 +132,7 @@ public class CheckScheduleActivity extends AppCompatActivity {
         webView.setOnTouchListener(new View.OnTouchListener() {
             public boolean onTouch(View v, MotionEvent event) {
                 // The code of the hiding goest here, just call hideSoftKeyboard(View v);
-                InputMethodManager inputMethodManager = (InputMethodManager)  CheckScheduleActivity.this.getSystemService(Activity.INPUT_METHOD_SERVICE);
+                InputMethodManager inputMethodManager = (InputMethodManager) CheckScheduleActivity.this.getSystemService(Activity.INPUT_METHOD_SERVICE);
                 inputMethodManager.hideSoftInputFromWindow(CheckScheduleActivity.this.getCurrentFocus().getWindowToken(), 0);
                 return false;
             }
@@ -282,7 +281,7 @@ public class CheckScheduleActivity extends AppCompatActivity {
                             e.printStackTrace();
                         }
                         try {
-                            itemcontent[i] = itemcontent[i] + "\n"+CheckScheduleActivity.this.getResources().getString(R.string.tel_textColon) + jsonArray.getJSONObject(i).getString("mobile");
+                            itemcontent[i] = itemcontent[i] + "\n" + CheckScheduleActivity.this.getResources().getString(R.string.tel_textColon) + jsonArray.getJSONObject(i).getString("mobile");
                         } catch (JSONException | NullPointerException e) {
                             e.printStackTrace();
                         }

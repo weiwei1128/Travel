@@ -98,8 +98,8 @@ public class MemberFragment extends Fragment {
         }
         if (member_cursor != null)
             member_cursor.close();
-        if (database.isOpen())
-            database.close();
+//        if (database.isOpen())
+//            database.close();
         //=====telephone====//
         telLayout.setOnClickListener(new View.OnClickListener() {
             @Override

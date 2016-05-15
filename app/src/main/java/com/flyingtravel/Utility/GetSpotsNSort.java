@@ -64,7 +64,7 @@ public class GetSpotsNSort extends AsyncTask<Void, Void, ArrayList<SpotData>> {
             DataBaseHelper helper = DataBaseHelper.getmInstance(mcontext);
             SQLiteDatabase database = helper.getWritableDatabase();
             Cursor spotDataRaw_cursor = database.query("spotDataRaw", new String[]{"spotName", "spotAdd",
-                            "spotLat", "spotLng", "picture1", "picture2","picture3",
+                            "spotLat", "spotLng", "picture1", "picture2", "picture3",
                             "openTime", "ticketInfo", "infoDetail"},
                     null, null, null, null, null);
             if (spotDataRaw_cursor != null) {

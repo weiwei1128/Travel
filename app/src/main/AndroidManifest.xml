@@ -1,11 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.flyingtravel">
+    <!--GCM-->
+    <permission
+        android:name="com.flyingtravel.permission.C2D_MESSAGE"
+        android:protectionLevel="signature" />
+    <uses-permission android:name="com.flyingtravel.permission.C2D_MESSAGE" />
+    <!-- 接收 GCM 用 -->
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+    <!-- 需要使用 Google 帳戶資訊(4.0.4以下版本需要使用者帳戶) -->
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <!-- 收到訊息時保持 CPU 休眠 -->
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.CALL_PHONE"/>
+    <uses-permission android:name="android.permission.CALL_PHONE" />
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
     <!--
  The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
@@ -42,7 +53,19 @@
              sign the APK for publishing.
              You can define the keys for the debug and release targets in src/debug/ and src/release/.
         -->
+        <!-- GCM -->
+        <!-- 允許 GCMBroadcastReceiver 接收處理來自 GCM 所 SEND 出來的 RECEIVE 跟 REGISTRATION 這兩個 Intent -->
+        <receiver
+            android:name="com.google.android.gcm.GCMBroadcastReceiver"
+            android:permission="com.google.android.c2dm.permission.SEND">
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
 
+                <category android:name="com.flyingtravel" />
+            </intent-filter>
+        </receiver>
+        <!--GCM-->
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="@string/google_maps_key" />
@@ -53,6 +76,7 @@
         <service android:name=".Utility.HttpService" />
         <service android:name=".Utility.TrackRouteService" />
         <service android:name=".Utility.LoadApiService" />
+        <service android:name=".Utility.GCMIntentService" />
         <!-- screenOrientation make the app not rorate with the phone -->
         <activity
             android:name=".HomepageActivity"

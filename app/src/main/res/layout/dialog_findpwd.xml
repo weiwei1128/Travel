@@ -76,7 +76,7 @@
                 android:layout_gravity="center"
                 android:textSize="16dp"
                 android:textColor="@color/black"
-                android:hint="@string/passwordInput_text"
+                android:hint="@string/emailInput_text"
                 android:singleLine="true" />
         </LinearLayout>
 
