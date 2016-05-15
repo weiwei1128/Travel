@@ -1,6 +1,5 @@
 [
     {
-<<<<<<< HEAD
         "outputFile": "/Users/wei/Documents/Travel/C:\\Users\\tinghua\\Documents\\GitHub\\Travel\\library\\build\\intermediates\\res\\merged\\release\\values-az-rAZ\\values-az-rAZ.xml",
         "map": [
             {
@@ -330,9 +329,6 @@
     },
     {
         "outputFile": "/Users/wei/Documents/Travel/library/build/intermediates/res/merged/release/values-az-rAZ/values-az-rAZ.xml",
-=======
-        "outputFile": "C:\\Users\\tinghua\\Documents\\GitHub\\Travel\\library\\build\\intermediates\\res\\merged\\release\\values-az-rAZ\\values-az-rAZ.xml",
->>>>>>> origin/master
         "map": [
             {
                 "to": {

@@ -345,7 +345,6 @@
                 }
             }
         ]
-<<<<<<< HEAD
     },
     {
         "outputFile": "/Users/wei/Documents/Travel/C:\\Users\\wei\\Documents\\Travel\\library\\build\\intermediates\\res\\merged\\release\\values-bn-rBD\\values-bn-rBD.xml",
@@ -1040,7 +1039,5 @@
                 }
             }
         ]
-=======
->>>>>>> origin/master
     }
 ]
