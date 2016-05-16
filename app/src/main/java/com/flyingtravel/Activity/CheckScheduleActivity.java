@@ -130,14 +130,7 @@ public class CheckScheduleActivity extends AppCompatActivity {
 
         ifWebView = true;
         webView = new WebView(CheckScheduleActivity.this);
-        webView.setOnTouchListener(new View.OnTouchListener() {
-            public boolean onTouch(View v, MotionEvent event) {
-                // The code of the hiding goest here, just call hideSoftKeyboard(View v);
-                InputMethodManager inputMethodManager = (InputMethodManager)  CheckScheduleActivity.this.getSystemService(Activity.INPUT_METHOD_SERVICE);
-                inputMethodManager.hideSoftInputFromWindow(CheckScheduleActivity.this.getCurrentFocus().getWindowToken(), 0);
-                return false;
-            }
-        });
+
         putItemLayout.addView(webView);
 
         WebSettings websettings = webView.getSettings();
