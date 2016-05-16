@@ -3,8 +3,10 @@ package com.flyingtravel.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -230,9 +232,15 @@ public class ServiceActivity extends AppCompatActivity {
                 dialog.dismiss();
             if (s) {
                 companyText.setText(company);
-                Log.e("5.3", "company" + company + "phone:" + phone + "time: " + time + "lineID: " + lineId);
+//                Log.e("5.3", "company" + company + "phone:" + phone + "time: " + time + "lineID: " + lineId);
                 phoneText.setText(phone);
-
+                phoneText.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent("android.intent.action.CALL", Uri.parse("tel:"+phoneText.getText().toString()));
+                        startActivity(intent);
+                    }
+                });
                 lineIdText.setText("LINE ID：" + lineId);
 //                timeText.append(time);
                 timeText.setText(ServiceActivity.this.getResources().getString(R.string.serviceTime_text) + time);

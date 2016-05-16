@@ -104,10 +104,10 @@ public class MemberFragment extends Fragment {
         telLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.e("5.12","click");
-                String phone = PhoneText.getText().toString();
-                Intent intent = new Intent("android.intent.action.CALL",Uri.parse("tel:"+phone));
-                startActivity(intent);
+//                Log.e("5.12","click");
+//                String phone = PhoneText.getText().toString();
+//                Intent intent = new Intent("android.intent.action.CALL",Uri.parse("tel:"+phone));
+//                startActivity(intent);
             }
         });
         //=======Logout=======//
