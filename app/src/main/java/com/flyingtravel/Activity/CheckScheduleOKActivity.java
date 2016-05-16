@@ -253,10 +253,10 @@ public class CheckScheduleOKActivity extends AppCompatActivity {
         if (a) {
             Boolean addFragment = false;
             for (int i = 0; i < count; i++) {
-//                Log.d("4.26","for:"+i+"-count:"+count);
+                Log.d("4.26","for:"+i+"-count:"+count+" itemid:"+itemid);
 //
-                if ((i != 0 && data[i][0].equals(data[i - 1][0]) || (i == 0 && count > 1 && data[i][0].equals(data[i + 1][0])))) {
-//                    Log.d("4.26","in if::"+data[i][4]+"i:"+i+"add:"+addFragment);
+                if ((i != 0 && i+1<count&&data[i][0].equals(data[i + 1][0])||i != 0 &&data[i][0].equals(data[i - 1][0]) || (i == 0 && count > 1 && data[i][0].equals(data[i + 1][0])))) {
+                    Log.d("4.26","in if::"+data[i][4]+"i:"+i+"add:"+addFragment);
                     if (addFragment)
                         break;
                     CheckScheduleFragment fragment = new CheckScheduleFragment();
@@ -264,12 +264,22 @@ public class CheckScheduleOKActivity extends AppCompatActivity {
                     bundle.putString("scheduleday", data[i][0]);
                     bundle.putString("scheduledate", data[i][1]);
                     bundle.putString("scheduletime", data[i][2]);
+                    int getcount=0;
                     for (int k = 0; k < summary.length; k++) {
-                        bundle.putString("schedulesummary" + k, summary[k]);
-                        bundle.putString("scheduleaddress" + k, address[k]);
-                        bundle.putString("scheduleajinwei" + k, lat[k]);
+
+                        if((summary[k]==null||summary[k].isEmpty())
+                                &&(address[k]==null||address[k].isEmpty())
+                                &&(lat[k]==null||lat[k].isEmpty()))
+                            Log.e("5.16","summary empty"+k);
+                        else {
+
+                            bundle.putString("schedulesummary" + getcount, summary[k]);
+                            bundle.putString("scheduleaddress" + getcount, address[k]);
+                            bundle.putString("scheduleajinwei" + getcount, lat[k]);
+                            getcount++;
+                        }
                     }
-                    bundle.putInt("schedulecount", count);
+                    bundle.putInt("schedulecount", getcount);
                     addFragment = true;
                     if (data[i][4] != null)
                         bundle.putString("schedulejinwei", data[i][4]);

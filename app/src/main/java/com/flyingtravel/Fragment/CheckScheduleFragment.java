@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -55,6 +56,7 @@ public class CheckScheduleFragment extends Fragment {
             count = getArguments().getInt("schedulecount");
             getsummary = new String[count];
             getaddress = new String[count];
+            Log.e("5.16","count::"+count);
             for (int i = 0; i < count; i++) {
                 if (getArguments().containsKey("schedulesummary" + i)) {
                     getsummary[i] = getArguments().getString("schedulesummary" + i);

@@ -122,7 +122,7 @@ public class ScheduleMapsActivity extends FragmentActivity implements
                     drawLine(LatLngList[i], LatLngList[i + 1]);
                 }
             bounds = builder.build();
-            final CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, 100);
+            final CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, 300);
 //        Log.e("5.6", "Location:bounds= " + bounds);
             mMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
                 @Override
