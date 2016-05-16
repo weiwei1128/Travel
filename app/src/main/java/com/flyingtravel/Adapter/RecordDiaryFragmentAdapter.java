@@ -109,6 +109,7 @@ public class RecordDiaryFragmentAdapter extends BaseAdapter {
                 String dateString = trackRoute_cursor.getString(7);
                 mViewHolder.DiaryDate.setText(dateString);
                 mViewHolder.DiaryTitle.setText(trackRoute_cursor.getString(5));
+                mViewHolder.DiaryTitle.setTag(trackRoute_cursor.getCount() - position-1);
                 mViewHolder.DiaryTotalTime.setText(trackRoute_cursor.getString(6));
                 RoutesCounter = trackRoute_cursor.getInt(0);
 
@@ -141,22 +142,24 @@ public class RecordDiaryFragmentAdapter extends BaseAdapter {
                             //Log.e("3/28_", "img: " + img_cursor.getBlob(3));
                             byte[] d = img_cursor.getBlob(3);
                             DefaultSliderView sliderView = new DefaultSliderView(context);
+
+                            sliderView.bundle(new Bundle());
+                            sliderView.getBundle().putInt("position", position);
                             sliderView.image(BitmapFactory.decodeByteArray(d, 0, d.length))
-                                    .setScaleType(BaseSliderView.ScaleType.Fit);/*
+                                    .setScaleType(BaseSliderView.ScaleType.Fit)
                                     .setOnSliderClickListener(new BaseSliderView.OnSliderClickListener() {
                                         @Override
                                         public void onSliderClick(BaseSliderView slider) {
-                                            Log.e("5/15_", "ImageSlider onClick: "+ mViewHolder.ImageSlider.getTag());
-                                            if (mViewHolder.ImageSlider.getTag() != null) {
+                                            if (slider.getBundle() != null) {
                                                 Bundle bundle = new Bundle();
-                                                bundle.putInt("WhichItem", (Integer) mViewHolder.ImageSlider.getTag());
+                                                bundle.putInt("WhichItem", slider.getBundle().getInt("position"));
                                                 Intent intent = new Intent();
                                                 intent.setClass(context, RecordDiaryDetailActivity.class);
                                                 intent.putExtras(bundle);
                                                 context.startActivity(intent);
                                             }
                                         }
-                                    });*/
+                                    });
                             mViewHolder.ImageSlider.addSlider(sliderView);
                         }
                         mViewHolder.ImageSlider.setCustomIndicator(mViewHolder.pagerIndicator);
