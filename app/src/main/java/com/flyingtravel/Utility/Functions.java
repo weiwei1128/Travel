@@ -232,7 +232,7 @@ public class Functions {
      *
      * @param string string to show
      */
-    public static void toast(Context context,String string){
+    public static void toast(Context context,String string,int length){
         final Toast toast = Toast.makeText(context, string,Toast.LENGTH_SHORT);
         toast.show();
         Handler handler = new Handler();
@@ -242,6 +242,6 @@ public class Functions {
                                         public void run() {
                                             toast.cancel();
                                         }
-                                    },500);
+                                    },length);
     }
 }

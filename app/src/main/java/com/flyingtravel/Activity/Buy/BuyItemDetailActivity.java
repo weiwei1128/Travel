@@ -457,7 +457,7 @@ public class BuyItemDetailActivity extends AppCompatActivity {
 //                    Log.e("3.24", List.toString());
                     editor.apply();
                 }
-                Functions.toast(BuyItemDetailActivity.this, BuyItemDetailActivity.this.getString(R.string.addok_text));
+                Functions.toast(BuyItemDetailActivity.this, BuyItemDetailActivity.this.getString(R.string.addok_text),500);
                 if (BuyAdd.isShowing())
                     BuyAdd.cancel();
             }
