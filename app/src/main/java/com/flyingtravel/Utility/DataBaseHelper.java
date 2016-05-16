@@ -11,7 +11,7 @@ import android.database.sqlite.SQLiteOpenHelper;
  */
 public class DataBaseHelper extends SQLiteOpenHelper {
     private static DataBaseHelper mInstance = null;
-    private static final int VERSION = 5;
+    private static final int VERSION = 6;
     // version 2: news 新增一個column
     // version 4: banner 新增一個column
     // version 5: banner 新增一個column
