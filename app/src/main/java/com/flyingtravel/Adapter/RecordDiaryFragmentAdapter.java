@@ -94,16 +94,6 @@ public class RecordDiaryFragmentAdapter extends BaseAdapter {
             mViewHolder.DiaryString = (TextView) convertView.findViewById(R.id.DiaryString);
 
             convertView.setTag(mViewHolder);
-/*
-            Cursor trackRoute_cursor = database.query("trackRoute",
-                    new String[]{"routesCounter", "track_no", "track_lat", "track_lng",
-                            "track_start", "track_title", "track_totaltime", "track_completetime"},
-                    "track_start=\"0\"", null, null, null, null, null);
-            if (trackRoute_cursor != null) {
-                if (trackRoute_cursor.getCount() != 0) {
-                    mViewHolder.ImageSlider.setTag(trackRoute_cursor.getCount() - position - 1);
-                }
-            }*/
 
         } else {
             mViewHolder = (ViewHolder) convertView.getTag();
@@ -121,9 +111,9 @@ public class RecordDiaryFragmentAdapter extends BaseAdapter {
                 mViewHolder.DiaryTitle.setText(trackRoute_cursor.getString(5));
                 mViewHolder.DiaryTotalTime.setText(trackRoute_cursor.getString(6));
                 RoutesCounter = trackRoute_cursor.getInt(0);
-/*
-                mViewHolder.ImageSlider.setTag(trackRoute_cursor.getCount() - position-1);
-*/
+
+//                mViewHolder.ImageSlider.setTag(trackRoute_cursor.getCount() - position-1);
+
                 Cursor memo_cursor = database.query("travelmemo", new String[]{"memo_routesCounter", "memo_trackNo",
                                 "memo_content", "memo_img", "memo_latlng", "memo_time"},
                         "memo_routesCounter=\"" + RoutesCounter + "\" AND memo_content!=\"null\"", null, null, null, null, null);
@@ -156,10 +146,10 @@ public class RecordDiaryFragmentAdapter extends BaseAdapter {
                                     .setOnSliderClickListener(new BaseSliderView.OnSliderClickListener() {
                                         @Override
                                         public void onSliderClick(BaseSliderView slider) {
-                                            Log.e("5/15_", "ImageSlider onClick: "+ trackRoute_cursor.getCount() - position-1);
+                                            Log.e("5/15_", "ImageSlider onClick: "+ mViewHolder.ImageSlider.getTag());
                                             if (mViewHolder.ImageSlider.getTag() != null) {
                                                 Bundle bundle = new Bundle();
-                                                bundle.putInt("WhichItem", (Integer) trackRoute_cursor.getCount() - position-1);
+                                                bundle.putInt("WhichItem", (Integer) mViewHolder.ImageSlider.getTag());
                                                 Intent intent = new Intent();
                                                 intent.setClass(context, RecordDiaryDetailActivity.class);
                                                 intent.putExtras(bundle);

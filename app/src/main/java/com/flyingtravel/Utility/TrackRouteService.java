@@ -138,7 +138,26 @@ public class TrackRouteService extends Service {
                             ContentValues cv = new ContentValues();
                             cv.put("track_start", 0);
                             cv.put("track_title", track_title);
-                            cv.put("track_totaltime", RecordActivity.time_text.getText().toString());
+                            Long now = System.currentTimeMillis();
+                            Long spent = now - start_time + tempSpent;
+                            String time;
+                            if (((spent / 1000) / 60) > 0) {
+                                if (((spent / 1000) / 60) < 10)
+                                    if (((spent / 1000) % 60) < 10)
+                                        time = "0" + ((spent / 1000) / 60) + ":0" + ((spent / 1000) % 60);
+                                    else
+                                        time = "0" + ((spent / 1000) / 60) + ":" + ((spent / 1000) % 60);
+                                else if (((spent / 1000) % 60) < 10)
+                                    time = ((spent / 1000) / 60) + ":0" + ((spent / 1000) % 60);
+                                else
+                                    time = ((spent / 1000) / 60) + ":" + ((spent / 1000) % 60);
+                            } else {
+                                if (((spent / 1000) % 60) < 10)
+                                    time = "00:0" + ((spent / 1000) % 60);
+                                else
+                                    time = "00:" + ((spent / 1000) % 60);
+                            }
+                            cv.put("track_totaltime", time);
                             SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd");
                             Date date = new Date();
                             String dateString = fmt.format(date);
@@ -261,14 +280,52 @@ public class TrackRouteService extends Service {
 
             if (record_status == 1) {
                 cv.put("track_start", 1);
-                cv.put("track_totaltime", RecordActivity.time_text.getText().toString());
+                Long now = System.currentTimeMillis();
+                Long spent = now - start_time + tempSpent;
+                String time;
+                if (((spent / 1000) / 60) > 0) {
+                    if (((spent / 1000) / 60) < 10)
+                        if (((spent / 1000) % 60) < 10)
+                            time = "0" + ((spent / 1000) / 60) + ":0" + ((spent / 1000) % 60);
+                        else
+                            time = "0" + ((spent / 1000) / 60) + ":" + ((spent / 1000) % 60);
+                    else if (((spent / 1000) % 60) < 10)
+                        time = ((spent / 1000) / 60) + ":0" + ((spent / 1000) % 60);
+                    else
+                        time = ((spent / 1000) / 60) + ":" + ((spent / 1000) % 60);
+                } else {
+                    if (((spent / 1000) % 60) < 10)
+                        time = "00:0" + ((spent / 1000) % 60);
+                    else
+                        time = "00:" + ((spent / 1000) % 60);
+                }
+                cv.put("track_totaltime", time);
                 long result = database.insert("trackRoute", null, cv);
                 Log.d("3/20_軌跡紀錄", result + " = DB INSERT RC:" + RoutesCounter
                         + " no:" + Track_no + " 座標 " + Latitude + "," + Longitude
                         + " status " + record_status);
             } else if (record_status == 2) {
                 cv.put("track_start", 2);
-                cv.put("track_totaltime", RecordActivity.time_text.getText().toString());
+                Long now = System.currentTimeMillis();
+                Long spent = now - start_time + tempSpent;
+                String time;
+                if (((spent / 1000) / 60) > 0) {
+                    if (((spent / 1000) / 60) < 10)
+                        if (((spent / 1000) % 60) < 10)
+                            time = "0" + ((spent / 1000) / 60) + ":0" + ((spent / 1000) % 60);
+                        else
+                            time = "0" + ((spent / 1000) / 60) + ":" + ((spent / 1000) % 60);
+                    else if (((spent / 1000) % 60) < 10)
+                        time = ((spent / 1000) / 60) + ":0" + ((spent / 1000) % 60);
+                    else
+                        time = ((spent / 1000) / 60) + ":" + ((spent / 1000) % 60);
+                } else {
+                    if (((spent / 1000) % 60) < 10)
+                        time = "00:0" + ((spent / 1000) % 60);
+                    else
+                        time = "00:" + ((spent / 1000) % 60);
+                }
+                cv.put("track_totaltime", time);
                 long result = database.insert("trackRoute", null, cv);
                 Log.d("3/20_軌跡紀錄_Pause", result + " = DB INSERT RC:" + RoutesCounter
                         + " no:" + Track_no + " 座標 " + Latitude + "," + Longitude
@@ -277,7 +334,26 @@ public class TrackRouteService extends Service {
             } else if (record_status == 0) {
                 cv.put("track_start", 0);
                 cv.put("track_title", track_title);
-                cv.put("track_totaltime", RecordActivity.time_text.getText().toString());
+                Long now = System.currentTimeMillis();
+                Long spent = now - start_time + tempSpent;
+                String time;
+                if (((spent / 1000) / 60) > 0) {
+                    if (((spent / 1000) / 60) < 10)
+                        if (((spent / 1000) % 60) < 10)
+                            time = "0" + ((spent / 1000) / 60) + ":0" + ((spent / 1000) % 60);
+                        else
+                            time = "0" + ((spent / 1000) / 60) + ":" + ((spent / 1000) % 60);
+                    else if (((spent / 1000) % 60) < 10)
+                        time = ((spent / 1000) / 60) + ":0" + ((spent / 1000) % 60);
+                    else
+                        time = ((spent / 1000) / 60) + ":" + ((spent / 1000) % 60);
+                } else {
+                    if (((spent / 1000) % 60) < 10)
+                        time = "00:0" + ((spent / 1000) % 60);
+                    else
+                        time = "00:" + ((spent / 1000) % 60);
+                }
+                cv.put("track_totaltime", time);
                 SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd");
                 Date date = new Date();
                 String dateString = fmt.format(date);

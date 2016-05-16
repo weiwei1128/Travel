@@ -1,8 +1,11 @@
 package com.flyingtravel.Utility;
 
 import android.content.Context;
+import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 /**
  * Created by wei on 2016/1/4.
@@ -213,7 +216,15 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 }
                 db.execSQL(DATABASE_ALTER_TEAM_3);
             }
-            db.execSQL(DATABASE_ALTER_TEAM_4);
+            Cursor c1 = db.rawQuery("SELECT memo_imgUrl FROM travelMemo", null);
+            int index = c1.getColumnIndex("someColumnName");
+            if (index == -1) {
+                try {
+                    db.execSQL(DATABASE_ALTER_TEAM_4);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
         }
 
     }
