@@ -217,7 +217,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 db.execSQL(DATABASE_ALTER_TEAM_3);
             }
             Cursor c1 = db.rawQuery("SELECT memo_imgUrl FROM travelMemo", null);
-            int index = c1.getColumnIndex("someColumnName");
+            int index = c1.getColumnIndex("memo_imgUrl");
             if (index == -1) {
                 try {
                     db.execSQL(DATABASE_ALTER_TEAM_4);
