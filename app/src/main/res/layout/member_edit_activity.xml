@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/light_gray"
+    tools:context="com.example.wei.travel.MemberActivity">
+
+    <LinearLayout
+        android:id="@+id/member_Layout"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:background="#5599FF"
+        android:gravity="center_vertical|center_horizontal"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/memberHeader"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:background="#5599FF"
+            android:gravity="center_vertical|center_horizontal"
+            android:text="@string/member_text"
+            android:textColor="@color/white"
+            android:textSize="22dp"
+            android:layout_weight="1" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/member_Layout"
+        android:layout_centerHorizontal="true"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:layout_marginBottom="1dp"
+            android:background="@color/white"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/member_name_edit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginLeft="10dp"
+                android:text="木村拓哉"
+                android:textColor="@color/black"
+                android:textSize="20dp"
+                android:layout_marginRight="20dp"
+                android:singleLine="true"
+                android:inputType="text" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginBottom="10dp"
+            android:background="@color/white"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_gravity="center"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:src="@drawable/member_phone" />
+
+            <EditText
+                android:id="@+id/member_phone_edit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="0912345678"
+                android:textColor="@color/black"
+                android:textSize="20dp"
+                android:layout_marginRight="20dp"
+                android:singleLine="true"
+                android:inputType="phone" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginBottom="1dp"
+            android:background="@color/white"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_gravity="center"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:src="@drawable/member_mail" />
+
+            <EditText
+                android:id="@+id/member_email_edit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Email"
+                android:textColor="@color/black"
+                android:textSize="18dp"
+                android:layout_marginRight="20dp"
+                android:singleLine="true"
+                android:inputType="textEmailAddress" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginBottom="10dp"
+            android:background="@color/white"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_gravity="center"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:src="@drawable/member_address" />
+
+            <EditText
+                android:id="@+id/member_addr_edit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="地址"
+                android:textColor="@color/black"
+                android:textSize="18dp"
+                android:layout_marginRight="20dp"
+                android:singleLine="true"
+                android:inputType="text" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_centerInParent="true"
+        android:layout_alignParentBottom="true"
+        android:background="@color/white">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="@string/cancel_text"
+            android:id="@+id/member_edit_cancel"
+            android:layout_weight="1"
+            android:background="@color/yellow"
+            android:layout_marginRight="1dp"
+            android:gravity="center_vertical|center_horizontal"
+            android:textSize="16dp"
+            android:textStyle="bold"
+            android:textColor="@color/white" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="@string/ok_text"
+            android:id="@+id/member_edit_ok"
+            android:layout_weight="1"
+            android:background="@color/yellow"
+            android:gravity="center_vertical|center_horizontal"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            android:textSize="16dp" />
+    </LinearLayout>
+
+</RelativeLayout>

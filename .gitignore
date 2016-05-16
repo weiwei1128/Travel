@@ -103,3 +103,5 @@ library/library.iml
 app/app.iml
 
 *.json
+
+*.json

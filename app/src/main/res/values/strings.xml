@@ -142,4 +142,6 @@
     <string name="addok_text">加入成功</string>
     <string name="satisfy_text">滿意度</string>
     <string name="CancelSend_text">確定要取消上傳嗎</string>
+    <string name="edit_text">資料已變更</string>
+    <string name="editok_text">成功修改</string>
 </resources>

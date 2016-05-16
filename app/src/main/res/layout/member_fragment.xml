@@ -29,7 +29,8 @@
             android:layout_width="70dp"
             android:layout_height="35dp"
             android:id="@+id/memberedit"
-            android:src="@drawable/white_pencil" />
+            android:src="@drawable/white_pencil"
+            android:background="@drawable/click_effect_general" />
     </LinearLayout>
 
     <LinearLayout

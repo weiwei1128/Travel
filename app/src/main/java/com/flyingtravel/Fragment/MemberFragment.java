@@ -14,16 +14,18 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.flyingtravel.Activity.MemberEditActivity;
 import com.flyingtravel.R;
 import com.flyingtravel.Utility.DataBaseHelper;
+import com.flyingtravel.Utility.Functions;
 import com.flyingtravel.Utility.GlobalVariable;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.HitBuilders;
@@ -33,14 +35,16 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 
 public class MemberFragment extends Fragment {
     Context context;
     TextView NameText, PhoneText, EmailText, AddrText;
-    LinearLayout logoutLayout, shareLayout,ratingLayout,telLayout;
+    LinearLayout logoutLayout, shareLayout, ratingLayout, telLayout;
+    ImageView editImg;
+
     public static GoogleAnalytics analytics;
     public static Tracker tracker;
+
     public MemberFragment() {
         // Required empty public constructor
     }
@@ -50,7 +54,7 @@ public class MemberFragment extends Fragment {
         super.onCreate(savedInstanceState);
         this.context = getActivity();
         /**GA**/
-        GlobalVariable globalVariable = (GlobalVariable)getActivity().getApplication();
+        GlobalVariable globalVariable = (GlobalVariable) getActivity().getApplication();
         tracker = globalVariable.getDefaultTracker();
         /**GA**/
     }
@@ -63,12 +67,13 @@ public class MemberFragment extends Fragment {
         tracker.setScreenName("會員");
         tracker.send(new HitBuilders.ScreenViewBuilder().build());
         /**GA**/
+        getDB();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.member_activity, container, false);
+        View view = inflater.inflate(R.layout.member_fragment, container, false);
         memberData(view);
         return view;
     }
@@ -76,44 +81,29 @@ public class MemberFragment extends Fragment {
     public void memberData(View view) {
         logoutLayout = (LinearLayout) view.findViewById(R.id.member_logout_layout);
         shareLayout = (LinearLayout) view.findViewById(R.id.member_share_layout);
-        ratingLayout = (LinearLayout)view.findViewById(R.id.member_value_layout);
-        telLayout = (LinearLayout)view.findViewById(R.id.member_tel_layout);
+        ratingLayout = (LinearLayout) view.findViewById(R.id.member_value_layout);
+        telLayout = (LinearLayout) view.findViewById(R.id.member_tel_layout);
         NameText = (TextView) view.findViewById(R.id.member_name_text);
         PhoneText = (TextView) view.findViewById(R.id.member_phone_text);
         EmailText = (TextView) view.findViewById(R.id.member_email_text);
         AddrText = (TextView) view.findViewById(R.id.member_addr_text);
+        editImg = (ImageView) view.findViewById(R.id.memberedit);
         Boolean login = false;
-        DataBaseHelper helper = DataBaseHelper.getmInstance(context);
-        SQLiteDatabase database = helper.getWritableDatabase();
-        Cursor member_cursor = database.query("member", new String[]{"account", "password",
-                "name", "phone", "email", "addr"}, null, null, null, null, null);
-        if (member_cursor != null && member_cursor.getCount() > 0) {
-            member_cursor.moveToFirst();
-//            Log.d("2.26", "DB " + member_cursor.getString(2));
-            NameText.setText(member_cursor.getString(2));
-            PhoneText.setText(member_cursor.getString(3));
-            EmailText.setText(member_cursor.getString(4));
-            AddrText.setText(member_cursor.getString(5));
-            login = true;
-        }
-        if (member_cursor != null)
-            member_cursor.close();
-//        if (database.isOpen())
-//            database.close();
-        //=====telephone====//
-        telLayout.setOnClickListener(new View.OnClickListener() {
+        login = getDB();
+
+        //=======edit=======//
+        editImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                Log.e("5.12","click");
-//                String phone = PhoneText.getText().toString();
-//                Intent intent = new Intent("android.intent.action.CALL",Uri.parse("tel:"+phone));
-//                startActivity(intent);
+                Functions.go(false,MemberFragment.this.getActivity(),context, MemberEditActivity.class,null);
             }
         });
+
         //=======Logout=======//
 
 
         final Boolean finalLogin = login;
+
         logoutLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -197,13 +187,32 @@ public class MemberFragment extends Fragment {
             }
         });
 
-    //======rating====//
+        //======rating====//
         ratingLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 launchMarket();
             }
         });
+    }
+     Boolean getDB(){
+        java.lang.Boolean login=false;
+        DataBaseHelper helper = DataBaseHelper.getmInstance(context);
+        SQLiteDatabase database = helper.getWritableDatabase();
+        Cursor member_cursor = database.query("member", new String[]{"account", "password",
+                "name", "phone", "email", "addr"}, null, null, null, null, null);
+        if (member_cursor != null && member_cursor.getCount() > 0) {
+            member_cursor.moveToFirst();
+//            Log.d("2.26", "DB " + member_cursor.getString(2));
+            NameText.setText(member_cursor.getString(2));
+            PhoneText.setText(member_cursor.getString(3));
+            EmailText.setText(member_cursor.getString(4));
+            AddrText.setText(member_cursor.getString(5));
+            login = true;
+        }
+        if (member_cursor != null)
+            member_cursor.close();
+        return login;
     }
     private void launchMarket() {
         tracker.send(new HitBuilders.EventBuilder().setCategory("評價")

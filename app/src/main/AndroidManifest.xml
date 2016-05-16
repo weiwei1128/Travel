@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.flyingtravel">
-    <!--GCM-->
+
+    <!-- GCM -->
     <permission
         android:name="com.flyingtravel.permission.C2D_MESSAGE"
         android:protectionLevel="signature" />
+
     <uses-permission android:name="com.flyingtravel.permission.C2D_MESSAGE" />
     <!-- 接收 GCM 用 -->
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
@@ -12,7 +14,6 @@
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <!-- 收到訊息時保持 CPU 休眠 -->
     <uses-permission android:name="android.permission.WAKE_LOCK" />
-
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -65,7 +66,7 @@
                 <category android:name="com.flyingtravel" />
             </intent-filter>
         </receiver>
-        <!--GCM-->
+        <!-- GCM -->
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="@string/google_maps_key" />
@@ -172,6 +173,8 @@
 
         <activity
             android:name=".ScheduleMapsActivity"
+            android:theme="@style/AppTheme" />
+        <activity android:name=".Activity.MemberEditActivity"
             android:theme="@style/AppTheme" />
     </application>
 
