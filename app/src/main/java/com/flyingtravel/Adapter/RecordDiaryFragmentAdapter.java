@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,15 +21,20 @@ import com.daimajia.slider.library.SliderTypes.BaseSliderView;
 import com.daimajia.slider.library.SliderTypes.DefaultSliderView;
 import com.daimajia.slider.library.Tricks.ViewPagerEx;
 import com.flyingtravel.R;
+import com.flyingtravel.RecordActivity;
 import com.flyingtravel.RecordDiaryDetailActivity;
+import com.flyingtravel.RecordDiaryFragment;
 import com.flyingtravel.Utility.DataBaseHelper;
 import com.flyingtravel.Utility.Functions;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by Tinghua on 3/27/2016.
  */
 
-public class RecordDiaryFragmentAdapter extends BaseAdapter implements ViewPagerEx.OnPageChangeListener {
+public class RecordDiaryFragmentAdapter extends BaseAdapter {
 
     private LayoutInflater inflater;
     private ViewHolder mViewHolder;
@@ -38,7 +44,6 @@ public class RecordDiaryFragmentAdapter extends BaseAdapter implements ViewPager
     private SQLiteDatabase database;
 
     private Integer RoutesCounter = 1;
-    int pos;
 
     public RecordDiaryFragmentAdapter(Context mcontext) {
         this.context = mcontext;
@@ -89,6 +94,16 @@ public class RecordDiaryFragmentAdapter extends BaseAdapter implements ViewPager
             mViewHolder.DiaryString = (TextView) convertView.findViewById(R.id.DiaryString);
 
             convertView.setTag(mViewHolder);
+/*
+            Cursor trackRoute_cursor = database.query("trackRoute",
+                    new String[]{"routesCounter", "track_no", "track_lat", "track_lng",
+                            "track_start", "track_title", "track_totaltime", "track_completetime"},
+                    "track_start=\"0\"", null, null, null, null, null);
+            if (trackRoute_cursor != null) {
+                if (trackRoute_cursor.getCount() != 0) {
+                    mViewHolder.ImageSlider.setTag(trackRoute_cursor.getCount() - position - 1);
+                }
+            }*/
 
         } else {
             mViewHolder = (ViewHolder) convertView.getTag();
@@ -100,14 +115,15 @@ public class RecordDiaryFragmentAdapter extends BaseAdapter implements ViewPager
                 "track_start=\"0\"", null, null, null, null, null);
         if (trackRoute_cursor != null) {
             if (trackRoute_cursor.getCount() != 0) {
-                pos = trackRoute_cursor.getCount() - position-1;
                 trackRoute_cursor.moveToPosition(trackRoute_cursor.getCount() - position-1);
                 String dateString = trackRoute_cursor.getString(7);
                 mViewHolder.DiaryDate.setText(dateString);
                 mViewHolder.DiaryTitle.setText(trackRoute_cursor.getString(5));
                 mViewHolder.DiaryTotalTime.setText(trackRoute_cursor.getString(6));
                 RoutesCounter = trackRoute_cursor.getInt(0);
-
+/*
+                mViewHolder.ImageSlider.setTag(trackRoute_cursor.getCount() - position-1);
+*/
                 Cursor memo_cursor = database.query("travelmemo", new String[]{"memo_routesCounter", "memo_trackNo",
                                 "memo_content", "memo_img", "memo_latlng", "memo_time"},
                         "memo_routesCounter=\"" + RoutesCounter + "\" AND memo_content!=\"null\"", null, null, null, null, null);
@@ -127,54 +143,74 @@ public class RecordDiaryFragmentAdapter extends BaseAdapter implements ViewPager
                 if (img_cursor != null) {
                     mViewHolder.ImageSlider.removeAllSliders();
                     if (img_cursor.getCount() > 1) {
+                        mViewHolder.ImageSlider.setVisibility(View.VISIBLE);
+                        mViewHolder.DiaryImage.setVisibility(View.INVISIBLE);
+
                         //Log.e("3/28_", "img count:" + number);
                         while (img_cursor.moveToNext()) {
                             //Log.e("3/28_", "img: " + img_cursor.getBlob(3));
                             byte[] d = img_cursor.getBlob(3);
                             DefaultSliderView sliderView = new DefaultSliderView(context);
                             sliderView.image(BitmapFactory.decodeByteArray(d, 0, d.length))
-                                    .setScaleType(BaseSliderView.ScaleType.Fit);
+                                    .setScaleType(BaseSliderView.ScaleType.Fit);/*
+                                    .setOnSliderClickListener(new BaseSliderView.OnSliderClickListener() {
+                                        @Override
+                                        public void onSliderClick(BaseSliderView slider) {
+                                            Log.e("5/15_", "ImageSlider onClick: "+ trackRoute_cursor.getCount() - position-1);
+                                            if (mViewHolder.ImageSlider.getTag() != null) {
+                                                Bundle bundle = new Bundle();
+                                                bundle.putInt("WhichItem", (Integer) trackRoute_cursor.getCount() - position-1);
+                                                Intent intent = new Intent();
+                                                intent.setClass(context, RecordDiaryDetailActivity.class);
+                                                intent.putExtras(bundle);
+                                                context.startActivity(intent);
+                                            }
+                                        }
+                                    });*/
                             mViewHolder.ImageSlider.addSlider(sliderView);
                         }
                         mViewHolder.ImageSlider.setCustomIndicator(mViewHolder.pagerIndicator);
-                        mViewHolder.ImageSlider.addOnPageChangeListener(this);
+                        mViewHolder.ImageSlider.addOnPageChangeListener(new ViewPagerEx.OnPageChangeListener() {
+                            @Override
+                            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+                            }
+
+                            @Override
+                            public void onPageSelected(int position) {
+
+                            }
+
+                            @Override
+                            public void onPageScrollStateChanged(int state) {
+
+                            }
+                        });
+
                         //Log.e("3/29_", "position: " + position);
                     } else if (img_cursor.getCount() == 1) {
+                        mViewHolder.DiaryImage.setVisibility(View.VISIBLE);
+                        mViewHolder.ImageSlider.setVisibility(View.INVISIBLE);
                         img_cursor.moveToFirst();
                         byte[] d = img_cursor.getBlob(3);
                         mViewHolder.DiaryImage.setImageBitmap(BitmapFactory.decodeByteArray(d, 0, d.length));
                         mViewHolder.DiaryImage.setScaleType(ImageView.ScaleType.FIT_CENTER);
                     } else if (img_cursor.getCount() == 0) {
+                        mViewHolder.DiaryImage.setVisibility(View.VISIBLE);
+                        mViewHolder.ImageSlider.setVisibility(View.INVISIBLE);
                         mViewHolder.DiaryImage.setImageResource(R.drawable.empty);
                         mViewHolder.DiaryImage.setScaleType(ImageView.ScaleType.FIT_CENTER);
                         //Log.e("3/28_", "img_cursor = 0 ");
                     }
                     mViewHolder.ImageSlider.stopAutoCycle();
-                    mViewHolder.ImageSlider.setFocusable(false);
-                    mViewHolder.ImageSlider.setFocusableInTouchMode(false);
-                    mViewHolder.DiaryImage.setFocusable(false);
-                    mViewHolder.DiaryImage.setFocusableInTouchMode(false);
+                    mViewHolder.pagerIndicator.setVerticalScrollbarPosition(0);
+
                     img_cursor.close();
                 }
             }
             trackRoute_cursor.close();
         }
         return convertView;
-    }
-
-    @Override
-    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-    }
-
-    @Override
-    public void onPageSelected(int position) {
-
-    }
-
-    @Override
-    public void onPageScrollStateChanged(int state) {
-
     }
 
     private static class ViewHolder {
