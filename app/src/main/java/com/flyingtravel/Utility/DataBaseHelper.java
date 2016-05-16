@@ -216,14 +216,17 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 }
                 db.execSQL(DATABASE_ALTER_TEAM_3);
             }
-            Cursor c1 = db.rawQuery("SELECT memo_imgUrl FROM travelMemo", null);
-            int index = c1.getColumnIndex("memo_imgUrl");
-            if (index == -1) {
-                try {
-                    db.execSQL(DATABASE_ALTER_TEAM_4);
-                } catch (SQLException e) {
-                    e.printStackTrace();
+            Cursor c1 = db.rawQuery("SELECT * FROM travelMemo LIMIT 1", null);
+            if (c1 != null) {
+                int index = c1.getColumnIndex("memo_imgUrl");
+                if (index == -1) {
+                    try {
+                        db.execSQL(DATABASE_ALTER_TEAM_4);
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
                 }
+                c1.close();
             }
         }
 
