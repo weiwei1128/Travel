@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -360,9 +361,10 @@ public class ShopRecordItemActivity extends AppCompatActivity {
                     Order_payment.setText(strings[0][4]);
                 if (strings[0][5] != null)
                     ship_tel.setText(strings[0][5]);
-                if (strings[0][6] != null)
+                if (strings[0][6] != null&&!strings[0][6].equals("null"))
                     ship_message.setText(strings[0][6]);
-
+//                else
+                Log.e("5.17","message:"+strings[0][6]);
             }
 
             super.onPostExecute(strings);

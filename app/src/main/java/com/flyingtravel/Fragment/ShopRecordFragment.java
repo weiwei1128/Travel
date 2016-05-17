@@ -130,7 +130,7 @@ public class ShopRecordFragment extends Fragment {
             Cursor order_cursor = database.query("shoporder", new String[]{"order_id", "order_userid ", "order_no",
                             "order_time", "order_name", "order_phone", "order_email",
                             "order_money", "order_state", "order_schedule"}, "order_userid=" + "\"" + userId + "\"",
-                    null, null, null, null);
+                    null, null, null, "_id DESC");
             String Order_id;
             if (order_cursor != null && order_cursor.getCount() >= position) {
                 order_cursor.moveToPosition(position);

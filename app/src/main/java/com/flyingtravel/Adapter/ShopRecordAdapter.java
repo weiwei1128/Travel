@@ -76,7 +76,7 @@ public class ShopRecordAdapter extends BaseAdapter {
 
         Cursor order_cursor = database.query("shoporder", new String[]{"order_id", "order_userid ", "order_no",
                 "order_time", "order_name", "order_phone", "order_email", "order_money",
-                "order_state", "order_schedule"}, "order_userid=" + "\"" + UserId + "\"", null, null, null, null);
+                "order_state", "order_schedule"}, "order_userid=" + "\"" + UserId + "\"", null, null, null, "_id DESC");
         if (order_cursor != null && order_cursor.getCount() >= position) {
             order_cursor.moveToPosition(position);
             if (order_cursor.getString(2) != null)
