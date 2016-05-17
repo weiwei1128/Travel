@@ -77,7 +77,8 @@
                 android:textSize="16dp"
                 android:textColor="@color/black"
                 android:hint="@string/emailInput_text"
-                android:singleLine="true" />
+                android:singleLine="true"
+                android:inputType="textEmailAddress" />
         </LinearLayout>
 
         <LinearLayout

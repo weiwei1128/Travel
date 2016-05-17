@@ -50,6 +50,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.baidu.android.pushservice.PushConstants;
+import com.baidu.android.pushservice.PushManager;
 import com.flyingtravel.Activity.LoginActivity;
 import com.flyingtravel.Fragment.MainFragment;
 import com.flyingtravel.Fragment.MemberFragment;
@@ -141,7 +143,7 @@ public class HomepageActivity extends FragmentActivity {
                     REQUEST_PERMISSION);
         } else {
             UI();
-
+            PushManager.startWork(getApplicationContext(), PushConstants.LOGIN_TYPE_API_KEY,"6BaeuKAiu1AjsqZua2iV8GHmdPQliGaE");
             changeFragment(mainFragment);
             homeImg.setClickable(false);
             homeImg.setImageResource(R.drawable.tab_selected_home);

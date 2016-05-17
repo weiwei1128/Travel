@@ -358,6 +358,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     class findPwd extends AsyncTask<String, Void, Boolean> {
+        ProgressDialog progressDialog = new ProgressDialog(LoginActivity.this);
         Dialog mdialog;
         String maccount, memail, message;
 
@@ -369,6 +370,11 @@ public class LoginActivity extends AppCompatActivity {
 
         @Override
         protected void onPreExecute() {
+            progressDialog.setMessage(LoginActivity.this.getResources().getString(R.string.loading_text));
+            progressDialog.setCancelable(false);
+            if (!progressDialog.isShowing()) {
+                progressDialog.show();
+            }
             super.onPreExecute();
         }
 
@@ -412,8 +418,7 @@ public class LoginActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(Boolean s) {
-            if (s)
-                message = LoginActivity.this.getResources().getString(R.string.errorReply_text) + message;
+            Log.e("5.16","s:"+s+"  maccount:"+maccount+"  email:"+memail);
 
             Toast.makeText(LoginActivity.this, message, Toast.LENGTH_SHORT).show();
             Timer a = new Timer();
@@ -425,6 +430,7 @@ public class LoginActivity extends AppCompatActivity {
                             mdialog.dismiss();
                     }
                 }, 2500);
+            progressDialog.dismiss();
             super.onPostExecute(s);
         }
     }
