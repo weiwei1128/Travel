@@ -353,8 +353,6 @@ public class RecordTrackFragment extends Fragment implements
                     record_start_img.setImageResource(R.drawable.record_selected_pause);
                     record_status = 1;
                     //====1.29
-                    RecordActivity.time_text.setVisibility(View.VISIBLE);
-                    RecordActivity.record_completeImg.setVisibility(View.VISIBLE);
                     starttime[0] = System.currentTimeMillis();
                     //----2.4
 
@@ -392,6 +390,9 @@ public class RecordTrackFragment extends Fragment implements
                         getActivity().sendBroadcast(intent_Trace);
                         tempSpent = 0L;
                     }
+
+                    RecordActivity.time_text.setVisibility(View.VISIBLE);
+                    RecordActivity.record_completeImg.setVisibility(View.VISIBLE);
                 }
             }
         });
@@ -524,8 +525,8 @@ public class RecordTrackFragment extends Fragment implements
                             // 設置對話框消息
                             isExit.setMessage(getContext().getResources().getString(R.string.CancelSend_text));
                             // 添加選擇按鈕並注冊監聽
-                            isExit.setButton(getContext().getResources().getString(R.string.ok_text), listener);
-                            isExit.setButton2(getContext().getResources().getString(R.string.cancel_text), listener);
+                            isExit.setButton(getContext().getResources().getString(R.string.ok_text), diary_listener);
+                            isExit.setButton2(getContext().getResources().getString(R.string.cancel_text), diary_listener);
                             // 顯示對話框
                             isExit.show();
                         }
@@ -804,6 +805,12 @@ public class RecordTrackFragment extends Fragment implements
                 trackRoute_cursor.moveToLast();
                 Integer track_start = trackRoute_cursor.getInt(4);
                 String temp_totaltime = trackRoute_cursor.getString(6);
+                Integer min = Integer.valueOf(temp_totaltime.substring(0, temp_totaltime.indexOf(":", 0)));
+                Integer sec = Integer.valueOf(temp_totaltime.substring(temp_totaltime.indexOf(":", 0) + 1, temp_totaltime.length()));
+                //Log.d("4/1_", "min:" + temp_totaltime.substring(0, temp_totaltime.indexOf(":", 0)));
+                //Log.d("4/1_", "sec:" + temp_totaltime.substring(temp_totaltime.indexOf(":", 0)+1, temp_totaltime.length()));
+                tempSpent = Long.valueOf((min * 60 + sec) * 1000);
+
                 // 停止
                 if (track_start == 0) {
                     RoutesCounter = trackRoute_cursor.getInt(0) + 1;
@@ -812,8 +819,20 @@ public class RecordTrackFragment extends Fragment implements
                 } else {
                     RoutesCounter = trackRoute_cursor.getInt(0);
                     Track_no = trackRoute_cursor.getInt(1);
-                    // 還在紀錄
-                    if (track_start == 1) {
+                    if (!Functions.isMyServiceRunning(getActivity(), TrackRouteService.class)) {
+                        // 創建退出對話框
+                        AlertDialog isResume = new AlertDialog.Builder(getContext()).create();
+                        // 設置對話框標題
+                        isResume.setTitle(getContext().getResources().getString(R.string.systemMessage_text));
+                        // 設置對話框消息
+                        isResume.setMessage(getContext().getResources().getString(R.string.resumeTrack_text));
+                        // 添加選擇按鈕並注冊監聽
+                        isResume.setButton(getContext().getResources().getString(R.string.ok_text), track_listener);
+                        isResume.setButton2(getContext().getResources().getString(R.string.cancel_text), track_listener);
+                        // 顯示對話框
+                        isResume.show();
+
+                    } else if (track_start == 1) { // 還在紀錄
                         // 正在紀錄
                         record_status = 1;
                         record_start_layout.setBackgroundColor(Color.parseColor("#5599FF"));
@@ -821,19 +840,22 @@ public class RecordTrackFragment extends Fragment implements
                         record_start_text.setText(getContext().getResources().getString(R.string.stopRecord_text));
                         record_start_img.performClick();
                         record_start_img.setImageResource(R.drawable.record_selected_pause);
+
+                        RecordActivity.time_text.setText(temp_totaltime);
+                        RecordActivity.time_text.setVisibility(View.VISIBLE);
+                        RecordActivity.record_completeImg.setVisibility(View.VISIBLE);
                     } else if (track_start == 2) {
                         // 暫停紀錄
                         record_status = 2;
-                        Integer min = Integer.valueOf(temp_totaltime.substring(0, temp_totaltime.indexOf(":", 0)));
-                        Integer sec = Integer.valueOf(temp_totaltime.substring(temp_totaltime.indexOf(":", 0) + 1, temp_totaltime.length()));
-                        //Log.d("4/1_", "min:" + temp_totaltime.substring(0, temp_totaltime.indexOf(":", 0)));
-                        //Log.d("4/1_", "sec:" + temp_totaltime.substring(temp_totaltime.indexOf(":", 0)+1, temp_totaltime.length()));
-                        tempSpent = Long.valueOf((min * 60 + sec) * 1000);
                         record_start_layout.setBackgroundColor(Color.parseColor("#FFFFFF"));
                         record_start_text.setTextColor(Color.parseColor("#555555"));
                         record_start_text.setText(getContext().getResources().getString(R.string.startRecord_text));
                         record_start_img.setImageResource(R.drawable.ic_play_light);
                         TraceRoute.clear();
+
+                        RecordActivity.time_text.setText(temp_totaltime);
+                        RecordActivity.time_text.setVisibility(View.VISIBLE);
+                        RecordActivity.record_completeImg.setVisibility(View.VISIBLE);
                     }
                 }
             }
@@ -927,8 +949,8 @@ public class RecordTrackFragment extends Fragment implements
                                 // 設置對話框消息
                                 isExit.setMessage(getContext().getResources().getString(R.string.CancelSend_text));
                                 // 添加選擇按鈕並注冊監聽
-                                isExit.setButton(getContext().getResources().getString(R.string.ok_text), listener);
-                                isExit.setButton2(getContext().getResources().getString(R.string.cancel_text), listener);
+                                isExit.setButton(getContext().getResources().getString(R.string.ok_text), diary_listener);
+                                isExit.setButton2(getContext().getResources().getString(R.string.cancel_text), diary_listener);
                                 // 顯示對話框
                                 isExit.show();
                             }
@@ -1096,7 +1118,8 @@ public class RecordTrackFragment extends Fragment implements
         }
     }
 
-    DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
+    // 取消上傳資料確認
+    DialogInterface.OnClickListener diary_listener = new DialogInterface.OnClickListener() {
         public void onClick(DialogInterface dialog, int which) {
             switch (which) {
                 case AlertDialog.BUTTON_POSITIVE:// "確認"
@@ -1118,6 +1141,98 @@ public class RecordTrackFragment extends Fragment implements
                     dialog_confirm_layout.setVisibility(View.INVISIBLE);
                     break;
                 case AlertDialog.BUTTON_NEGATIVE:// "取消"第二個按鈕取消對話框
+                    break;
+                default:
+                    break;
+            }
+        }
+    };
+
+    // 紀錄繼續或中斷確認
+    DialogInterface.OnClickListener track_listener = new DialogInterface.OnClickListener() {
+        public void onClick(DialogInterface dialog, int which) {
+            switch (which) {
+                case AlertDialog.BUTTON_POSITIVE:// "確認"
+                    record_status = 1;
+                    record_start_layout.setBackgroundColor(Color.parseColor("#5599FF"));
+                    record_start_text.setTextColor(Color.parseColor("#FFFFFF"));
+                    record_start_text.setText(getContext().getResources().getString(R.string.stopRecord_text));
+                    record_start_img.performClick();
+                    record_start_img.setImageResource(R.drawable.record_selected_pause);
+                    starttime[0] = System.currentTimeMillis();
+
+                    Intent intent_Trace = new Intent(getActivity(), TrackRouteService.class);
+                    intent_Trace.putExtra("record_status", 1);
+                    intent_Trace.putExtra("start", starttime[0]);
+                    intent_Trace.putExtra("spent", tempSpent);
+                    intent_Trace.putExtra("routesCounter", RoutesCounter);
+                    intent_Trace.putExtra("track_no", Track_no);
+                    getActivity().sendBroadcast(intent_Trace);
+                    tempSpent = 0L;
+
+                    RecordActivity.time_text.setVisibility(View.VISIBLE);
+                    RecordActivity.record_completeImg.setVisibility(View.VISIBLE);
+                    break;
+                case AlertDialog.BUTTON_NEGATIVE:// "取消"第二個按鈕取消對話框
+                    // reset內容
+                    title_editText.setText("");
+                    // 輸入這趟旅程的標題
+                    dialog_header_text.setText(getContext().getResources().getString(R.string.recordTitleInput_text));
+                    title_layout.setVisibility(View.VISIBLE);
+                    RelativeLayout.LayoutParams otelParams = new RelativeLayout.LayoutParams(
+                            ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                    otelParams.addRule(RelativeLayout.BELOW, R.id.dialog_header_text);
+                    title_layout.setLayoutParams(otelParams);
+
+                    // 隱藏View
+                    dialog_scrollview.setVisibility(View.INVISIBLE);
+                    RelativeLayout.LayoutParams otelParams1 = new RelativeLayout.LayoutParams(
+                            ViewGroup.LayoutParams.MATCH_PARENT, 0);
+                    otelParams1.addRule(RelativeLayout.BELOW, R.id.dialog_header_text);
+                    dialog_scrollview.setLayoutParams(otelParams1);
+
+                    dialog_choose_layout.setVisibility(View.INVISIBLE);
+                    dialog_confirm_layout.setVisibility(View.INVISIBLE);
+                    // 隱藏View
+
+                    // 按下確認
+                    title_confirmTextView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            starttime[0] = System.currentTimeMillis();
+                            if (title_editText.getText().toString().equals("")) {
+                                Toast.makeText(getActivity(), getContext().getResources().getString(R.string.emptyInput_text), Toast.LENGTH_SHORT).show();
+                            } else {
+                                Intent intent_Trace = new Intent(getActivity(), TrackRouteService.class);
+                                intent_Trace.putExtra("record_status", 0);
+                                intent_Trace.putExtra("start", starttime[0]);
+                                intent_Trace.putExtra("spent", tempSpent);
+                                intent_Trace.putExtra("routesCounter", RoutesCounter);
+                                intent_Trace.putExtra("track_no", Track_no);
+                                intent_Trace.putExtra("track_title", title_editText.getText().toString());
+                                getActivity().sendBroadcast(intent_Trace);
+                                tempSpent = 0L;
+
+                                mProgressDialog.setMessage(getContext().getResources().getString(R.string.handling_text));
+                                mProgressDialog.setCancelable(false);
+                                mProgressDialog.show();
+
+                                Track_no = 1;
+                                RoutesCounter++;
+                                RecordActivity.time_text.setVisibility(View.INVISIBLE);
+                                RecordActivity.record_completeImg.setVisibility(View.INVISIBLE);
+
+                                record_start_layout.setBackgroundColor(Color.parseColor("#FFFFFF"));
+                                record_start_text.setTextColor(Color.parseColor("#555555"));
+                                record_start_text.setText(getContext().getResources().getString(R.string.startRecord_text));
+                                record_start_img.setImageResource(R.drawable.ic_play_light);
+                                record_status = 0;
+
+                                spotDialog.dismiss();
+                            }
+                        }
+                    });
+                    spotDialog.show();
                     break;
                 default:
                     break;

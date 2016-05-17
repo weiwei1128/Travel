@@ -84,9 +84,11 @@ public class TrackRouteService extends Service {
         if (intent != null) {
             //record_start_boolean = intent.getBooleanExtra("isStart", false);
             start_time = intent.getLongExtra("start", 0);
+            tempSpent = intent.getLongExtra("spent", 0);
             record_status = intent.getIntExtra("record_status", 0);
             RoutesCounter = intent.getIntExtra("routesCounter", 1);
             Track_no = intent.getIntExtra("track_no", 1);
+            track_title = intent.getStringExtra("track_title");
             handler.postDelayed(count, 1000);
         }
         super.onStartCommand(intent, flags, startId);
