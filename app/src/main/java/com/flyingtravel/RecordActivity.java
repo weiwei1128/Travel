@@ -55,7 +55,7 @@ public class RecordActivity extends FragmentActivity  {
         time_text.setVisibility(View.INVISIBLE);
         record_completeImg = (ImageView) findViewById(R.id.record_completeImg);
         record_completeImg.setVisibility(View.INVISIBLE);
-
+/*
         DataBaseHelper helper = DataBaseHelper.getmInstance(getApplicationContext());
         SQLiteDatabase database = helper.getWritableDatabase();
         Cursor trackRoute_cursor = database.query("trackRoute",
@@ -74,7 +74,7 @@ public class RecordActivity extends FragmentActivity  {
             }
             trackRoute_cursor.close();
         }
-
+*/
         // Prompt the user to Enabled GPS
         LocationManager service = (LocationManager) getSystemService(LOCATION_SERVICE);
         boolean enabled = service.isProviderEnabled(LocationManager.GPS_PROVIDER);
