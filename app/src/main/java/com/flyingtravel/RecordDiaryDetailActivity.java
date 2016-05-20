@@ -848,9 +848,10 @@ public class RecordDiaryDetailActivity extends AppCompatActivity implements
                 mProgressDialog.dismiss();
             }
             Intent sharingIntent = new Intent(Intent.ACTION_SEND_MULTIPLE);
-            sharingIntent.setType("text/plain");
             sharingIntent.putExtra(Intent.EXTRA_SUBJECT, title);
             sharingIntent.putExtra(Intent.EXTRA_TEXT, s);
+            sharingIntent.setType("text/plain");
+            sharingIntent.setType("*/*");
             startActivity(Intent.createChooser(sharingIntent, getApplication().getResources().getString(R.string.shareto_text)));
             super.onPostExecute(s);
         }
