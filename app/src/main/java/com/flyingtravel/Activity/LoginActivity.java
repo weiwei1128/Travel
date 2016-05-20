@@ -308,10 +308,11 @@ public class LoginActivity extends AppCompatActivity {
             //{"act":"reg","username":"ljd110@qq.com","password":"ljd110@qq.com",
             // "email":"ljd110@qq.com","mobile":"ljd110@qq.com","nickname":"ljd110@qq.com"}
             try {
-                entity.addPart("json", new StringBody("{\"act\":\"reg\",\"username\":\""
-                        + account + "\",\"password\":\"" + password
-                        + "\",\"email\":\"" + email + "\",\"mobile\":\"" + phone
-                        + "\",\"nickname\":\"" + name + "\"}", chars));
+                entity.addPart("json", new StringBody("{\"act\":\"reg\"," +
+                        "\"username\":\"" + account + "\"," +
+                        "\"password\":\"" + password + "\"," +
+                        "\"email\":\"" + email + "\"," +
+                        "\"mobile\":\"" + phone + "\",\"nickname\":\"" + name + "\"," + "\"area\":\""+"\",\"birthday\":\""+"\",\"city\":\"\",\"amount\":\"1\"}", chars));
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
