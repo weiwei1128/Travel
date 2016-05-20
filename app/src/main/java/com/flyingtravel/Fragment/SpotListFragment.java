@@ -293,7 +293,7 @@ public class SpotListFragment extends Fragment implements
     @Override
     public void onLocationChanged(Location location) {
         if (CurrentLocation != location) {
-            //HandleNewLocation(CurrentLocation);
+            //HandleNewLocation(location);
         }
     }
 
