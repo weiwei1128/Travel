@@ -284,8 +284,8 @@ public class SpotMapFragment extends Fragment implements
             HandleNewLocation(location);
             if (globalVariable.isAPILoaded && globalVariable.SpotDataSorted.isEmpty()) {
 //                Log.e("3/23_Connected", "事先Sort");
-                new GetSpotsNSort(getActivity(), CurrentLocation.getLatitude(),
-                        CurrentLocation.getLongitude()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                new GetSpotsNSort(getActivity(), location.getLatitude(),
+                        location.getLongitude()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             }
         }
     }
@@ -309,12 +309,18 @@ public class SpotMapFragment extends Fragment implements
     @Override
     public void onLocationChanged(Location location) {
         if (CurrentLocation != location) {
-            HandleNewLocation(CurrentLocation);
+            HandleNewLocation(location);
         }
     }
 
     private void HandleNewLocation(Location location) {
         Log.d(TAG, location.toString());
+
+        if (globalVariable.isAPILoaded && globalVariable.SpotDataSorted.isEmpty()) {
+//                Log.e("3/23_Connected", "事先Sort");
+            new GetSpotsNSort(getActivity(), location.getLatitude(),
+                    location.getLongitude()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        }
 
         CurrentLocation = location;
         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
