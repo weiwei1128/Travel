@@ -9,7 +9,6 @@
 .idea/misc.xml
 
 *.json
-
 *.iml
 
 library/build/outputs/aar/library-release.aar
@@ -81,27 +80,9 @@ library/build/intermediates/blame/res/release/single/drawable-ldrtl-xhdpi-v17.js
 library/build/intermediates/blame/res/release/single/drawable-xhdpi-v4.json
 *.json
 *.jar
-*.iml
-
-*.json
 
 app/app.iml
 
 library/library.iml
-*.json
-*.json
-*.json
 *.aar
-*.json
 
-*.iml
-
-*.json
-
-*.json
-
-app/app.iml
-
-*.json
-
-*.json
