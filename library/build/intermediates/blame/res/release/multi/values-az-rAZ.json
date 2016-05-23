@@ -1,8 +1,5 @@
 [
     {
-<<<<<<< Updated upstream
-        "outputFile": "D:\\Dropbox\\GitHub\\Travel\\library\\build\\intermediates\\res\\merged\\release\\values-az-rAZ\\values-az-rAZ.xml",
-=======
         "outputFile": "/Users/wei/Documents/Travel/D:\\Dropbox\\GitHub\\Travel\\library\\build\\intermediates\\res\\merged\\release\\values-az-rAZ\\values-az-rAZ.xml",
         "map": [
             {
@@ -332,7 +329,7 @@
     },
     {
         "outputFile": "/Users/wei/Documents/Travel/library/build/intermediates/res/merged/release/values-az-rAZ/values-az-rAZ.xml",
->>>>>>> Stashed changes
+
         "map": [
             {
                 "to": {
