@@ -479,7 +479,8 @@ public class LoginActivity extends AppCompatActivity {
                 Charset chars = Charset.forName("UTF-8");
                 //"act":"login","username":"ljd110@qq.com","password":"ljd110@qq.com
                 entity9.addPart("json", new StringBody("{\"act\":\"login\",\"username\":\""
-                        + maccount + "\",\"password\":\"" + mpassword + "\"}", chars));
+                        + maccount + "\",\"password\":\"" + mpassword
+                        + "\",\"channel_id\":\"" + "12345" +"\"}", chars));
 
                 post9.setEntity(entity9);
                 HttpResponse resp9 = client9.execute(post9);

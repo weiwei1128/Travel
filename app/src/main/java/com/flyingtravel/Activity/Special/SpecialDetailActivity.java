@@ -5,6 +5,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageView;
@@ -76,7 +77,7 @@ public class SpecialDetailActivity extends AppCompatActivity {
             }
         });
         options = new DisplayImageOptions.Builder()
-                .showImageOnFail(R.drawable.error)
+                .showImageOnFail(R.drawable.empty)
                 .showImageForEmptyUri(R.drawable.empty)
                 .showImageOnLoading(R.drawable.loading2)
                 .cacheInMemory(false)
@@ -113,9 +114,16 @@ public class SpecialDetailActivity extends AppCompatActivity {
                 special.moveToPosition(itemPosition);
                 if (special.getString(1) != null)
                     itemTitle.setText(special.getString(1));
-                if (special.getString(2).startsWith("http:"))
+//                if (special.getString(2).startsWith("https")) {
+//                    Log.e("5.23","img.2: http><><><><><---1");
+//                    loader.displayImage(special.getString(2).replace("https", "http")
+//                            , itemImg, options, listener);
+//                }
+//                else
+                if (special.getString(2).startsWith("http")){
                     loader.displayImage(special.getString(2)
                             , itemImg, options, listener);
+                }
                 else loader.displayImage("http://zhiyou.lin366.com/" + special.getString(2)
                         , itemImg, options, listener);
                 if (special.getString(3) != null)

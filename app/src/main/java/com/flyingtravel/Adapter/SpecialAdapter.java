@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +18,7 @@ import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
+import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 
 /**
  * Created by wei on 2016/1/30.
@@ -39,11 +41,12 @@ public class SpecialAdapter extends BaseAdapter {
         database = helper.getWritableDatabase();
 
         options = new DisplayImageOptions.Builder()
-                .showImageOnFail(R.drawable.error)
+                .showImageOnFail(R.drawable.empty)
                 .showImageOnLoading(R.drawable.loading2)
                 .showImageForEmptyUri(R.drawable.empty)
                 .cacheInMemory(false)
-                .cacheOnDisk(true).build();
+                .cacheOnDisk(true)
+                .build();
         listener = new ImageLoadingListener() {
             @Override
             public void onLoadingStarted(String s, View view) {
@@ -52,8 +55,8 @@ public class SpecialAdapter extends BaseAdapter {
 
             @Override
             public void onLoadingFailed(String s, View view, FailReason failReason) {
-                ImageView imageView = (ImageView) view.findViewById(R.id.special_img);
-                loader.displayImage(null, imageView, options, listener);
+//                ImageView imageView = (ImageView) view.findViewById(R.id.special_img);
+//                loader.displayImage(null, imageView, options, listener);
             }
 
             @Override
@@ -97,7 +100,7 @@ public class SpecialAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        thing item;
+        final thing item;
 
         if (convertView == null) {
             convertView = layoutInflater.inflate(R.layout.special_item, null);
@@ -119,11 +122,17 @@ public class SpecialAdapter extends BaseAdapter {
                 item.name.setText(special.getString(1));
             if (special.getString(4) != null)
                 item.what.setText(mContext.getResources().getString(R.string.price_text)+ special.getString(4));
-            if (special.getString(2) != null)
-                if (special.getString(2).startsWith("http:"))
-                    loader.displayImage(special.getString(2), item.m_img, options, listener);
-                else loader.displayImage("http://zhiyou.lin366.com/" + special.getString(2)
-                        , item.m_img, options, listener);
+            if (special.getString(2) != null) {
+                if (special.getString(2).startsWith("http")) {
+                    String a = special.getString(2);
+                    loader.displayImage(a, item.m_img, options, listener);
+                }
+                else {
+                    loader.displayImage("http://zhiyou.lin366.com/" + special.getString(2), item.m_img, options, listener);
+                }
+            }
+            //https://upload.wikimedia.org/wikipedia/en/2/25/Channel_digital_image_CMYK_color.jpg
+//            loader.displayImage("https://images.abic.com.tw/photoDB/post/1419122120.jpg",item.m_img,options,listener);
         }
         if (special != null)
             special.close();

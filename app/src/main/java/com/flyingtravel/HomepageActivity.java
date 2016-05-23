@@ -34,6 +34,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.BitmapFactory;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -58,12 +59,15 @@ import com.flyingtravel.Fragment.MemberFragment;
 import com.flyingtravel.Fragment.MoreFragment;
 import com.flyingtravel.Fragment.ShopRecordFragment;
 import com.flyingtravel.ImageSlide.MainImageFragment;
+import com.flyingtravel.Utility.AuthImageDownloader;
 import com.flyingtravel.Utility.Functions;
 import com.flyingtravel.Utility.HttpService;
 import com.flyingtravel.Utility.LoadApiService;
+import com.flyingtravel.Utility.NutraBaseImageDecoder;
 import com.flyingtravel.Utility.View.MyTextview;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
@@ -109,8 +113,24 @@ public class HomepageActivity extends FragmentActivity {
         setContentView(R.layout.activity_fragment_test);
 
 
-        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(HomepageActivity.this)
-                .build();
+//        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(HomepageActivity.this).build();
+        //0523 Edit//
+        ImageLoaderConfiguration.Builder configBuilder = new ImageLoaderConfiguration.Builder(this);
+        configBuilder.imageDownloader(new AuthImageDownloader(this,5000,5000));
+        BitmapFactory.Options decodeoption = new BitmapFactory.Options();
+        //try to solve image can't decode ->>fail!!
+        //current:: HTC m8 OK
+        //          samsung SM-P350 pad OK
+        //          LG OK
+        //TODO      sony C4  FAIL!
+        //TODO      SAMSUNG ?? FAIL
+        DisplayImageOptions options = new DisplayImageOptions.Builder().decodingOptions(decodeoption).build();
+        configBuilder.defaultDisplayImageOptions(options);
+        configBuilder.imageDecoder(new NutraBaseImageDecoder(true));
+
+        ImageLoaderConfiguration config = configBuilder.build();
+
+        //0523 Edit//
         ImageLoader.getInstance().init(config);
 
         Intent intent_LoadApiService = new Intent(HomepageActivity.this, LoadApiService.class);
