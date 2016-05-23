@@ -345,6 +345,8 @@
                 }
             }
         ]
+<<<<<<< Updated upstream
+=======
     },
     {
         "outputFile": "/Users/wei/Documents/Travel/library/build/intermediates/res/merged/release/values-bn-rBD/values-bn-rBD.xml",
@@ -1039,5 +1041,6 @@
                 }
             }
         ]
+>>>>>>> Stashed changes
     }
 ]

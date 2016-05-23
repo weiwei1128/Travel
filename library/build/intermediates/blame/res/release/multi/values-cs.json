@@ -1,5 +1,8 @@
 [
     {
+<<<<<<< Updated upstream
+        "outputFile": "D:\\Dropbox\\GitHub\\Travel\\library\\build\\intermediates\\res\\merged\\release\\values-cs\\values-cs.xml",
+=======
         "outputFile": "/Users/wei/Documents/Travel/D:\\Dropbox\\GitHub\\Travel\\library\\build\\intermediates\\res\\merged\\release\\values-cs\\values-cs.xml",
         "map": [
             {
@@ -348,7 +351,7 @@
     },
     {
         "outputFile": "/Users/wei/Documents/Travel/library/build/intermediates/res/merged/release/values-cs/values-cs.xml",
-
+>>>>>>> Stashed changes
         "map": [
             {
                 "to": {

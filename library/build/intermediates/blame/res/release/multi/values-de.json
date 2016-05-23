@@ -345,6 +345,8 @@
                 }
             }
         ]
+<<<<<<< Updated upstream
+=======
     },
     {
         "outputFile": "/Users/wei/Documents/Travel/D:\\Dropbox\\GitHub\\Travel\\library\\build\\intermediates\\res\\merged\\release\\values-de\\values-de.xml",
@@ -1039,5 +1041,6 @@
                 }
             }
         ]
+>>>>>>> Stashed changes
     }
 ]
