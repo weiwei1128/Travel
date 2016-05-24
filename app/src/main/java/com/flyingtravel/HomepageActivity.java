@@ -43,6 +43,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -53,6 +54,7 @@ import android.widget.Toast;
 
 import com.baidu.android.pushservice.PushConstants;
 import com.baidu.android.pushservice.PushManager;
+import com.crashlytics.android.Crashlytics;
 import com.flyingtravel.Activity.LoginActivity;
 import com.flyingtravel.Fragment.MainFragment;
 import com.flyingtravel.Fragment.MemberFragment;
@@ -70,6 +72,8 @@ import com.google.android.gms.analytics.Tracker;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+
+import io.fabric.sdk.android.Fabric;
 
 public class HomepageActivity extends FragmentActivity {
     /***
@@ -111,7 +115,7 @@ public class HomepageActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fragment_test);
-
+        Fabric.with(this, new Crashlytics());
 
 //        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(HomepageActivity.this).build();
         //0523 Edit//
@@ -163,7 +167,7 @@ public class HomepageActivity extends FragmentActivity {
                     REQUEST_PERMISSION);
         } else {
             UI();
-            PushManager.startWork(getApplicationContext(), PushConstants.LOGIN_TYPE_API_KEY,"6BaeuKAiu1AjsqZua2iV8GHmdPQliGaE");
+
             changeFragment(mainFragment);
             homeImg.setClickable(false);
             homeImg.setImageResource(R.drawable.tab_selected_home);
@@ -176,6 +180,15 @@ public class HomepageActivity extends FragmentActivity {
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
         MultiDex.install(this);
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        String result = intent.getStringExtra("result");
+        if(result!=null){
+            Log.e("5.23","in 1Login:"+result);
+        }else Log.e("5.23","1NULL");
+//        super.onNewIntent(intent);
     }
 
     public void changeFragment(Fragment f) {

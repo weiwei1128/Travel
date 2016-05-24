@@ -144,5 +144,6 @@
     <string name="CancelSend_text">確定要取消上傳嗎</string>
     <string name="edit_text">資料已變更</string>
     <string name="editok_text">成功修改</string>
+    <string name="questionnarie_text">問卷</string>
     <string name="resumeTrack_text">偵測到未完成的紀錄，是否繼續？</string>
 </resources>

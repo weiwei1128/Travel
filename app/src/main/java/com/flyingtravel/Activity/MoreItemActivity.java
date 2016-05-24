@@ -90,6 +90,9 @@ public class MoreItemActivity extends AppCompatActivity {
                     myURL = "http://zhiyou.lin366.com/diy/";
                     header.setText(this.getResources().getString(R.string.planschedule_text));
                     break;
+                case 2:
+                    myURL = "http://zhiyou.lin366.com/diaocha.aspx";
+                    header.setText(this.getResources().getString(R.string.questionnarie_text));
             }
             webView.loadUrl(myURL);
             content.addView(webView);

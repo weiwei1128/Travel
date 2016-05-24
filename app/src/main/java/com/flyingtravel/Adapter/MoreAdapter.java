@@ -25,7 +25,7 @@ public class MoreAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return 2;
+        return 3;
     }
 
     @Override
@@ -55,6 +55,8 @@ public class MoreAdapter extends BaseAdapter {
             case 1:
                 item.itemName.setText(context.getResources().getString(R.string.planschedule_text));
                 break;
+            case 2:
+                item.itemName.setText(context.getResources().getString(R.string.questionnarie_text));
         }
 
 

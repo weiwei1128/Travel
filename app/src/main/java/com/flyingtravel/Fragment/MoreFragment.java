@@ -62,6 +62,9 @@ public class MoreFragment extends Fragment {
                     case 1:
                         bundle.putInt("position", 1);
                         break;
+                    case 2:
+                        bundle.putInt("position", 2);
+                        break;
                 }
                 Functions.go(false, getActivity(), getActivity(), MoreItemActivity.class, bundle);
             }

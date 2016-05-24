@@ -19,13 +19,13 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.baidu.android.pushservice.PushConstants;
+import com.baidu.android.pushservice.PushManager;
 import com.crashlytics.android.Crashlytics;
 import com.flyingtravel.HomepageActivity;
 import com.flyingtravel.R;
 import com.flyingtravel.Utility.DataBaseHelper;
 import com.flyingtravel.Utility.GlobalVariable;
-import com.flyingtravel.Utility.HttpService;
-import com.flyingtravel.Utility.LoadApiService;
 import com.flyingtravel.Utility.View.MyAnimation;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
@@ -73,17 +73,12 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Fabric.with(this, new Crashlytics());
+
         setContentView(R.layout.login_activity);
         /**GA**/
         GlobalVariable globalVariable = (GlobalVariable) getApplication();
         tracker = globalVariable.getDefaultTracker();
 
-        Intent intent_LoadApi = new Intent(LoginActivity.this, LoadApiService.class);
-        startService(intent_LoadApi);
-
-        Intent intent = new Intent(LoginActivity.this, HttpService.class);
-        startService(intent);
 
         checkLogin();
 
@@ -234,7 +229,7 @@ public class LoginActivity extends AppCompatActivity {
                             sighUp sighUp = new sighUp(account.getText().toString(),
                                     password.getText().toString(), name.getText().toString(),
                                     phone.getText().toString(), email.getText().toString(),
-                                    addr.getText().toString(),signDialog);
+                                    addr.getText().toString(), signDialog);
                             sighUp.execute();
                         }
                     }
@@ -253,6 +248,7 @@ public class LoginActivity extends AppCompatActivity {
     } //onCreate
 
     void checkLogin() {
+        Log.d("5.23", "1checkLogin()!!");
         DataBaseHelper helper = DataBaseHelper.getmInstance(LoginActivity.this);
         SQLiteDatabase database = helper.getWritableDatabase();
         Cursor member_cursor = database.query("member", new String[]{"account", "password",
@@ -264,6 +260,7 @@ public class LoginActivity extends AppCompatActivity {
 //            a.schedule(new TimerTask() {
 //                @Override
 //                public void run() {
+            Log.d("5.23", "checkLogin()!!");
             Intent intent = new Intent();
             intent.setClass(LoginActivity.this, HomepageActivity.class);
             startActivity(intent);
@@ -279,7 +276,7 @@ public class LoginActivity extends AppCompatActivity {
 
     class sighUp extends AsyncTask<String, Void, Boolean> {
 
-        String account, password, name, phone, email, message,address;
+        String account, password, name, phone, email, message, address;
         Dialog dialog;
 
         public sighUp(String maccount, String mpassword, String mname, String mphone, String memail,
@@ -312,7 +309,7 @@ public class LoginActivity extends AppCompatActivity {
                         "\"username\":\"" + account + "\"," +
                         "\"password\":\"" + password + "\"," +
                         "\"email\":\"" + email + "\"," +
-                        "\"mobile\":\"" + phone + "\",\"nickname\":\"" + name + "\"," + "\"area\":\""+"\",\"birthday\":\""+"\",\"city\":\"\",\"amount\":\"1\"}", chars));
+                        "\"mobile\":\"" + phone + "\",\"nickname\":\"" + name + "\"," + "\"area\":\"" + "\",\"birthday\":\"" + "\",\"city\":\"\",\"amount\":\"1\"}", chars));
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
@@ -349,10 +346,10 @@ public class LoginActivity extends AppCompatActivity {
 
             Toast.makeText(LoginActivity.this, message, Toast.LENGTH_SHORT).show();
             Timer a = new Timer();
-            if (aBoolean){
-                if(dialog.isShowing())
+            if (aBoolean) {
+                if (dialog.isShowing())
                     dialog.dismiss();
-                new login_Data(account,password).execute();
+                new login_Data(account, password).execute();
             }
             super.onPostExecute(aBoolean);
         }
@@ -419,7 +416,7 @@ public class LoginActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(Boolean s) {
-            Log.e("5.16","s:"+s+"  maccount:"+maccount+"  email:"+memail);
+            Log.e("5.16", "s:" + s + "  maccount:" + maccount + "  email:" + memail);
 
             Toast.makeText(LoginActivity.this, message, Toast.LENGTH_SHORT).show();
             Timer a = new Timer();
@@ -480,14 +477,14 @@ public class LoginActivity extends AppCompatActivity {
                 //"act":"login","username":"ljd110@qq.com","password":"ljd110@qq.com
                 entity9.addPart("json", new StringBody("{\"act\":\"login\",\"username\":\""
                         + maccount + "\",\"password\":\"" + mpassword
-                        + "\",\"channel_id\":\"" + "12345" +"\"}", chars));
+                        + "\",\"channel_id\":\"" + "12345" + "\"}", chars));
 
                 post9.setEntity(entity9);
                 HttpResponse resp9 = client9.execute(post9);
                 total = EntityUtils.toString(resp9.getEntity());
 
                 //取得登入會員資料
-//                Log.e("2.26", "msg:" + total);
+                Log.e("2.26", "msg:" + total);
                 String state = null;
                 try {
                     state = new JSONObject(total.substring(
@@ -591,6 +588,8 @@ public class LoginActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String string) {
             mDialog.dismiss();
+            if (OK)
+                PushManager.startWork(getApplicationContext(), PushConstants.LOGIN_TYPE_API_KEY, "6BaeuKAiu1AjsqZua2iV8GHmdPQliGaE");
             /** 新增會員資料 **/
             if (OK) {
                 DataBaseHelper helper = DataBaseHelper.getmInstance(LoginActivity.this);
@@ -612,7 +611,7 @@ public class LoginActivity extends AppCompatActivity {
                 cv.put("email", mEmail);
                 cv.put("addr", mAddr);
                 long result = database.insert("member", null, cv);
-//                Log.d("2.26", "member_insert:" + result);
+                Log.d("2.26", "member_insert:" + result);
 
 
             }
@@ -640,26 +639,18 @@ public class LoginActivity extends AppCompatActivity {
 
             Timer a = new Timer();
 
-            if (OK)
-            //如果正確才會跳到下個畫面
-            {
-                a.schedule(new TimerTask() {
-                               @Override
-                               public void run() {
-//                        Intent intent = new Intent();
-//                        intent.setClass(LoginActivity.this, HomepageActivity.class);
-//                        startActivity(intent);
-                                   finish();
-
-                               }
-                           },
-//                        0
-                        1500
-                );
-            }
 
 
             super.onPostExecute(string);
         }
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        String result = intent.getStringExtra("result");
+        if (result != null) {
+            Log.e("5.23", "in Login:" + result);
+        } else Log.e("5.23", "NULL");
+//        super.onNewIntent(intent);
     }
 }

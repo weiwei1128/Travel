@@ -9,6 +9,7 @@ import android.util.Log;
 
 import com.baidu.android.pushservice.PushManager;
 import com.baidu.android.pushservice.PushMessageReceiver;
+import com.flyingtravel.Activity.LoginActivity;
 import com.flyingtravel.HomepageActivity;
 import com.flyingtravel.R;
 import com.google.android.gcm.GCMBaseIntentService;
@@ -21,8 +22,10 @@ import java.util.List;
 public class GCMIntentService extends PushMessageReceiver{
 
     @Override
-    public void onBind(Context context, int i, String s, String s1, String s2, String s3) {
-
+    public void onBind(Context context, int errorCode, String appid,
+                       String userId, String channelId, String requestId) {
+        Log.e("5.23","======"+errorCode+" user id: "+userId+" appid:"+appid+" channelid:"+channelId+" request id:"+requestId);
+        updateContent(context,channelId);
     }
 
     @Override
@@ -58,5 +61,25 @@ public class GCMIntentService extends PushMessageReceiver{
     @Override
     public void onNotificationArrived(Context context, String s, String s1, String s2) {
 
+    }
+    private void updateContent(Context context, String content) {
+        Log.e("5.23", "updateContent");
+        //String logText = "" + Utils.logStringCache;
+
+//        if (!logText.equals("")) {
+//            logText += "\n";
+//        }
+
+//        SimpleDateFormat sDateFormat = new SimpleDateFormat("HH-mm-ss");
+//        logText += sDateFormat.format(new Date()) + ": ";
+//        logText += content;
+
+        //Utils.logStringCache = logText;
+
+//        Intent intent = new Intent();
+//        intent.putExtra("result", content);
+//        intent.setClass(context.getApplicationContext(), LoginActivity.class);
+//        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//        context.getApplicationContext().startActivity(intent);
     }
 }
