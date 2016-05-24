@@ -148,4 +148,5 @@
     <string name="questionnarie_text">問卷</string>
     <string name="membertype1_text">普通會員</string>
     <string name="membertype2_text">企業會員</string>
+    <string name="currentversion_text">目前版本:</string>
 </resources>

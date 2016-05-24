@@ -148,4 +148,5 @@
     <string name="resumeTrack_text">侦测到未完成的纪录，是否继续？</string>
     <string name="membertype1_text">普通会员</string>
     <string name="membertype2_text">企业会员</string>
+    <string name="currentversion_text">目前版本:</string>
 </resources>

@@ -66,6 +66,7 @@ public class MoreFragment extends Fragment {
                         bundle.putInt("position", 2);
                         break;
                 }
+                if(position!=3)
                 Functions.go(false, getActivity(), getActivity(), MoreItemActivity.class, bundle);
             }
         });
