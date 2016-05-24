@@ -116,6 +116,9 @@ public class HomepageActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fragment_test);
         Fabric.with(this, new Crashlytics());
+        //baidu push notification
+        PushManager.startWork(getApplicationContext(), PushConstants.LOGIN_TYPE_API_KEY, "6BaeuKAiu1AjsqZua2iV8GHmdPQliGaE");
+
 
 //        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(HomepageActivity.this).build();
         //0523 Edit//

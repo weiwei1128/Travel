@@ -5,6 +5,8 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.baidu.android.pushservice.PushManager;
@@ -19,7 +21,7 @@ import java.util.List;
 /**
  * Created by wei on 2016/5/12.
  */
-public class GCMIntentService extends PushMessageReceiver{
+public class BaiduPushNotification extends PushMessageReceiver{
 
     @Override
     public void onBind(Context context, int errorCode, String appid,
@@ -64,22 +66,11 @@ public class GCMIntentService extends PushMessageReceiver{
     }
     private void updateContent(Context context, String content) {
         Log.e("5.23", "updateContent");
-        //String logText = "" + Utils.logStringCache;
+        SharedPreferences pref = PreferenceManager
+                .getDefaultSharedPreferences(context.getApplicationContext());
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putString("channel_id", content);
+        editor.commit();
 
-//        if (!logText.equals("")) {
-//            logText += "\n";
-//        }
-
-//        SimpleDateFormat sDateFormat = new SimpleDateFormat("HH-mm-ss");
-//        logText += sDateFormat.format(new Date()) + ": ";
-//        logText += content;
-
-        //Utils.logStringCache = logText;
-
-//        Intent intent = new Intent();
-//        intent.putExtra("result", content);
-//        intent.setClass(context.getApplicationContext(), LoginActivity.class);
-//        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//        context.getApplicationContext().startActivity(intent);
     }
 }

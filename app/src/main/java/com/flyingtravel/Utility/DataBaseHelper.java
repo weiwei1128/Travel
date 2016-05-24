@@ -14,11 +14,12 @@ import android.util.Log;
  */
 public class DataBaseHelper extends SQLiteOpenHelper {
     private static DataBaseHelper mInstance = null;
-    private static final int VERSION = 6;
+    private static final int VERSION = 7;
     // version 2: news 新增一個column
     // version 4: banner 新增一個column
     // version 5: banner 新增一個column
     // version 6: travelMemo 新增一個column: memo_imgUrl
+    // version 7: member 新增一個colum: type [會員類型]
     private static final String DATABASE_NAME = "Travel.db";
     private Context mcontext;
 
@@ -58,7 +59,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 + "name TEXT,"
                 + "phone TEXT,"
                 + "email TEXT,"
-                + "addr TEXT"
+                + "addr TEXT,"
+                + "type TEXT" //0524 新增column
                 + ");";
         db.execSQL(DATABASE_CREATE_TABLE_MEMBER);
 
@@ -200,33 +202,39 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_ALTER_TEAM_4 = "ALTER TABLE "
             + "travelMemo" + " ADD COLUMN " + "memo_imgUrl" + " TEXT;";
 
+    private static final String DATABASE_ALTER_TEAM_5 = "ALTER TABLE "
+            + "member" + " ADD COLUMN " + "type" + " TEXT;";
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         /** TODO 正式版已修改!!
          * [0425] [DATABASE_ALTER_TEAM_1] [新增一個column]
          * [0508] [DATABASE_ALTER_TEAM_2] [新增一個column]
+         * [0524] [DATABASE_ALTER_TEAM_5] [新增會員type column]
          * **/
-        if(oldVersion < 6) {
-            if(oldVersion < 5) {
-                if (oldVersion < 4) {
-                    if (oldVersion < 2)
-                        db.execSQL(DATABASE_ALTER_TEAM_1);
-                    db.execSQL(DATABASE_ALTER_TEAM_2);
-                }
-                db.execSQL(DATABASE_ALTER_TEAM_3);
-            }
-            Cursor c1 = db.rawQuery("SELECT * FROM travelMemo LIMIT 1", null);
-            if (c1 != null) {
-                int index = c1.getColumnIndex("memo_imgUrl");
-                if (index == -1) {
-                    try {
-                        db.execSQL(DATABASE_ALTER_TEAM_4);
-                    } catch (SQLException e) {
-                        e.printStackTrace();
+        if(oldVersion <7) {
+            db.execSQL(DATABASE_ALTER_TEAM_5);
+            if (oldVersion < 6) {
+                if (oldVersion < 5) {
+                    if (oldVersion < 4) {
+                        if (oldVersion < 2)
+                            db.execSQL(DATABASE_ALTER_TEAM_1);
+                        db.execSQL(DATABASE_ALTER_TEAM_2);
                     }
+                    db.execSQL(DATABASE_ALTER_TEAM_3);
                 }
-                c1.close();
+                Cursor c1 = db.rawQuery("SELECT * FROM travelMemo LIMIT 1", null);
+                if (c1 != null) {
+                    int index = c1.getColumnIndex("memo_imgUrl");
+                    if (index == -1) {
+                        try {
+                            db.execSQL(DATABASE_ALTER_TEAM_4);
+                        } catch (SQLException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    c1.close();
+                }
             }
         }
 

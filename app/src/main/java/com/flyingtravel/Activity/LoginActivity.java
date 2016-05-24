@@ -4,11 +4,13 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -19,9 +21,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.baidu.android.pushservice.PushConstants;
-import com.baidu.android.pushservice.PushManager;
-import com.crashlytics.android.Crashlytics;
 import com.flyingtravel.HomepageActivity;
 import com.flyingtravel.R;
 import com.flyingtravel.Utility.DataBaseHelper;
@@ -46,8 +45,6 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.util.Timer;
 import java.util.TimerTask;
-
-import io.fabric.sdk.android.Fabric;
 
 public class LoginActivity extends AppCompatActivity {
     TextView accountText, passText,
@@ -248,11 +245,11 @@ public class LoginActivity extends AppCompatActivity {
     } //onCreate
 
     void checkLogin() {
-        Log.d("5.23", "1checkLogin()!!");
+//        Log.d("5.23", "1checkLogin()!!");
         DataBaseHelper helper = DataBaseHelper.getmInstance(LoginActivity.this);
         SQLiteDatabase database = helper.getWritableDatabase();
         Cursor member_cursor = database.query("member", new String[]{"account", "password",
-                "name", "phone", "email", "addr"}, null, null, null, null, null);
+                "name", "phone", "email", "addr","type"}, null, null, null, null, null);
         if (member_cursor != null && member_cursor.getCount() > 0) {
 //            Toast.makeText(LoginActivity.this, "登入過了!", Toast.LENGTH_SHORT).show();
             Timer a = new Timer();
@@ -260,7 +257,7 @@ public class LoginActivity extends AppCompatActivity {
 //            a.schedule(new TimerTask() {
 //                @Override
 //                public void run() {
-            Log.d("5.23", "checkLogin()!!");
+//            Log.d("5.23", "checkLogin()!!");
             Intent intent = new Intent();
             intent.setClass(LoginActivity.this, HomepageActivity.class);
             startActivity(intent);
@@ -434,7 +431,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     class login_Data extends AsyncTask<String, Void, String> {
-        public String maccount, mpassword, mName, mPhone, mEmail, mAddr, login_result;
+        public String maccount, mpassword, mName, mPhone, mEmail, mAddr,mtype, login_result,channel_id;
         Boolean OK = false;
 
         login_Data(String account, String password) {
@@ -451,7 +448,9 @@ public class LoginActivity extends AppCompatActivity {
             if (!mDialog.isShowing()) {
                 mDialog.show();
             }
-
+            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(LoginActivity.this);
+            channel_id = sharedPreferences.getString("channel_id",null);
+            Log.e("5.24","get Channelid:"+channel_id);
             //Loading Dialog
             super.onPreExecute();
         }
@@ -466,6 +465,8 @@ public class LoginActivity extends AppCompatActivity {
                 *
                 * */
             String total = null;
+            if(channel_id==null)
+                channel_id ="12345";
             //0107
 
             try {
@@ -477,7 +478,7 @@ public class LoginActivity extends AppCompatActivity {
                 //"act":"login","username":"ljd110@qq.com","password":"ljd110@qq.com
                 entity9.addPart("json", new StringBody("{\"act\":\"login\",\"username\":\""
                         + maccount + "\",\"password\":\"" + mpassword
-                        + "\",\"channel_id\":\"" + "12345" + "\"}", chars));
+                        + "\",\"channel_id\":\"" + channel_id + "\"}", chars));
 
                 post9.setEntity(entity9);
                 HttpResponse resp9 = client9.execute(post9);
@@ -550,6 +551,13 @@ public class LoginActivity extends AppCompatActivity {
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
+
+                        try {
+                            mtype = new JSONObject(result.substring(
+                                    result.indexOf("{"), result.lastIndexOf("}") + 1)).getString("type");
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                     }
 
 //                    Log.e("2.26", "getinfo: " + result + "states:" + message);
@@ -557,6 +565,7 @@ public class LoginActivity extends AppCompatActivity {
 //                    Log.e("2.26", "phone: " + mPhone);
 //                    Log.e("2.26", "Email: " + mEmail);
 //                    Log.e("2.26", "Address: " + mAddr);
+                    Log.e("2.26", "type: " + mtype);
                 }
 //                else Log.e("2.26", "state: " + state);
 
@@ -588,14 +597,13 @@ public class LoginActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String string) {
             mDialog.dismiss();
-            if (OK)
-                PushManager.startWork(getApplicationContext(), PushConstants.LOGIN_TYPE_API_KEY, "6BaeuKAiu1AjsqZua2iV8GHmdPQliGaE");
             /** 新增會員資料 **/
             if (OK) {
+
                 DataBaseHelper helper = DataBaseHelper.getmInstance(LoginActivity.this);
                 SQLiteDatabase database = helper.getWritableDatabase();
                 Cursor member_cursor = database.query("member", new String[]{"account", "password",
-                        "name", "phone", "email", "addr"}, null, null, null, null, null);
+                        "name", "phone", "email", "addr","type"}, null, null, null, null, null);
 
                 if (member_cursor != null && member_cursor.getCount() > 0) {
                     database.delete("member", null, null);
@@ -610,6 +618,7 @@ public class LoginActivity extends AppCompatActivity {
                 cv.put("phone", mPhone);
                 cv.put("email", mEmail);
                 cv.put("addr", mAddr);
+                cv.put("type", mtype);
                 long result = database.insert("member", null, cv);
                 Log.d("2.26", "member_insert:" + result);
 
@@ -638,19 +647,16 @@ public class LoginActivity extends AppCompatActivity {
 
 
             Timer a = new Timer();
-
+            a.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    finish();
+                }
+            }, 1500);
 
 
             super.onPostExecute(string);
         }
     }
 
-    @Override
-    protected void onNewIntent(Intent intent) {
-        String result = intent.getStringExtra("result");
-        if (result != null) {
-            Log.e("5.23", "in Login:" + result);
-        } else Log.e("5.23", "NULL");
-//        super.onNewIntent(intent);
-    }
 }

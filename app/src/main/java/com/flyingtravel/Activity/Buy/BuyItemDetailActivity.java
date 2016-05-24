@@ -199,7 +199,8 @@ public class BuyItemDetailActivity extends AppCompatActivity {
         shareLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent sharingIntent = new Intent(Intent.ACTION_SEND_MULTIPLE);
+                Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+//                Intent sharingIntent = new Intent(Intent.ACTION_SEND_MULTIPLE);
                 //drawable -> bitmap
                 Bitmap icon = ((BitmapDrawable)ItemImg.getDrawable()).getBitmap();
                 ByteArrayOutputStream bytes = new ByteArrayOutputStream();
@@ -222,14 +223,15 @@ public class BuyItemDetailActivity extends AppCompatActivity {
                 }
 
                 //setting share information
-                sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, BuyItemDetailActivity.this.getResources().getString(R.string.title_text));
+//                sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, BuyItemDetailActivity.this.getResources().getString(R.string.title_text));
 //                sharingIntent.putExtra(Intent.EXTRA_TEMPLATE, "testtt");
 //                sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, getContext().getResources().getString(R.string.title_text));
                 sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, "http://zhiyou.lin366.com/shop/show.aspx?id="+itemID);
-                sharingIntent.putExtra(Intent.EXTRA_TITLE,BuyItemDetailActivity.this.getResources().getString(R.string.title_text));
-                sharingIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(f));
-                sharingIntent.setType("image/jpeg");
-                sharingIntent.setType("*/*");
+//                sharingIntent.putExtra(Intent.EXTRA_TITLE,BuyItemDetailActivity.this.getResources().getString(R.string.title_text));
+//                sharingIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(f));
+                sharingIntent.setType("text/plain");
+//                sharingIntent.setType("image/jpeg");
+//                sharingIntent.setType("*/*");
 //                Log.d("4.18", "path:" + path + " lens: " + len+" bytes"+bytes.size());
 //                File file = new File(path);
 //                Log.d("4.18", String.valueOf(file.exists()));

@@ -14,6 +14,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,7 +39,7 @@ import java.io.IOException;
 
 public class MemberFragment extends Fragment {
     Context context;
-    TextView NameText, PhoneText, EmailText, AddrText;
+    TextView NameText, PhoneText, EmailText, AddrText,header;
     LinearLayout logoutLayout, shareLayout, ratingLayout, telLayout;
     ImageView editImg;
 
@@ -83,6 +84,7 @@ public class MemberFragment extends Fragment {
         shareLayout = (LinearLayout) view.findViewById(R.id.member_share_layout);
         ratingLayout = (LinearLayout) view.findViewById(R.id.member_value_layout);
         telLayout = (LinearLayout) view.findViewById(R.id.member_tel_layout);
+        header = (TextView)view.findViewById(R.id.memberHeader);
         NameText = (TextView) view.findViewById(R.id.member_name_text);
         PhoneText = (TextView) view.findViewById(R.id.member_phone_text);
         EmailText = (TextView) view.findViewById(R.id.member_email_text);
@@ -201,7 +203,7 @@ public class MemberFragment extends Fragment {
         DataBaseHelper helper = DataBaseHelper.getmInstance(context);
         SQLiteDatabase database = helper.getWritableDatabase();
         Cursor member_cursor = database.query("member", new String[]{"account", "password",
-                "name", "phone", "email", "addr"}, null, null, null, null, null);
+                "name", "phone", "email", "addr","type"}, null, null, null, null, null);
         if (member_cursor != null && member_cursor.getCount() > 0) {
             member_cursor.moveToFirst();
 //            Log.d("2.26", "DB " + member_cursor.getString(2));
@@ -209,6 +211,10 @@ public class MemberFragment extends Fragment {
             PhoneText.setText(member_cursor.getString(3));
             EmailText.setText(member_cursor.getString(4));
             AddrText.setText(member_cursor.getString(5));
+            if(member_cursor.getString(6).equals("1"))
+                header.setText(context.getString(R.string.membertype1_text));
+            else if (member_cursor.getString(6).equals("2"))
+                header.setText(context.getString(R.string.membertype2_text));
             login = true;
         }
         if (member_cursor != null)

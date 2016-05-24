@@ -146,4 +146,6 @@
     <string name="editok_text">成功修改</string>
     <string name="questionnarie_text">問卷</string>
     <string name="resumeTrack_text">偵測到未完成的紀錄，是否繼續？</string>
+    <string name="membertype1_text">普通會員</string>
+    <string name="membertype2_text">企業會員</string>
 </resources>
