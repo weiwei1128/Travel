@@ -251,62 +251,79 @@ public class CheckScheduleOKActivity extends AppCompatActivity {
 
     private void methodThatDoesSomethingWhenTaskIsDone(Boolean a) {
         if (a) {
+            int[] sameday = new int[data.length + 1];
+            ;
+            Log.d("5.24", "data length:" + data.length + " itemid::" + itemid);
+            String date_temp = "";
+            for (int u = 0; u < data.length; u++) {
+                if (date_temp.equals(data[u][0]))
+                    if (sameday[Integer.parseInt(date_temp)] == 0)
+                        sameday[Integer.parseInt(date_temp)] = sameday[Integer.parseInt(date_temp)] + 2;
+                    else sameday[Integer.parseInt(date_temp)]++;
+                date_temp = data[u][0];
+            }
+            for (int k = 0; k < data.length; k++)
+                Log.d("5.24", "same day" + k + ":" + sameday[k]);
             Boolean addFragment = false;
-            for (int i = 0; i < count; i++) {
-                Log.d("4.26","for:"+i+"-count:"+count+" itemid:"+itemid);
-//
-                if ((i != 0 && i+1<count&&data[i][0].equals(data[i + 1][0])||i != 0 &&data[i][0].equals(data[i - 1][0]) || (i == 0 && count > 1 && data[i][0].equals(data[i + 1][0])))) {
-                    Log.d("4.26","in if::"+data[i][4]+"i:"+i+"add:"+addFragment);
-                    if (addFragment)
-                        break;
+            int coundown = 0, get = 0;
+            String addDay = "";
+            for (int q = 0; q < count; q++) {
+                if (sameday[q + 1] != 0) {
+                    Log.w("5.24<<", ">>有兩天以上的行程" + q + " sameday[q+1]:" + sameday[q + 1] + " data:" + data[q][0]);
+                    get = sameday[q + 1];
                     CheckScheduleFragment fragment = new CheckScheduleFragment();
                     Bundle bundle = new Bundle();
-                    bundle.putString("scheduleday", data[i][0]);
-                    bundle.putString("scheduledate", data[i][1]);
-                    bundle.putString("scheduletime", data[i][2]);
-                    int getcount=0;
-                    for (int k = 0; k < summary.length; k++) {
+//                    bundle.putString("scheduleday", data[i][0]);
+//                    bundle.putString("scheduledate", data[i][1]);
+//                    bundle.putString("scheduletime", data[i][2]);
+                    int w = 1;
+                    for (int r = 0; r < count; r++) {
 
-                        if((summary[k]==null||summary[k].isEmpty())
-                                &&(address[k]==null||address[k].isEmpty())
-                                &&(lat[k]==null||lat[k].isEmpty()))
-                            Log.e("5.16","summary empty"+k);
-                        else {
+                        if (data[r][0].equals((q + 1) + "")) {
+                            addDay = addDay + r + "_";
+                            Log.w("5.24<<", q + "是兩天以上的行程：day:" + data[r][0] + "address" + data[r][4] + "第幾個:" + r + "?" + w);
+                            bundle.putString("scheduleday", data[r][0]);
+                            bundle.putString("scheduledate", data[r][1]);
+                            bundle.putString("scheduletime", data[r][2]);
+                            bundle.putString("schedulesummary" + w, data[r][3]);
+                            bundle.putString("scheduleaddress" + w, data[r][4]);
+                            bundle.putString("scheduleajinwei" + w, data[r][5]);
 
-                            bundle.putString("schedulesummary" + getcount, summary[k]);
-                            bundle.putString("scheduleaddress" + getcount, address[k]);
-                            bundle.putString("scheduleajinwei" + getcount, lat[k]);
-                            getcount++;
-                        }
+                            w++;
+                        }//是兩天以上的行程
+
                     }
-                    bundle.putInt("schedulecount", getcount);
-                    addFragment = true;
-                    if (data[i][4] != null)
-                        bundle.putString("schedulejinwei", data[i][4]);
-                    else if (data[i][5] != null)
-                        bundle.putString("schedulejinwei", data[i][5]);
+                    Log.d("5.24", "schedulecount" + (w - 1));
+
                     if (itemid != null)
                         bundle.putString("scheduleid", itemid);
+                    bundle.putInt("schedulecount", (w - 1));
                     fragment.setArguments(bundle);
                     fragments.add(fragment);
                 } else {
-                    CheckScheduleFragment fragment = new CheckScheduleFragment();
-                    Bundle bundle = new Bundle();
-                    bundle.putString("scheduleday", data[i][0]);
-                    bundle.putString("scheduledate", data[i][1]);
-                    bundle.putString("scheduletime", data[i][2]);
-                    bundle.putString("schedulesummary", data[i][3]);
-                    if (data[i][4] != null)
-                        bundle.putString("schedulejinwei", data[i][4]);
-                    else if (data[i][5] != null)
-                        bundle.putString("schedulejinwei", data[i][5]);
-                    if (itemid != null)
-                        bundle.putString("scheduleid", itemid);
-                    fragment.setArguments(bundle);
-                    fragments.add(fragment);
+                    if (addDay.contains(String.valueOf(q)))
+                        Log.w("5.24<<", "這" + q + "已經加過行程" + data[q][3]);
+                    else {
+                        Log.w("5.24<<", "這" + q + "天有一個行程或是沒有行程" + data[q][3]);
+                        CheckScheduleFragment fragment = new CheckScheduleFragment();
+                        Bundle bundle = new Bundle();
+                        bundle.putString("scheduleday", data[q][0]);
+                        bundle.putString("scheduledate", data[q][1]);
+                        bundle.putString("scheduletime", data[q][2]);
+                        bundle.putString("schedulesummary", data[q][3]);
+                        if (data[q][4] != null)
+                            bundle.putString("schedulejinwei", data[q][4]);
+                        else if (data[q][5] != null)
+                            bundle.putString("schedulejinwei", data[q][5]);
+                        if (itemid != null)
+                            bundle.putString("scheduleid", itemid);
+                        fragment.setArguments(bundle);
+                        fragments.add(fragment);
+                    }
                 }
-
             }
+
+
 //            Log.e("4.26","fragments"+fragments.size());
             ViewPager viewPager = (ViewPager) findViewById(R.id.checkschedule_viewpager);
             checkScheduleFragmentAdapter = new CheckScheduleFragmentAdapter(

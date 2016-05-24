@@ -47,6 +47,7 @@ public class ScheduleMapsActivity extends FragmentActivity implements
     LatLng[] LatLngList;
     final Handler handler = new Handler();
     Boolean startPlay=false;
+    Boolean hasnull=false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,14 +59,14 @@ public class ScheduleMapsActivity extends FragmentActivity implements
 
         Bundle bundle = this.getIntent().getExtras();
         if (bundle.containsKey("count")) {
-//            Log.e("5.6", "count:" + bundle.getInt("count"));
+            Log.e("5.6", "count:" + bundle.getInt("count"));
             addressCount = bundle.getInt("count");
         }
 //        address = new String[addressCount];
         if (bundle.containsKey("address")) {
             address = bundle.getStringArray("address");
         }
-//        Log.d("5.6", "address size:" + address.length + "string:" + address);
+        Log.d("5.6", "address size:" + address.length + "string:" + address);
 
         mapView = (MapView) findViewById(R.id.Map);
         mapView.onCreate(savedInstanceState);
@@ -115,11 +116,18 @@ public class ScheduleMapsActivity extends FragmentActivity implements
 
             builder = new LatLngBounds.Builder();
             LatLngList = new LatLng[addressCount];
-            for (int i = 0; i < addressCount; i++)
+            for (int i = 0; i < addressCount; i++) {
+//                Log.e("5.24","address:"+address[i]);
                 LatLngList[i] = getLat(address[i]);
+            }
             if (addressCount > 1)
                 for (int i = 0; i < addressCount - 1; i++) {
+                    if(LatLngList[i]!=null&&LatLngList[i+1]!=null)
                     drawLine(LatLngList[i], LatLngList[i + 1]);
+                    else {
+                        Log.e("5.24","address has null");
+                        hasnull = true;
+                    }
                 }
             bounds = builder.build();
             final CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, 300);
@@ -135,7 +143,7 @@ public class ScheduleMapsActivity extends FragmentActivity implements
             startLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(!startPlay) {
+                    if(!startPlay&&!hasnull) {
                         if(startMarker!=null&&!startMarker.getPosition().equals(LatLngList[0]))
                             startMarker.setVisible(false);
 
@@ -169,7 +177,8 @@ public class ScheduleMapsActivity extends FragmentActivity implements
         double latitude = 0;
         try {
             List<Address> adresses = coder.getFromLocationName(address, 1);
-            if (adresses == null)
+//            Log.d("5.24","addresses::"+address.length());
+            if (adresses == null||adresses.isEmpty()||adresses.size()==0)
                 return null;
             Address location = adresses.get(0);
             longitude = location.getLongitude();
@@ -200,7 +209,7 @@ public class ScheduleMapsActivity extends FragmentActivity implements
 
     public void animateMarker(final Marker marker, final LatLng[] locationList,
                               final boolean hideMarker) {
-        if (locationList.length <= 1)
+        if (locationList.length <= 1||hasnull)
             return;
 
         final long[] start = {SystemClock.uptimeMillis()};

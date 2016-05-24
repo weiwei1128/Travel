@@ -58,10 +58,10 @@ public class CheckScheduleFragment extends Fragment {
             getaddress = new String[count];
             Log.e("5.16","count::"+count);
             for (int i = 0; i < count; i++) {
-                if (getArguments().containsKey("schedulesummary" + i)) {
-                    getsummary[i] = getArguments().getString("schedulesummary" + i);
-                    getaddress[i] = getArguments().getString("scheduleaddress" + i);
-//                    Log.d("4.26", "!!!!!!!!!" + getArguments().getString("schedulesummary" + i));
+                if (getArguments().containsKey("schedulesummary" + (i+1))) {
+                    getsummary[i] = getArguments().getString("schedulesummary" + (i+1));
+                    getaddress[i] = getArguments().getString("scheduleaddress" + (i+1));
+                    Log.d("4.26", i+"!!!!!!!!!" + getArguments().getString("schedulesummary" + (i+1)));
                 }
             }
 
@@ -94,6 +94,7 @@ public class CheckScheduleFragment extends Fragment {
                 if (count != 0)
                     bundle.putStringArray("address", getaddress);
                 else bundle.putStringArray("address", new String[]{data[4]});
+                Log.w("5.24","count:"+count+" getaddress"+getaddress.length);
                 tracker.send(new HitBuilders.EventBuilder().setCategory("行程查詢-行程模擬-ID:"+itemid)
 //                .setAction("click")
 //                .setLabel("submit")
