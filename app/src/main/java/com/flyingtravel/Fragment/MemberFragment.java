@@ -14,7 +14,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,7 +38,7 @@ import java.io.IOException;
 
 public class MemberFragment extends Fragment {
     Context context;
-    TextView NameText, PhoneText, EmailText, AddrText,header;
+    TextView NameText, PhoneText, EmailText, AddrText, header;
     LinearLayout logoutLayout, shareLayout, ratingLayout, telLayout;
     ImageView editImg;
 
@@ -84,7 +83,7 @@ public class MemberFragment extends Fragment {
         shareLayout = (LinearLayout) view.findViewById(R.id.member_share_layout);
         ratingLayout = (LinearLayout) view.findViewById(R.id.member_value_layout);
         telLayout = (LinearLayout) view.findViewById(R.id.member_tel_layout);
-        header = (TextView)view.findViewById(R.id.memberHeader);
+        header = (TextView) view.findViewById(R.id.memberHeader);
         NameText = (TextView) view.findViewById(R.id.member_name_text);
         PhoneText = (TextView) view.findViewById(R.id.member_phone_text);
         EmailText = (TextView) view.findViewById(R.id.member_email_text);
@@ -97,7 +96,7 @@ public class MemberFragment extends Fragment {
         editImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Functions.go(false,MemberFragment.this.getActivity(),context, MemberEditActivity.class,null);
+                Functions.go(false, MemberFragment.this.getActivity(), context, MemberEditActivity.class, null);
             }
         });
 
@@ -198,29 +197,36 @@ public class MemberFragment extends Fragment {
             }
         });
     }
-     Boolean getDB(){
-        java.lang.Boolean login=false;
+
+    Boolean getDB() {
+        java.lang.Boolean login = false;
         DataBaseHelper helper = DataBaseHelper.getmInstance(context);
         SQLiteDatabase database = helper.getWritableDatabase();
         Cursor member_cursor = database.query("member", new String[]{"account", "password",
-                "name", "phone", "email", "addr","type"}, null, null, null, null, null);
+                "name", "phone", "email", "addr", "type"}, null, null, null, null, null);
         if (member_cursor != null && member_cursor.getCount() > 0) {
             member_cursor.moveToFirst();
 //            Log.d("2.26", "DB " + member_cursor.getString(2));
-            NameText.setText(member_cursor.getString(2));
-            PhoneText.setText(member_cursor.getString(3));
-            EmailText.setText(member_cursor.getString(4));
-            AddrText.setText(member_cursor.getString(5));
-            if(member_cursor.getString(6).equals("1"))
-                header.setText(context.getString(R.string.membertype1_text));
-            else if (member_cursor.getString(6).equals("2"))
-                header.setText(context.getString(R.string.membertype2_text));
+            if (member_cursor.getString(2) != null)
+                NameText.setText(member_cursor.getString(2));
+            if (member_cursor.getString(3) != null)
+                PhoneText.setText(member_cursor.getString(3));
+            if (member_cursor.getString(4) != null)
+                EmailText.setText(member_cursor.getString(4));
+            if (member_cursor.getString(5) != null)
+                AddrText.setText(member_cursor.getString(5));
+            if (member_cursor.getString(6) != null)
+                if (member_cursor.getString(6).equals("1"))
+                    header.setText(context.getString(R.string.membertype1_text));
+                else if (member_cursor.getString(6).equals("2"))
+                    header.setText(context.getString(R.string.membertype2_text));
             login = true;
         }
         if (member_cursor != null)
             member_cursor.close();
         return login;
     }
+
     private void launchMarket() {
         tracker.send(new HitBuilders.EventBuilder().setCategory("評價")
 //                .setAction("click")

@@ -404,7 +404,7 @@ public class HttpService extends Service {
                             cv.put("price", jsonObjects[i][5]);
                             cv.put("click", jsonObjects[i][4]);
                             long result = database.insert("special_activity", null, cv);
-                            Log.e("4.19", "3 price:" + jsonObjects[i][5] + " title" + jsonObjects[i][1]);
+//                            Log.e("4.19", "3 price:" + jsonObjects[i][5] + " title" + jsonObjects[i][1]);
 //                            Log.d("3.10", "special_activity: " + result + " = DB INSERT" + i + "title " + jsonObjects[i][1]);
                         }
                     else { //資料庫已經有資料了!

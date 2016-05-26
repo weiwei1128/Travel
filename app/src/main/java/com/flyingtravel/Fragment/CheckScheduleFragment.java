@@ -94,7 +94,7 @@ public class CheckScheduleFragment extends Fragment {
                 if (count != 0)
                     bundle.putStringArray("address", getaddress);
                 else bundle.putStringArray("address", new String[]{data[4]});
-                Log.w("5.24","count:"+count+" getaddress"+getaddress.length);
+//                Log.w("5.24","count:"+count+" getaddress"+getaddress.length);
                 tracker.send(new HitBuilders.EventBuilder().setCategory("行程查詢-行程模擬-ID:"+itemid)
 //                .setAction("click")
 //                .setLabel("submit")
