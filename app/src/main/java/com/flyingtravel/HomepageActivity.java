@@ -43,7 +43,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -120,28 +119,9 @@ public class HomepageActivity extends FragmentActivity {
         PushManager.startWork(getApplicationContext(), PushConstants.LOGIN_TYPE_API_KEY, "6BaeuKAiu1AjsqZua2iV8GHmdPQliGaE");
 
 
-//        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(HomepageActivity.this).build();
-        //0523 Edit//
-        ImageLoaderConfiguration.Builder configBuilder = new ImageLoaderConfiguration.Builder(this);
-        configBuilder.imageDownloader(new AuthImageDownloader(this,5000,5000));
-        BitmapFactory.Options decodeoption = new BitmapFactory.Options();
-        //try to solve image can't decode ->>fail!!
-        //current:: HTC m8 OK
-        //          samsung SM-P350 pad OK
-        //          LG OK
-        //TODO      sony C4  FAIL!
-        //TODO      SAMSUNG ?? FAIL
-        DisplayImageOptions options = new DisplayImageOptions.Builder().decodingOptions(decodeoption).build();
-        configBuilder.defaultDisplayImageOptions(options);
-        configBuilder.imageDecoder(new NutraBaseImageDecoder(true));
-
-        ImageLoaderConfiguration config = configBuilder.build();
-
-        //0523 Edit//
-        ImageLoader.getInstance().init(config);
-
         Intent intent_LoadApiService = new Intent(HomepageActivity.this, LoadApiService.class);
         startService(intent_LoadApiService);
+
         Intent intent = new Intent(HomepageActivity.this, HttpService.class);
         startService(intent);
 
@@ -172,9 +152,7 @@ public class HomepageActivity extends FragmentActivity {
             UI();
 
             changeFragment(mainFragment);
-            homeImg.setClickable(false);
-            homeImg.setImageResource(R.drawable.tab_selected_home);
-            homeText.setTextColor(getResources().getColor(R.color.blue_click));
+            homeClick(true);
         }
 
     }
@@ -185,15 +163,6 @@ public class HomepageActivity extends FragmentActivity {
         MultiDex.install(this);
     }
 
-    @Override
-    protected void onNewIntent(Intent intent) {
-        String result = intent.getStringExtra("result");
-        if(result!=null){
-            Log.e("5.23","in 1Login:"+result);
-        }else Log.e("5.23","1NULL");
-//        super.onNewIntent(intent);
-    }
-
     public void changeFragment(Fragment f) {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 //        Log.d("4.7","HA:"+getSupportFragmentManager()+"=manager"+getSupportFragmentManager().getFragments());
@@ -202,6 +171,26 @@ public class HomepageActivity extends FragmentActivity {
     }
 
     void UI() {
+        /**ImageLoader**/
+        //        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(HomepageActivity.this).build();
+        //0523 Edit//
+        ImageLoaderConfiguration.Builder configBuilder = new ImageLoaderConfiguration.Builder(this);
+        configBuilder.imageDownloader(new AuthImageDownloader(this, 5000, 5000));
+        BitmapFactory.Options decodeoption = new BitmapFactory.Options();
+        //try to solve image can't decode ->>fail!!
+        //current:: HTC m8 OK
+        //          samsung SM-P350 pad OK
+        //          LG OK
+        //TODO      sony C4  FAIL!
+        //TODO      SAMSUNG ?? FAIL
+        DisplayImageOptions options = new DisplayImageOptions.Builder().decodingOptions(decodeoption).build();
+        configBuilder.defaultDisplayImageOptions(options);
+        configBuilder.imageDecoder(new NutraBaseImageDecoder(true));
+
+        ImageLoaderConfiguration config = configBuilder.build();
+
+        //0523 Edit//
+        ImageLoader.getInstance().init(config);
 
         /**TAB**/
         //======= HOME =======//
