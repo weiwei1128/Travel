@@ -499,6 +499,8 @@ public class SpotMapFragment extends Fragment implements
                 globalVariable.MarkerOptionsArray = markerOptionsArray;
             }
             int MarkerCount = globalVariable.MarkerOptionsArray.size();
+            if (MarkerIcon.isRecycled()) 
+                MarkerIcon = decodeBitmapFromResource(getResources(), R.drawable.location3, 10, 18);
             for (int i = 0; i < MarkerCount / 12; i++) {
                 mMap.addMarker(globalVariable.MarkerOptionsArray.get(i)
                         .icon(BitmapDescriptorFactory.fromBitmap(MarkerIcon)));
