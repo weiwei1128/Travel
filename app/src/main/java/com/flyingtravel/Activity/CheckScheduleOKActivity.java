@@ -40,7 +40,7 @@ import java.util.List;
 
 public class CheckScheduleOKActivity extends AppCompatActivity {
     String itemid = null;
-    LinearLayout backImg;
+    LinearLayout backImg, queLayout;
     CheckScheduleFragmentAdapter checkScheduleFragmentAdapter;
 
     String[][] data;
@@ -95,6 +95,15 @@ public class CheckScheduleOKActivity extends AppCompatActivity {
                 CheckScheduleOKActivity.this.getResources().getString(R.string.wrongData_text), Toast.LENGTH_SHORT).show();
         dayText = (TextView) findViewById(R.id.checkschedule_dayText);
         dateText = (TextView) findViewById(R.id.checkschedule_dateText);
+        queLayout = (LinearLayout) findViewById(R.id.checkschedule_queLayout);
+        queLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Bundle bundle = new Bundle();
+                bundle.putInt("position", 2);
+                Functions.go(false, CheckScheduleOKActivity.this, CheckScheduleOKActivity.this, MoreItemActivity.class, bundle);
+            }
+        });
         backImg = (LinearLayout) findViewById(R.id.checkschedule_backImg);
         backImg.setOnClickListener(new View.OnClickListener() {
             @Override

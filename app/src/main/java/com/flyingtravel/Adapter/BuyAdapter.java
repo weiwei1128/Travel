@@ -18,9 +18,11 @@ import android.widget.TextView;
 
 import com.flyingtravel.R;
 import com.flyingtravel.Utility.DataBaseHelper;
+import com.flyingtravel.Utility.Functions;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
+import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 
 import java.util.ArrayList;
@@ -58,6 +60,7 @@ public class BuyAdapter extends BaseAdapter implements Filterable {
                 .showImageOnFail(R.drawable.error)
                 .showImageOnLoading(R.drawable.loading2)
                 .showImageForEmptyUri(R.drawable.empty)
+//                .displayer(new RoundedBitmapDisplayer(20)) //圓角圖片
                 .cacheInMemory(false)
                 .cacheOnDisk(true).build();
         listener = new ImageLoadingListener() {
@@ -140,7 +143,7 @@ public class BuyAdapter extends BaseAdapter implements Filterable {
             Cursor goods_search_cursor = database.query("goods", new String[]{"totalCount", "goods_id", "goods_title",
                     "goods_url", "goods_money", "goods_content", "goods_click", "goods_addtime"}, "goods_title LIKE ?", new String[]{"%" + filterString + "%"}, null, null, null);
             if (goods_search_cursor != null) {
-                if (goods_search_cursor.getCount() != 0)
+                if (goods_search_cursor.getCount() != 0&&goods_search_cursor.getCount()>=position)
                     goods_search_cursor.moveToPosition(position);
 //                    while ((goods_search_cursor.moveToNext())) {
 //                        Log.d("5.26", "GET VIEW goods search::" + goods_search_cursor.getString(2));
@@ -277,7 +280,7 @@ public class BuyAdapter extends BaseAdapter implements Filterable {
 
             // Now we have to inform the adapter about the new list filtered
             if (ifFilter) {
-//                Toast.makeText(context, "無此景點！", Toast.LENGTH_LONG).show();
+//                Functions.toast(context,context.getString(R.string.nofile_text),800);
 //                notifyDataSetInvalidated();
 //                Log.e("4/1_", "沒東西時 results.count: " + results.count);
             } else {

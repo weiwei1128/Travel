@@ -69,6 +69,7 @@ import com.flyingtravel.Utility.View.MyTextview;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
 import com.nostra13.universalimageloader.cache.disc.impl.UnlimitedDiskCache;
+import com.nostra13.universalimageloader.cache.disc.naming.HashCodeFileNameGenerator;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
@@ -187,10 +188,11 @@ public class HomepageActivity extends FragmentActivity {
         DisplayImageOptions options = new DisplayImageOptions.Builder().decodingOptions(decodeoption).build();
         configBuilder.defaultDisplayImageOptions(options);
         configBuilder.imageDecoder(new NutraBaseImageDecoder(true));
-        configBuilder
+        configBuilder.threadPoolSize(100);
+        configBuilder.discCacheFileNameGenerator(new HashCodeFileNameGenerator());
 //                .diskCache(new UnlimitedDiskCache(cacheDir)) // default
-                .diskCacheSize(50 * 1024 * 1024)
-                .diskCacheFileCount(100);
+//                .diskCacheSize(50 * 1024 * 1024) //default unlimited
+//                .diskCacheFileCount(100); //default 是unlimited
         ImageLoaderConfiguration config = configBuilder.build();
 
         //0523 Edit//

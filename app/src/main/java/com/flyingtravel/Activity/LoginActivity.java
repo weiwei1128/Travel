@@ -596,7 +596,7 @@ public class LoginActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String string) {
-            mDialog.dismiss();
+
             /** 新增會員資料 **/
             if (OK) {
 
@@ -653,7 +653,7 @@ public class LoginActivity extends AppCompatActivity {
                     finish();
                 }
             }, 1500);
-
+            mDialog.dismiss();
 
             super.onPostExecute(string);
         }

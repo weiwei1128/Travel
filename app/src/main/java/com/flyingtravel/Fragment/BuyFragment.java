@@ -61,7 +61,7 @@ public class BuyFragment extends Fragment {
         if (adapter.getCount() == 0)
             Toast.makeText(context, getContext().getResources().getString(R.string.nofile_text), Toast.LENGTH_SHORT).show();
         search = (SearchView) view.findViewById(R.id.searchView);
-        search.setQueryHint(getContext().getResources().getString(R.string.InputSpotName_text));
+        search.setQueryHint(getContext().getResources().getString(R.string.inputkeyword_text));
         search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {

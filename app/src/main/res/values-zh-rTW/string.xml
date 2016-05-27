@@ -149,4 +149,5 @@
     <string name="membertype1_text">普通會員</string>
     <string name="membertype2_text">企業會員</string>
     <string name="currentversion_text">目前版本:</string>
+    <string name="inputkeyword_text">請輸入關鍵字</string>
 </resources>
