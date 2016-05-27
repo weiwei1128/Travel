@@ -6,12 +6,14 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.provider.ContactsContract;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -39,9 +41,7 @@ public class BuyActivity extends AppCompatActivity {
     ImageView ListImg;
     LinearLayout backImg;
     int count = 0, pageNo = 1, pages = 0, minus = pageNo - 1;
-    int UpdateItem=0;
     TextView number, lastPage, nextPage;
-    //http://www.anbon.tw/travel/good_cover.png
     /**GA**/
     public static Tracker tracker;
 
@@ -83,8 +83,20 @@ public class BuyActivity extends AppCompatActivity {
 
     void getPages(){
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(BuyActivity.this);
-        int howmany = sharedPreferences.getInt("InBuyList", 0);
-        if (howmany > 0) {
+        int number = 0;
+        Cursor goodsitem_cursor = database.query("goodsitem", new String[]{"goods_bigid",
+                        "goods_itemid", "goods_title", "goods_money", "goods_url"},
+                null, null, null, null, null);
+        if (goodsitem_cursor != null)
+            if (goodsitem_cursor.getCount() > 0)
+                while (goodsitem_cursor.moveToNext()) {
+                    if (sharedPreferences.contains(goodsitem_cursor.getString(1)) && (sharedPreferences.getInt(goodsitem_cursor.getString(1), 0) > 0)) {
+                        number++;
+                        break;
+                    }
+                }
+
+        if (number > 0) {
             ListImg.setVisibility(View.VISIBLE);
             ListImg.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -129,11 +141,11 @@ public class BuyActivity extends AppCompatActivity {
 
     void UI() {
         lastPage = (TextView) findViewById(R.id.lastpage_text);
-        lastPage.setVisibility(View.INVISIBLE);
         nextPage = (TextView) findViewById(R.id.nextpage_text);
         backImg = (LinearLayout) findViewById(R.id.buy_backImg);
         ListImg = (ImageView) findViewById(R.id.buy_listImg);
         viewPager = (ViewPager) findViewById(R.id.buy_viewpager);
+        lastPage.setVisibility(View.INVISIBLE);
         ListImg.setVisibility(View.INVISIBLE);
         backImg.setOnClickListener(new View.OnClickListener() {
             @Override

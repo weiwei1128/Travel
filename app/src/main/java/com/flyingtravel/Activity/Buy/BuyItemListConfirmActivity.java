@@ -153,13 +153,41 @@ public class BuyItemListConfirmActivity extends AppCompatActivity {
         }
         if (member_cursor != null)
             member_cursor.close();
-
-
+        final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        //0527//
+        Cursor goodsitem_cursor = database.query("goodsitem", new String[]{"goods_bigid",
+                        "goods_itemid", "goods_title", "goods_money", "goods_url"},
+                null, null, null, null, null);
+        int count = -1;
         int totalnumber = 0, getitemPosition = 0, BiginCart = 0, totalmoney = 0;
+        if (goodsitem_cursor != null) {
+            if (goodsitem_cursor.getCount() > 0)
+
+                while (goodsitem_cursor.moveToNext()) {
+                    if (sharedPreferences.contains(goodsitem_cursor.getString(1)) && (sharedPreferences.getInt(goodsitem_cursor.getString(1), 0) > 0)) {
+                        Cursor goodsbig_cursor = database.query("goods", new String[]{"totalCount", "goods_id", "goods_title",
+                                        "goods_url", "goods_money", "goods_content", "goods_click", "goods_addtime"},
+                                "goods_id=?", new String[]{goodsitem_cursor.getString(0)}, null, null, null);
+                        if (goodsbig_cursor != null) {
+                            if (goodsbig_cursor.getCount() > 0) {
+                                goodsbig_cursor.moveToFirst();
+                                int money = Integer.valueOf(goodsitem_cursor.getString(3)) * sharedPreferences.getInt(goodsitem_cursor.getString(1), 0);
+                                totalmoney = totalmoney + money;
+                                buylistText.append(goodsbig_cursor.getString(2) + " " + goodsitem_cursor.getString(2) + " : "
+                                        + sharedPreferences.getInt(goodsitem_cursor.getString(1), 0) + BuyItemListConfirmActivity.this.getResources().getString(R.string.a_text)
+                                        + " $" + money + "\n");
+                                cartList.put(goodsitem_cursor.getString(1), sharedPreferences.getInt(goodsitem_cursor.getString(1), 0));
+                            }
+                        }
+                    }
+                }
+        }
+
+
         String BigitemID = null, SmallitemID = null, itemName = null;
         Cursor goods_cursor = database.query("goods", new String[]{"totalCount", "goods_id", "goods_title",
                 "goods_url", "goods_money", "goods_content", "goods_addtime"}, null, null, null, null, null);
-        final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+
         if (goods_cursor != null && goods_cursor.getCount() != 0) {
             while (goods_cursor.moveToNext()) {
                 BiginCart = sharedPreferences.getInt("InBuyListg" + goods_cursor.getString(1), 0);
@@ -188,11 +216,11 @@ public class BuyItemListConfirmActivity extends AppCompatActivity {
                                         "goods_bigid=? and goods_itemid=?", new String[]{BigitemID, SmallitemID}, null, null, null);
                                 goods_cursor_big.moveToFirst();
                                 int money = Integer.valueOf(goods_cursor_big.getString(3)) * smallItemCount;
-                                totalmoney = totalmoney + money;
-                                buylistText.append(goods_cursor.getString(2) + " " + goods_cursor_big.getString(2) + " : "
-                                        + smallItemCount + BuyItemListConfirmActivity.this.getResources().getString(R.string.a_text)
-                                        + " $" + money + "\n");
-                                cartList.put(SmallitemID, smallItemCount);
+//                                totalmoney = totalmoney + money;
+//                                buylistText.append(goods_cursor.getString(2) + " " + goods_cursor_big.getString(2) + " : "
+//                                        + smallItemCount + BuyItemListConfirmActivity.this.getResources().getString(R.string.a_text)
+//                                        + " $" + money + "\n");
+//                                cartList.put(SmallitemID, smallItemCount);
                             }
                         }
                     }

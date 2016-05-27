@@ -68,6 +68,7 @@ import com.flyingtravel.Utility.NutraBaseImageDecoder;
 import com.flyingtravel.Utility.View.MyTextview;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
+import com.nostra13.universalimageloader.cache.disc.impl.UnlimitedDiskCache;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
@@ -113,7 +114,7 @@ public class HomepageActivity extends FragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_fragment_test);
+        setContentView(R.layout.activity_fragment);
         Fabric.with(this, new Crashlytics());
         //baidu push notification
         PushManager.startWork(getApplicationContext(), PushConstants.LOGIN_TYPE_API_KEY, "6BaeuKAiu1AjsqZua2iV8GHmdPQliGaE");
@@ -186,7 +187,10 @@ public class HomepageActivity extends FragmentActivity {
         DisplayImageOptions options = new DisplayImageOptions.Builder().decodingOptions(decodeoption).build();
         configBuilder.defaultDisplayImageOptions(options);
         configBuilder.imageDecoder(new NutraBaseImageDecoder(true));
-
+        configBuilder
+//                .diskCache(new UnlimitedDiskCache(cacheDir)) // default
+                .diskCacheSize(50 * 1024 * 1024)
+                .diskCacheFileCount(100);
         ImageLoaderConfiguration config = configBuilder.build();
 
         //0523 Edit//

@@ -8,15 +8,14 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -70,6 +69,10 @@ public class BuyItemDetailActivity extends AppCompatActivity {
     String itemID;
     String[][] cartItem;
     LinearLayout addLayout, BackImg, shareLayout;
+
+    //Filter//
+    int FilterPostion = 999999;
+    String FilterString = null;
     /**
      * GA
      **/
@@ -109,6 +112,10 @@ public class BuyItemDetailActivity extends AppCompatActivity {
         if (bundle.containsKey("WhichItem")) {
             ItemPosition = bundle.getInt("WhichItem");
         }
+        if (bundle.containsKey("FilterStringPosition"))
+            FilterPostion = bundle.getInt("FilterStringPosition");
+        if (bundle.containsKey("FilterString"))
+            FilterString = bundle.getString("FilterString");
         UI();
         //show image
         options = new DisplayImageOptions.Builder()
@@ -149,34 +156,69 @@ public class BuyItemDetailActivity extends AppCompatActivity {
 //        Log.e("4.25","!!!!!getIngo!!!!!");
         helper = DataBaseHelper.getmInstance(BuyItemDetailActivity.this);
         database = helper.getWritableDatabase();
-        Cursor goods_cursor = database.query("goods", new String[]{"totalCount", "goods_id",
-                "goods_title", "goods_url", "goods_money", "goods_content", "goods_click",
-                "goods_addtime"}, null, null, null, null, null);
-        if (goods_cursor != null && goods_cursor.getCount() >= ItemPosition) {
-            goods_cursor.moveToPosition(ItemPosition);
-            if (goods_cursor.getString(1) != null)
-                itemID = goods_cursor.getString(1);
-            if (goods_cursor.getString(5) != null)
-                ItemDetail.setText(goods_cursor.getString(5));
-            if (goods_cursor.getString(2) != null)
-                ItemName.setText(goods_cursor.getString(2));
-            if (goods_cursor.getString(2) != null)
-                ItemHeader.setText(goods_cursor.getString(2));
-            if (goods_cursor.getString(3) != null)
-                if (goods_cursor.getString(3).startsWith("http://"))
-                    loader.displayImage(goods_cursor.getString(3)
-                            , ItemImg, options, listener);
-                else loader.displayImage("http://zhiyou.lin366.com/" + goods_cursor.getString(3)
-                        , ItemImg, options, listener);
-            new checkitem(new Functions.TaskCallBack() {
-                @Override
-                public void TaskDone(Boolean OrderNeedUpdate) {
-                    methodThatDoesSomethingWhenTaskIsDone(OrderNeedUpdate);
+
+        if (FilterPostion != 999999 && FilterString != null) {
+            Cursor goods_search_cursor = database.query("goods", new String[]{"totalCount", "goods_id", "goods_title",
+                    "goods_url", "goods_money", "goods_content", "goods_click", "goods_addtime"}, "goods_title LIKE ?", new String[]{"%" + FilterString + "%"}, null, null, null);
+            if (goods_search_cursor != null) {
+                if (goods_search_cursor.getCount() >= FilterPostion) {
+                    goods_search_cursor.moveToPosition(FilterPostion);
+                    if (goods_search_cursor.getString(1) != null)
+                        itemID = goods_search_cursor.getString(1);
+                    if (goods_search_cursor.getString(5) != null)
+                        ItemDetail.setText(goods_search_cursor.getString(5));
+                    if (goods_search_cursor.getString(2) != null)
+                        ItemName.setText(goods_search_cursor.getString(2));
+                    if (goods_search_cursor.getString(2) != null)
+                        ItemHeader.setText(goods_search_cursor.getString(2));
+                    if (goods_search_cursor.getString(3) != null)
+                        if (goods_search_cursor.getString(3).startsWith("http://"))
+                            loader.displayImage(goods_search_cursor.getString(3)
+                                    , ItemImg, options, listener);
+                        else
+                            loader.displayImage("http://zhiyou.lin366.com/" + goods_search_cursor.getString(3)
+                                    , ItemImg, options, listener);
+                    new checkitem(new Functions.TaskCallBack() {
+                        @Override
+                        public void TaskDone(Boolean OrderNeedUpdate) {
+                            methodThatDoesSomethingWhenTaskIsDone(OrderNeedUpdate);
+                        }
+                    }).execute();
                 }
-            }).execute();
+                goods_search_cursor.close();
+
+            }
+        } else {
+
+            Cursor goods_cursor = database.query("goods", new String[]{"totalCount", "goods_id",
+                    "goods_title", "goods_url", "goods_money", "goods_content", "goods_click",
+                    "goods_addtime"}, null, null, null, null, null);
+            if (goods_cursor != null && goods_cursor.getCount() >= ItemPosition) {
+                goods_cursor.moveToPosition(ItemPosition);
+                if (goods_cursor.getString(1) != null)
+                    itemID = goods_cursor.getString(1);
+                if (goods_cursor.getString(5) != null)
+                    ItemDetail.setText(goods_cursor.getString(5));
+                if (goods_cursor.getString(2) != null)
+                    ItemName.setText(goods_cursor.getString(2));
+                if (goods_cursor.getString(2) != null)
+                    ItemHeader.setText(goods_cursor.getString(2));
+                if (goods_cursor.getString(3) != null)
+                    if (goods_cursor.getString(3).startsWith("http://"))
+                        loader.displayImage(goods_cursor.getString(3)
+                                , ItemImg, options, listener);
+                    else loader.displayImage("http://zhiyou.lin366.com/" + goods_cursor.getString(3)
+                            , ItemImg, options, listener);
+                new checkitem(new Functions.TaskCallBack() {
+                    @Override
+                    public void TaskDone(Boolean OrderNeedUpdate) {
+                        methodThatDoesSomethingWhenTaskIsDone(OrderNeedUpdate);
+                    }
+                }).execute();
+            }
+            if (goods_cursor != null)
+                goods_cursor.close();
         }
-        if (goods_cursor != null)
-            goods_cursor.close();
     }
 
     void UI() {
@@ -202,7 +244,7 @@ public class BuyItemDetailActivity extends AppCompatActivity {
                 Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
 //                Intent sharingIntent = new Intent(Intent.ACTION_SEND_MULTIPLE);
                 //drawable -> bitmap
-                Bitmap icon = ((BitmapDrawable)ItemImg.getDrawable()).getBitmap();
+                Bitmap icon = ((BitmapDrawable) ItemImg.getDrawable()).getBitmap();
                 ByteArrayOutputStream bytes = new ByteArrayOutputStream();
                 icon.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
 //                InputStream inputStream = getResources().openRawResource(R.drawable.icon_512);
@@ -226,7 +268,7 @@ public class BuyItemDetailActivity extends AppCompatActivity {
 //                sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, BuyItemDetailActivity.this.getResources().getString(R.string.title_text));
 //                sharingIntent.putExtra(Intent.EXTRA_TEMPLATE, "testtt");
 //                sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, getContext().getResources().getString(R.string.title_text));
-                sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, "http://zhiyou.lin366.com/shop/show.aspx?id="+itemID);
+                sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, "http://zhiyou.lin366.com/shop/show.aspx?id=" + itemID);
 //                sharingIntent.putExtra(Intent.EXTRA_TITLE,BuyItemDetailActivity.this.getResources().getString(R.string.title_text));
 //                sharingIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(f));
                 sharingIntent.setType("text/plain");
@@ -276,21 +318,38 @@ public class BuyItemDetailActivity extends AppCompatActivity {
 
         DataBaseHelper helper = DataBaseHelper.getmInstance(BuyItemDetailActivity.this);
         SQLiteDatabase database = helper.getWritableDatabase();
-        final Cursor goods_cursor = database.query("goods", new String[]{"totalCount", "goods_id", "goods_title",
-                "goods_url", "goods_money", "goods_content", "goods_click", "goods_addtime"}, null, null, null, null, null);
-        if (goods_cursor != null && goods_cursor.getCount() >= ItemPosition) {
-            goods_cursor.moveToPosition(ItemPosition);
+        if (FilterPostion != 999999 && FilterString != null) {
+            Cursor goods_search_cursor = database.query("goods", new String[]{"totalCount", "goods_id", "goods_title",
+                    "goods_url", "goods_money", "goods_content", "goods_click", "goods_addtime"}, "goods_title LIKE ?", new String[]{"%" + FilterString + "%"}, null, null, null);
+            if (goods_search_cursor != null) {
+                if (goods_search_cursor.getCount() >= FilterPostion) {
+                    goods_search_cursor.moveToPosition(FilterPostion);
+                    if (goods_search_cursor.getString(1) != null)
+                        itemId = goods_search_cursor.getString(1);
+                    if (goods_search_cursor.getString(2) != null)
+                        itemName = goods_search_cursor.getString(2);
+                    if (goods_search_cursor.getString(3) != null)
+                        itemImg = goods_search_cursor.getString(3);
+                }
+                goods_search_cursor.close();
 
-            if (goods_cursor.getString(1) != null)
-                itemId = goods_cursor.getString(1);
-            if (goods_cursor.getString(2) != null)
-                itemName = goods_cursor.getString(2);
-            if (goods_cursor.getString(3) != null)
-                itemImg = goods_cursor.getString(3);
+            }
+        } else {
+            final Cursor goods_cursor = database.query("goods", new String[]{"totalCount", "goods_id", "goods_title",
+                    "goods_url", "goods_money", "goods_content", "goods_click", "goods_addtime"}, null, null, null, null, null);
+            if (goods_cursor != null && goods_cursor.getCount() >= ItemPosition) {
+                goods_cursor.moveToPosition(ItemPosition);
+
+                if (goods_cursor.getString(1) != null)
+                    itemId = goods_cursor.getString(1);
+                if (goods_cursor.getString(2) != null)
+                    itemName = goods_cursor.getString(2);
+                if (goods_cursor.getString(3) != null)
+                    itemImg = goods_cursor.getString(3);
+            }
+            if (goods_cursor != null)
+                goods_cursor.close();
         }
-        if (goods_cursor != null)
-            goods_cursor.close();
-
         for (int i = 0; i < cartItem.length; i++) {
 
             View view = LayoutInflater.from(BuyItemDetailActivity.this)
@@ -320,12 +379,17 @@ public class BuyItemDetailActivity extends AppCompatActivity {
                     String a = sharedPreferences.getString("InBuyListg" + itemId + "id" + (k + 1), "NULL");
 //                    Log.e("3.24","id:"+a);
                     if (a.equals(cartItem[i][0]) && sharedPreferences.getInt("InBuyListgC" + itemId + "id" + (k + 1), 0) != 0) {
-                        numberText[i].setText(sharedPreferences.getInt("InBuyListgC" + itemId + "id" + (k + 1), 0) + "");
+//                        numberText[i].setText(sharedPreferences.getInt("InBuyListgC" + itemId + "id" + (k + 1), 0) + "");
 //                        Log.e("3.24","這個項目有在購物車裡面!!!"+cartItem[i][1]+"有幾個:"
 //                                +sharedPreferences.getInt("InBuyListgC" + itemId+"id"+(k+1),0));
                     }
                 }
             }
+            if(sharedPreferences.contains(cartItem[i][0])&&(sharedPreferences.getInt(cartItem[i][0],0)>0)){
+                numberText[i].setText(sharedPreferences.getInt(cartItem[i][0],0)+"");
+                Log.e("5.27","cart::::"+itemName+"-"+cartItem[i][1]+": "+sharedPreferences.getInt(cartItem[i][0],0));
+            }else Log.e("5.27","not in cart!"+sharedPreferences.getInt(cartItem[i][0],0));
+
 
             nameText[i].setText(itemName);
             fromText[i].setText(cartItem[i][1]);
@@ -336,7 +400,7 @@ public class BuyItemDetailActivity extends AppCompatActivity {
                     * Integer.valueOf(numberText[i].getText().toString()) + "");
             totalprice[0] += Integer.valueOf(totalText[i].getText().toString());
             totalPrice.setText(totalprice[0] + "");
-            if (itemImg.startsWith("http://"))
+            if (itemImg.startsWith("http"))
                 loader.displayImage(itemImg, Img[i], options, listener);
             else
                 loader.displayImage("http://zhiyou.lin366.com/" + itemImg, Img[i], options, listener);
@@ -393,73 +457,89 @@ public class BuyItemDetailActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 SharedPreferences.Editor editor = sharedPreferences.edit();
-                int smallItemCount = 0;//大項目裡在購物車裡的小項目總數
-                //確認大項目裡的小項目有沒有在購物車裡面
-                HashSet<String> List = new HashSet<String>();
+                ////0527 更新/////
+                String[] inCart = null;
+                if (sharedPreferences.getString("inCart", null) != null)
+                    inCart = sharedPreferences.getString("inCart", null).split(",");
+                StringBuilder sb = new StringBuilder();
+                for (int s = 0; s < cartItem.length; s++) {
+                    sharedPreferences.edit().putInt(cartItem[s][0],Integer.valueOf(numberText[s].getText().toString())).apply();
 
-                int count = sharedPreferences.getInt("InBuyListg" + finalItemId, 0);//這個大項目有幾個小項目在購物車裡
-                for (int i = 0; i < cartItem.length; i++) {
-                    if (count > 0) { //這個大項目有小項目在購物車裡面
-                        for (int k = 0; k < count; k++) {
-                            String a = sharedPreferences.getString("InBuyListg" + finalItemId + "id" + (k + 1), "NULL");//shared裡的第K個小項目id
-                            if (Integer.valueOf(numberText[i].getText().toString()) > 0) {
+                    Log.w("5.27","id:"+cartItem[s][0]+" count:"+Integer.valueOf(numberText[s].getText().toString()));
+                }
+                ////0527 更新/////
+
+
+//                int smallItemCount = 0;//大項目裡在購物車裡的小項目總數
+//                確認大項目裡的小項目有沒有在購物車裡面
+//                HashSet<String> List = new HashSet<String>();
+//                Log.d("5.26", "finalItemID:::" + finalItemId + "cartItemlength:" + cartItem.length);
+//                int count = sharedPreferences.getInt("InBuyListg" + finalItemId, 0);//這個大項目有幾個小項目在購物車裡
+//                Log.e("5.26", "這個大項目有幾個小項目在購物車裡" + count);
+//                for (int i = 0; i < cartItem.length; i++) {
+//                    if (count > 0) { //這個大項目有小項目在購物車裡面
+//                        for (int k = 0; k < count; k++) {
+//                            String kthItemInShared = sharedPreferences.getString("InBuyListg" + finalItemId + "id" + (k + 1), "NULL");//shared裡的第K個小項目id
+//                            if (Integer.valueOf(numberText[i].getText().toString()) > 0) {
                                 //                   editor.putString("InBuyListg" + finalItemId + "id" + smallItemCount, cartItem[i][0]);//第幾個小項目的id
 
-                                if (a.equals(cartItem[i][0])) {//第i個小項目id有在shared裡
-                                    editor.putInt("InBuyListgC" + finalItemId + "id" + (k + 1), Integer.valueOf(numberText[i].getText().toString()));
-                                    editor.apply();
-                                    List.add(cartItem[i][0]);
-                                    List.add(cartItem[i][0] + numberText[i].getText().toString());
-                                } else {
-                                    smallItemCount++;
-                                    finalNumber[0]++;
-                                    editor.putInt("InBuyList", finalNumber[0]);//the total count of the cart
-                                    editor.putInt("InBuyListg" + finalItemId, smallItemCount);//這個大項目裡面有幾個小項目在購物車裡
-                                    editor.putString("InBuyListg" + finalItemId + "id" + smallItemCount, cartItem[i][0]);//第幾個小項目的id
-                                    editor.putInt("InBuyListgC" + finalItemId + "id" + smallItemCount,
-                                            Integer.valueOf(numberText[i].getText().toString()));//第幾個小項目的數量
-                                    editor.apply();
-                                    List.add(cartItem[i][0]);
-                                    List.add(cartItem[i][0] + numberText[i].getText().toString());
-                                }
-                            } else {
-                                if (a.equals(cartItem[i][0])) {
-                                    smallItemCount--;
-                                    finalNumber[0]--;
-                                    editor.putInt("InBuyList", finalNumber[0]);//the total count of the cart
-                                    editor.putInt("InBuyListg" + finalItemId, smallItemCount);//這個大項目裡面有幾個小項目在購物車裡
-                                    editor.putString("InBuyListg" + finalItemId + "id" + smallItemCount, cartItem[i][0]);//第幾個小項目的id
-                                    editor.putInt("InBuyListgC" + finalItemId + "id" + smallItemCount,
-                                            Integer.valueOf(numberText[i].getText().toString()));//第幾個小項目的數量
+//                                if (kthItemInShared.equals(cartItem[i][0])) {//第i個小項目id有在shared裡
+//                                    Log.d("5.26", kthItemInShared + "第" + i + "個小項目id有在shared裡 finalItemID:::" + finalItemId + "   cartItem::" + cartItem[i][0] + "-K:" + k);
+//                                    editor.putInt("InBuyListgC" + finalItemId + "id" + (k + 1), Integer.valueOf(numberText[i].getText().toString()));
+//                                    editor.apply();
+//                                    List.add(cartItem[i][0]);
+//                                    List.add(cartItem[i][0] + numberText[i].getText().toString());
+//                                } else {
+//                                    Log.d("5.26", kthItemInShared + "第" + i + "個小項目id沒有在shared裡 finalItemID:::" + finalItemId + "cartItem" + cartItem[i][0] + "-K:" + k);
+//                                    smallItemCount++;
+//                                    finalNumber[0]++;
+//                                    editor.putInt("InBuyList", finalNumber[0]);//the total count of the cart
+//                                    editor.putInt("InBuyListg" + finalItemId, smallItemCount);//這個大項目裡面有幾個小項目在購物車裡
+//                                    editor.putString("InBuyListg" + finalItemId + "id" + smallItemCount, cartItem[i][0]);//第幾個小項目的id
+//                                    editor.putInt("InBuyListgC" + finalItemId + "id" + smallItemCount,
+//                                            Integer.valueOf(numberText[i].getText().toString()));//第幾個小項目的數量
+//                                    editor.apply();
+//                                    List.add(cartItem[i][0]);
+//                                    List.add(cartItem[i][0] + numberText[i].getText().toString());
+//                                }
+//                            } else {
+//                                if (kthItemInShared.equals(cartItem[i][0])) {
+//                                    smallItemCount--;
+//                                    finalNumber[0]--;
+//                                    editor.putInt("InBuyList", finalNumber[0]);//the total count of the cart
+//                                    editor.putInt("InBuyListg" + finalItemId, smallItemCount);//這個大項目裡面有幾個小項目在購物車裡
+//                                    editor.putString("InBuyListg" + finalItemId + "id" + smallItemCount, cartItem[i][0]);//第幾個小項目的id
+//                                    editor.putInt("InBuyListgC" + finalItemId + "id" + smallItemCount,
+//                                            Integer.valueOf(numberText[i].getText().toString()));//第幾個小項目的數量
 
-                                    List.add(cartItem[i][0]);
-                                    List.add(cartItem[i][0] + numberText[i].getText().toString());
-                                    editor.apply();
-                                }
-                            }
-                        }
-                    } else {
-                        if (Integer.valueOf(numberText[i].getText().toString()) > 0) {
-                            smallItemCount++;
-                            finalNumber[0]++;
-                            editor.putInt("InBuyList", finalNumber[0]);//the total count of the cart
-                            editor.putInt("InBuyListg" + finalItemId, smallItemCount);//這個大項目裡面有幾個小項目在購物車裡
-                            editor.putString("InBuyListg" + finalItemId + "id" + smallItemCount, cartItem[i][0]);//第幾個小項目的id
-                            editor.putInt("InBuyListgC" + finalItemId + "id" + smallItemCount,
-                                    Integer.valueOf(numberText[i].getText().toString()));//第幾個小項目的數量
-                            List.add(cartItem[i][0]);
-                            List.add(cartItem[i][0] + numberText[i].getText().toString());
-                            editor.apply();
-                        }
-                    }
-                }
-                if (List.size() > 0) {
-                    editor.putStringSet(finalItemId, List);
+//                                    List.add(cartItem[i][0]);
+//                                    List.add(cartItem[i][0] + numberText[i].getText().toString());
+//                                    editor.apply();
+//                                }
+//                            }
+//                        }
+//                    } else {
+//                        if (Integer.valueOf(numberText[i].getText().toString()) > 0) {
+//                            smallItemCount++;
+//                            finalNumber[0]++;
+//                            editor.putInt("InBuyList", finalNumber[0]);//the total count of the cart
+//                            editor.putInt("InBuyListg" + finalItemId, smallItemCount);//這個大項目裡面有幾個小項目在購物車裡
+//                            editor.putString("InBuyListg" + finalItemId + "id" + smallItemCount, cartItem[i][0]);//第幾個小項目的id
+//                            editor.putInt("InBuyListgC" + finalItemId + "id" + smallItemCount,
+//                                    Integer.valueOf(numberText[i].getText().toString()));//第幾個小項目的數量
+//                            List.add(cartItem[i][0]);
+//                            List.add(cartItem[i][0] + numberText[i].getText().toString());
+//                            editor.apply();
+//                        }
+//                    }
+//                }
+//                if (List.size() > 0) {
+//                    editor.putStringSet(finalItemId, List);
 //                    Log.e("3.24", "inList!!!!");
 //                    Log.e("3.24", List.toString());
-                    editor.apply();
-                }
-                Functions.toast(BuyItemDetailActivity.this, BuyItemDetailActivity.this.getString(R.string.addok_text),500);
+//                    editor.apply();
+//                }
+                Functions.toast(BuyItemDetailActivity.this, BuyItemDetailActivity.this.getString(R.string.addok_text), 500);
                 if (BuyAdd.isShowing())
                     BuyAdd.cancel();
             }

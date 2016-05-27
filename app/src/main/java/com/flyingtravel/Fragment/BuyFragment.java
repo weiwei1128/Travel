@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.SearchView;
 import android.widget.Toast;
 
 import com.flyingtravel.Activity.Buy.BuyItemDetailActivity;
@@ -29,6 +30,7 @@ public class BuyFragment extends Fragment {
     Context context;
     Activity activity;
 
+    private SearchView search;
 
 
     public BuyFragment() {
@@ -52,12 +54,30 @@ public class BuyFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.buy_fragment, container, false);
         gridView = (GridView) view.findViewById(R.id.gridView);
-        adapter = new BuyAdapter(getActivity(), Position,gridView);//position 代表頁碼
+        adapter = new BuyAdapter(getActivity(), Position, gridView);//position 代表頁碼
         gridView.setNumColumns(2);
         gridView.setAdapter(adapter);
         gridView.setOnItemClickListener(new itemListener());
         if (adapter.getCount() == 0)
             Toast.makeText(context, getContext().getResources().getString(R.string.nofile_text), Toast.LENGTH_SHORT).show();
+        search = (SearchView) view.findViewById(R.id.searchView);
+        search.setQueryHint(getContext().getResources().getString(R.string.InputSpotName_text));
+        search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+//                    Functions.toast(context,"製作中",1000);
+                adapter = new BuyAdapter(getActivity(), Position, gridView);
+                gridView.setAdapter(adapter);
+                adapter.getFilter().filter(newText);
+                //Log.e("4/1_", "搜尋: " + newText.toString());
+                return true;
+            }
+        });
         return view;
     }
 
@@ -65,8 +85,12 @@ public class BuyFragment extends Fragment {
 
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+            Log.e("5.26", "whichitem::" + adapter.getIfFilter());
             Bundle bundle = new Bundle();
             bundle.putInt("WhichItem", (Position - 1) * 10 + position);
+            bundle.putString("FilterString", adapter.getFilterString());
+            bundle.putInt("FilterStringPosition", position);
 
             Functions.go(false, activity, context, BuyItemDetailActivity.class, bundle);
 
@@ -74,18 +98,40 @@ public class BuyFragment extends Fragment {
             SQLiteDatabase database;
             helper = DataBaseHelper.getmInstance(context);
             database = helper.getWritableDatabase();
-            Cursor goods_cursor = database.query("goods", new String[]{"totalCount", "goods_id",
-                    "goods_title", "goods_url", "goods_money", "goods_content", "goods_click",
-                    "goods_addtime"}, null, null, null, null, null);
-            if (goods_cursor != null && goods_cursor.getCount() >= (Position - 1) * 10 + position) {
-                goods_cursor.moveToPosition((Position - 1) * 10 + position);
-                ContentValues cv = new ContentValues();
-                int count = 0;
-                if (goods_cursor.getString(6) != null)
-                    count = Integer.parseInt(goods_cursor.getString(6)) + 1;
-                cv.put("goods_click", count + "");
-                Log.d("4.25", "click:" + count);
-                long result = database.update("goods", cv, "goods_id=?", new String[]{goods_cursor.getString(1)});
+
+            if (adapter.getIfFilter()) {
+                Cursor goods_cursor = database.query("goods", new String[]{"totalCount", "goods_id",
+                        "goods_title", "goods_url", "goods_money", "goods_content", "goods_click",
+                        "goods_addtime"}, "goods_title LIKE ?", new String[]{"%" + adapter.getFilterString() + "%"}, null, null, null);
+                if (goods_cursor != null && goods_cursor.getCount() >= position) {
+                    goods_cursor.moveToPosition(position);
+                    ContentValues cv = new ContentValues();
+                    int count = 0;
+                    if (goods_cursor.getString(6) != null)
+                        count = Integer.parseInt(goods_cursor.getString(6)) + 1;
+                    cv.put("goods_click", count + "");
+//                Log.d("4.25", "click:" + count);
+                    long result = database.update("goods", cv, "goods_id=?", new String[]{goods_cursor.getString(1)});
+                }
+                if (goods_cursor != null)
+                    goods_cursor.close();
+            } else {
+                Cursor goods_cursor = database.query("goods", new String[]{"totalCount", "goods_id",
+                        "goods_title", "goods_url", "goods_money", "goods_content", "goods_click",
+                        "goods_addtime"}, null, null, null, null, null);
+
+                if (goods_cursor != null && goods_cursor.getCount() >= (Position - 1) * 10 + position) {
+                    goods_cursor.moveToPosition((Position - 1) * 10 + position);
+                    ContentValues cv = new ContentValues();
+                    int count = 0;
+                    if (goods_cursor.getString(6) != null)
+                        count = Integer.parseInt(goods_cursor.getString(6)) + 1;
+                    cv.put("goods_click", count + "");
+//                Log.d("4.25", "click:" + count);
+                    long result = database.update("goods", cv, "goods_id=?", new String[]{goods_cursor.getString(1)});
+                }
+                if (goods_cursor != null)
+                    goods_cursor.close();
             }
 //            adapter.UpdateView((Position - 1) * 10 + position,position);
             adapter.notifyDataSetChanged();

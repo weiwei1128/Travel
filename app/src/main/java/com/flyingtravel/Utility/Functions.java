@@ -30,8 +30,6 @@ public class Functions {
      * go to another Activity or go back.
      *
      * @param isBack if true then only call activity.finish()
-     *
-     *
      */
     public static void go(Boolean isBack, Activity activity, Context context, Class goclass, Bundle bundle) {
 
@@ -180,6 +178,7 @@ public class Functions {
          */
         public void TaskDone(Boolean OrderNeedUpdate);
     }
+
     /**
      * get bitmap from file
      *
@@ -232,8 +231,8 @@ public class Functions {
      *
      * @param string string to show
      */
-    public static void toast(Context context,String string,int length){
-        final Toast toast = Toast.makeText(context, string,Toast.LENGTH_SHORT);
+    public static void toast(Context context, String string, int length) {
+        final Toast toast = Toast.makeText(context, string, Toast.LENGTH_SHORT);
         toast.show();
         Handler handler = new Handler();
         handler.postDelayed(new
@@ -242,6 +241,19 @@ public class Functions {
                                         public void run() {
                                             toast.cancel();
                                         }
-                                    },length);
+                                    }, length);
+    }
+
+    public static <T> boolean contain(final T[] array, final T word) {
+        if (word == null) {
+            for (final T source : array)
+                if (source == null)
+                    return true;
+        } else {
+            for (final T source : array)
+                if (source == word || word.equals(source))
+                    return true;
+        }
+        return false;
     }
 }

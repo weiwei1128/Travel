@@ -59,7 +59,7 @@ public class MoreAdapter extends BaseAdapter {
                 item.itemName.setText(context.getResources().getString(R.string.questionnarie_text));
                 break;
             case 3:
-                item.itemName.setText(context.getResources().getString(R.string.currentversion_text)+"18");
+                item.itemName.setText(context.getResources().getString(R.string.currentversion_text)+"19");
                 break;
         }
 
