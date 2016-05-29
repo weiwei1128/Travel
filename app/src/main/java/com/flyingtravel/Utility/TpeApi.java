@@ -179,7 +179,9 @@ public class TpeApi extends AsyncTask<String, Void, ArrayList<SpotData>> {
 //        Log.e("3/23_TPESpotJson", "Loaded to globalVariable");
 
 //        Log.e("3/23_", "=========TPESpotJson======Write to DB");
-        DataBaseHelper helper = DataBaseHelper.getmInstance(mcontext);
+
+//        DataBaseHelper helper = DataBaseHelper.getmInstance(mcontext);
+        SpotDataBaseHelper helper = SpotDataBaseHelper.getmInstance(mcontext);
         SQLiteDatabase database = helper.getWritableDatabase();
         Cursor spotDataRaw_cursor = database.query("spotDataRaw", new String[]{"spotName", "spotAdd",
                         "spotLat", "spotLng", "picture1", "picture2", "picture3",

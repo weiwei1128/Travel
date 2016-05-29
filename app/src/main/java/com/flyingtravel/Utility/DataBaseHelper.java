@@ -63,7 +63,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 + "type TEXT" //0524 新增column
                 + ");";
         db.execSQL(DATABASE_CREATE_TABLE_MEMBER);
-
+        //----------move---------//
         //景點資訊 偷偷記錄位置
         String DATABASE_CREATE_TABLE_LOCATION = "create table location("
                 + "_ID INTEGER PRIMARY KEY," + "CurrentLat BLOB,"
@@ -100,7 +100,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 + "infoDetail TEXT"
                 + ");";
         db.execSQL(DATABASE_CREATE_TABLE_SPOTDATA_SORTED);
-
+        //----------move---------//
         //軌跡紀錄
         String DATABASE_CREATE_TABLE_TRACKROUTE = "create table trackRoute("
                 + "_ID INTEGER PRIMARY KEY," + "routesCounter INTEGER,"

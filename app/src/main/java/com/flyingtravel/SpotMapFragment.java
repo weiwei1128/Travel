@@ -25,6 +25,7 @@ import com.flyingtravel.Utility.DataBaseHelper;
 import com.flyingtravel.Utility.GetSpotsNSort;
 import com.flyingtravel.Utility.GlobalVariable;
 import com.flyingtravel.Utility.LoadApiService;
+import com.flyingtravel.Utility.SpotDataBaseHelper;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.google.android.gms.common.ConnectionResult;
@@ -336,7 +337,9 @@ public class SpotMapFragment extends Fragment implements
         // 移動地圖到目前的位置
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 16));
 
-        DataBaseHelper helper = DataBaseHelper.getmInstance(getActivity());
+        //0529 move//
+//        DataBaseHelper helper = DataBaseHelper.getmInstance(getActivity());
+        SpotDataBaseHelper helper = SpotDataBaseHelper.getmInstance(getActivity());
         SQLiteDatabase database = helper.getWritableDatabase();
         Cursor location_cursor = database.query("location",
                 new String[]{"CurrentLat", "CurrentLng"}, null, null, null, null, null);
@@ -470,7 +473,8 @@ public class SpotMapFragment extends Fragment implements
                     MarkerOptionsArray.add(markerOpt);
                 }
             } else {
-                DataBaseHelper helper = DataBaseHelper.getmInstance(getActivity());
+                SpotDataBaseHelper helper = SpotDataBaseHelper.getmInstance(getActivity());
+//                DataBaseHelper helper = DataBaseHelper.getmInstance(getActivity());
                 SQLiteDatabase database = helper.getWritableDatabase();
                 Cursor spotDataRaw_cursor = database.query("spotDataRaw", new String[]{"spotName", "spotAdd",
                                 "spotLat", "spotLng", "picture1", "picture2", "picture3",
