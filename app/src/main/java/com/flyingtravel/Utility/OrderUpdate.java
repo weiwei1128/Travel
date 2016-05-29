@@ -40,7 +40,7 @@ public class OrderUpdate extends AsyncTask<String, Boolean, Boolean> {
 
     @Override
     protected Boolean doInBackground(String... params) {
-        Log.d("5.29","orderUpdate");
+//        Log.d("5.29","orderUpdate");
         HttpClient client = new DefaultHttpClient();
         HttpPost post = new HttpPost("http://zhiyou.lin366.com/api/order/index.aspx");
         MultipartEntity multipartEntity = new MultipartEntity();

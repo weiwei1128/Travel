@@ -333,7 +333,7 @@ public class CheckScheduleActivity extends AppCompatActivity {
 //                                    Log.e("5.29","default");
 
                             }
-                            Log.d("5.29","sellprice:::"+sellprice+" "+itemprice[i]);
+//                            Log.d("5.29","sellprice:::"+sellprice+" "+itemprice[i]);
 //                            itemprice[i] = "$" + sellprice;
                         } catch (JSONException | NullPointerException e) {
                             e.printStackTrace();

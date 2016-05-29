@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 import android.view.View;
@@ -21,6 +22,7 @@ import com.flyingtravel.R;
 import com.flyingtravel.Utility.DataBaseHelper;
 import com.flyingtravel.Utility.Functions;
 import com.flyingtravel.Utility.GlobalVariable;
+import com.flyingtravel.Utility.Special;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
@@ -42,6 +44,7 @@ public class SpecialActivity extends AppCompatActivity {
      * GA
      **/
     public static Tracker tracker;
+
 
     @Override
     protected void onResume() {
@@ -113,6 +116,7 @@ public class SpecialActivity extends AppCompatActivity {
             SpecialFragment fragment = new SpecialFragment();
             Bundle bundle = new Bundle();
             bundle.putInt("pagenumber", (i + 1));
+            bundle.putInt("total", FragmentNumber);
             fragment.setArguments(bundle);
             //pagenumber
             fragments.add(fragment);
@@ -125,7 +129,7 @@ public class SpecialActivity extends AppCompatActivity {
         if (specialFragmentViewPagerAdapter.getCount() == 0)
             Toast.makeText(this, SpecialActivity.this.getResources().getString(R.string.nofile_text), Toast.LENGTH_SHORT).show();
 //*/
-//
+
     }
 
 
