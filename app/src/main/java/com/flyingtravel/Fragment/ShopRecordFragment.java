@@ -8,6 +8,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,13 +37,16 @@ import com.google.android.gms.analytics.Tracker;
  * show the data
  **/
 
-public class ShopRecordFragment extends Fragment {
+public class ShopRecordFragment extends Fragment{
     Context context;
     String userId = null;
     int OldCount = 0;
     GridView gridView;
     public ShopRecordAdapter adapter;
     ProgressDialog dialog;
+
+    private SwipeRefreshLayout mSwipeRefreshLayout;
+
     /**GA**/
     public static Tracker tracker;
 
@@ -85,6 +90,22 @@ public class ShopRecordFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.shoprecord_activity, container, false);
         UI(view);
+
+        mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_refresh_layout);
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                new OrderUpdate(userId, OldCount, context, new Functions.TaskCallBack() {
+                    @Override
+                    public void TaskDone(Boolean Update) {
+                        methodThatDoesSomethingWhenTaskIsDone(Update);
+                    }
+                }).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                mSwipeRefreshLayout.setRefreshing(false);
+//                Log.d("5.29","onRefresh");
+            }
+        });
+
         return view;
     }
 
@@ -121,6 +142,7 @@ public class ShopRecordFragment extends Fragment {
 
     }
 
+
     class itemlistener implements AdapterView.OnItemClickListener {
 
         @Override
@@ -130,7 +152,7 @@ public class ShopRecordFragment extends Fragment {
             Cursor order_cursor = database.query("shoporder", new String[]{"order_id", "order_userid ", "order_no",
                             "order_time", "order_name", "order_phone", "order_email",
                             "order_money", "order_state", "order_schedule"}, "order_userid=" + "\"" + userId + "\"",
-                    null, null, null, "_id DESC");
+                    null, null, null, "CAST(order_id AS INTEGER) DESC");
             String Order_id;
             if (order_cursor != null && order_cursor.getCount() >= position) {
                 order_cursor.moveToPosition(position);
