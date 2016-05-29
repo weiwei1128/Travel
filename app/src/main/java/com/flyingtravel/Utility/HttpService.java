@@ -10,7 +10,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
-import android.util.Log;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -57,6 +56,7 @@ public class HttpService extends Service {
         new Goods(context).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         new News().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         new Special().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        new ExchangeRate().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
         return 1;
     }
@@ -76,6 +76,73 @@ public class HttpService extends Service {
     /**
      * 各種JSON
      **/
+
+    private class ExchangeRate extends AsyncTask<String, Void, Boolean> {
+        String us, cn;
+
+        @Override
+        protected Boolean doInBackground(String... params) {
+            HttpClient client = new DefaultHttpClient();
+            //http://zhiyou.lin366.com/api/feedback/index.aspx
+            //http://zhiyou.lin366.com/api/feedback/content.aspx
+            HttpPost post = new HttpPost("http://zhiyou.lin366.com/api/feedback/content.aspx");
+            MultipartEntity entity = new MultipartEntity();
+            Charset chars = Charset.forName("UTF-8");
+            try {
+                entity.addPart("json", new StringBody("{\"act\":\"content\"}", chars));
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+
+            post.setEntity(entity);
+            HttpResponse resp = null;
+            String result = null;
+            try {
+                resp = client.execute(post);
+                result = EntityUtils.toString(resp.getEntity());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            String message = null;
+            try {
+                message = new JSONObject(result.substring(
+                        result.indexOf("{"), result.lastIndexOf("}") + 1)).getString("states");
+            } catch (JSONException | NullPointerException e2) {
+                e2.printStackTrace();
+            }
+            if (message == null || !message.equals("1"))
+                return false;
+            else {
+                try {
+                    us = new JSONObject(result.substring(
+                            result.indexOf("{"), result.lastIndexOf("}") + 1)).getString("us");
+                } catch (JSONException | NullPointerException e2) {
+                    e2.printStackTrace();
+                }
+
+                try {
+                    cn = new JSONObject(result.substring(
+                            result.indexOf("{"), result.lastIndexOf("}") + 1)).getString("cn");
+                } catch (JSONException | NullPointerException e2) {
+                    e2.printStackTrace();
+                }
+                return true;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            if (result) {
+                SharedPreferences sharedPreferences = PreferenceManager
+                        .getDefaultSharedPreferences(context);
+                sharedPreferences.edit().putString("us", us).apply();
+                sharedPreferences.edit().putString("cn", cn).apply();
+
+            }
+            super.onPostExecute(result);
+        }
+    }
+
     private class Banner extends AsyncTask<String, Void, String> {
 
         @Override
@@ -119,7 +186,7 @@ public class HttpService extends Service {
 //                Log.d("3.7", "BannerService result:" + jsonArray.length());
                 DataBaseHelper helper = DataBaseHelper.getmInstance(context);
                 SQLiteDatabase database = helper.getWritableDatabase();
-                Cursor cursor = database.query("banner", new String[]{"img_url", "link","bannerid"}, null, null, null, null, null);
+                Cursor cursor = database.query("banner", new String[]{"img_url", "link", "bannerid"}, null, null, null, null, null);
                 if (cursor != null && cursor.getCount() > 0)
                     database.delete("banner", null, null);
                 if (cursor != null)
@@ -317,6 +384,10 @@ public class HttpService extends Service {
             try {
                 state = new JSONObject(getString.substring(
                         getString.indexOf("{"), getString.lastIndexOf("}") + 1)).getString("states");
+            } catch (JSONException | NullPointerException e) {
+                e.printStackTrace();
+            }
+            try {
                 totalcount = new JSONObject(getString).getString("totalCount");
             } catch (JSONException | NullPointerException e) {
                 e.printStackTrace();
@@ -385,7 +456,7 @@ public class HttpService extends Service {
                 intent.putExtra("news", true);
                 sendBroadcast(intent);
 
-                Log.e("3.10", "special_activity item size:" + jsonObjects.length);
+//                Log.e("3.10", "special_activity item size:" + jsonObjects.length);
                 DataBaseHelper helper = DataBaseHelper.getmInstance(context);
                 SQLiteDatabase database = helper.getWritableDatabase();
 //                database.beginTransaction();

@@ -37,6 +37,7 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -50,9 +51,9 @@ public class BuyItemListConfirmActivity extends AppCompatActivity {
     //get shop list item
     final HashMap<String, Integer> cartList = new HashMap<>();
     //get remove list
-    final HashSet<String> removeList = new HashSet<>();
-    int removeCount = 0;
-    final HashMap<Integer, String> remove = new HashMap<>();
+//    final HashSet<String> removeList = new HashSet<>();
+//    int removeCount = 0;
+//    final HashMap<Integer, String> remove = new HashMap<>();
     /*GA*/
     public static Tracker tracker;
 
@@ -160,9 +161,13 @@ public class BuyItemListConfirmActivity extends AppCompatActivity {
                 null, null, null, null, null);
         int count = -1;
         int totalnumber = 0, getitemPosition = 0, BiginCart = 0, totalmoney = 0;
+        String en="1", cn="1";
+        if (sharedPreferences.contains("us"))
+            en = sharedPreferences.getString("us", "1");
+        if (sharedPreferences.contains("cn"))
+            cn = sharedPreferences.getString("cn", "1");
         if (goodsitem_cursor != null) {
             if (goodsitem_cursor.getCount() > 0)
-
                 while (goodsitem_cursor.moveToNext()) {
                     if (sharedPreferences.contains(goodsitem_cursor.getString(1)) && (sharedPreferences.getInt(goodsitem_cursor.getString(1), 0) > 0)) {
                         Cursor goodsbig_cursor = database.query("goods", new String[]{"totalCount", "goods_id", "goods_title",
@@ -171,71 +176,108 @@ public class BuyItemListConfirmActivity extends AppCompatActivity {
                         if (goodsbig_cursor != null) {
                             if (goodsbig_cursor.getCount() > 0) {
                                 goodsbig_cursor.moveToFirst();
-                                int money = Integer.valueOf(goodsitem_cursor.getString(3)) * sharedPreferences.getInt(goodsitem_cursor.getString(1), 0);
+                                int money=0;
+                                if(goodsitem_cursor.getString(3)!=null) {
+//                                    money = Integer.valueOf(goodsitem_cursor.getString(3)) * sharedPreferences.getInt(goodsitem_cursor.getString(1), 0);
+                                    int ori = Integer.parseInt(goodsitem_cursor.getString(3));
+                                    String result = "" + ori;
+
+                                    switch (Locale.getDefault().toString()) {
+                                        case "zh_TW":
+                                            money = ori;
+                                            break;
+
+                                        case "zh_CN"://￥
+                                                result = "" + (ori * Double.parseDouble(cn));
+                                                if (result.contains(".")) {
+                                                    //有小數點!!
+                                                    result = result.substring(0, result.indexOf("."));
+                                                }
+                                            money = Integer.parseInt(result);
+                                            break;
+
+                                        case "en_US":
+                                                result = "" + (ori * Double.parseDouble(en));
+                                                if (result.contains(".")) {
+                                                    //有小數點!!
+                                                    result = result.substring(0, result.indexOf("."));
+                                                }
+                                            money = Integer.parseInt(result);
+                                            break;
+
+                                        default:
+                                            money = ori;
+
+                                    }
+
+
+                                }
                                 totalmoney = totalmoney + money;
                                 buylistText.append(goodsbig_cursor.getString(2) + " " + goodsitem_cursor.getString(2) + " : "
                                         + sharedPreferences.getInt(goodsitem_cursor.getString(1), 0) + BuyItemListConfirmActivity.this.getResources().getString(R.string.a_text)
                                         + " $" + money + "\n");
                                 cartList.put(goodsitem_cursor.getString(1), sharedPreferences.getInt(goodsitem_cursor.getString(1), 0));
                             }
+                            goodsbig_cursor.close();
                         }
                     }
                 }
+            goodsitem_cursor.close();
         }
 
 
-        String BigitemID = null, SmallitemID = null, itemName = null;
-        Cursor goods_cursor = database.query("goods", new String[]{"totalCount", "goods_id", "goods_title",
-                "goods_url", "goods_money", "goods_content", "goods_addtime"}, null, null, null, null, null);
+//        String BigitemID = null, SmallitemID = null, itemName = null;
+//        Cursor goods_cursor = database.query("goods", new String[]{"totalCount", "goods_id", "goods_title",
+//                "goods_url", "goods_money", "goods_content", "goods_addtime"}, null, null, null, null, null);
+//
+//        if (goods_cursor != null && goods_cursor.getCount() != 0) {
+//            while (goods_cursor.moveToNext()) {
+//                BiginCart = sharedPreferences.getInt("InBuyListg" + goods_cursor.getString(1), 0);
+//                removeList.add("InBuyListg" + goods_cursor.getString(1));
+//                removeCount++;
+//                remove.put(removeCount, "InBuyListg" + goods_cursor.getString(1));
+//                if (BiginCart > 0) {
+//                    for (int k = 0; k < BiginCart; k++) {
+//                        String a = sharedPreferences.getString("InBuyListg" + goods_cursor.getString(1) + "id" + (k + 1), null);
+//                        int smallItemCount = sharedPreferences.getInt("InBuyListgC" + goods_cursor.getString(1) + "id" + (k + 1), 0);
+//                        removeList.add("InBuyListg" + goods_cursor.getString(1) + "id" + (k + 1));
+//                        removeList.add("InBuyListgC" + goods_cursor.getString(1) + "id" + (k + 1));
+//                        removeCount++;
+//                        remove.put(removeCount, "InBuyListg" + goods_cursor.getString(1) + "id" + (k + 1));
+//                        removeCount++;
+//                        remove.put(removeCount, "InBuyListgC" + goods_cursor.getString(1) + "id" + (k + 1));
+//                        if (a != null && smallItemCount != 0) {
 
-        if (goods_cursor != null && goods_cursor.getCount() != 0) {
-            while (goods_cursor.moveToNext()) {
-                BiginCart = sharedPreferences.getInt("InBuyListg" + goods_cursor.getString(1), 0);
-                removeList.add("InBuyListg" + goods_cursor.getString(1));
-                removeCount++;
-                remove.put(removeCount, "InBuyListg" + goods_cursor.getString(1));
-                if (BiginCart > 0) {
-                    for (int k = 0; k < BiginCart; k++) {
-                        String a = sharedPreferences.getString("InBuyListg" + goods_cursor.getString(1) + "id" + (k + 1), null);
-                        int smallItemCount = sharedPreferences.getInt("InBuyListgC" + goods_cursor.getString(1) + "id" + (k + 1), 0);
-                        removeList.add("InBuyListg" + goods_cursor.getString(1) + "id" + (k + 1));
-                        removeList.add("InBuyListgC" + goods_cursor.getString(1) + "id" + (k + 1));
-                        removeCount++;
-                        remove.put(removeCount, "InBuyListg" + goods_cursor.getString(1) + "id" + (k + 1));
-                        removeCount++;
-                        remove.put(removeCount, "InBuyListgC" + goods_cursor.getString(1) + "id" + (k + 1));
-                        if (a != null && smallItemCount != 0) {
+//                            BigitemID = goods_cursor.getString(1);
+//                            getitemPosition = k + 1;
+//                            SmallitemID = a;
 
-                            BigitemID = goods_cursor.getString(1);
-                            getitemPosition = k + 1;
-                            SmallitemID = a;
-
-                            if (BigitemID != null) {
-                                Cursor goods_cursor_big = database.query("goodsitem", new String[]{"goods_bigid",
-                                                "goods_itemid", "goods_title", "goods_money", "goods_url"},
-                                        "goods_bigid=? and goods_itemid=?", new String[]{BigitemID, SmallitemID}, null, null, null);
-                                goods_cursor_big.moveToFirst();
-                                int money = Integer.valueOf(goods_cursor_big.getString(3)) * smallItemCount;
+//                            if (BigitemID != null) {
+//                                Cursor goods_cursor_big = database.query("goodsitem", new String[]{"goods_bigid",
+//                                                "goods_itemid", "goods_title", "goods_money", "goods_url"},
+//                                        "goods_bigid=? and goods_itemid=?", new String[]{BigitemID, SmallitemID}, null, null, null);
+//                                goods_cursor_big.moveToFirst();
+//                                int money = Integer.valueOf(goods_cursor_big.getString(3)) * smallItemCount;
 //                                totalmoney = totalmoney + money;
 //                                buylistText.append(goods_cursor.getString(2) + " " + goods_cursor_big.getString(2) + " : "
 //                                        + smallItemCount + BuyItemListConfirmActivity.this.getResources().getString(R.string.a_text)
 //                                        + " $" + money + "\n");
 //                                cartList.put(SmallitemID, smallItemCount);
-                            }
-                        }
-                    }
-                }
+//                            }
+//                        }
+//                    }
+//                }
 //                else {//這個大項目沒有小項目在購物車裡面
 //                    Log.e("3.24", "這不是我要的!!!!" + getPosition + "." + position+"///"+goods_cursor.getString(1));
 //                }
 //                Log.i("3.24","我在while裡面!!!要執行下一輪");
 
-            }
-        }
+//            }
+//        }
 
         //////////^^^^^
-        if (goods_cursor != null)
-            goods_cursor.close();
+//        if (goods_cursor != null)
+//            goods_cursor.close();
 
         totalText.setText(totalmoney + "");
     }
@@ -248,11 +290,11 @@ public class BuyItemListConfirmActivity extends AppCompatActivity {
      * "sname":"sname","stel":"stel","semail":"semail","sstate":"sstate",
      * "scity":"scity","saddress":"saddress","carlist":[{"gid":"123","num":"1"},
      * {"gid":"123","num":"2"}]}
-     * <p/>
+     * <p>
      * express!=null
      * payment!=null
-     * <p/>
-     * <p/>
+     * <p>
+     * <p>
      * 回傳資料
      * {"states":"1","msg":"加入成功","id":"45"}
      */

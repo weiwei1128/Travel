@@ -2,11 +2,13 @@ package com.flyingtravel.Activity;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -45,6 +47,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
+import java.util.Locale;
 
 public class CheckScheduleActivity extends AppCompatActivity {
     ListView listView;
@@ -59,6 +62,7 @@ public class CheckScheduleActivity extends AppCompatActivity {
     public static GoogleAnalytics analytics;
     public static Tracker tracker;
 
+    String en, cn;
     @Override
     protected void onResume() {
         super.onResume();
@@ -76,6 +80,12 @@ public class CheckScheduleActivity extends AppCompatActivity {
         GlobalVariable globalVariable = (GlobalVariable)getApplication();
         tracker = globalVariable.getDefaultTracker();
         /**GA**/
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(CheckScheduleActivity.this);
+        if (sharedPreferences.contains("us"))
+            en = sharedPreferences.getString("us", "1");
+        if (sharedPreferences.contains("cn"))
+            cn = sharedPreferences.getString("cn", "1");
+
         backImg = (LinearLayout) findViewById(R.id.checkschedule_backImg);
         backImg.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -195,7 +205,7 @@ public class CheckScheduleActivity extends AppCompatActivity {
         protected void onPreExecute() {
 //            Log.e("3.25", "OnPreExecute");
             dialog.setMessage(CheckScheduleActivity.this.getResources().getString(R.string.loading_text));
-            dialog.setCancelable(false);
+//            dialog.setCancelable(false);
             dialog.show();
 
             super.onPreExecute();
@@ -281,11 +291,50 @@ public class CheckScheduleActivity extends AppCompatActivity {
                         }
                         try {
                             String sellprice = jsonArray.getJSONObject(i).getString("order_amount");
+//                            Log.d("5.29","sellprice:::"+sellprice);
                             if (sellprice.contains(".")) {
                                 //有小數點!!
                                 sellprice = sellprice.substring(0, sellprice.indexOf("."));
                             }
-                            itemprice[i] = "$" + sellprice;
+                            String resultprice = "NT$" + sellprice;
+
+                            switch (Locale.getDefault().toString()) {
+                                case "zh_TW":
+                                    itemprice[i] = resultprice;
+//                                    Log.e("5.29","TW");
+                                    break;
+
+                                case "zh_CN"://￥
+                                    if (cn != null) {
+                                        resultprice = "￥" + (Integer.parseInt(sellprice) * Double.parseDouble(cn));
+                                        if (resultprice.contains(".")) {
+                                            //有小數點!!
+                                            resultprice = resultprice.substring(0, resultprice.indexOf("."));
+                                        }
+                                    }
+                                    itemprice[i] = resultprice;
+//                                    Log.e("5.29","CN");
+                                    break;
+
+                                case "en_US":
+                                    if (en != null) {
+                                        resultprice = "$" + (Integer.parseInt(sellprice) * Double.parseDouble(en));
+                                        if (result.contains(".")) {
+                                            //有小數點!!
+                                            resultprice = resultprice.substring(0, resultprice.indexOf("."));
+                                        }
+                                    }
+                                    itemprice[i] = resultprice;
+//                                    Log.e("5.29","US");
+                                    break;
+
+                                default:
+                                    itemprice[i] = resultprice;
+//                                    Log.e("5.29","default");
+
+                            }
+                            Log.d("5.29","sellprice:::"+sellprice+" "+itemprice[i]);
+//                            itemprice[i] = "$" + sellprice;
                         } catch (JSONException | NullPointerException e) {
                             e.printStackTrace();
                         }

@@ -2,10 +2,11 @@ package com.flyingtravel.Adapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
-import android.util.Log;
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,14 +19,13 @@ import android.widget.TextView;
 
 import com.flyingtravel.R;
 import com.flyingtravel.Utility.DataBaseHelper;
-import com.flyingtravel.Utility.Functions;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
-import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 /**
  * Created by wei on 2015/11/11.
@@ -46,12 +46,17 @@ public class BuyAdapter extends BaseAdapter implements Filterable {
     private Boolean ifFilter = false;
     private String filterString;
     ArrayList<String> buyDataID;
+    String en, cn;
 
     public BuyAdapter(Context mcontext, Integer index, GridView gridView) {
         this.context = mcontext;
         inflater = LayoutInflater.from(mcontext);
         this.gridView = gridView;
-
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        if (sharedPreferences.contains("us"))
+            en = sharedPreferences.getString("us", "1");
+        if (sharedPreferences.contains("cn"))
+            cn = sharedPreferences.getString("cn", "1");
         pageNO = index;
         helper = DataBaseHelper.getmInstance(context);
         database = helper.getWritableDatabase();
@@ -60,6 +65,7 @@ public class BuyAdapter extends BaseAdapter implements Filterable {
                 .showImageOnFail(R.drawable.error)
                 .showImageOnLoading(R.drawable.loading2)
                 .showImageForEmptyUri(R.drawable.empty)
+
 //                .displayer(new RoundedBitmapDisplayer(20)) //圓角圖片
                 .cacheInMemory(false)
                 .cacheOnDisk(true).build();
@@ -143,15 +149,49 @@ public class BuyAdapter extends BaseAdapter implements Filterable {
             Cursor goods_search_cursor = database.query("goods", new String[]{"totalCount", "goods_id", "goods_title",
                     "goods_url", "goods_money", "goods_content", "goods_click", "goods_addtime"}, "goods_title LIKE ?", new String[]{"%" + filterString + "%"}, null, null, null);
             if (goods_search_cursor != null) {
-                if (goods_search_cursor.getCount() != 0&&goods_search_cursor.getCount()>=position)
+                if (goods_search_cursor.getCount() != 0 && goods_search_cursor.getCount() >= position)
                     goods_search_cursor.moveToPosition(position);
 //                    while ((goods_search_cursor.moveToNext())) {
 //                        Log.d("5.26", "GET VIEW goods search::" + goods_search_cursor.getString(2));
                 if (goods_search_cursor.getString(2) != null)
                     mcell.buyText.setText(goods_search_cursor.getString(2));
                 else mcell.buyText.setText(R.string.wrongData_text);
-                if (goods_search_cursor.getString(4) != null)
-                    mcell.moneyText.setText("$" + goods_search_cursor.getString(4));
+                if (goods_search_cursor.getString(4) != null) {
+                    int ori = Integer.parseInt(goods_search_cursor.getString(4));
+                    String result = "NT$" + ori;
+
+                    switch (Locale.getDefault().toString()) {
+                        case "zh_TW":
+                            mcell.moneyText.setText(result);
+                            break;
+
+                        case "zh_CN"://￥
+                            if (cn != null) {
+                                result = "￥" + (ori * Double.parseDouble(cn));
+                                if (result.contains(".")) {
+                                    //有小數點!!
+                                    result = result.substring(0, result.indexOf("."));
+                                }
+                            }
+                            mcell.moneyText.setText(result);
+                            break;
+
+                        case "en_US":
+                            if (en != null) {
+                                result = "$" + (ori * Double.parseDouble(en));
+                                if (result.contains(".")) {
+                                    //有小數點!!
+                                    result = result.substring(0, result.indexOf("."));
+                                }
+                            }
+                            mcell.moneyText.setText(result);
+                            break;
+
+                        default:
+                            mcell.moneyText.setText(result);
+
+                    }
+                }
 
 //            if (!(mcell.clickText.getText().toString().substring(3).startsWith("0") &&
 //                    mcell.clickText.getText().toString().endsWith("0")))//避免出現:00
@@ -181,8 +221,50 @@ public class BuyAdapter extends BaseAdapter implements Filterable {
                 if (goods_cursor.getString(2) != null)
                     mcell.buyText.setText(goods_cursor.getString(2));
                 else mcell.buyText.setText(R.string.wrongData_text);
-                if (goods_cursor.getString(4) != null)
-                    mcell.moneyText.setText("$" + goods_cursor.getString(4));
+                if (goods_cursor.getString(4) != null) {
+//                    Log.e("5.28","Locale::"+ Locale.getDefault().getDisplayLanguage()+"-"+Locale.getDefault().getDisplayCountry()
+//                            +"-"+Locale.getDefault().getLanguage()
+//                            +"-"+Locale.getDefault().toString()
+//                            +"-"+Locale.getDefault().getISO3Language());
+                    //Locale.getDefault().toString()
+                    //繁體:zh_TW
+                    //簡體:zh_CN
+                    //en_US
+                    int ori = Integer.parseInt(goods_cursor.getString(4));
+                    String result = "NT$" + ori;
+
+                    switch (Locale.getDefault().toString()) {
+                        case "zh_TW":
+                            mcell.moneyText.setText(result);
+                            break;
+                        case "zh_CN"://￥
+                            if (cn != null) {
+                                result = "￥" + (ori * Double.parseDouble(cn));
+                                if (result.contains(".")) {
+                                    //有小數點!!
+                                    result = result.substring(0, result.indexOf("."));
+                                }
+                            }
+                            mcell.moneyText.setText(result);
+
+                            break;
+                        case "en_US":
+                            if (en != null) {
+                                result = "$" + (ori * Double.parseDouble(en));
+                                if (result.contains(".")) {
+                                    //有小數點!!
+                                    result = result.substring(0, result.indexOf("."));
+                                }
+                            }
+                            mcell.moneyText.setText(result);
+                            break;
+                        default:
+                            mcell.moneyText.setText(result);
+
+                    }
+
+
+                }
 
 //            if (!(mcell.clickText.getText().toString().substring(3).startsWith("0") &&
 //                    mcell.clickText.getText().toString().endsWith("0")))//避免出現:00

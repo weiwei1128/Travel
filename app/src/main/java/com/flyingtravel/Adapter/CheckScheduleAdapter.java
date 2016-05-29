@@ -1,6 +1,7 @@
 package com.flyingtravel.Adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -69,6 +70,7 @@ public class CheckScheduleAdapter extends BaseAdapter {
             mitem.date.setText(date[position]);
         if (price[position] != null)
             mitem.price.setText(price[position]);
+        Log.d("5.29",";;"+price[position]);
         if (content[position] != null)
             mitem.content.setText(content[position]);
         if (state[position] != null)

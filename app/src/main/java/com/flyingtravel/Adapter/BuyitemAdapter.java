@@ -22,6 +22,8 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 
+import java.util.Locale;
+
 /**
  * Created by wei on 2015/12/30.
  */
@@ -34,6 +36,7 @@ public class BuyitemAdapter extends BaseAdapter {
     ImageLoader loader = ImageLoader.getInstance();
     DisplayImageOptions options;
     private ImageLoadingListener listener;
+    String en, cn;
 
     public BuyitemAdapter(Context context) {
         this.context = context;
@@ -41,6 +44,10 @@ public class BuyitemAdapter extends BaseAdapter {
         database = helper.getWritableDatabase();
         layoutInflater = LayoutInflater.from(context);
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        if (sharedPreferences.contains("us"))
+            en = sharedPreferences.getString("us", "1");
+        if (sharedPreferences.contains("cn"))
+            cn = sharedPreferences.getString("cn", "1");
         options = new DisplayImageOptions.Builder()
                 .showImageOnFail(R.drawable.error)
                 .showImageOnLoading(R.drawable.empty)
@@ -142,10 +149,47 @@ public class BuyitemAdapter extends BaseAdapter {
                                     Log.e("5.27", count + "title:" + goodsbig_cursor.getString(2)
                                             + "[" + goodsitem_cursor.getString(2) + "]::" + sharedPreferences.getInt(goodsitem_cursor.getString(1), 0));
 //                                if (position == 0) {
-//
-                                    newcell.cellnameTxt.setText(goodsbig_cursor.getString(2));
-                                    newcell.cellfromTxt.setText(goodsitem_cursor.getString(2));
-                                    newcell.cellmoneyTxt.setText(goodsitem_cursor.getString(3));
+                                    if (goodsbig_cursor.getString(2) != null)
+                                        newcell.cellnameTxt.setText(goodsbig_cursor.getString(2));
+                                    if (goodsitem_cursor.getString(2) != null)
+                                        newcell.cellfromTxt.setText(goodsitem_cursor.getString(2));
+                                    if (goodsitem_cursor.getString(3) != null) {
+//                                        newcell.cellmoneyTxt.setText(goodsitem_cursor.getString(3));
+                                        int ori = Integer.parseInt(goodsitem_cursor.getString(3));
+                                        String result = "" + ori;
+
+                                        switch (Locale.getDefault().toString()) {
+                                            case "zh_TW":
+                                                newcell.cellmoneyTxt.setText(result);
+                                                break;
+
+                                            case "zh_CN"://￥
+                                                if (cn != null) {
+                                                    result = "" + (ori * Double.parseDouble(cn));
+                                                    if (result.contains(".")) {
+                                                        //有小數點!!
+                                                        result = result.substring(0, result.indexOf("."));
+                                                    }
+                                                }
+                                                newcell.cellmoneyTxt.setText(result);
+                                                break;
+
+                                            case "en_US":
+                                                if (en != null) {
+                                                    result = "" + (ori * Double.parseDouble(en));
+                                                    if (result.contains(".")) {
+                                                        //有小數點!!
+                                                        result = result.substring(0, result.indexOf("."));
+                                                    }
+                                                }
+                                                newcell.cellmoneyTxt.setText(result);
+                                                break;
+
+                                            default:
+                                                newcell.cellmoneyTxt.setText(result);
+
+                                        }
+                                    }
                                     newcell.cellnumberTxt.setText(sharedPreferences.getInt(goodsitem_cursor.getString(1), 0) + "");
                                     if (goodsbig_cursor.getString(3).startsWith("http"))
                                         loader.displayImage(goodsbig_cursor.getString(3), newcell.cellImg, options, listener);

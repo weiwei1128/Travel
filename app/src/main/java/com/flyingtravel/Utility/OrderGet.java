@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -206,7 +207,9 @@ public class OrderGet extends AsyncTask<String, Void, String> {
                         cv.put("order_email", string[5]);
                         cv.put("order_money", string[6]);
                         cv.put("order_state", string[7]);
+//                        Log.d("5.29","_time:"+string[2]);
                         long result = database.insert("shoporder", null, cv);
+                        Log.d("5.29","_time:"+string[2]+"/"+result);
                         returnMessage = returnMessage + "新的資料庫新增資料:" + string[0] + " result:" + result;
                     }
 
@@ -239,7 +242,9 @@ public class OrderGet extends AsyncTask<String, Void, String> {
                             cv.put("order_email", string[5]);
                             cv.put("order_money", string[6]);
                             cv.put("order_state", string[7]);
+
                             long result = database.insert("shoporder", null, cv);
+                            Log.d("5.29","_time:"+string[2]+"/"+result);
                             returnMessage = returnMessage + "舊的資料庫新增資料:" + string[0] + " result:" + result;
                         }
                         if (order_cursor_dul != null)

@@ -54,6 +54,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.util.HashSet;
+import java.util.Locale;
 
 public class BuyItemDetailActivity extends AppCompatActivity {
 
@@ -373,27 +374,67 @@ public class BuyItemDetailActivity extends AppCompatActivity {
         *int howmany = sharedPreferences.getInt("InBuyList", 0);
         * **/
             //確認大項目裡的小項目有沒有在購物車裡面
-            if (sharedPreferences.getInt("InBuyListg" + itemId, 0) > 0) {//這個大項目有小項目在購物車裡面
+//            if (sharedPreferences.getInt("InBuyListg" + itemId, 0) > 0) {//這個大項目有小項目在購物車裡面
 //                Log.e("3.24","這個大項目有小項目在購物車裡面"+itemId+"幾個"+sharedPreferences.getInt("InBuyListg"+itemId,0));
-                for (int k = 0; k < sharedPreferences.getInt("InBuyListg" + itemId, 0); k++) {
-                    String a = sharedPreferences.getString("InBuyListg" + itemId + "id" + (k + 1), "NULL");
+//                for (int k = 0; k < sharedPreferences.getInt("InBuyListg" + itemId, 0); k++) {
+//                    String a = sharedPreferences.getString("InBuyListg" + itemId + "id" + (k + 1), "NULL");
 //                    Log.e("3.24","id:"+a);
-                    if (a.equals(cartItem[i][0]) && sharedPreferences.getInt("InBuyListgC" + itemId + "id" + (k + 1), 0) != 0) {
+//                    if (a.equals(cartItem[i][0]) && sharedPreferences.getInt("InBuyListgC" + itemId + "id" + (k + 1), 0) != 0) {
 //                        numberText[i].setText(sharedPreferences.getInt("InBuyListgC" + itemId + "id" + (k + 1), 0) + "");
 //                        Log.e("3.24","這個項目有在購物車裡面!!!"+cartItem[i][1]+"有幾個:"
 //                                +sharedPreferences.getInt("InBuyListgC" + itemId+"id"+(k+1),0));
-                    }
-                }
-            }
-            if(sharedPreferences.contains(cartItem[i][0])&&(sharedPreferences.getInt(cartItem[i][0],0)>0)){
-                numberText[i].setText(sharedPreferences.getInt(cartItem[i][0],0)+"");
-                Log.e("5.27","cart::::"+itemName+"-"+cartItem[i][1]+": "+sharedPreferences.getInt(cartItem[i][0],0));
-            }else Log.e("5.27","not in cart!"+sharedPreferences.getInt(cartItem[i][0],0));
+//                    }
+//                }
+//            }
+//            if(sharedPreferences.contains(cartItem[i][0])&&(sharedPreferences.getInt(cartItem[i][0],0)>0)){
+//                numberText[i].setText(sharedPreferences.getInt(cartItem[i][0],0)+"");
+//                Log.e("5.27","cart::::"+itemName+"-"+cartItem[i][1]+": "+sharedPreferences.getInt(cartItem[i][0],0));
+//            }else Log.e("5.27","not in cart!"+sharedPreferences.getInt(cartItem[i][0],0));
 
 
             nameText[i].setText(itemName);
             fromText[i].setText(cartItem[i][1]);
-            moneyText[i].setText(cartItem[i][2]);
+            String en="1", cn = "1";
+            if (sharedPreferences.contains("us"))
+                en = sharedPreferences.getString("us", "1");
+            if (sharedPreferences.contains("cn"))
+                cn = sharedPreferences.getString("cn", "1");
+
+            int ori = Integer.parseInt(cartItem[i][2]);
+            String result = "" + ori;
+
+            switch (Locale.getDefault().toString()) {
+                case "zh_TW":
+                    moneyText[i].setText(result);
+                    break;
+
+                case "zh_CN"://￥
+                    if (cn != null) {
+                        result = "" + (ori * Double.parseDouble(cn));
+                        if (result.contains(".")) {
+                            //有小數點!!
+                            result = result.substring(0, result.indexOf("."));
+                        }
+                    }
+                    moneyText[i].setText(result);
+                    break;
+
+                case "en_US":
+                    if (en != null) {
+                        result = "" + (ori * Double.parseDouble(en));
+                        if (result.contains(".")) {
+                            //有小數點!!
+                            result = result.substring(0, result.indexOf("."));
+                        }
+                    }
+                    moneyText[i].setText(result);
+                    break;
+
+                default:
+                    moneyText[i].setText(result);
+
+            }
+//            moneyText[i].setText(cartItem[i][2]);
             if (Integer.parseInt(numberText[i].getText().toString()) == 0)
                 numberText[i].setText("1");
             totalText[i].setText(Integer.valueOf(moneyText[i].getText().toString())

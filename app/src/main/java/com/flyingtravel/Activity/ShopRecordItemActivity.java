@@ -2,12 +2,13 @@ package com.flyingtravel.Activity;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,6 +37,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
+import java.util.Locale;
 
 public class ShopRecordItemActivity extends AppCompatActivity {
     String OrderId;
@@ -44,6 +46,7 @@ public class ShopRecordItemActivity extends AppCompatActivity {
     LinearLayout carLayout, backImg;
     Context context = ShopRecordItemActivity.this;
     LayoutInflater inflater;
+    String en, cn;
     /*GA*/
     public static Tracker tracker;
 
@@ -51,8 +54,8 @@ public class ShopRecordItemActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         /**GA**/
-        if(OrderId!=null) {
-            tracker.setScreenName("訂單內頁-ID:"+OrderId);
+        if (OrderId != null) {
+            tracker.setScreenName("訂單內頁-ID:" + OrderId);
             tracker.send(new HitBuilders.ScreenViewBuilder().build());
         }
         /**GA**/
@@ -80,6 +83,12 @@ public class ShopRecordItemActivity extends AppCompatActivity {
     }
 
     void setupUI() {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        if (sharedPreferences.contains("us"))
+            en = sharedPreferences.getString("us", "1");
+        if (sharedPreferences.contains("cn"))
+            cn = sharedPreferences.getString("cn", "1");
+
         carLayout = (LinearLayout) findViewById(R.id.shoprecord_itemlayout);
         backImg = (LinearLayout) findViewById(R.id.shoprecorditem_backImg);
         Order_date = (TextView) findViewById(R.id.shoprecord_itemdate);
@@ -109,7 +118,7 @@ public class ShopRecordItemActivity extends AppCompatActivity {
         SQLiteDatabase database = helper.getWritableDatabase();
         Cursor order_cursor = database.query("shoporder", new String[]{"order_id", "order_userid", "order_no",
                 "order_time", "order_name", "order_phone", "order_email",
-                "order_money", "order_state", "order_schedule"}, "order_id=" + OrderId, null, null, null, null);
+                "order_money", "order_state", "order_schedule"}, "order_id=" + OrderId, null, null, null, "CAST(order_id AS INTEGER) DESC");
         if (order_cursor != null && order_cursor.getCount() > 0) {
             order_cursor.moveToFirst();
             if (order_cursor.getString(8) != null) {
@@ -343,28 +352,103 @@ public class ShopRecordItemActivity extends AppCompatActivity {
                         name.setText(strings[(i + 1)][0]);
                     if (strings[(i + 1)][2] != null)
                         count.setText("  x" + strings[(i + 1)][2]);
-                    if (strings[(i + 1)][3] != null)
-                        money.setText("$" + strings[(i + 1)][3]);
+                    if (strings[(i + 1)][3] != null) {
+//                        money.setText("$" + strings[(i + 1)][3]);
+
+                        int ori = Integer.parseInt(strings[(i + 1)][3]);
+                        String result = "NT$" + ori;
+
+                        switch (Locale.getDefault().toString()) {
+                            case "zh_TW":
+                                money.setText(result);
+                                break;
+
+                            case "zh_CN"://￥
+                                if (cn != null) {
+                                    result = "￥" + (ori * Double.parseDouble(cn));
+                                    if (result.contains(".")) {
+                                        //有小數點!!
+                                        result = result.substring(0, result.indexOf("."));
+                                    }
+                                }
+                                money.setText(result);
+                                break;
+
+                            case "en_US":
+                                if (en != null) {
+                                    result = "$" + (ori * Double.parseDouble(en));
+                                    if (result.contains(".")) {
+                                        //有小數點!!
+                                        result = result.substring(0, result.indexOf("."));
+                                    }
+                                }
+                                money.setText(result);
+                                break;
+
+                            default:
+                                money.setText(result);
+
+                        }
+                    }
                     carLayout.addView(view);
                 }
                 if (strings[0][0] != null)
                     Order_no.setText(strings[0][0]);
                 if (strings[0][1] != null)
                     ship_name.setText(strings[0][1]);
-                if (strings[0][2] != null)
-                    money_total.setText("$" + strings[0][2]);
-                if (strings[0][2] != null)
-                    money_item.setText("$" + strings[0][2]);
+                if (strings[0][2] != null) {
+//                    money_total.setText("$" + strings[0][2]);
+//                    money_item.setText("$" + strings[0][2]);
+
+                    int ori = Integer.parseInt(strings[0][2]);
+                    String result = "NT$" + ori;
+
+                    switch (Locale.getDefault().toString()) {
+                        case "zh_TW":
+                            money_item.setText(result);
+                            money_total.setText(result);
+                            break;
+
+                        case "zh_CN"://￥
+                            if (cn != null) {
+                                result = "￥" + (ori * Double.parseDouble(cn));
+                                if (result.contains(".")) {
+                                    //有小數點!!
+                                    result = result.substring(0, result.indexOf("."));
+                                }
+                            }
+                            money_item.setText(result);
+                            money_total.setText(result);
+                            break;
+
+                        case "en_US":
+                            if (en != null) {
+                                result = "$" + (ori * Double.parseDouble(en));
+                                if (result.contains(".")) {
+                                    //有小數點!!
+                                    result = result.substring(0, result.indexOf("."));
+                                }
+                            }
+                            money_item.setText(result);
+                            money_total.setText(result);
+                            break;
+
+                        default:
+                            money_item.setText(result);
+                            money_total.setText(result);
+
+                    }
+                }
                 if (strings[0][3] != null)
                     Order_date.setText(strings[0][3]);
                 if (strings[0][4] != null)
                     Order_payment.setText(strings[0][4]);
                 if (strings[0][5] != null)
                     ship_tel.setText(strings[0][5]);
-                if (strings[0][6] != null&&!strings[0][6].equals("null"))
+                if (strings[0][6] != null && !strings[0][6].equals("null"))
                     ship_message.setText(strings[0][6]);
 //                else
-                Log.e("5.17","message:"+strings[0][6]);
+//                Log.e("5.17","message:"+strings[0][6]);
             }
 
             super.onPostExecute(strings);

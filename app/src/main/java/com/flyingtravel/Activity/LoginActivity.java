@@ -348,6 +348,8 @@ public class LoginActivity extends AppCompatActivity {
                     dialog.dismiss();
                 new login_Data(account, password).execute();
             }
+            if (dialog.isShowing())
+                dialog.dismiss();
             super.onPostExecute(aBoolean);
         }
     }
