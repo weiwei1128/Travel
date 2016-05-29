@@ -53,7 +53,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
-import java.util.HashSet;
 import java.util.Locale;
 
 public class BuyItemDetailActivity extends AppCompatActivity {
@@ -394,7 +393,7 @@ public class BuyItemDetailActivity extends AppCompatActivity {
 
             nameText[i].setText(itemName);
             fromText[i].setText(cartItem[i][1]);
-            String en="1", cn = "1";
+            String en = "1", cn = "1";
             if (sharedPreferences.contains("us"))
                 en = sharedPreferences.getString("us", "1");
             if (sharedPreferences.contains("cn"))
@@ -504,9 +503,9 @@ public class BuyItemDetailActivity extends AppCompatActivity {
                     inCart = sharedPreferences.getString("inCart", null).split(",");
                 StringBuilder sb = new StringBuilder();
                 for (int s = 0; s < cartItem.length; s++) {
-                    sharedPreferences.edit().putInt(cartItem[s][0],Integer.valueOf(numberText[s].getText().toString())).apply();
+                    sharedPreferences.edit().putInt(cartItem[s][0], Integer.valueOf(numberText[s].getText().toString())).apply();
 
-                    Log.w("5.27","id:"+cartItem[s][0]+" count:"+Integer.valueOf(numberText[s].getText().toString()));
+                    Log.w("5.27", "id:" + cartItem[s][0] + " count:" + Integer.valueOf(numberText[s].getText().toString()));
                 }
                 ////0527 更新/////
 
@@ -522,7 +521,7 @@ public class BuyItemDetailActivity extends AppCompatActivity {
 //                        for (int k = 0; k < count; k++) {
 //                            String kthItemInShared = sharedPreferences.getString("InBuyListg" + finalItemId + "id" + (k + 1), "NULL");//shared裡的第K個小項目id
 //                            if (Integer.valueOf(numberText[i].getText().toString()) > 0) {
-                                //                   editor.putString("InBuyListg" + finalItemId + "id" + smallItemCount, cartItem[i][0]);//第幾個小項目的id
+                //                   editor.putString("InBuyListg" + finalItemId + "id" + smallItemCount, cartItem[i][0]);//第幾個小項目的id
 
 //                                if (kthItemInShared.equals(cartItem[i][0])) {//第i個小項目id有在shared裡
 //                                    Log.d("5.26", kthItemInShared + "第" + i + "個小項目id有在shared裡 finalItemID:::" + finalItemId + "   cartItem::" + cartItem[i][0] + "-K:" + k);

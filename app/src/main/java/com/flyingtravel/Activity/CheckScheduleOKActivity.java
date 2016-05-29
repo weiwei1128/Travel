@@ -261,7 +261,6 @@ public class CheckScheduleOKActivity extends AppCompatActivity {
     private void methodThatDoesSomethingWhenTaskIsDone(Boolean a) {
         if (a) {
             int[] sameday = new int[data.length + 1];
-            ;
             Log.d("5.24", "data length:" + data.length + " itemid::" + itemid);
             String date_temp = "";
             for (int u = 0; u < data.length; u++) {

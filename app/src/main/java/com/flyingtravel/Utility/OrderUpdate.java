@@ -86,11 +86,7 @@ public class OrderUpdate extends AsyncTask<String, Boolean, Boolean> {
         } catch (JSONException | NullPointerException e) {
             e.printStackTrace();
         }
-        if (totalcount == null || Integer.valueOf(totalcount) <= OldCount)
-
-            return false;
-        else
-            return true;
+        return !(totalcount == null || Integer.valueOf(totalcount) <= OldCount);
 
     }
 

@@ -267,7 +267,7 @@ public class SpotListFragment extends Fragment implements
         Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         if (location == null) {
             LocationServices.FusedLocationApi.requestLocationUpdates
-                    (mGoogleApiClient, mLocationRequest, (LocationListener) this);
+                    (mGoogleApiClient, mLocationRequest, this);
         } else {
             //HandleNewLocation(location);
         }

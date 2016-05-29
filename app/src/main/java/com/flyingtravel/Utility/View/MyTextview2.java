@@ -95,7 +95,7 @@ public class MyTextview2 extends TextView implements Runnable {
         int moveDistance = rect.width();
         rect = null;
         this.mDistance = isFirstRun ? moveDistance : moveDistance+getWidth();
-        this.mDuration = (int) (2*mDistance);
+        this.mDuration = 2*mDistance;
         return this.mDistance;
     }
 

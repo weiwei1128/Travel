@@ -60,7 +60,7 @@ public class Functions {
         int oldHeight = bitmap.getHeight();
         int l = bitmap.getWidth();
         int i = bitmap.getHeight();
-        while ((int) l > 500 || (int) i > 500) {
+        while (l > 500 || i > 500) {
             l = (int) (l * 0.9);
             i = (int) (i * 0.9);
         }
@@ -176,7 +176,7 @@ public class Functions {
          *
          * @param OrderNeedUpdate if Order record updated
          */
-        public void TaskDone(Boolean OrderNeedUpdate);
+        void TaskDone(Boolean OrderNeedUpdate);
     }
 
     /**

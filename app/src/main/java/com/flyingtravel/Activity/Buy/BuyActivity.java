@@ -6,14 +6,11 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.provider.ContactsContract;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -42,7 +39,9 @@ public class BuyActivity extends AppCompatActivity {
     LinearLayout backImg;
     int count = 0, pageNo = 1, pages = 0, minus = pageNo - 1;
     TextView number, lastPage, nextPage;
-    /**GA**/
+    /**
+     * GA
+     **/
     public static Tracker tracker;
 
     @Override
@@ -81,13 +80,13 @@ public class BuyActivity extends AppCompatActivity {
         layout.addView(textView);
     }
 
-    void getPages(){
+    void getPages() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(BuyActivity.this);
         int number = 0;
         Cursor goodsitem_cursor = database.query("goodsitem", new String[]{"goods_bigid",
                         "goods_itemid", "goods_title", "goods_money", "goods_url"},
                 null, null, null, null, null);
-        if (goodsitem_cursor != null)
+        if (goodsitem_cursor != null) {
             if (goodsitem_cursor.getCount() > 0)
                 while (goodsitem_cursor.moveToNext()) {
                     if (sharedPreferences.contains(goodsitem_cursor.getString(1)) && (sharedPreferences.getInt(goodsitem_cursor.getString(1), 0) > 0)) {
@@ -95,6 +94,8 @@ public class BuyActivity extends AppCompatActivity {
                         break;
                     }
                 }
+            goodsitem_cursor.close();
+        }
 
         if (number > 0) {
             ListImg.setVisibility(View.VISIBLE);
@@ -109,7 +110,7 @@ public class BuyActivity extends AppCompatActivity {
             ListImg.setVisibility(View.INVISIBLE);
     }
 
-    public void setPageNo(){
+    public void setPageNo() {
 //        Log.d("4.25", "setPageNo");
         helper = DataBaseHelper.getmInstance(BuyActivity.this);
         database = helper.getWritableDatabase();

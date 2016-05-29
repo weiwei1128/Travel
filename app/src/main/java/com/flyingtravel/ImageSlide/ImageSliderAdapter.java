@@ -98,7 +98,7 @@ public class ImageSliderAdapter extends PagerAdapter {
                 fragmentActivity.getBaseContext()).denyCacheImageMultipleSizesInMemory()
                 .build();
         ImageLoader.getInstance().init(config);
-        imageLoader.displayImage(((Product) products.get(position)).getImageUrl()
+        imageLoader.displayImage(products.get(position).getImageUrl()
                 , imageView, options, listener);
         imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
         container.addView(view);

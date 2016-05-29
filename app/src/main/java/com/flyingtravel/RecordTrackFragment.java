@@ -433,7 +433,7 @@ public class RecordTrackFragment extends Fragment implements
         write.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (dialog_img.getVisibility() == dialog_img.VISIBLE) {
+                if (dialog_img.getVisibility() == View.VISIBLE) {
                     dialog_img.setImageBitmap(null);
                     dialog_img.setVisibility(View.INVISIBLE);
                 }
@@ -483,7 +483,7 @@ public class RecordTrackFragment extends Fragment implements
 
                                 if (inDB != -1) {
                                     if (spotDialog.isShowing()) {
-                                        if (content_layout.getVisibility() == content_layout.VISIBLE) {
+                                        if (content_layout.getVisibility() == View.VISIBLE) {
                                             content_layout.setVisibility(View.INVISIBLE);
                                             content_editText.setText("");
                                         }
@@ -582,7 +582,7 @@ public class RecordTrackFragment extends Fragment implements
             @Override
             public void onClick(View v) {
                 if (spotDialog.isShowing()) {
-                    if (content_layout.getVisibility() == content_layout.VISIBLE) {
+                    if (content_layout.getVisibility() == View.VISIBLE) {
                         content_layout.setVisibility(View.INVISIBLE);
                         content_editText.setText("");
                     }
@@ -663,7 +663,7 @@ public class RecordTrackFragment extends Fragment implements
         Location last_location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         if (last_location == null) {
             LocationServices.FusedLocationApi.requestLocationUpdates
-                    (mGoogleApiClient, mLocationRequest, (LocationListener) this);
+                    (mGoogleApiClient, mLocationRequest, this);
         } else {
             HandleNewLocation(last_location);
         }
@@ -908,7 +908,7 @@ public class RecordTrackFragment extends Fragment implements
             memo_img = rotateImage(memo_img, rotationAngle);
             dialog_img.setImageBitmap(memo_img);
 
-            if (content_layout.getVisibility() == content_layout.VISIBLE) {
+            if (content_layout.getVisibility() == View.VISIBLE) {
                 content_layout.setVisibility(View.INVISIBLE);
             }
             dialog_scrollview.setVisibility(View.VISIBLE);

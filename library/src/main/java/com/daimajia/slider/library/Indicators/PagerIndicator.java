@@ -77,8 +77,8 @@ public class PagerIndicator extends LinearLayout implements ViewPagerEx.OnPageCh
 
     public enum IndicatorVisibility{
         Visible,
-        Invisible;
-    };
+        Invisible
+    }
 
     private GradientDrawable mUnSelectedGradientDrawable;
     private GradientDrawable mSelectedGradientDrawable;

@@ -208,12 +208,7 @@ public class MemberEditActivity extends AppCompatActivity {
             }
             Log.e("5.16","message:"+message);
             //如果讀取資料錯誤 不進行之後的動作
-            if (state == null || state.equals("0"))
-                return false;
-            else {
-
-                return true;
-            }
+            return !(state == null || state.equals("0"));
         }
 
         @Override
