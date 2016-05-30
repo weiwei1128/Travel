@@ -177,7 +177,7 @@ public class ScheduleMapsActivity extends FragmentActivity implements
         double latitude = 0;
         try {
             List<Address> adresses = coder.getFromLocationName(address, 1);
-//            Log.d("5.24","addresses::"+address.length());
+            Log.d("5.24","addresses::"+adresses.size()+"::"+address);
             if (adresses == null||adresses.isEmpty()||adresses.size()==0)
                 return null;
             Address location = adresses.get(0);

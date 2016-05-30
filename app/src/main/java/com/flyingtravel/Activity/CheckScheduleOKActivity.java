@@ -49,6 +49,8 @@ public class CheckScheduleOKActivity extends AppCompatActivity {
     List<Fragment> fragments = new ArrayList<>();
     TextView dayText;
     TextView dateText;
+    List<String> day = new ArrayList<>();
+    List<String> date = new ArrayList<>();
     /**
      * GA
      **/
@@ -190,6 +192,7 @@ public class CheckScheduleOKActivity extends AppCompatActivity {
                         } catch (JSONException | NullPointerException e) {
                             e.printStackTrace();
                         }
+                        Log.e("4.26", "Day" + data[i][0] + "i:" + i);
                         if (i != 0 && data[i][0].equals(data[i - 1][0])) {
                             summary[i - 1] = temp_summary;
                             try {
@@ -261,7 +264,8 @@ public class CheckScheduleOKActivity extends AppCompatActivity {
     private void methodThatDoesSomethingWhenTaskIsDone(Boolean a) {
         if (a) {
             int[] sameday = new int[data.length + 1];
-            Log.d("5.24", "data length:" + data.length + " itemid::" + itemid);
+
+//            Log.d("5.24", "data length:" + data.length + " itemid::" + itemid);
             String date_temp = "";
             for (int u = 0; u < data.length; u++) {
                 if (date_temp.equals(data[u][0]))
@@ -270,8 +274,8 @@ public class CheckScheduleOKActivity extends AppCompatActivity {
                     else sameday[Integer.parseInt(date_temp)]++;
                 date_temp = data[u][0];
             }
-            for (int k = 0; k < data.length; k++)
-                Log.d("5.24", "same day" + k + ":" + sameday[k]);
+//            for (int k = 0; k < data.length; k++)
+//                Log.d("5.24", "same day" + k + ":" + sameday[k]);
             Boolean addFragment = false;
             int coundown = 0, get = 0;
             String addDay = "";
@@ -289,7 +293,11 @@ public class CheckScheduleOKActivity extends AppCompatActivity {
 
                         if (data[r][0].equals((q + 1) + "")) {
                             addDay = addDay + r + "_";
-                            Log.w("5.24<<", q + "是兩天以上的行程：day:" + data[r][0] + "address" + data[r][4] + "第幾個:" + r + "?" + w);
+                            Log.w("5.24<<", q + "是兩天以上的行程：day:" + data[r][0] + "address" + data[r][0] + "第幾個:" + r + "?" + w);
+                            if (!day.contains(data[r][0]))
+                                day.add(data[r][0]);
+                            if (!date.contains(data[r][1]))
+                                date.add(data[r][1]);
                             bundle.putString("scheduleday", data[r][0]);
                             bundle.putString("scheduledate", data[r][1]);
                             bundle.putString("scheduletime", data[r][2]);
@@ -310,11 +318,15 @@ public class CheckScheduleOKActivity extends AppCompatActivity {
                     fragments.add(fragment);
                 } else {
                     if (addDay.contains(String.valueOf(q)))
-                        Log.w("5.24<<", "這" + q + "已經加過行程" + data[q][3]);
+                        Log.w("5.24<<", "這" + q + "已經加過行程" + data[q][0]);
                     else {
-                        Log.w("5.24<<", "這" + q + "天有一個行程或是沒有行程" + data[q][3]);
+                        Log.w("5.24<<", "這" + q + "天有一個行程或是沒有行程" + data[q][0]);
                         CheckScheduleFragment fragment = new CheckScheduleFragment();
                         Bundle bundle = new Bundle();
+                        if (!day.contains(data[q][0]))
+                            day.add(data[q][0]);
+                        if (!date.contains(data[q][1]))
+                            date.add(data[q][1]);
                         bundle.putString("scheduleday", data[q][0]);
                         bundle.putString("scheduledate", data[q][1]);
                         bundle.putString("scheduletime", data[q][2]);
@@ -340,8 +352,17 @@ public class CheckScheduleOKActivity extends AppCompatActivity {
             viewPager.setOffscreenPageLimit(1);
             viewPager.setAdapter(checkScheduleFragmentAdapter);
             viewPager.setOnPageChangeListener(new PageListener());
-            dayText.setText("Day" + data[0][0]);
-            dateText.setText(data[0][1]);
+//            if (day != null)
+//                Log.e("5.30", day.size() + "=size");
+            if (day != null && day.get(0) != null)
+                dayText.setText("Day" + day.get(0));
+            else
+                dayText.setText("Day" + data[0][0]);
+
+            if (date != null && date.get(0) != null)
+                dateText.setText(date.get(0));
+            else
+                dateText.setText(data[0][1]);
         }
     }
 
@@ -352,9 +373,16 @@ public class CheckScheduleOKActivity extends AppCompatActivity {
         }
 
         public void onPageSelected(int position) {
-//            Log.e("4.26","onPageSelected"+position+"--data[position][0]"+data[position][0]);
-            dayText.setText("Day" + data[position][0]);
-            dateText.setText(data[position][1]);
+            Log.e("4.26", "onPageSelected" + position + "--data[position][0]" + data[position][0]);
+            if (day != null && day.get(position) != null)
+                dayText.setText("Day" + day.get(position));
+            else
+                dayText.setText("Day" + data[position][0]);
+
+            if (date != null && date.get(position) != null)
+                dateText.setText(date.get(position));
+            else
+                dateText.setText(data[position][1]);
             /*
             pageNo = position + 1;
             if (pageNo == pages)
