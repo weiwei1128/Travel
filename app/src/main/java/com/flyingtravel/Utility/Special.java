@@ -210,9 +210,9 @@ public class Special extends AsyncTask<String, Void, Boolean> {
                 }
                 special.close();
             }
-            return null;
+            return true;
         } else
-            return null;
+            return false;
     }
 
     @Override
