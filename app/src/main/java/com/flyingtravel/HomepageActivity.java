@@ -118,7 +118,7 @@ public class HomepageActivity extends FragmentActivity {
         setContentView(R.layout.activity_fragment);
         Fabric.with(this, new Crashlytics());
         //baidu push notification
-        PushManager.startWork(getApplicationContext(), PushConstants.LOGIN_TYPE_API_KEY, "6BaeuKAiu1AjsqZua2iV8GHmdPQliGaE");
+        PushManager.startWork(getApplicationContext(), PushConstants.LOGIN_TYPE_API_KEY, "Ex9ZdeunxtqdnTAO2VPdXSyz");
 
 
         Intent intent_LoadApiService = new Intent(HomepageActivity.this, LoadApiService.class);
