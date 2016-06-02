@@ -184,6 +184,39 @@
                 android:background="@drawable/border_rec_blue"
                 android:padding="4dp" />
 
+            <Spinner
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:id="@+id/spinner_country"
+                style="1" />
+
+            <Spinner
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:id="@+id/spinner_city"
+                style="1" />
+
+            <Spinner
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:id="@+id/spinner_district"
+                style="1" />
+
+            <Spinner
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:id="@+id/spinner_china" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginBottom="10dp">
+
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -191,7 +224,8 @@
                 android:hint="@string/AddrInput_text"
                 android:textColor="@color/black"
                 android:textSize="16dp"
-                android:singleLine="true" />
+                android:singleLine="true"
+                android:layout_weight="1" />
         </LinearLayout>
 
         <LinearLayout

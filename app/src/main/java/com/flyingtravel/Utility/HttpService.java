@@ -454,7 +454,7 @@ public class HttpService extends Service {
                 try {
                     jsonArray = new JSONObject(getString).getJSONArray("list");
 //                Log.e("2.25", jsonArray.length() + ":jsonArray長度");
-                } catch (JSONException e) {
+                } catch (JSONException | NullPointerException e ) {
                     e.printStackTrace();
                 }
                 for (int i = 0; i < Integer.valueOf(totalcount); i++) {
