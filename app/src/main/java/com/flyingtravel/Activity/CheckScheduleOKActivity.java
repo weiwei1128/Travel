@@ -363,6 +363,9 @@ public class CheckScheduleOKActivity extends AppCompatActivity {
                 dateText.setText(date.get(0));
             else
                 dateText.setText(data[0][1]);
+            //0601 提醒可向旁邊滑
+            if (checkScheduleFragmentAdapter.getCount() > 0)
+                Functions.toast(CheckScheduleOKActivity.this, CheckScheduleOKActivity.this.getString(R.string.slide_text), 1000);
         }
     }
 
