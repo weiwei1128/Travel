@@ -192,7 +192,7 @@ public class CheckScheduleOKActivity extends AppCompatActivity {
                         } catch (JSONException | NullPointerException e) {
                             e.printStackTrace();
                         }
-                        Log.e("4.26", "Day" + data[i][0] + "i:" + i);
+//                        Log.e("4.26", "Day" + data[i][0] + "i:" + i);
                         if (i != 0 && data[i][0].equals(data[i - 1][0])) {
                             summary[i - 1] = temp_summary;
                             try {
@@ -281,7 +281,7 @@ public class CheckScheduleOKActivity extends AppCompatActivity {
             String addDay = "";
             for (int q = 0; q < count; q++) {
                 if (sameday[q + 1] != 0) {
-                    Log.w("5.24<<", ">>有兩天以上的行程" + q + " sameday[q+1]:" + sameday[q + 1] + " data:" + data[q][0]);
+//                    Log.w("5.24<<", ">>有兩天以上的行程" + q + " sameday[q+1]:" + sameday[q + 1] + " data:" + data[q][0]);
                     get = sameday[q + 1];
                     CheckScheduleFragment fragment = new CheckScheduleFragment();
                     Bundle bundle = new Bundle();
@@ -293,7 +293,7 @@ public class CheckScheduleOKActivity extends AppCompatActivity {
 
                         if (data[r][0].equals((q + 1) + "")) {
                             addDay = addDay + r + "_";
-                            Log.w("5.24<<", q + "是兩天以上的行程：day:" + data[r][0] + "address" + data[r][0] + "第幾個:" + r + "?" + w);
+//                            Log.w("5.24<<", q + "是兩天以上的行程：day:" + data[r][0] + "address" + data[r][0] + "第幾個:" + r + "?" + w);
                             if (!day.contains(data[r][0]))
                                 day.add(data[r][0]);
                             if (!date.contains(data[r][1]))
@@ -309,7 +309,7 @@ public class CheckScheduleOKActivity extends AppCompatActivity {
                         }//是兩天以上的行程
 
                     }
-                    Log.d("5.24", "schedulecount" + (w - 1));
+//                    Log.d("5.24", "schedulecount" + (w - 1));
 
                     if (itemid != null)
                         bundle.putString("scheduleid", itemid);
@@ -320,7 +320,7 @@ public class CheckScheduleOKActivity extends AppCompatActivity {
                     if (addDay.contains(String.valueOf(q)))
                         Log.w("5.24<<", "這" + q + "已經加過行程" + data[q][0]);
                     else {
-                        Log.w("5.24<<", "這" + q + "天有一個行程或是沒有行程" + data[q][0]);
+//                        Log.w("5.24<<", "這" + q + "天有一個行程或是沒有行程" + data[q][0]);
                         CheckScheduleFragment fragment = new CheckScheduleFragment();
                         Bundle bundle = new Bundle();
                         if (!day.contains(data[q][0]))
@@ -364,7 +364,7 @@ public class CheckScheduleOKActivity extends AppCompatActivity {
             else
                 dateText.setText(data[0][1]);
             //0601 提醒可向旁邊滑
-            if (checkScheduleFragmentAdapter.getCount() > 0)
+            if (checkScheduleFragmentAdapter.getCount() > 1)
                 Functions.toast(CheckScheduleOKActivity.this, CheckScheduleOKActivity.this.getString(R.string.slide_text), 1000);
         }
     }
@@ -376,7 +376,7 @@ public class CheckScheduleOKActivity extends AppCompatActivity {
         }
 
         public void onPageSelected(int position) {
-            Log.e("4.26", "onPageSelected" + position + "--data[position][0]" + data[position][0]);
+//            Log.e("4.26", "onPageSelected" + position + "--data[position][0]" + data[position][0]);
             if (day != null && day.get(position) != null)
                 dayText.setText("Day" + day.get(position));
             else
