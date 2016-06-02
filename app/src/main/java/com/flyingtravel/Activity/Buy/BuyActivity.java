@@ -128,6 +128,7 @@ public class BuyActivity extends AppCompatActivity {
             BuyFragment fragment = new BuyFragment();
             Bundle bundle = new Bundle();
             bundle.putInt("position", (i + 1));
+            bundle.putInt("total", count);
             fragment.setArguments(bundle);
             fragments.add(fragment);
         }

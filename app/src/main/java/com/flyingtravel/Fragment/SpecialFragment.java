@@ -54,7 +54,6 @@ public class SpecialFragment extends Fragment {
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                //TODO 加上taskDONE!!!
                 new Special(getActivity(), new Functions.TaskCallBack() {
                     @Override
                     public void TaskDone(Boolean OrderNeedUpdate) {

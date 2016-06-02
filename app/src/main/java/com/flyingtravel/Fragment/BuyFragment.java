@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,14 +22,16 @@ import com.flyingtravel.Adapter.BuyAdapter;
 import com.flyingtravel.R;
 import com.flyingtravel.Utility.DataBaseHelper;
 import com.flyingtravel.Utility.Functions;
+import com.flyingtravel.Utility.Goods;
 
 public class BuyFragment extends Fragment {
 
     GridView gridView;
     BuyAdapter adapter;
-    int Position = 0;
+    int Position = 0,totalnumber = 0;
     Context context;
     Activity activity;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
 
     private SearchView search;
 
@@ -48,6 +51,7 @@ public class BuyFragment extends Fragment {
         Position = getArguments().getInt("position");
         context = this.getActivity().getBaseContext();
         activity = this.getActivity();
+        totalnumber = getArguments().getInt("total");
     }
 
     @Override
@@ -55,6 +59,21 @@ public class BuyFragment extends Fragment {
         View view = inflater.inflate(R.layout.buy_fragment, container, false);
         gridView = (GridView) view.findViewById(R.id.gridView);
         adapter = new BuyAdapter(getActivity(), Position, gridView);//position 代表頁碼
+        mSwipeRefreshLayout = (SwipeRefreshLayout)view.findViewById(R.id.swipe_refresh_layout);
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                new Goods(context, new Functions.TaskCallBack() {
+                    @Override
+                    public void TaskDone(Boolean OrderNeedUpdate) {
+                        if(OrderNeedUpdate)
+                            adapter.notifyDataSetChanged();
+                        mSwipeRefreshLayout.setRefreshing(false);
+                    }
+                },totalnumber).execute();
+            }
+        });
+
         gridView.setNumColumns(2);
         gridView.setAdapter(adapter);
         gridView.setOnItemClickListener(new itemListener());
@@ -86,7 +105,7 @@ public class BuyFragment extends Fragment {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-            Log.e("5.26", "whichitem::" + adapter.getIfFilter());
+//            Log.e("5.26", "whichitem::" + adapter.getIfFilter());
             Bundle bundle = new Bundle();
             bundle.putInt("WhichItem", (Position - 1) * 10 + position);
             bundle.putString("FilterString", adapter.getFilterString());
