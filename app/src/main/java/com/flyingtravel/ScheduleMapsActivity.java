@@ -171,6 +171,29 @@ public class ScheduleMapsActivity extends FragmentActivity implements
     }
 
 
+    @Override
+    protected void onDestroy() {
+        mapView.onDestroy();
+        super.onDestroy();
+    }
+
+    @Override
+    protected void onPause() {
+        mapView.onPause();
+        super.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        mapView.onResume();
+        super.onResume();
+    }
+    @Override
+    public void onLowMemory() {
+        mapView.onLowMemory();
+        super.onLowMemory();
+    }
+
     LatLng getLat(String address) {
         Geocoder coder = new Geocoder(this);
         double longitude = 0;
